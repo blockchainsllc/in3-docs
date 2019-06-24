@@ -193,10 +193,10 @@ Since Incubed is optimized for embedded devices, server may not only support JSO
   ````
 
 
-The binary format is based on JSON-structure, but uses a RLP-encoding aproach. Each node or value is represented by a these 3 values:
+The binary format is based on JSON-structure, but uses a RLP-encoding aproach. Each node or value is represented by a these 4 values:
 
-*  **type** `d_type_t` - 3 bit defining the type of the element.
-*  **len** `uint32_t` - the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value.
+*  **type** `d_type_t` - 3 bit : defining the type of the element.
+*  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value.
 *  **key** `uint16_t` - the key hash of the property. This value will only passed, if the structure is a property of a JSON-Object.
 *  **value** `bytes_t` - the bytes or value of the node (only for strings or bytes)
 
