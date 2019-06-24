@@ -2,7 +2,7 @@ stages:
   - build
 
 build:
-  image: build-images/doc:readthedocs
+  image: docker.slock.it/build-images/doc:readthedocs
   stage: build
   tags:
     - short-jobs
