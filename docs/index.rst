@@ -3,10 +3,9 @@ Welcome to Incubed's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Concept:
+   :caption: Concept
 
    intro
-   getting_started
    Ethereum-Verification-and-MerkleProof
    poa
    incentivization
@@ -14,10 +13,12 @@ Welcome to Incubed's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference:
+   :caption: Reference
 
-   Threat-Model-for-Incubed
+   getting_started
+   examples
    milestones
+   Threat-Model-for-Incubed
    spec
    api-ts
    api-c
