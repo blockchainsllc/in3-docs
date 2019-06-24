@@ -1,4 +1,7 @@
-# API Reference TS\n\nThis page contains a list of all Datastructures and Classes used within the TypeScript IN3 Client.\n
+# API Reference TS
+
+This page contains a list of all Datastructures and Classes used within the TypeScript IN3 Client.
+
 
 * [**AccountProof**](#type-accountproof) : `interface`  - the Proof-for a single Account
 
