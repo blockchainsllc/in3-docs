@@ -17,12 +17,12 @@ the results will be found in
 
 in order to update the Typescript-docu:
 
-````
+```
 ./updateTS.sh
 ```
 
 in order to update the C-docu:
 
-````
+```
 ./updateC.sh
 ```
