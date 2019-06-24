@@ -13,4 +13,4 @@ build:
     - make text
   artifacts:
     paths:
-      - docs/_build
+      - build
