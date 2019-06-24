@@ -1,0 +1,16 @@
+stages:
+  - build
+
+build:
+  image: build-images/doc:readthedocs
+  stage: build
+  tags:
+    - short-jobs
+  script:
+    - cd docs 
+    - make html
+    - make latexpdf
+    - make text
+  artifacts:
+    paths:
+      - docs/_build
