@@ -1,6 +1,6 @@
-# IN3-Specification 
+# IN3-Protocol
 
-This document describes the communication between a incubed client and a incubed node. This communication is based on requests which use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests this means each node also accepts all standard requests as at https://github.com/ethereum/wiki/wiki/JSON-RPC, which also includes handling Bulk-requests. 
+This document describes the communication between a incubed client and a incubed node. This communication is based on requests which use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests this means each node also accepts all standard requests as defined at [Ethereum JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) , which also includes handling Bulk-requests. 
 
 Each request may add an optional `in3` property defining the verification behavior for incubed.
 
@@ -178,10 +178,19 @@ The following functions are offered within the registry:
 
 ## Binary Format
 
-Since Incubed is optimized for embedded devices, server may not only support JSON, but a special binary-format. This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with following optimizations:
+Since Incubed is optimized for embedded devices, server may not only support JSON, but a special binary-format. 
+You may wonder why we don't want to use any existing binary serialisation for json like cbor or others. The reason is simply, because we do not need to support all features JSON offers. The following features are not supported:
+- no escape sequences (this allows to use the string without copying it)
+- no float support (at least for now)
+- no string litersals starting with `0x` since this is always considered as hexcoded bytes
+- no propertyNames within the same object with the same key hash.
+
+Since we are able to accept these restrictions, we can keep the json-parser simple.
+This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with following optimizations:
 
 * All strings starting with `0x`are interpreted as binary data and stored as such, which reduces the size of the data to 50%.
-* All propertyNames of JSON-Objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount. (depending on the propertyName).    
+* Recurring byte-values will use references to previous data, which reduces the payload especially for merkle proofs.
+* All propertyNames of JSON-Objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount. (depending on the propertyName).
 
   the hash is calculated very easy like this:
   ```c
@@ -193,12 +202,35 @@ Since Incubed is optimized for embedded devices, server may not only support JSO
   ````
 
 
+```eval_rst
+.. note:: A very important limitation is the fact, that property names are stored as 16bit hashes, which decreases the payload, but does not allow to restore the full json without knowing all property names! 
+```
+
 The binary format is based on JSON-structure, but uses a RLP-encoding aproach. Each node or value is represented by a these 4 values:
 
+*  **key** `uint16_t` - the key hash of the property. This value will only passed before the property node, if the structure is a property of a JSON-Object. 
 *  **type** `d_type_t` - 3 bit : defining the type of the element.
-*  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value.
-*  **key** `uint16_t` - the key hash of the property. This value will only passed, if the structure is a property of a JSON-Object.
-*  **value** `bytes_t` - the bytes or value of the node (only for strings or bytes)
+*  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value. 
+*  **data** `bytes_t` - the bytes or value of the node (only for strings or bytes)
+
+
+```eval_rst
+.. graphviz::
+
+    digraph g{
+      rankdir=LR;
+
+      node[fontname="Helvetica",   shape=record, color=lightblue ]
+      propHash[label="key|16 bit", style=dashed]
+      type[label="type|{type (3bit) | len (5bit)}"]
+      len2[label="len ext",  style=dashed]
+      data[label="data",  style=dashed]
+      propHash -> type -> len2 -> data
+    }
+
+
+```
+
 
 The serialization depends on the type, which is defined in the first 3 bits of the first byte of the element:
 
@@ -219,13 +251,29 @@ Depending on these type the length will be used to read the next bytes:
 * `0x0` : **binary data** - This would be a value or property with binary data. The `len` will be used to read the number of bytes as binary data.
 * `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead copying memory in RAM.
 * `0x2` : **array** - represents a array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
-* `0x3` : **object** - a JSON-object with `len` properties comming next. In this case the properties following this element will have a `key` specified.
-* `0x4` : **boolean** - boolean value where len must be either `0x1`= `true` or `0x0` = `false`.
+* `0x3` : **object** - a JSON-object with `len` properties comming next. In this case the properties following this element will have a leading `key` specified.
+* `0x4` : **boolean** - boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. if `len > 1` this element is a copy of a previous node and may reference the same data. 
 * `0x5` : **integer** - a integer-value with max 29 bit (since the 3 bits are used for the type). if the value is higher than `0x20000000`, it will be stored as binary data.
 * `0x6` : **null** - represents a null-value. if this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
 
 
 ## Communication
+
+Incubed requests follow a simple request/response schema allowing even devices with a small bandwith to retrieve all required data with one request. But there are exceptions when a additional need to fetched.
+
+These are:
+
+1. **Changes in the NodeRegistry**    
+
+    Changes in the NodeRegistry are based on one of the following event : 
+    
+    - `LogNodeRegistered`
+    - `LogNodeRemoved`
+    - `LogNodeChanged`
+
+    The server needs to watch for events from the `NodeRegistry` contract, and update the nodelist when needed.
+    
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList` a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
 
 ## Proofs
 
