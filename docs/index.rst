@@ -6,7 +6,6 @@ Welcome to Incubed's documentation!
    :caption: Concept
 
    intro
-   Ethereum-Verification-and-MerkleProof
    poa
    incentivization
    decentralizing_services
@@ -16,9 +15,10 @@ Welcome to Incubed's documentation!
    :caption: Reference
 
    getting_started
-   examples
    milestones
    Threat-Model-for-Incubed
    spec
    api-ts
    api-c
+   api-cmd
+   api-docker

@@ -242,7 +242,7 @@ uint8_t  len  = *val & 0x1F;   // the other 5 bits  (0-31) the length
 the `len` depends on ther size of the data. so the last 5 bit of the first bytes are interpreted as following:
 
 * `0x00` - `0x1c` : the length is taken as is from the 5 bits.
-* `0x1d` - `0x1f` : the length is taken by reading the value of the next `len - 0x1c` bytes.  
+* `0x1d` - `0x1f` : the length is taken by reading the bigendian value of the next `len - 0x1c` bytes (len ext).  
 
 After the type-byte and optional length bytes the 2 bytes representing the property hash is added, but only if the elemtent is a property of a JSON-object.    
 
@@ -252,7 +252,7 @@ Depending on these type the length will be used to read the next bytes:
 * `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead copying memory in RAM.
 * `0x2` : **array** - represents a array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
 * `0x3` : **object** - a JSON-object with `len` properties comming next. In this case the properties following this element will have a leading `key` specified.
-* `0x4` : **boolean** - boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. if `len > 1` this element is a copy of a previous node and may reference the same data. 
+* `0x4` : **boolean** - boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. if `len > 1` this element is a copy of a previous node and may reference the same data. The index of the source node will then be `len-2`.
 * `0x5` : **integer** - a integer-value with max 29 bit (since the 3 bits are used for the type). if the value is higher than `0x20000000`, it will be stored as binary data.
 * `0x6` : **null** - represents a null-value. if this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
 
@@ -275,7 +275,485 @@ These are:
     
     Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList` a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
 
+2. **Changes in the ValidatorList**    
+
+    This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on ther consensys Changes in the ValidatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. Thism`lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
+    
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of a not verifyable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
+
+3. **Failover**    
+
+    Another reason for a second request is the case of not delivering a valid response. This could happen if a node does not respond at all or the response can not be validated. In both cases the client may blacklist the node for a while and sends the same request to another node.
+
+
 ## Proofs
+
+Proofs are crucial part of the security concept for incubed. Whenever a request asks for a response with `verification`: `proof`, the node must provide the proof needed to validaten the response result. The proof itself depends on the chain.
+
+### Ethereum
+
+For Ethereum all proofs are based on the correct block hash. That's why verification differientiates between [Verifying the blockhash](poa.htmlm) (which depends on the used consensus) and the actual result data.
+
+There is also another reason why the BlockHash is so important. This is the only value you are able to access from within a SmartContract, because the evm supports a OpCode (`BLOCKHASH`), which allows you to read the last 256 Blockhashes, which gives us the chance to even verify the blockhash onchain.
+
+Depending on the method, different proofs are needed, which are described in this document.
+
+- **[Block Proof](#blockproof)** - verifies the content of the BlockHeader
+- **[Transaction Proof](#transaction-proof)** - verifies the input data of a transaction
+- **[Receipt Proof](#receipt-proof)** - verifies the outcome of a transaction
+- **[Log Proof](#log-proof)** - verifies the response of `eth_getPastLogs`
+- **[Account Proof](#account-proof)** - verifies the state of an account
+- **[Call Proof](#call-proof)** - verifies the result of a `eth_call` - response
+
+Each `in3`-section of the response containing proof contains a property with a proof-object with the following properties:
+
+*  **type** `string` (required)  - the type of the proof   
+ Must be one of the these values : `'transactionProof`', `'receiptProof`', `'blockProof`', `'accountProof`', `'callProof`', `'logProof`'
+*  **block** `string` - the serialized blockheader as hex, required in most proofs 
+*  **finalityBlocks** `array` - the serialized foloowing blockheaders as hex, required in case of finality asked. (only relevant for PoA-chains) The server muist deliver enough blockheaders to cover more then 50% of the validators. In order to verify them, they must be linkable (with the parentHash).    
+*  **transactions** `array` - the list of raw transactions of the block if needed to create a merkle trie for the transactions. 
+*  **uncles** `array` - the list of uncle-headers of the block. This will only be set, if full verification is required in order to create a merkle trie for the uncles and so prove the uncle_hash.   
+*  **merkleProof** `string[]` - the serialized merkle-nodes beginning with the root-node. ( depending on the content to prove)
+*  **merkleProofPrev** `string[]` - the serialized merkle-noodes beginning with the root-node of the previous entry (only for full proof of receipts)   
+*  **txProof** `string[]` - the serialized merkle-nodes beginning with the root-node in order to prrof the transactionIndex  ( onle needed for transaction receipts )
+*  **logProof** [LogProof](#logproof) - the Log Proof in case of a `eth_getLogs`-Request   
+*  **accounts** `object` - a map of addresses and their AccountProof   
+*  **txIndex** `integer` - the transactionIndex within the block ( for transaactions and receipts)   
+*  **signatures** `Signature[]` - requested signatures   
+
+
+#### BlockProof
+
+BlockProofs are used whenever you want to read data of a Block and verify them. This would be:
+
+- [eth_getBlockTransactionCountByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbyhash)
+- [eth_getBlockTransactionCountByNumber
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbynumber)
+- [eth_getBlockByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbyhash)
+- [eth_getBlockByNumber
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber)
+
+The `eth_getBlockBy...` methods return the Block-Data. In this case all we need is somebody verifying the blockhash, which is don by requiring somebody who stored a deposit and would lose it, to sign this blockhash.
+
+The Verification is then donne by simply creating the blockhash and comparing this to the signed one.
+
+The Blockhash is calculated by [serializing the blockdata](https://github.com/slockit/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
+
+```js
+blockHeader = rlp.encode([
+  bytes32( parentHash ),
+  bytes32( sha3Uncles ),
+  address( miner || coinbase ),
+  bytes32( stateRoot ),
+  bytes32( transactionsRoot ),
+  bytes32( receiptsRoot || receiptRoot ),
+  bytes256( logsBloom ),
+  uint( difficulty ),
+  uint( number ),
+  uint( gasLimit ),
+  uint( gasUsed ),
+  uint( timestamp ),
+  bytes( extraData ),
+
+  ... sealFields
+    ? sealFields.map( rlp.decode )
+    : [
+      bytes32( b.mixHash ),
+      bytes8( b.nonce )
+    ]
+])
+```
+
+For POA-Chains the blockheader will use the `sealFields` (instead of mixHash and nonce) which are already rlp-encoded and should be added as raw data when using rlp.encode.
+
+```js
+if (keccak256(blockHeader) !== singedBlockHash) 
+  throw new Error('Invalid Block')
+```
+
+In case of the `eth_getBlockTransactionCountBy...` the proof contains the full blockHeader already serilalized + all transactionHashes. This is needed in order to verify them in a merkleTree and compare them with the `transactionRoot`
+
+
+#### Transaction Proof
+
+TransactionProofs are used for the following transaction-methods:
+
+- [eth_getTransactionByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyhash)
+- [eth_getTransactionByBlockHashAndIndex
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblockhashandindex)
+- [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblocknumberandindex)
+
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph block_header {
+            label="blockheader" style="" color=black
+
+            bheader[ label="parentHash|...|<tr>transactionRoot|receiptRoot|stateRoot"]
+            troot:a -> bheader:tr 
+        }
+
+        subgraph cluster_client_registry {
+            label="Transaction Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="transaction data"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:a 
+            tval:a -> ta:a
+        }
+
+
+      }
+    }
+
+```
+
+In order to prove the transaction data, each transaction of the containing block must be serialized
+
+```js
+transaction = rlp.encode([
+  uint( tx.nonce ),
+  uint( tx.gasPrice ),
+  uint( tx.gas || tx.gasLimit ),
+  address( tx.to ),
+  uint( tx.value ),
+  bytes( tx.input || tx.data ),
+  uint( tx.v ),
+  uint( tx.r ),
+  uint( tx.s )
+])
+``` 
+
+and stored in a merkle-trie with `rlp.encode(transactionIndex)` as key or path, since the blockheader only contains the `transactionRoot`, which is the root-hash of the resulting merkle trie. A Merkle-Proof with the transactionIndex of the target transaction will then be created from this trie.
+
+
+The Proof-Data will look like these:
+
+```js
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "result": {
+    "blockHash": "0xf1a2fd6a36f27950c78ce559b1dc4e991d46590683cb8cb84804fa672bca395b",
+    "blockNumber": "0xca",
+    "from": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+    "gas": "0x55f0",
+    "gasPrice": "0x0",
+    "hash": "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",
+    "input": "0x00",
+    "value": "0x3e8"
+    ...
+  },
+  "in3": {
+    "proof": {
+      "type": "transactionProof",
+      "block": "0xf901e6a040997a53895b48...", // serialized blockheader
+      "merkleProof": [  /* serialized nodes starting with the root-node */
+        "0xf868822080b863f86136808255f0942b5ad5c4795c026514f8317c7a215e218dc..."
+        "0xcd6cf8203e8001ca0dc967310342af5042bb64c34d3b92799345401b26713b43f..."
+      ],
+      "txIndex": 0,
+      "signatures": [...]
+    }
+  }
+}
+```
+
+
+#### Receipt Proof
+
+Proofs for the transactionReceipt are used for the following method:
+
+- [eth_getTransactionReceipt
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt)
+
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph blockheader {
+            label="blocheader" style="" color=black
+
+            bheader[ label="parentHash|...|transactionRoot|<tr>receiptRoot|stateRoot"]
+            troot:a -> bheader:tr 
+        }
+
+        subgraph cluster_client_registry {
+            label="Receipt Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="transaction receipt"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:a 
+            tval:a -> ta:a
+        }
+
+
+      }
+    }
+
+```
+
+The proof works similiar to the transaction proof.
+
+In order to create the proof we need to serialize all transaction receipts 
+
+```js
+transactionReceipt = rlp.encode([
+  uint( r.status || r.root ),
+  uint( r.cumulativeGasUsed ),
+  bytes256( r.logsBloom ),
+  r.logs.map(l => [
+    address( l.address ),
+    l.topics.map( bytes32 ),
+    bytes( l.data )
+  ])
+].slice(r.status === null && r.root === null ? 1 : 0))
+``` 
+
+and stored it in a merkle-trie with `elp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle trie. A Merkle-Proof with the transactionIndex of the target transaction receipt will then be created from this trie.
+
+Since the merkle-Proof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the Transaction itself as described in the [Transaction Proof](#transaction-proof)
+
+#### Log Proof
+
+Proofs for logs are only for the one rpc-method:
+
+- [eth_getLogs
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs)
+
+Since logs or events are based on the TransactionReceipts, the only way to prove them is by proving the TransactionReceipt each event belongs to.
+
+That's why this proof needs to provide
+- all blockheaders where these events occured
+- all TransactionReceipts + their MerkleProof of the logs
+- all MerkleProofs for the transactions in order to prove the transactionIndex
+
+The Proof data structure will look like this:
+
+```ts
+  Proof {
+    type: 'logProof',
+    logProof: {
+      [blockNr: string]: {  // the blockNumber in hex as key
+        block : string  // serialized blockheader
+        receipts: {
+          [txHash: string]: {  // the transactionHash as key
+            txIndex: number // transactionIndex within the block
+            txProof: string[] // the merkle Proof-Array for the transaction
+            proof: string[] // the merkle Proof-Array for the receipts
+          }
+        }
+      }
+    }
+  }
+```
+
+
+In order to create the proof, we group all events into their blocks and transactions, so we only need to provide the blockheader once per block. 
+The merkle-proofs for receipts are created as described in the [Receipt Proof](#receipt-proof).
+
+#### Account Proof
+
+Prooving an account-value applies to these functions:
+
+- [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance)
+- [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
+- [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount)
+- [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat)
+
+Each of these values are stored in the account-object:
+
+```js
+account = rlp.encode([
+  uint( nonce),
+  uint( balance),
+  bytes32( storageHash || ethUtil.KECCAK256_RLP),
+  bytes32( codeHash || ethUtil.KECCAK256_NULL)
+])
+```
+
+The proof an account is created by taking the state merkle trie and  creating a merkle proof. Since all of the above RPC-Method only provide a single value, the proof must contain all 4 values in order to encode them and verify the value of the merkle proof. 
+
+For verification the `stateRoot` of the blockHeader is used and `keccak(accountProof.address)` ass the path or key within the merkle trie.
+
+```js
+verifyMerkleProof(
+ block.stateRoot, // expected merkle root
+ keccak(accountProof.address), // path, which is the hashed address
+ accountProof.accountProof), // array of Buffer with the merkle-proof-data
+ isNotExistend(accountProof) ? null : serializeAccount(accountProof), // the expected serialized account
+)
+```
+
+In case the account does exist yet, (which is the case if `none` == `startNonce` and `codeHash` == `'0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'`), the proof may end with one of these nodes:
+    
+- the last node is a branch, where the child of the next step does not exist.
+- the last node is a leaf with different relative key
+
+Both would prove, that this key does not exist.
+
+For `eth_getStorageAt` a additional storage proof is required. This is created by using the `storageHash` of the account and creating a merkle proof using the has of the storage key (`keccak(key)`)  as path.
+
+
+```js
+verifyMerkleProof(
+  bytes32( accountProof.storageHash ),   // the storageRoot of the account
+  keccak(bytes32(s.key)),  // the path, which is the hash of the key
+  s.proof.map(bytes), // array of Buffer with the merkle-proof-data
+  s.value === '0x0' ? null : util.rlp.encode(s.value) // the expected value or none to proof non-existence
+))
+```
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph cluster_block_header {
+            label="Blockheader" color=white  style=filled
+
+            bheader[ label="parentHash|...|<tr>stateRoot|transactionRoot|receiptRoot|..."]
+        }
+
+        subgraph cluster_state_trie {
+            label="State Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||<b>0xabcdef"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="nonce|balance|<sr>storageHash|codeHash"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:b 
+            tval:a -> ta:a
+        }
+
+        subgraph cluster_storage_trie {
+            label="Storage Trie"  color=lightblue  style=filled
+
+            sroot[label="|<a>0x123456|||||<b>0xabcdef"]  
+            sa[label="|0x123456||<a>0xabcdef|||"]  
+            sb[label="|0x98765||<a>0xfcab34|||"]  
+            sval[label="storage value"]  
+
+            sa:a -> sroot:a
+            sb:a -> sroot:b 
+            sval:a -> sa:a
+        }
+
+        sroot:a -> tval:sr
+        troot:a -> bheader:tr 
+
+      }
+    }
+
+```
+
+
+
+
+#### Call Proof
+
+Call Proofs are used whenever you are calling a read-only function of smart contract:
+
+- [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
+
+
+Verifying the result of a `eth_call` is a little bit more complex. Because the response is a result of executing opcodes in the vm. The only way to do so, is to reproduce it and execute the same code. That's why a Call Proof needs to provide all data used within the call. This means :
+
+- all referred accounts including the code (if it is a contract), storageHash, nonce and balance.
+- all storage keys, which are used ( This can be found by tracing the transaction and collecting data based on th `SLOAD`-opcode )
+- all blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks) 
+
+For Verifying you need to follow these steps:
+
+1. serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof))
+
+2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof)
+
+3. create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
+
+
+```js 
+  // create new state for a vm
+  const state = new Trie()
+  const vm = new VM({ state })
+
+  // fill in values
+  for (const adr of Object.keys(accounts)) {
+    const ac = accounts[adr]
+
+    // create an account-object
+    const account = new Account([ac.nonce, ac.balance, ac.stateRoot, ac.codeHash])
+
+    // if we have a code, we will set the code
+    if (ac.code) account.setCode( state, bytes( ac.code ))
+
+    // set all storage-values
+    for (const s of ac.storageProof)
+      account.setStorage( state, bytes32( s.key ), rlp.encode( bytes32( s.value )))
+
+    // set the account data
+    state.put( address( adr ), account.serialize())
+  }
+
+  // add listener on each step to make sure it uses only values found in the proof
+  vm.on('step', ev => {
+     if (ev.opcode.name === 'SLOAD') {
+        const contract = toHex( ev.address ) // address of the current code
+        const storageKey = bytes32( ev.stack[ev.stack.length - 1] ) // last element on the stack is the key
+        if (!getStorageValue(contract, storageKey))
+          throw new Error(`incomplete data: missing key ${storageKey}`)
+     }
+     /// ... check other opcodes as well
+  })
+
+  // create a transaction
+  const tx = new Transaction(txData)
+
+  // run it
+  const result = await vm.runTx({ tx, block: new Block([block, [], []]) })
+
+  // use the return value
+  return result.vm.return
+```
+
+In the future we will be using the same approach to verify calls with ewasm.
+
 
 ## RPC-Methods Ethereum 
 
