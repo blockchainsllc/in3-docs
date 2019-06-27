@@ -1,14 +1,15 @@
-# API Reference Docker
+********************
+API Reference Docker
+********************
 
 In order to start the incubed-client as a standalone client (allowing others application to connect to it), you can start the container as
 
-```
-docker run -d -p 8545:8545  slockit/in3:latest --chainId=mainnet
-```
+.. code-block:: sh
+
+   docker run -d -p 8545:8545  slockit/in3:latest --chainId=mainnet
+
 
 The application would then accept the following arguments:
-
-```eval_rst
 
 .. glossary::
     --nodeLimit
@@ -71,4 +72,3 @@ The application would then accept the following arguments:
     --loggerUrl
         a url of RES-Endpoint, the client will log all errors to. The client will post to this endpoint JSON like { id?, level, message, meta? }
 
-```

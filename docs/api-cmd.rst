@@ -1,17 +1,16 @@
-# API Reference CMD
+*****************
+API Reference CMD
+*****************
 
 Incubed can be used as a comandline-util or as tool in bash-scripts.
 This tool will execute a json-rpc reauest and write the result to std out.
 
-## Usage
+Usage
+#####
 
-```sh
-in3 [options] method [arguments]
-```
+.. code-block:: sh
 
-Following options are available:
-
-```eval_rst
+   in3 [options] method [arguments]
 
 .. glossary::
      -c, -chain
@@ -51,48 +50,55 @@ As method, the following can be used:
         if there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional argument of the function.
      call
         uses ``eth_call`` to call a function. Following the ``call`` argument the function-signature and its arguments must follow. 
-```
 
-## Examples
+Examples
+########
 
-### getting the current block
-```sh
-# on a comandline
-in3 eth_blockNumber
-> 8035324
+getting the current block
+*************************
 
-# for a different chain
-in3 -c kovan eth_blockNumber
-> 11834906
 
-# getting it as hex
-in3 -c kovan -hex eth_blockNumber
-> 0xb49625
+.. code-block:: sh
 
-# as part of shell script
-BLOCK_NUMBER=`in3 eth_blockNumber`
-```
+   # on a comandline
+   in3 eth_blockNumber
+   > 8035324
 
-### calling a function of a smart contract 
+   # for a different chain
+   in3 -c kovan eth_blockNumber
+   > 11834906
 
-```sh
-# without arguments
-in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 call "totalServers():uint256"
-> 5
+   # getting it as hex
+   in3 -c kovan -hex eth_blockNumber
+   > 0xb49625
 
-# with arguments returning a array of values
-in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 call "servers(uint256):(string,address,uint,uint,uint,address)" 1
-> https://in3.slock.it/mainnet/nd-1
-> 0x784bfa9eb182c3a02dbeb5285e3dba92d717e07a
-> 65535
-> 65535
-> 0
-> 0x0000000000000000000000000000000000000000
-```
+   # as part of shell script
+   BLOCK_NUMBER=`in3 eth_blockNumber`
 
-### sending a transaction 
 
-```sh
-# sends a transaction to a registerServer-function and signs it with the private given (-pk 0x...)
-in3 -c kovan -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000 -pk 0x... send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
-```
+calling a function of a smart contract
+**************************************
+
+.. code-block:: sh
+
+   # without arguments
+   in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 call "totalServers():uint256"
+   > 5
+
+   # with arguments returning a array of values
+   in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 call "servers(uint256):(string,address,uint,uint,uint,address)" 1
+   > https://in3.slock.it/mainnet/nd-1
+   > 0x784bfa9eb182c3a02dbeb5285e3dba92d717e07a
+   > 65535
+   > 65535
+   > 0
+   > 0x0000000000000000000000000000000000000000
+
+
+sending a transaction
+*********************
+
+.. code-block:: sh
+
+   # sends a transaction to a registerServer-function and signs it with the private given (-pk 0x...)
+   in3 -c kovan -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000 -pk 0x... send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
