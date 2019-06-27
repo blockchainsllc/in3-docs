@@ -62,6 +62,17 @@ getting the current block
    BLOCK_NUMBER=`in3 eth_blockNumber`
 
 
+using jq to filter JSON
+***********************
+
+.. code-block:: sh
+
+   # get the timestamp of the latest block
+   in3 eth_getBlockByNumber latest false | jq -r .timestamp
+
+   # get the first transaction of the last block
+   in3 eth_getBlockByNumber latest true | jq  '.transactions[0]'
+
 calling a function of a smart contract
 **************************************
 
@@ -87,4 +98,15 @@ sending a transaction
 .. code-block:: sh
 
    # sends a transaction to a registerServer-function and signs it with the private given (-pk 0x...)
-   in3 -c kovan -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000 -pk 0x... send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
+   in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000 -pk 0x... send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
+
+deploying a contract
+********************
+
+.. code-block:: sh
+   # compiling the solidity code, filtering the binary and send it as transaction
+   docker run -v $(pwd)/contracts:/contracts ethereum/solc:0.4.25 --optimize  --combined-json bin /contracts/ServerRegistry.sol \
+    | jq -r '.contracts."/contracts/ServerRegistry.sol:ServerRegistry".bin' \
+    | in3 -gas 1000000 -pk `cat my_private_key.txt` send \
+    | jq .
+   
