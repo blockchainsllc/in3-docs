@@ -12,33 +12,19 @@ Usage
 
    in3 [options] method [arguments]
 
-.. glossary::
-     -c, -chain
-        the chain to use. Currently ``mainnet``(default), ``kovan``, ``tobalaba``, ``goerli`` are predefined.
-     -p, -proof
-        specifies the Verification level: 
-
-        :none: no proof
-        :standard: standard verification (default)
-        :full: full verification 
-     -s, -signs
-        number of signatures to use when verifying.
-     -b, -block
-        the blocknumber to use when making calls.
-        could be either ``latest`` (default),``earliest`` or a hexnumbner
-     -to
-        the target address of the call
-     -gas_limit
-        the gas_limit to use when sending transactions. (default: 100000) 
-     -value
-        the value to send when sending a transaction. (default: 0)
-     -wait
-        if given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transactionHash after sending, but wait until the transaction is mined and return the transactionreceipt.
-     -json
-        if given the result will be returned as json, which is especially important for ``eth_call`` results with complex structres.
-     -debug
-        if given incubed will output debug information when executing. 
-
+-c, -chain     the chain to use. Currently ``mainnet``(default), ``kovan``, ``tobalaba``, ``goerli`` are predefined.
+-p, -proof     specifies the Verification level: 
+                  :none: no proof
+                  :standard: standard verification (default)
+                  :full: full verification 
+-s, -signs     number of signatures to use when verifying.
+-b, -block     the blocknumber to use when making calls. could be either ``latest`` (default),``earliest`` or a hexnumbner
+-to            the target address of the call
+-gas_limit     the gas_limit to use when sending transactions. (default: 100000) 
+-value         the value to send when sending a transaction. (default: 0)
+-wait          if given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transactionHash after sending, but wait until the transaction is mined and return the transactionreceipt.
+-json          if given the result will be returned as json, which is especially important for ``eth_call`` results with complex structres.
+-debug         if given incubed will output debug information when executing. 
 
 As method, the following can be used:
 

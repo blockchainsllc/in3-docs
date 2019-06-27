@@ -4,6 +4,7 @@ Welcome to Incubed's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Concept
+   :numbered:
 
    intro
    poa
@@ -22,3 +23,6 @@ Welcome to Incubed's documentation!
    api-c
    api-cmd
    api-docker
+
+ 
+* :ref:`genindex`
