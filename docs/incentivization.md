@@ -264,3 +264,30 @@ Even though servers are allowed to register without a deposit, convicting is sti
 
 In case of a conflict, each client has now at least one server he knows he can trust since it is run by the same owner. This makes it impossible for attackers to use Blacklist-Attacks or other threats which can be solved by requiring a response from the "home"-node.
 
+## Payment
+
+Each egistered Node creates its own ecosystem with its own score. All the clients belonging to this ecosystem will be served only as good as the score of this ecosystem will allow. But a good score can not only be achieved with a good performance, but also by paying for a good score. 
+
+For all the payments a special contract is created. Here anybody can create its own ecosystem even without running a node, but paying for it. 
+The payment will work as following:
+
+The user will choose a price and timerange. These values can always be increased later. depending on the price he also achieves voting power. Thus creating a reputation for the registered nodes. 
+
+Each node is entitled to is portion of the balance in the payment contract and can at any given time send a transaction to extract its share. 
+The share depends on the current reputation of the node.
+
+```math
+payment_n =  \frac{weight_n \cdot reputation_n \cdot balance_{total}} { weight_{total} } 
+```
+
+Why should a node treat a paying client better then others?
+
+Because the higher the price he paid, the higher the voting power, which he may use to upgrade or downgrade the reputation of the node. And this reputation will directly incluence the payment to the node.
+
+That's why for a node the score of a client depends as following:
+
+```math
+score_c =  \frac{ paid_c \Cdot requests_{total}} { requests_c \cdot paid_{total} } 
+```
+
+The score would be 1, if the payment a node receives the same percentage of requests from a ecosystem as the payment of the ecosystem represents relativ to the total payment per month. So paying a higher price would increase its score. Or sending less requests. 
