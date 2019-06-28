@@ -104,6 +104,7 @@ deploying a contract
 ********************
 
 .. code-block:: sh
+
    # compiling the solidity code, filtering the binary and send it as transaction
    docker run -v $(pwd)/contracts:/contracts ethereum/solc:0.4.25 --optimize  --combined-json bin /contracts/ServerRegistry.sol \
     | jq -r '.contracts."/contracts/ServerRegistry.sol:ServerRegistry".bin' \
