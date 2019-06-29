@@ -303,6 +303,7 @@ In order to securely identify a client as belonging to a ecosystem, each request
    
    ```js
    proof = rlp.encode(
+      bytes32(registry_id),      // the uinique id of the registry
       address(client_address),   // the public address of a client
       uint(ttl),                 // unix timestamp when this proof expires 
       bytes(signature)           // the signature with the signer-key of the ecosystem. The messagehash is created by rlp.encode the client_address and the ttl 
