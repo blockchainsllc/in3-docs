@@ -291,3 +291,40 @@ score_c =  \frac{ paid_c \cdot requests_{total}} { requests_c \cdot paid_{total}
 ```
 
 The score would be 1, if the payment a node receives the same percentage of requests from a ecosystem as the payment of the ecosystem represents relativ to the total payment per month. So paying a higher price would increase its score. Or sending less requests. 
+
+## Client Identification
+
+As a requirement for identification, each client needs to generate a uniqe private key, which must never leave the device.
+
+In order to securely identify a client as belonging to a ecosystem, each requests needs 2 signatures:
+
+1. **The Ecosystem-Proof**    
+   This proof consists of the following information:
+   
+   ```js
+   proof = rlp.encode(
+      address(client_address),   // the public address of a client
+      uint(ttl),                 // unix timestamp when this proof expires 
+      bytes(signature)           // the signature with the signer-key of the ecosystem. The messagehash is created by rlp.encode the client_address and the ttl 
+   )
+   ```
+   
+   For the client this means, he should always store such a proof on the device. if the ttl expires he needs to renew this. 
+   If the ecosystem is a server, he may send a request to the server, if the ecosystem is a payer, this needs to happen in a custom way.
+   
+2. **The Client-Proof**    
+   This must be created for each request. Here the client will create a hash of the request (simply by adding the `method`, `params` and a `timestamp`-field) and signs this with its private key.
+   
+   ```js
+   message_hash = keccack(
+      request.method 
+      + JSON.stringify(request.params)
+      + request.timestamp 
+   )
+   ```
+   
+With each request the client needs to send both proofs.
+
+
+The server may cache the ecosystem-proof, but needs to verify the client signature with each request, thus ensuring the identity of the sending client.
+  .
