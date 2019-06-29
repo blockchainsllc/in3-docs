@@ -3,7 +3,7 @@ API Reference CMD
 *****************
 
 Incubed can be used as a comandline-util or as tool in bash-scripts.
-This tool will execute a json-rpc reauest and write the result to std out.
+This tool will execute a json-rpc request and write the result to std out.
 
 Usage
 #####
@@ -51,11 +51,11 @@ From Binaries
 
 You can download the binaries here:
 
-- :download:`mac os <downloads/mac/in3>`.
-- :download:`armv7 <downloads/armv7/in3>`.
-- :download:`armv7hf <downloads/armv7hf/in3>`.
-- :download:`linux_x86 <downloads/linux_x86/in3>`.
-- :download:`linux_x64 <downloads/linux_x64/in3>`.
+- :download:`mac os <downloads/in3_osx>`.
+- :download:`armv7 <downloads/in3_armv7>`.
+- :download:`armv7hf <downloads/in3_armv7h>`.
+- :download:`linux_x86 <downloads/in3_x86>`.
+- :download:`linux_x64 <downloads/in3_x64>`.
 
 From Sources
 ************
