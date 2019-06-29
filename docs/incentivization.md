@@ -287,7 +287,7 @@ Because the higher the price he paid, the higher the voting power, which he may 
 That's why for a node the score of a client depends as following:
 
 ```math
-score_c =  \frac{ paid_c \cdot requests_{total}} { requests_c \cdot paid_{total} } 
+score_c =  \frac{ paid_c \cdot requests_{total}} { requests_c \cdot paid_{total} + 1} 
 ```
 
 The score would be 1, if the payment a node receives the same percentage of requests from a ecosystem as the payment of the ecosystem represents relativ to the total payment per month. So paying a higher price would increase its score. Or sending less requests. 
