@@ -5,6 +5,14 @@ BIN_PATH=/opt/local/bin
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     BIN_PATH=/usr/bin
     NAME=x64
+
+    case $(uname -m) in
+        i386)   NAME="x86" ;;
+        i686)   NAME="x64" ;;
+        x86_64) NAME="x64" ;;
+        arm)    NAME="armv7" ;;
+    esac
+
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
     BIN_PATH=/opt/local/bin

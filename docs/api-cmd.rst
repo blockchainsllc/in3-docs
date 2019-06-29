@@ -62,7 +62,7 @@ or just use this one-liner:
 
 .. code-block:: sh
 
-   sudo curl https://in3.readthedocs.io/en/develop/_downloads/install.sh -sSf | sh
+   curl https://in3.readthedocs.io/en/develop/_downloads/install.sh -sSf | sudo sh
 
 From Sources
 ************
