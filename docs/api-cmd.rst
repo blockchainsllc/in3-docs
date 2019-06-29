@@ -52,6 +52,7 @@ From Binaries
 You can download the binaries here:
 
 - :download:`mac os <downloads/in3_osx>`.
+- :download:`win64 <downloads/in3.exe>`.
 - :download:`armv7 <downloads/in3_armv7>`.
 - :download:`armv7hf <downloads/in3_armv7hf>`.
 - :download:`linux_x86 <downloads/in3_x86>`.
@@ -66,6 +67,13 @@ or just use this one-liner:
 
 From Sources
 ************
+
+Before building just make sure you have these components installed:
+
+- cmake ( should be installed as part of build-essential - ``apt-get install build-essential`` )
+- libcurl
+  for ubuntu use either ``sudo apt-get install libcurl4-gnutls-dev`` or ``apt-get install libcurl4-openssl-dev``
+- if libcurl can not be found conan is used to fetch and build curl.
 
 .. code-block:: sh
 
