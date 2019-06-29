@@ -53,9 +53,16 @@ You can download the binaries here:
 
 - :download:`mac os <downloads/in3_osx>`.
 - :download:`armv7 <downloads/in3_armv7>`.
-- :download:`armv7hf <downloads/in3_armv7h>`.
+- :download:`armv7hf <downloads/in3_armv7hf>`.
 - :download:`linux_x86 <downloads/in3_x86>`.
 - :download:`linux_x64 <downloads/in3_x64>`.
+- :download:`installer <downloads/install.sh>`.
+
+or just use this one-liner:
+
+.. code-block:: sh
+
+   sudo curl https://in3.readthedocs.io/en/develop/_downloads/install.sh -sSf | sh
 
 From Sources
 ************
