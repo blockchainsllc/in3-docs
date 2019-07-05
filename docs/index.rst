@@ -23,6 +23,7 @@ Welcome to Incubed's documentation!
    api-c
    api-cmd
    api-docker
+   api-node
 
  
 * :ref:`genindex`
