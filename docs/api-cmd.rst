@@ -128,6 +128,7 @@ As method, the following can be used:
      send <signature> ...args
         based on the ``-to``, ``-value`` and ``-pk`` a transaction is build, signed and send. 
         if there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional argument of the function.
+        
         .. code-block:: sh
            
            # send some eth ( requires to set the IN3_PK-variable before)
@@ -141,6 +142,7 @@ As method, the following can be used:
         returns the nodeList of the Incubed NodeRegistry as json.
      in3_sign <blocknumber>
         requests a node to sign. in order to specify the signer, you need to pass the url like this:
+
         .. code-block:: sh
            
            # send a tx to a function
