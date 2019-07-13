@@ -125,17 +125,42 @@ As method, the following can be used:
 .. glossary::
      <JSON-RPC>-method
         all official supported `JSON-RPC-Method <https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-methods>`_ may be used.
-     send
-        based on the ``-to``, ``-value`` and ``-pk`` a transaction is build and signed and send. 
+     send <signature> ...args
+        based on the ``-to``, ``-value`` and ``-pk`` a transaction is build, signed and send. 
         if there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional argument of the function.
-     call
+        .. code-block:: sh
+           
+           # send some eth ( requires to set the IN3_PK-variable before)
+           in3 send -to 0x1234556 -value 0.5eth  
+           # send a tx to a function
+           in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
+
+     call <signature> ...args
         uses ``eth_call`` to call a function. Following the ``call`` argument the function-signature and its arguments must follow. 
-      in3_nodeList
-        returns the nodeList of the Incubed NodeRegistry.
-      in3_sign
-        requests a node to sign.
-      in3_stats
-        returns the stats of a node.
+     in3_nodeList
+        returns the nodeList of the Incubed NodeRegistry as json.
+     in3_sign <blocknumber>
+        requests a node to sign. in order to specify the signer, you need to pass the url like this:
+        .. code-block:: sh
+           
+           # send a tx to a function
+           in3 in3_sign -c https://in3.slock.it/mainnet/nd-1 6000000
+
+     in3_stats
+        returns the stats of a node. unless you specify the node with ``-c <rpcurl>`` it will pick a random node. 
+     abi_encode <signature> ...args
+        encodes the arguments as described in the method signature using ABI-Encoding
+     abi_decode <signature> data
+        decodes the data based on the signature.
+     pk2address <privatekey>
+        extracts the public address from a private key
+     key <keyfile>
+        reads the private key from JSON-Keystore file from first argument and returns the private key. This may ask the user to enter the passphrase (unless provided with ``-pwd``.
+        In order to unlock the key reuse it within the shell, you can set the enviroment variable like this:
+
+        .. code-block:: sh
+
+           export IN3_PK=`in3 keystore mykeyfile.json` 
 
 Cache
 #####
