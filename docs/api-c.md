@@ -35,6 +35,23 @@ While incubed operates on JSON-RPC-Level, as a developer you might want to use a
 
 
 
+## Building
+
+While we provide binaries (TODO put link to releases), you can also build from source:
+
+## requirements
+
+- cmake
+- curl : curl is used as transport for the comandline-tools
+- optional: libsycrypt, which would be used for unlocking keystore files using `scrypt` as kdf method. if it does not exist you can still build, but not decrypt such keys.
+
+Incubed uses cmake for configuring:
+
+```c
+mkdir build && cd build
+cmake -DEVM_GAS=true -DCMAKE_BUILD_TYPE=Release .. && make
+make install
+```
 ## CMake options
 
 ### CMD
@@ -53,7 +70,7 @@ Type: `BOOL` , Default-Value: `OFF`
 
 if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
 
-Type: `BOOL` , Default-Value: `true`
+Type: `BOOL` , Default-Value: `ON`
 
 ### EXAMPLES
 
@@ -77,13 +94,13 @@ Type: `BOOL` , Default-Value: `ON`
 
 build the java-binding (shared-lib and jar-file)
 
-Type: `BOOL` , Default-Value: `true`
+Type: `BOOL` , Default-Value: `OFF`
 
 ### TEST
 
 builds the tests and also adds special memory-management, which detects memory leaks, but will cause slower performance
 
-Type: `BOOL` , Default-Value: `true`
+Type: `BOOL` , Default-Value: `OFF`
 
 ### TRANSPORTS
 
@@ -97,18 +114,6 @@ Includes the WASM-Build. In order to build it you need emscripten as toolchain. 
 
 Type: `BOOL` , Default-Value: `OFF` 
 
-
-
-
-## Building
-
-Incubed uses cmake for configuring.
-
-```c
-mkdir build && cd build
-cmake -DEVM_GAS=true -DCMAKE_BUILD_TYPE=Release .. && make
-make install
-```
 
 
 
