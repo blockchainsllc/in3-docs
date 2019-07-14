@@ -30,6 +30,8 @@ Usage
 -np            short for ``-p none``
 -s, -signs     number of signatures to use when verifying.
 -b, -block     the blocknumber to use when making calls. could be either ``latest`` (default),``earliest`` or a hexnumbner
+-pk            the private key as raw as keystorefile
+-pwd           password to unlock the key
 -to            the target address of the call
 -d, -data      the data for a transaction. 
 
@@ -128,7 +130,7 @@ As method, the following can be used:
      send <signature> ...args
         based on the ``-to``, ``-value`` and ``-pk`` a transaction is build, signed and send. 
         if there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional argument of the function.
-        
+
         .. code-block:: sh
            
            # send some eth ( requires to set the IN3_PK-variable before)
