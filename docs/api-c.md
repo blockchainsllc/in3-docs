@@ -35,6 +35,14 @@ While incubed operates on JSON-RPC-Level, as a developer you might want to use a
 
 
 
+## Example for compiling with gcc inside this directory
+
+```c
+gcc -o in3_example in3_example.c -L../../build/lib/ -lin3_bundle -lcurl  -I../../include
+```
+
+
+
 ## Building
 
 While we provide binaries (TODO put link to releases), you can also build from source:
@@ -63,12 +71,6 @@ build the comandline utils
 
 Type: `BOOL` , Default-Value: `ON`
 
-#### DEBUG
-
-Turns on Debug output in the code. This would be required if the tests should output additional debug infos.
-
-Type: `BOOL` , Default-Value: `OFF`
-
 #### EVM_GAS
 
 if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
@@ -79,7 +81,7 @@ Type: `BOOL` , Default-Value: `ON`
 
 build the examples.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL` , Default-Value: `ON`
 
 #### FAST_MATH
 
@@ -1040,52 +1042,6 @@ storing nodelists and other caches with the storage handler as specified in the 
 
 Location: src/core/client/cache.h
 
-#### in3_cache_init
-
-```c
-in3_ret_t in3_cache_init(in3_t *c);
-```
-
-inits the client. 
-
-This is done by checking the cache and updating the local storage. This function should be called after creating a new incubed instance.
-
-example 
-
-```c
-// register verifiers
-in3_register_eth_full();
-
-// create new client
-in3_t* client = in3_new();
-
-// configure storage...
-in3_storage_handler_t storage_handler;
-storage_handler.get_item = storage_get_item;
-storage_handler.set_item = storage_set_item;
-
-// configure transport
-client->transport    = send_curl;
-
-// configure storage
-client->cacheStorage = &storage_handler;
-
-// init cache
-in3_cache_init(client);
-
-// ready to use ...
-```
-arguments:
-```eval_rst
-=================== ======= ==================
-`in3_t * <#in3-t>`_  **c**  the incubed client
-=================== ======= ==================
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 #### in3_cache_update_nodelist
 
 ```c
@@ -1138,6 +1094,13 @@ This includes the definition of the client and used enum values.
 
 Location: src/core/client/client.h
 
+#### IN3_PROTO_VER
+
+```c
+#define IN3_PROTO_VER 0x1
+```
+
+
 #### IN3_SIGN_ERR_REJECTED
 
 return value used by the signer if the the signature-request was rejected. 
@@ -1171,15 +1134,6 @@ return value used by the signer for unspecified errors.
 
 ```c
 #define IN3_SIGN_ERR_GENERAL_ERROR -4
-```
-
-
-#### IN3_DEBUG
-
-flag used in the EVM (or the `evm_flags`) to turn on debug output. 
-
-```c
-#define IN3_DEBUG 65536
 ```
 
 
@@ -1518,7 +1472,6 @@ The stuct contains following fields:
 ``uint8_t``                                          **use_http**            if true the client will try to use http instead of https
 `in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and nodeList definitions
 ``uint16_t``                                         **chainsCount**         number of configured chains
-``uint32_t``                                         **evm_flags**           flags for the evm (EIPs)
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**             filter handler
 =================================================== ======================== =======================================================================================
 ```
@@ -1593,6 +1546,99 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### in3_client_register_chain
+
+```c
+in3_ret_t in3_client_register_chain(in3_t *client, uint64_t chain_id, in3_chain_type_t type, address_t contract, json_ctx_t *spec);
+```
+
+registers a new chain or replaces a existing (but keeps the nodelist) 
+
+arguments:
+```eval_rst
+======================================= ============== =========================================
+`in3_t * <#in3-t>`_                      **client**    the pointer to the incubed client config.
+``uint64_t``                             **chain_id**  the chain id.
+`in3_chain_type_t <#in3-chain-type-t>`_  **type**      the verification type of the chain.
+`address_t <#address-t>`_                **contract**  contract of the registry.
+`json_ctx_t * <#json-ctx-t>`_            **spec**      chainspec or NULL.
+======================================= ============== =========================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_add_node
+
+```c
+in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, uint64_t props, address_t address);
+```
+
+adds a node to a chain ore updates a existing node 
+
+[in] public address of the signer. 
+
+arguments:
+```eval_rst
+========================= ============== =========================================
+`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
+``uint64_t``               **chain_id**  the chain id.
+``char *``                 **url**       url of the nodes.
+``uint64_t``               **props**     properties of the node.
+`address_t <#address-t>`_  **address**   
+========================= ============== =========================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_remove_node
+
+```c
+in3_ret_t in3_client_remove_node(in3_t *client, uint64_t chain_id, address_t address);
+```
+
+removes a node from a nodelist 
+
+[in] public address of the signer. 
+
+arguments:
+```eval_rst
+========================= ============== =========================================
+`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
+``uint64_t``               **chain_id**  the chain id.
+`address_t <#address-t>`_  **address**   
+========================= ============== =========================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_clear_nodes
+
+```c
+in3_ret_t in3_client_clear_nodes(in3_t *client, uint64_t chain_id);
+```
+
+removes all nodes from the nodelist 
+
+[in] the chain id. 
+
+arguments:
+```eval_rst
+=================== ============== =========================================
+`in3_t * <#in3-t>`_  **client**    the pointer to the incubed client config.
+``uint64_t``         **chain_id**  
+=================== ============== =========================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### in3_free
 
 ```c
@@ -1607,6 +1653,25 @@ arguments:
 `in3_t * <#in3-t>`_  **a**  the pointer to the incubed client config to free.
 =================== ======= =================================================
 ```
+
+#### in3_cache_init
+
+```c
+in3_ret_t in3_cache_init(in3_t *c);
+```
+
+inits the cache. 
+
+arguments:
+```eval_rst
+=================== ======= ==================
+`in3_t * <#in3-t>`_  **c**  the incubed client
+=================== ======= ==================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 ### context.h
 
@@ -4161,14 +4226,14 @@ returns: [`sb_t *`](#sb-t)
 #### sb_add_range
 
 ```c
-sb_t* sb_add_range(sb_t *sb, char *chars, int start, int len);
+sb_t* sb_add_range(sb_t *sb, const char *chars, int start, int len);
 ```
 
 arguments:
 ```eval_rst
 ================= =========== 
 `sb_t * <#sb-t>`_  **sb**     
-``char *``         **chars**  
+``const char *``   **chars**  
 ``int``            **start**  
 ``int``            **len**    
 ================= =========== 
@@ -4635,6 +4700,37 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+## Module transport/http 
+
+
+
+
+### in3_http.h
+
+transport-handler using simple http. 
+
+Location: src/transport/http/in3_http.h
+
+#### send_http
+
+```c
+in3_ret_t send_http(char **urls, int urls_len, char *payload, in3_response_t *result);
+```
+
+arguments:
+```eval_rst
+===================================== ============== 
+``char **``                            **urls**      
+``int``                                **urls_len**  
+``char *``                             **payload**   
+`in3_response_t * <#in3-response-t>`_  **result**    
+===================================== ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 ## Module verifier/eth1/basic 
 
 
@@ -4801,32 +4897,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### signer.h
 
-Ethereum Nanon verification. 
+Ethereum Nano verification. 
 
 Location: src/verifier/eth1/basic/signer.h
-
-#### eth_sign
-
-```c
-in3_ret_t eth_sign(void *pk, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst);
-```
-
-signs the given data 
-
-arguments:
-```eval_rst
-=========================================== ============= 
-``void *``                                   **pk**       
-`d_signature_type_t <#d-signature-type-t>`_  **type**     
-`bytes_t <#bytes-t>`_                        **message**  
-`bytes_t <#bytes-t>`_                        **account**  
-``uint8_t *``                                **dst**      
-=========================================== ============= 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### eth_set_pk_signer
 
@@ -4846,22 +4919,6 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### sign_tx
-
-```c
-bytes_t sign_tx(d_token_t *tx, in3_ctx_t *ctx);
-```
-
-arguments:
-```eval_rst
-=========================== ========= 
-`d_token_t * <#d-token-t>`_  **tx**   
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  
-=========================== ========= 
-```
-returns: [`bytes_t`](#bytes-t)
 
 
 ### trie.h
@@ -5489,13 +5546,6 @@ stack limit reached
 ```
 
 
-#### EVM_PROP_DEBUG
-
-```c
-#define EVM_PROP_DEBUG 65536
-```
-
-
 #### EVM_PROP_STATIC
 
 ```c
@@ -5557,6 +5607,9 @@ stack limit reached
 ```c
 #define EVM_ENV_NONCE 8
 ```
+
+
+#### EVM_DEBUG_BLOCK (...)
 
 
 #### EVM_CALL_MODE_STATIC
@@ -5945,24 +5998,24 @@ returns: `int`
 #### evm_call
 
 ```c
-int evm_call(in3_vctx_t *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, bytes_t **result);
+int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, bytes_t **result);
 ```
 
 run a evm-call 
 
 arguments:
 ```eval_rst
-============================= ============= 
-`in3_vctx_t * <#in3-vctx-t>`_  **vc**       
-``uint8_t``                    **address**  
-``uint8_t *``                  **value**    
-`wlen_t <#wlen-t>`_            **l_value**  
-``uint8_t *``                  **data**     
-``uint32_t``                   **l_data**   
-``uint8_t``                    **caller**   
-``uint64_t``                   **gas**      
-`bytes_t ** <#bytes-t>`_       **result**   
-============================= ============= 
+======================== ============= 
+``void *``                **vc**       
+``uint8_t``               **address**  
+``uint8_t *``             **value**    
+`wlen_t <#wlen-t>`_       **l_value**  
+``uint8_t *``             **data**     
+``uint32_t``              **l_data**   
+``uint8_t``               **caller**   
+``uint64_t``              **gas**      
+`bytes_t ** <#bytes-t>`_  **result**   
+======================== ============= 
 ```
 returns: `int`
 
