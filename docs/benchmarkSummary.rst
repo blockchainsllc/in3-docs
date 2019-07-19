@@ -87,7 +87,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
        
     10. Copy the jml file to the EC2 instance using:
        (On host computer)
-       
+
        .. code-block:: sh
 
           scp -i <path_to_key> <path_to_local_file> <user>@<server_url>:<path_on_server>
@@ -120,8 +120,8 @@ Considerations
  - A beneficial method for running the test is to slowly ramp up the user count, start with a test of 10 users for 120 seconds in order to test basic stability. Work your way up to 200 users and longer durations. 
  - Parity might often be the bottleneck, you can confirm this by using the get_avg_stddev_in3_response.sh script in the scripts directory of the in3-test repo. This would help show what optimizations are needed
 
- Results/Baseline 
- ################
+Results/Baseline
+################
 
  - The baseline test was done with our existing server running multiple docker containers, it is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
  - The baseline for our current system is given below, this system has multithreading enabled and has been tested with ethCalls included in the test plan. 
