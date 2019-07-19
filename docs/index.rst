@@ -18,6 +18,7 @@ Welcome to Incubed's documentation!
    getting_started
    milestones
    Threat-Model-for-Incubed
+   benchmarkSummary
    spec
    api-ts
    api-c
