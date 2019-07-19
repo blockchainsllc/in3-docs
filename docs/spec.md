@@ -275,6 +275,21 @@ These are:
     
     Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList` a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
 
+  ```eval_rst
+    .. uml::
+
+      Client -> NodeA: Request
+      NodeA --> Client: Response with lastNodeList
+
+      Client --> Client: check if lastNodeList increased
+
+      Client -> NodeB: Request in3_nodeList
+      NodeB --> Client: verify and update nodeList and lastNodeList
+
+
+  ```
+
+
 2. **Changes in the ValidatorList**    
 
     This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on ther consensys Changes in the ValidatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. Thism`lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
@@ -292,7 +307,7 @@ Proofs are crucial part of the security concept for incubed. Whenever a request 
 
 ### Ethereum
 
-For Ethereum all proofs are based on the correct block hash. That's why verification differientiates between [Verifying the blockhash](poa.htmlm) (which depends on the used consensus) and the actual result data.
+For Ethereum all proofs are based on the correct block hash. That's why verification differientiates between [Verifying the blockhash](poa.html) (which depends on the used consensus) and the actual result data.
 
 There is also another reason why the BlockHash is so important. This is the only value you are able to access from within a SmartContract, because the evm supports a OpCode (`BLOCKHASH`), which allows you to read the last 256 Blockhashes, which gives us the chance to even verify the blockhash onchain.
 

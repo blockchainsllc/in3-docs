@@ -42,7 +42,8 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'plantweb.directive'
 #    'sphinxcontrib.mermaid',
 #    'recommonmark',
 #    'sphinxcontrib.inkscapeconverter'
@@ -102,6 +103,9 @@ exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+plantweb_defaults = {
+    'format': 'png'
+}
 
 # -- Options for HTML output -------------------------------------------------
 
