@@ -29,9 +29,9 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 
     4. To install JMeter without the extra plugins, run the following command
 
-        .. code-block:: sh
+      .. code-block:: sh
 
-          brew install jmeter
+        brew install jmeter
     
     5. To install JMeter with all the extra plugins, run the following command
 
@@ -87,6 +87,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
        
     10. Copy the jml file to the EC2 instance using:
        (On host computer)
+       
        .. code-block:: sh
 
           scp -i <path_to_key> <path_to_local_file> <user>@<server_url>:<path_on_server>
