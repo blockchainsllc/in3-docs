@@ -97,7 +97,8 @@
  
  - The baseline test was done with our existing server running multiple docker containers, it is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
  - The baseline for our current system is given below, this system has multithreading enabled and has been tested with ethCalls included in the test plan. 
- | Test number | Test description                     | Users/duration | Number of requests | tps | getBlockByHash (ms) | getBlockByNumber (ms) | getTransactionHash (ms) | getTransactionReceipt (ms) | EthCall(ms) | eth_getStorage (ms) |   | Notes                                                                                                                |
+ 
+| Test number | Test description                     | Users/duration | Number of requests | tps | getBlockByHash (ms) | getBlockByNumber (ms) | getTransactionHash (ms) | getTransactionReceipt (ms) | EthCall(ms) | eth_getStorage (ms) |   | Notes                                                                                                                |
 |-------------|--------------------------------------|----------------|--------------------|-----|---------------------|-----------------------|-------------------------|----------------------------|-------------|---------------------|---|----------------------------------------------------------------------------------------------------------------------|
 | T1          | Testing Multithreading with ethCalls |                |                    |     |                     |                       |                         |                            |             |                     |   |                                                                                                                      |
 |             |                                      | 10/120s        |                    |     |                     |                       |                         |                            |             |                     |   |                                                                                                                      |
@@ -112,3 +113,5 @@
 |             |                                      | 200/500s       | 34000              | 70  | 1270                | 1031                  | 12500                   | 14349                      | 1251        | 716                 |   | At higher loads, the rpc delay adds up. It is the bottlenecking factor. Able to handle 200 users on sustained loads. |
  
  - More benchmarks and their results can be found in the in3-tests repo
+ 
+ 
