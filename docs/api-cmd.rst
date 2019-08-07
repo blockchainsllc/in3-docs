@@ -44,8 +44,8 @@ Usage
 -json          if given the result will be returned as json, which is especially important for ``eth_call`` results with complex structres.
 -hex           if given the result will be returned as hex.
 -debug         if given incubed will output debug information when executing. 
--ri, -reponse-in reads the response from stdin instead of sending the request allowing offline use cases
--ro, -reponse-out writes the raw response from the node to stdout 
+-ri            reads the response from stdin instead of sending the request allowing offline use cases
+-ro            writes the raw response from the node to stdout 
 
 Install
 #######
