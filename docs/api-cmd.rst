@@ -160,6 +160,8 @@ As method, the following can be used:
         decodes the data based on the signature.
      pk2address <privatekey>
         extracts the public address from a private key
+     createkey
+        generates a raw random private key
      key <keyfile>
         reads the private key from JSON-Keystore file from first argument and returns the private key. This may ask the user to enter the passphrase (unless provided with ``-pwd``.
         In order to unlock the key reuse it within the shell, you can set the enviroment variable like this:
