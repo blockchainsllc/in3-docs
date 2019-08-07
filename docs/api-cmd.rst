@@ -38,12 +38,14 @@ Usage
                This can be a filepath, a 0x-hexvalue or ``-`` to read it from stdin. if a method signature is given and data they 
                will be combined and used as constructor arguments when deploying.
 
--gas_limit     the gas_limit to use when sending transactions. (default: 100000) 
+-gas           the gas limit to use when sending transactions. (default: 100000) 
 -value         the value to send when sending a transaction. can be hexvalue or a float/integer with the suffix ``eth`` or ``wei`` like ``1.8eth`` (default: 0)
 -w, -wait      if given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transactionHash after sending, but wait until the transaction is mined and return the transactionreceipt.
 -json          if given the result will be returned as json, which is especially important for ``eth_call`` results with complex structres.
 -hex           if given the result will be returned as hex.
 -debug         if given incubed will output debug information when executing. 
+-ri, -reponse-in reads the response from stdin instead of sending the request allowing offline use cases
+-ro, -reponse-out writes the raw response from the node to stdout 
 
 Install
 #######
