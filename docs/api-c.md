@@ -35,14 +35,6 @@ While incubed operates on JSON-RPC-Level, as a developer you might want to use a
 
 
 
-## Example for compiling with gcc inside this directory
-
-```c
-gcc -o in3_example in3_example.c -L../../build/lib/ -lin3_bundle -lcurl  -I../../include
-```
-
-
-
 ## Building
 
 While we provide binaries (TODO put link to releases), you can also build from source:
@@ -71,6 +63,12 @@ build the comandline utils
 
 Type: `BOOL` , Default-Value: `ON`
 
+#### DEBUG
+
+Turns on Debug output in the code. This would be required if the tests should output additional debug infos.
+
+Type: `BOOL` , Default-Value: `OFF`
+
 #### EVM_GAS
 
 if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
@@ -81,7 +79,7 @@ Type: `BOOL` , Default-Value: `ON`
 
 build the examples.
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL` , Default-Value: `OFF`
 
 #### FAST_MATH
 
@@ -605,10 +603,6 @@ char* eth_last_error();
 
 the current error or null if all is ok 
 
-```eval_rst
-  
-  
-```
 returns: `char *`
 
 
@@ -942,10 +936,6 @@ in3_t* in3_create();
 
 creates a new client 
 
-```eval_rst
-  
-  
-```
 returns: [`in3_t *`](#in3-t)
 
 
@@ -1097,7 +1087,7 @@ Location: src/core/client/client.h
 #### IN3_PROTO_VER
 
 ```c
-#define IN3_PROTO_VER 0x1
+#define IN3_PROTO_VER 0x2
 ```
 
 
@@ -1303,6 +1293,8 @@ The stuct contains following fields:
 `in3_node_weight_t * <#in3-node-weight-t>`_  **weights**         stats and weights recorded for each node
 `bytes_t ** <#bytes-t>`_                     **initAddresses**   array of addresses of nodes that should always part of the nodeList
 `bytes_t * <#bytes-t>`_                      **contract**        the address of the registry contract
+`bytes32_t <#bytes32-t>`_                    **registry_id**     the identifier of the registry
+``uint8_t``                                  **version**         version of the chain
 `json_ctx_t * <#json-ctx-t>`_                **spec**            optional chain specification, defining the transaitions and forks
 =========================================== ==================== =================================================================================================================
 ```
@@ -1514,10 +1506,6 @@ in3_cache_init(client);
 // ready to use ...
 ```
 
-```eval_rst
-  
-  
-```
 returns: [`in3_t *`](#in3-t) : the incubed instance. 
 
 
@@ -1549,20 +1537,22 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_register_chain
 
 ```c
-in3_ret_t in3_client_register_chain(in3_t *client, uint64_t chain_id, in3_chain_type_t type, address_t contract, json_ctx_t *spec);
+in3_ret_t in3_client_register_chain(in3_t *client, uint64_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version, json_ctx_t *spec);
 ```
 
 registers a new chain or replaces a existing (but keeps the nodelist) 
 
 arguments:
 ```eval_rst
-======================================= ============== =========================================
-`in3_t * <#in3-t>`_                      **client**    the pointer to the incubed client config.
-``uint64_t``                             **chain_id**  the chain id.
-`in3_chain_type_t <#in3-chain-type-t>`_  **type**      the verification type of the chain.
-`address_t <#address-t>`_                **contract**  contract of the registry.
-`json_ctx_t * <#json-ctx-t>`_            **spec**      chainspec or NULL.
-======================================= ============== =========================================
+======================================= ================= =========================================
+`in3_t * <#in3-t>`_                      **client**       the pointer to the incubed client config.
+``uint64_t``                             **chain_id**     the chain id.
+`in3_chain_type_t <#in3-chain-type-t>`_  **type**         the verification type of the chain.
+`address_t <#address-t>`_                **contract**     contract of the registry.
+`bytes32_t <#bytes32-t>`_                **registry_id**  the identifier of the registry.
+``uint8_t``                              **version**      the chain version.
+`json_ctx_t * <#json-ctx-t>`_            **spec**         chainspec or NULL.
+======================================= ================= =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -3387,10 +3377,6 @@ returns: `char *`
 json_ctx_t* json_create();
 ```
 
-```eval_rst
-  
-  
-```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
 
@@ -3631,10 +3617,6 @@ void d_clear_keynames();
 
 delete the cached keynames 
 
-```eval_rst
-  
-  
-```
 
 #### key
 
@@ -4703,7 +4685,8 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 ## Module transport/http 
 
 
-
+for detecting Windows compilers
+target_link_libraries(transport_curl ws2_32 wsock32 pthread )
 
 ### in3_http.h
 
@@ -4850,10 +4833,6 @@ void in3_register_eth_basic();
 
 this function should only be called once and will register the eth-nano verifier. 
 
-```eval_rst
-  
-  
-```
 
 #### eth_verify_eth_getLog
 
@@ -5050,10 +5029,6 @@ trie_t* trie_new();
 
 creates a new Merkle Trie. 
 
-```eval_rst
-  
-  
-```
 returns: [`trie_t *`](#trie-t)
 
 
@@ -5392,10 +5367,6 @@ void in3_register_eth_full();
 
 this function should only be called once and will register the eth-full verifier. 
 
-```eval_rst
-  
-  
-```
 
 ### evm.h
 
@@ -5662,10 +5633,6 @@ the current state of the evm
 
 The stuct contains following fields:
 
-```eval_rst
-  
-  
-```
 
 #### evm_get_env
 
@@ -6640,6 +6607,518 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 
 static lib
 
+### chainspec.h
+
+Ethereum chain specification. 
+
+Location: src/verifier/eth1/nano/chainspec.h
+
+#### BLOCK_LATEST
+
+```c
+#define BLOCK_LATEST 0xFFFFFFFFFFFFFFFF
+```
+
+
+#### eth_consensus_type_t
+
+the consensus type. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ================================
+ **ETH_POW**         0 Pro of Work (Ethash)
+ **ETH_POA_AURA**    1 Proof of Authority using Aura.
+ **ETH_POA_CLIQUE**  2 Proof of Authority using clique.
+==================== = ================================
+```
+
+#### eip_transition_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+============ ====================== 
+``uint64_t``  **transition_block**  
+``eip_t``     **eips**              
+============ ====================== 
+```
+
+#### consensus_transition_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+=============================================== ====================== 
+``uint64_t``                                     **transition_block**  
+`eth_consensus_type_t <#eth-consensus-type-t>`_  **type**              
+`bytes_t <#bytes-t>`_                            **validators**        
+``uint8_t *``                                    **contract**          
+=============================================== ====================== 
+```
+
+#### chainspec_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+===================================================== =============================== 
+``uint64_t``                                           **network_id**                 
+``uint64_t``                                           **account_start_nonce**        
+``uint32_t``                                           **eip_transitions_len**        
+`eip_transition_t * <#eip-transition-t>`_              **eip_transitions**            
+``uint32_t``                                           **consensus_transitions_len**  
+`consensus_transition_t * <#consensus-transition-t>`_  **consensus_transitions**      
+===================================================== =============================== 
+```
+
+#### __attribute__
+
+```c
+struct __attribute__((__packed__)) eip_;
+```
+
+defines the flags for the current activated EIPs. 
+
+Since it does not make sense to support a evm defined before Homestead, homestead EIP is always turned on! 
+
+< REVERT instruction 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Bitwise shifting instructions in EVM 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Gas cost changes for IO-heavy operations 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Simple replay attack protection 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < EXP cost increase 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Contract code size limit 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Precompiled contracts for addition and scalar multiplication on the elliptic curve alt_bn128 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Precompiled contracts for optimal ate pairing check on the elliptic curve alt_bn128 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < Big integer modular exponentiation 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < New opcodes: RETURNDATASIZE and RETURNDATACOPY 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ < New opcode STATICCALL 
+
+
+
+
+
+
+
+
+
+
+
+ < Embedding transaction status code in receipts 
+
+
+
+
+
+
+
+
+ < Skinny CREATE2 
+
+
+
+
+
+ < EXTCODEHASH opcode 
+
+
+ < Net gas metering for SSTORE without dirty maps 
+
+arguments:
+```eval_rst
+================  
+``(__packed__)``  
+================  
+```
+returns: `struct`
+
+
+#### chainspec_create_from_json
+
+```c
+chainspec_t* chainspec_create_from_json(d_token_t *data);
+```
+
+arguments:
+```eval_rst
+=========================== ========== 
+`d_token_t * <#d-token-t>`_  **data**  
+=========================== ========== 
+```
+returns: [`chainspec_t *`](#chainspec-t)
+
+
+#### chainspec_get_eip
+
+```c
+eip_t chainspec_get_eip(chainspec_t *spec, uint64_t block_number);
+```
+
+arguments:
+```eval_rst
+=============================== ================== 
+`chainspec_t * <#chainspec-t>`_  **spec**          
+``uint64_t``                     **block_number**  
+=============================== ================== 
+```
+returns: `eip_t`
+
+
+#### chainspec_get_consensus
+
+```c
+consensus_transition_t* chainspec_get_consensus(chainspec_t *spec, uint64_t block_number);
+```
+
+arguments:
+```eval_rst
+=============================== ================== 
+`chainspec_t * <#chainspec-t>`_  **spec**          
+``uint64_t``                     **block_number**  
+=============================== ================== 
+```
+returns: [`consensus_transition_t *`](#consensus-transition-t)
+
+
+#### chainspec_to_bin
+
+```c
+int chainspec_to_bin(chainspec_t *spec, bytes_builder_t *bb);
+```
+
+arguments:
+```eval_rst
+======================================= ========== 
+`chainspec_t * <#chainspec-t>`_          **spec**  
+`bytes_builder_t * <#bytes-builder-t>`_  **bb**    
+======================================= ========== 
+```
+returns: `int`
+
+
+#### chainspec_from_bin
+
+```c
+chainspec_t* chainspec_from_bin(void *raw);
+```
+
+arguments:
+```eval_rst
+========== ========= 
+``void *``  **raw**  
+========== ========= 
+```
+returns: [`chainspec_t *`](#chainspec-t)
+
+
+#### chainspec_get
+
+```c
+chainspec_t* chainspec_get(uint64_t chain_id);
+```
+
+arguments:
+```eval_rst
+============ ============== 
+``uint64_t``  **chain_id**  
+============ ============== 
+```
+returns: [`chainspec_t *`](#chainspec-t)
+
+
+#### chainspec_put
+
+```c
+void chainspec_put(uint64_t chain_id, chainspec_t *spec);
+```
+
+arguments:
+```eval_rst
+=============================== ============== 
+``uint64_t``                     **chain_id**  
+`chainspec_t * <#chainspec-t>`_  **spec**      
+=============================== ============== 
+```
+
 ### eth_nano.h
 
 Ethereum Nanon verification. 
@@ -6777,10 +7256,6 @@ void in3_register_eth_nano();
 
 this function should only be called once and will register the eth-nano verifier. 
 
-```eval_rst
-  
-  
-```
 
 #### create_tx_path
 

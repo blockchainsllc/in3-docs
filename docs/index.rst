@@ -22,6 +22,7 @@ Welcome to Incubed's documentation!
    spec
    api-ts
    api-c
+   api-java
    api-cmd
    api-docker
    api-node
