@@ -76,7 +76,7 @@ public class HelloIN3 {
         in3.setChainId(0x1); // set it to mainnet (which is also dthe default)
 
         // create a API instance which uses our incubed.
-        EthAPI api = new EthAPI(in3);
+        API api = new API(in3);
 
         // read the latest Block including all Transactions.
         Block latestBlock = api.getBlockByNumber(Block.LATEST, true);
@@ -115,7 +115,7 @@ public class HelloIN3 {
        in3.setChainId(0x1);  // set it to mainnet (which is also dthe default)
 
        // create a API instance which uses our incubed.
-       EthAPI api = new EthAPI(in3);
+       API api = new API(in3);
 
        // call a contract, which uses eth_call to get the result. 
        Object[] result = (Object[]) api.call(                                   // call a function of a contract
@@ -743,6 +743,85 @@ arguments:
 
 ## Package in3.eth1
 
+#### class API
+
+a Wrapper for the incubed client offering Type-safe Access and additional helper functions. 
+
+##### API
+
+creates a API using the given incubed instance. 
+
+ > public  API([`IN3`](#class-in3) in3);
+
+arguments:
+```eval_rst
+=================== ========= 
+`IN3 <#class-in3>`_  **in3**  
+=================== ========= 
+```
+##### getBlockByNumber
+
+finds the Block as specified by the number. 
+
+use `Block.LATEST` for getting the lastest block. 
+
+ > public [`Block`](#class-block) getBlockByNumber([`long`](#class-long) block, [`boolean`](#class-boolean) includeTransactions);
+
+arguments:
+```eval_rst
+=========== ========================= ================================================================================================
+``long``     **block**                
+``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
+=========== ========================= ================================================================================================
+```
+##### getBlockNumber
+
+the current BlockNumber. 
+
+ > public `long` getBlockNumber();
+
+##### getGasPrice
+
+the current Gas Price. 
+
+ > public `long` getGasPrice();
+
+##### call
+
+calls a function of a smart contract and returns the result. 
+
+ > public `Object` call([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+================================================= ============= =============================================================
+`TransactionRequest <#class-transactionrequest>`_  **request**  
+``long``                                           **block**    < the transaction to call. < the Block used to for the state.
+================================================= ============= =============================================================
+```
+returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
+
+
+
+##### call
+
+the current Gas Price. 
+
+ > public `Object` call([`String`](#class-string) to, [`String`](#class-string) function, [`Object...`](#class-object...) params);
+
+arguments:
+```eval_rst
+============= ============== 
+``String``     **to**        
+``String``     **function**  
+``Object...``  **params**    
+============= ============== 
+```
+returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
+
+
+
+
 #### class Block
 
 represents a Block in ethereum. 
@@ -889,105 +968,6 @@ returns the blockhashes of all uncles-blocks.
 
  > public `String []` getUncles();
 
-##### main
-
- > public static `void` main([`String[]`](#class-string[]) args);
-
-arguments:
-```eval_rst
-============= ========== 
-``String []``  **args**  
-============= ========== 
-```
-
-#### class EthAPI
-
-a Wrapper for the incubed client offering Type-safe Access and additional helper functions. 
-
-##### EthAPI
-
-creates a API using the given incubed instance. 
-
- > public  EthAPI([`IN3`](#class-in3) in3);
-
-arguments:
-```eval_rst
-=================== ========= 
-`IN3 <#class-in3>`_  **in3**  
-=================== ========= 
-```
-##### getBlockByNumber
-
-finds the Block as specified by the number. 
-
-use `Block.LATEST` for getting the lastest block. 
-
- > public [`Block`](#class-block) getBlockByNumber([`long`](#class-long) block, [`boolean`](#class-boolean) includeTransactions);
-
-arguments:
-```eval_rst
-=========== ========================= ================================================================================================
-``long``     **block**                
-``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
-=========== ========================= ================================================================================================
-```
-##### getBlockNumber
-
-the current BlockNumber. 
-
- > public `long` getBlockNumber();
-
-##### getGasPrice
-
-the current Gas Price. 
-
- > public `long` getGasPrice();
-
-##### call
-
-calls a function of a smart contract and returns the result. 
-
- > public `Object` call([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
-
-arguments:
-```eval_rst
-================================================= ============= =============================================================
-`TransactionRequest <#class-transactionrequest>`_  **request**  
-``long``                                           **block**    < the transaction to call. < the Block used to for the state.
-================================================= ============= =============================================================
-```
-returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
-
-
-
-##### call
-
-the current Gas Price. 
-
- > public `Object` call([`String`](#class-string) to, [`String`](#class-string) function, [`Object...`](#class-object...) params);
-
-arguments:
-```eval_rst
-============= ============== 
-``String``     **to**        
-``String``     **function**  
-``Object...``  **params**    
-============= ============== 
-```
-returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
-
-
-
-##### main
-
- > public static `void` main([`String[]`](#class-string[]) args);
-
-arguments:
-```eval_rst
-============= ========== 
-``String []``  **args**  
-============= ========== 
-```
 
 #### class Transaction
 
