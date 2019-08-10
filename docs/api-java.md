@@ -43,8 +43,8 @@ foreach(module
   verifier/eth1/evm 
   verifier/eth1/basic 
   verifier/eth1/full 
-  bindings/java t
-  hird-party/crypto 
+  bindings/java
+  third-party/crypto 
   third-party/tommath 
   api/eth1)
         file(MAKE_DIRECTORY in3-core/src/${module}/outputs)
@@ -77,7 +77,7 @@ cp -r in3-core/src/bindings/java/in3 src/main/java/
 # but not the native libs, since these will be build
 rm -rf src/main/java/in3/native
 ```
-Step 3. Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
+Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
 
 Here is example how to use it:
 
