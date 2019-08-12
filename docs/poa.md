@@ -65,7 +65,7 @@ Since all proofs always include the blockheader, it is crucial to verify the cor
 
 ### Proof of Work
 
-Currently, the public chain uses Proof of Work. This makes it very hard to verify the header, since anybody can produce such a header. So the only way to verify that this is an accepted block, is to let registered nodes sign the blockhash. If they are wrong, they lose their previously stored deposit. For the client this means that the required security depends on the deposit stored by the nodes.
+Currently, the public chain uses Proof of Work. This makes it very hard to verify the header, since anybody can produce such a header. So, the only way to verify that the block in question is an accepted block, is to let registered nodes sign the blockhash. If they are wrong, they lose their previously stored deposit. For the client, this means that the required security depends on the deposit stored by the nodes.
 That's why a client may be configured to require multiple signatures and even a minimal deposit:
 
 ```js
