@@ -128,11 +128,8 @@ public class HelloIN3 {
         // configure
         in3.setChainId(0x1); // set it to mainnet (which is also dthe default)
 
-        // create a API instance which uses our incubed.
-        API api = new API(in3);
-
         // read the latest Block including all Transactions.
-        Block latestBlock = api.getBlockByNumber(Block.LATEST, true);
+        Block latestBlock = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
 
         // Use the getters to retrieve all containing data
         System.out.println("current BlockNumber : " + latestBlock.getNumber());
@@ -167,11 +164,8 @@ public class HelloIN3 {
        // configure
        in3.setChainId(0x1);  // set it to mainnet (which is also dthe default)
 
-       // create a API instance which uses our incubed.
-       API api = new API(in3);
-
        // call a contract, which uses eth_call to get the result. 
-       Object[] result = (Object[]) api.call(                                   // call a function of a contract
+       Object[] result = (Object[]) in3.getEth1API().call(                                   // call a function of a contract
             "0x2736D225f85740f42D17987100dc8d58e9e16252",                       // address of the contract
             "servers(uint256):(string,address,uint256,uint256,uint256,address)",// function signature
             1);                                                                 // first argument, which is the index of the node we are looking for.
@@ -250,6 +244,18 @@ arguments:
 =========== ========= 
 ``byte []``  **val**  
 =========== ========= 
+```
+##### setKey
+
+sets the client key as hexstring to sign requests 
+
+ > public `void` setKey([`String`](#class-string) val);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **val**  
+========== ========= 
 ```
 ##### getMaxCodeCache
 
@@ -417,6 +423,30 @@ arguments:
 ``int``  **val**  
 ======= ========= 
 ```
+##### getSigner
+
+returns the signer or wallet. 
+
+ > public [`Signer`](#class-signer) getSigner();
+
+##### getEth1API
+
+gets the ethereum-api 
+
+ > public [`in3.eth1.API`](#class-in3.eth1.api) getEth1API();
+
+##### setSigner
+
+sets the signer or wallet. 
+
+ > public `void` setSigner([`Signer`](#class-signer) signer);
+
+arguments:
+```eval_rst
+========================= ============ 
+`Signer <#class-signer>`_  **signer**  
+========================= ============ 
+```
 ##### getTimeout
 
 specifies the number of milliseconds before the request times out. 
@@ -483,13 +513,13 @@ arguments:
 
 provides the ability to cache content 
 
- > public [`StorageProvidernative `](#class-storageprovider) getStorageProvider();
+ > public [`StorageProvider`](#class-storageprovider) getStorageProvider();
 
 ##### setStorageProvider
 
 provides the ability to cache content like nodelists, contract codes and validatorlists 
 
- > public `native void` setStorageProvider([`StorageProvider`](#class-storageprovider) val);
+ > public `void` setStorageProvider([`StorageProvider`](#class-storageprovider) val);
 
 arguments:
 ```eval_rst
@@ -711,6 +741,16 @@ arguments:
 ``Object``  **o**  
 ========== ======= 
 ```
+##### asInt
+
+ > public static `int` asInt([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
 ##### asString
 
  > public static `String` asString([`Object`](#class-object) o);
@@ -751,6 +791,40 @@ arguments:
  > public static `void` loadLibrary();
 
 
+#### class TempStorageProvider
+
+a simple Storage Provider storing the cache in the temp-folder. 
+
+##### getItem
+
+returns a item from cache () 
+
+ > public `byte []` getItem([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **key**  
+========== ========= 
+```
+returns: `byte []` : the bytes or null if not found. 
+
+
+
+##### setItem
+
+stores a item in the cache. 
+
+ > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
+
+arguments:
+```eval_rst
+=========== ============= 
+``String``   **key**      
+``byte []``  **content**  
+=========== ============= 
+```
+
 #### enum Proof
 
 The enum type contains the following values:
@@ -763,6 +837,51 @@ The enum type contains the following values:
                  
                  Full Verification including even uncles wich leads to higher payload
 ============== = ====================================================================
+```
+
+#### interface Signer
+
+a Interface responsible for signing data or transactions. 
+
+##### prepareTransaction
+
+optiional method which allows to change the transaction-data before sending it. 
+
+This can be used for redirecting it through a multisig. 
+
+ > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
+
+arguments:
+```eval_rst
+================================================= ========= 
+`IN3 <#class-in3>`_                                **in3**  
+`TransactionRequest <#class-transactionrequest>`_  **tx**   
+================================================= ========= 
+```
+##### hasAccount
+
+returns true if the account is supported (or unlocked) 
+
+ > public `boolean` hasAccount([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### sign
+
+signing of the raw data. 
+
+ > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **data**     
+``String``  **address**  
+========== ============= 
 ```
 
 #### interface StorageProvider
@@ -834,6 +953,19 @@ arguments:
 ``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
 =========== ========================= ================================================================================================
 ```
+##### getBlockByHash
+
+Returns information about a block by hash. 
+
+ > public [`Block`](#class-block) getBlockByHash([`String`](#class-string) blockHash, [`boolean`](#class-boolean) includeTransactions);
+
+arguments:
+```eval_rst
+=========== ========================= ================================================================================================
+``String``   **blockHash**            
+``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
+=========== ========================= ================================================================================================
+```
 ##### getBlockNumber
 
 the current BlockNumber. 
@@ -845,6 +977,14 @@ the current BlockNumber.
 the current Gas Price. 
 
  > public `long` getGasPrice();
+
+##### getChainId
+
+Returns the EIP155 chain ID used for transaction signing at the current best block. 
+
+Null is returned if not available. 
+
+ > public `String` getChainId();
 
 ##### call
 
@@ -863,6 +1003,305 @@ returns: `Object` : the decoded result. if only one return value is expected the
 
 
 
+##### estimateGas
+
+Makes a call or transaction, which won’t be added to the blockchain and returns the used gas, which can be used for estimating the used gas. 
+
+ > public `long` estimateGas([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+================================================= ============= =============================================================
+`TransactionRequest <#class-transactionrequest>`_  **request**  
+``long``                                           **block**    < the transaction to call. < the Block used to for the state.
+================================================= ============= =============================================================
+```
+returns: `long` : the gas required to call the function. 
+
+
+
+##### getBalance
+
+Returns the balance of the account of given address in wei. 
+
+ > public `BigInteger` getBalance([`String`](#class-string) address, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+``long``    **block**    
+========== ============= 
+```
+##### getCode
+
+Returns code at a given address. 
+
+ > public `String` getCode([`String`](#class-string) address, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+``long``    **block**    
+========== ============= 
+```
+##### getStorageAt
+
+Returns the value from a storage position at a given address. 
+
+ > public `String` getStorageAt([`String`](#class-string) address, [`BigInteger`](#class-biginteger) position, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+============== ============== 
+``String``      **address**   
+``BigInteger``  **position**  
+``long``        **block**     
+============== ============== 
+```
+##### getBlockTransactionCountByHash
+
+Returns the number of transactions in a block from a block matching the given block hash. 
+
+ > public `long` getBlockTransactionCountByHash([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+##### getBlockTransactionCountByNumber
+
+Returns the number of transactions in a block from a block matching the given block number. 
+
+ > public `long` getBlockTransactionCountByNumber([`long`](#class-long) block);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **block**  
+======== =========== 
+```
+##### getFilterChangesFromLogs
+
+Polling method for a filter, which returns an array of logs which occurred since last poll. 
+
+ > public [`Log []`](#class-log) getFilterChangesFromLogs([`long`](#class-long) id);
+
+arguments:
+```eval_rst
+======== ======== 
+``long``  **id**  
+======== ======== 
+```
+##### getFilterChangesFromBlocks
+
+Polling method for a filter, which returns an array of logs which occurred since last poll. 
+
+ > public [`Block []`](#class-block) getFilterChangesFromBlocks([`long`](#class-long) id);
+
+arguments:
+```eval_rst
+======== ======== 
+``long``  **id**  
+======== ======== 
+```
+##### getFilterLogs
+
+Polling method for a filter, which returns an array of logs which occurred since last poll. 
+
+ > public [`Log []`](#class-log) getFilterLogs([`long`](#class-long) id);
+
+arguments:
+```eval_rst
+======== ======== 
+``long``  **id**  
+======== ======== 
+```
+##### getLogs
+
+Polling method for a filter, which returns an array of logs which occurred since last poll. 
+
+ > public [`Log []`](#class-log) getLogs([`LogFilter`](#class-logfilter) filter);
+
+arguments:
+```eval_rst
+=============================== ============ 
+`LogFilter <#class-logfilter>`_  **filter**  
+=============================== ============ 
+```
+##### getTransactionByBlockHashAndIndex
+
+Returns information about a transaction by block hash and transaction index position. 
+
+ > public [`Transaction`](#class-transaction) getTransactionByBlockHashAndIndex([`String`](#class-string) blockHash, [`int`](#class-int) index);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+``int``     **index**      
+========== =============== 
+```
+##### getTransactionByBlockNumberAndIndex
+
+Returns information about a transaction by block number and transaction index position. 
+
+ > public [`Transaction`](#class-transaction) getTransactionByBlockNumberAndIndex([`long`](#class-long) block, [`int`](#class-int) index);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **block**  
+``int``   **index**  
+======== =========== 
+```
+##### getTransactionByHash
+
+Returns the information about a transaction requested by transaction hash. 
+
+ > public [`Transaction`](#class-transaction) getTransactionByHash([`String`](#class-string) transactionHash);
+
+arguments:
+```eval_rst
+========== ===================== 
+``String``  **transactionHash**  
+========== ===================== 
+```
+##### getTransactionCount
+
+Returns the number of transactions sent from an address. 
+
+ > public `BigInteger` getTransactionCount([`String`](#class-string) address, [`long`](#class-long) block);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+``long``    **block**    
+========== ============= 
+```
+##### getTransactionReceipt
+
+Returns the number of transactions sent from an address. 
+
+ > public [`TransactionReceipt`](#class-transactionreceipt) getTransactionReceipt([`String`](#class-string) transactionHash);
+
+arguments:
+```eval_rst
+========== ===================== 
+``String``  **transactionHash**  
+========== ===================== 
+```
+##### getUncleByBlockNumberAndIndex
+
+Returns information about a uncle of a block number and uncle index position. 
+
+Note: An uncle doesn’t contain individual transactions. 
+
+ > public [`Block`](#class-block) getUncleByBlockNumberAndIndex([`long`](#class-long) block, [`int`](#class-int) pos);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **block**  
+``int``   **pos**    
+======== =========== 
+```
+##### getUncleCountByBlockHash
+
+Returns the number of uncles in a block from a block matching the given block hash. 
+
+ > public `long` getUncleCountByBlockHash([`String`](#class-string) block);
+
+arguments:
+```eval_rst
+========== =========== 
+``String``  **block**  
+========== =========== 
+```
+##### getUncleCountByBlockNumber
+
+Returns the number of uncles in a block from a block matching the given block hash. 
+
+ > public `long` getUncleCountByBlockNumber([`long`](#class-long) block);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **block**  
+======== =========== 
+```
+##### newBlockFilter
+
+Creates a filter in the node, to notify when a new block arrives. 
+
+To check if the state has changed, call eth_getFilterChanges. 
+
+ > public `long` newBlockFilter();
+
+##### newLogFilter
+
+Creates a filter object, based on filter options, to notify when the state changes (logs). 
+
+To check if the state has changed, call eth_getFilterChanges.
+
+A note on specifying topic filters: Topics are order-dependent. A transaction with a log with topics [A, B] will be matched by the following topic filters:
+
+[] “anything” [A] “A in first position (and anything after)” [null, B] “anything in first position AND B in second position (and anything after)” [A, B] “A in first position AND B in second position (and anything after)” [[A, B], [A, B]] “(A OR B) in first position AND (A OR B) in second position (and anything after)” 
+
+ > public `long` newLogFilter([`LogFilter`](#class-logfilter) filter);
+
+arguments:
+```eval_rst
+=============================== ============ 
+`LogFilter <#class-logfilter>`_  **filter**  
+=============================== ============ 
+```
+##### uninstallFilter
+
+uninstall filter. 
+
+ > public `long` uninstallFilter([`long`](#class-long) filter);
+
+arguments:
+```eval_rst
+======== ============ 
+``long``  **filter**  
+======== ============ 
+```
+##### sendRawTransaction
+
+Creates new message call transaction or a contract creation for signed transactions. 
+
+ > public `String` sendRawTransaction([`String`](#class-string) data);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **data**  
+========== ========== 
+```
+returns: `String` : transactionHash 
+
+
+
+##### sendTransaction
+
+sends a Transaction as desribed by the TransactionRequest. 
+
+This will require a signer to be set in order to sign the transaction. 
+
+ > public `String` sendTransaction([`TransactionRequest`](#class-transactionrequest) tx);
+
+arguments:
+```eval_rst
+================================================= ======== 
+`TransactionRequest <#class-transactionrequest>`_  **tx**  
+================================================= ======== 
+```
 ##### call
 
 the current Gas Price. 
@@ -1029,6 +1468,154 @@ returns the blockhashes of all uncles-blocks.
  > public `String []` getUncles();
 
 
+#### class Log
+
+a log entry of a transaction receipt. 
+
+##### isRemoved
+
+true when the log was removed, due to a chain reorganization. 
+
+false if its a valid log. 
+
+ > public `boolean` isRemoved();
+
+##### getLogIndex
+
+integer of the log index position in the block. 
+
+null when its pending log. 
+
+ > public `int` getLogIndex();
+
+##### gettTansactionIndex
+
+integer of the transactions index position log was created from. 
+
+null when its pending log. 
+
+ > public `int` gettTansactionIndex();
+
+##### getTransactionHash
+
+Hash, 32 Bytes - hash of the transactions this log was created from. 
+
+null when its pending log. 
+
+ > public `String` getTransactionHash();
+
+##### getBlockHash
+
+Hash, 32 Bytes - hash of the block where this log was in. 
+
+null when its pending. null when its pending log. 
+
+ > public `String` getBlockHash();
+
+##### getBlockNumber
+
+the block number where this log was in. 
+
+null when its pending. null when its pending log. 
+
+ > public `long` getBlockNumber();
+
+##### getAddress
+
+20 Bytes - address from which this log originated. 
+
+ > public `String` getAddress();
+
+##### getTopics
+
+Array of 0 to 4 32 Bytes DATA of indexed log arguments. 
+
+(In solidity: The first topic is the hash of the signature of the event (e.g. Deposit(address,bytes32,uint256)), except you declared the event with the anonymous specifier.) 
+
+ > public `String []` getTopics();
+
+
+#### class LogFilter
+
+Log configuration for search logs. 
+
+##### toString
+
+creates a JSON-String. 
+
+ > public `String` toString();
+
+
+#### class SimpleWallet
+
+a simple Implementation for holding private keys to sing data or transactions. 
+
+##### addRawKey
+
+adds a key to the wallet and returns its public address. 
+
+ > public `String` addRawKey([`String`](#class-string) data);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **data**  
+========== ========== 
+```
+##### addKeyStore
+
+adds a key to the wallet and returns its public address. 
+
+ > public `String` addKeyStore([`String`](#class-string) jsonData, [`String`](#class-string) passphrase);
+
+arguments:
+```eval_rst
+========== ================ 
+``String``  **jsonData**    
+``String``  **passphrase**  
+========== ================ 
+```
+##### prepareTransaction
+
+optiional method which allows to change the transaction-data before sending it. 
+
+This can be used for redirecting it through a multisig. 
+
+ > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
+
+arguments:
+```eval_rst
+================================================= ========= 
+`IN3 <#class-in3>`_                                **in3**  
+`TransactionRequest <#class-transactionrequest>`_  **tx**   
+================================================= ========= 
+```
+##### hasAccount
+
+returns true if the account is supported (or unlocked) 
+
+ > public `boolean` hasAccount([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### sign
+
+signing of the raw data. 
+
+ > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **data**     
+``String``  **address**  
+========== ============= 
+```
+
 #### class Transaction
 
 represents a Transaction in ethereum. 
@@ -1124,6 +1711,89 @@ the gas provided by the sender.
  > public `long` getGas();
 
 
+#### class TransactionReceipt
+
+represents a Transaction receipt in ethereum. 
+
+##### getBlockHash
+
+the blockhash of the block containing this transaction. 
+
+ > public `String` getBlockHash();
+
+##### getBlockNumber
+
+the block number of the block containing this transaction. 
+
+ > public `long` getBlockNumber();
+
+##### getCreatedContractAddress
+
+the address of the deployed contract (if successfull) 
+
+ > public `String` getCreatedContractAddress();
+
+##### getFrom
+
+the address of the sender. 
+
+ > public `String` getFrom();
+
+##### getTransactionHash
+
+the Transaction hash. 
+
+ > public `String` getTransactionHash();
+
+##### getTransactionIndex
+
+the Transaction index. 
+
+ > public `int` getTransactionIndex();
+
+##### getTo
+
+20 Bytes - The address of the receiver. 
+
+null when it’s a contract creation transaction. 
+
+ > public `String` getTo();
+
+##### getGasUsed
+
+The amount of gas used by this specific transaction alone. 
+
+ > public `long` getGasUsed();
+
+##### getLogs
+
+Array of log objects, which this transaction generated. 
+
+ > public [`Log []`](#class-log) getLogs();
+
+##### getLogsBloom
+
+256 Bytes - A bloom filter of logs/events generated by contracts during transaction execution. 
+
+Used to efficiently rule out transactions without expected logs 
+
+ > public `String` getLogsBloom();
+
+##### getRoot
+
+32 Bytes - Merkle root of the state trie after the transaction has been executed (optional after Byzantium hard fork EIP609). 
+
+ > public `String` getRoot();
+
+##### getStatus
+
+success of a Transaction. 
+
+true indicates transaction failure , false indicates transaction success. Set for blocks mined after Byzantium hard fork EIP609, null before. 
+
+ > public `boolean` getStatus();
+
+
 #### class TransactionRequest
 
 represents a Transaction Request which should be send or called. 
@@ -1169,12 +1839,6 @@ Type: `long`
 the gas price to use 
 
 Type: `long`
-
-##### privateKey
-
-the private Key to use for signing 
-
-Type: `String`
 
 ##### function
 
