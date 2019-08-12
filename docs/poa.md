@@ -78,7 +78,7 @@ client.sendRPC('eth_getBalance', [account, 'latest'], chain, {
 The `minDeposit` lets the client preselect only nodes with at least that much deposit.
 The `signatureCount` asks for multiple signatures and so increases the security.
 
-Since most clients are small devices with limited bandwith, the client is not asking for the signatures directly from the nodes, but chooses one node and lets this node run a subrequest to get the signatures. This means less requests for the clients, but also at least one node checks the signatures and convicts the other if they lied.
+Since most clients are small devices with limited bandwith, the client is not asking for the signatures directly from the nodes, but chooses one node and lets this node run a subrequest to get the signatures. This means fewer requests for the clients, but also at least one node checks the signatures and convicts the other if they lied.
 
 ### Proof of Authority
 
