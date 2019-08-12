@@ -95,7 +95,7 @@ Aura is used by Parity only and there are two ways to configure such:
 
 #### Clique
 
-Clique is a protocol developed by the geth-team and is now also supported by parity (see görli-testnet).
+Clique is a protocol developed by the Geth-team and is now also supported by Parity (see Görli-testnet).
 Instead of relying on a contract, clique defines a protocol of how validator nodes may change. All votes are done directly in the blockheader. This makes it easier to prove, since it does not rely on any contract. 
 
 The Incubed nodes will check all the blocks for votes and create a `validatorlist` which defines the validatorset for any given blocknumber. This also includes the proof in form of all blockheaders that either voted the new node in or out. This way the client can ask for the list and automatically update the internal list after he verified each blockheader and vote. Even though malicious nodes cannot forge the signatures of a validator, that may skip votes in the validatorlist. That is why a validatorlist update should always be done by running multiple requests and merging them together.
