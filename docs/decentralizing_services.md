@@ -1,13 +1,13 @@
-# Decentralizing central services
+# Decentralizing Central Services
 
-*Important: This concept is still in early development and discussion and not implemented yet, but planned in future milestones.*
+*Important: This concept is still in early development, meaning it has not been implemented yet.*
 
-Many DAPPs still need some offchain-services, like search-services running on a server, which of course can be seen as single point of failure. In order to dectralize these even dapp-specific services they must fullfill these criteria:
+Many dApps still require some off-chain services, such as search functions running on a server, which, of course, can be seen as a single point of failure. To decentralize these dApp-specific services, they must fulfill the following criteria:
 
-1. **stateless** - since requests may be send to different servers they cannot hold a users state, which would only be available on one node.
-2. **deterministic** - all servers need to produce the exact same result
+1. **Stateless**: Since requests may be sent to different servers, they cannot hold a user's state, which would only be available on one node.
+2. **Deterministic**: All servers need to produce the exact same result.
 
-If these requirements are met, the service can be registered defining the server behavior in a docker image.
+If these requirements are met, the service can be registered, defining the server behavior in a docker image.
 
 ```eval_rst
 .. graphviz::
@@ -71,22 +71,19 @@ If these requirements are met, the service can be registered defining the server
 
 ```
 
-## Incentivication
+## Incentivization
 
-Each Server can define
+Each server can define (1) a list of services to offer or (2) a list of services to reward.
 
-- a list of services as offer
-- a list of services to reward
+The main idea is simply the following:
 
-The main idea is simply:
+> **If you run my service, I will run yours.**
 
-> **if you run my service I will run yours**
-
-Each Server can specifiy which services we would like to see used. If another server offers them, he will also run at least as many rewareded services of the other node.
+Each server can specifiy which services we would like to see used. If another server offers them, we will also run at least as many rewarded services as the other node.
 
 ## Verification
 
-Each Service specify a Verifier, which is a wasm-module (specified through a ipfs-hash). This wasm offers 2 function:
+Each service specifies a verifier, which is a Wasm module (specified through an IPFS hash). This Wasm offers two functions:
 
 ```js
 function minRequests():number
@@ -94,11 +91,8 @@ function minRequests():number
 function verify(request:RPCRequest[], responses:RPCResponse[])
 ```
 
-A minimal version could simply asure running at least 2 requests and comparing them. In case they differ they can 
+A minimal version could simply ensure that two requests were running and then compare them. If different, the Wasm could check with the home server and "convict" nodes.
 
-- check with the "home"-server
-- convict nodes
+### Convicting
 
-### convicting
-
-As a generic service convicting on chain can not be done, but each server is able to verify the result and if false downgrade the score.
+Convicting on chain cannot be done, but each server is able to verify the result and, if false, downgrade the score.
