@@ -90,8 +90,8 @@ Currently, there are two consensus algorithms:
 
 Aura is used by Parity only and there are two ways to configure such:
 
-- **static list of nodes** (like the Kovan-network) - In this case the validatorlist is included in the chain-spec and cannot change, which makes it very easy for a client to verify blockheaders.
-- **validator contract** - a contract which offers a function `getValidators()`. Depending on the chain this contract may contain rules that define how validators may change. But this flexibility comes with a price. It makes it harder for a client to find a secure way to detect validator changes. That's why the proof for such a contract depends on the rules layed out in the contract and is chain-specific. 
+- **static list of nodes** (like the Kovan-network) - in this case, the validatorlist is included in the chain-spec and cannot change, which makes it very easy for a client to verify blockheaders.
+- **validator contract** - a contract that offers a function `getValidators()`. Depending on the chain, this contract may contain rules that define how validators may change. But this flexibility comes with a price. It makes it harder for a client to find a secure way to detect validator changes. That's why the proof for such a contract depends on the rules laid out in the contract and is chain-specific. 
 
 #### Clique
 
