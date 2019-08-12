@@ -82,13 +82,13 @@ Since most clients are small devices with limited bandwith, the client is not as
 
 ### Proof of Authority
 
-The good thing about Proof of Authority is that there is already a signature included in the blockheader. So if we know who is allowed to sign a block, we can do not need an additional blockhash signed. The only critical information we rely on is the list of validators.
+The good thing about Proof of Authority is that there is already a signature included in the blockheader. So, if we know who is allowed to sign a block, we do not need an additional blockhash signed. The only critical information we rely on is the list of validators.
 
-Currently there are 2 Consensys algorithms:
+Currently, there are two consensus algorithms:
 
 #### Aura
 
-Aura is used by parity only and there are 2 ways to configure such:
+Aura is used by parity only and there are two ways to configure such:
 
 - **static list of nodes** (like the kovan-network) - In this case the validatorlist is included in the chain-spec and cannot change, which makes it very easy for a client to verify blockheaders.
 - **validator contract** - a contract which offers a function `getValidators()`. Depending on the chain this contract may contain rules that define how validators may change. But this flexibility comes with a price. It makes it harder for a client to find a secure way to detect validator changes. That's why the proof for such a contract depends on the rules layed out in the contract and is chain-specific. 
