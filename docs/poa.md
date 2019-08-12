@@ -1,6 +1,6 @@
 ## Verifying Blockheaders
 
-Since all proofs always include the blockheader, it is crucial to verify the correctness of these data as well. But verification depends on the consensus of the underlying blockchain. (For details, see [Ethereum Verification and MerkleProof](./Ethereum-Verification-and-MerkleProof) )
+Since all proofs always include the blockheader, it is crucial to verify the correctness of these data as well. But verification depends on the consensus of the underlying blockchain. (For details, see [Ethereum Verification and MerkleProof](./Ethereum-Verification-and-MerkleProof) .)
 
 ```eval_rst
 .. graphviz::
