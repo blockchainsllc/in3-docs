@@ -827,16 +827,16 @@ arguments:
 
 #### enum Proof
 
+The Proof type indicating how much proof is required. 
+
 The enum type contains the following values:
 
 ```eval_rst
-============== = ====================================================================
- **none**      0 
- **standard**  1 No Verification.
- **full**      2 Standard Verification of the important properties. 
-                 
-                 Full Verification including even uncles wich leads to higher payload
-============== = ====================================================================
+============== = =====================================================================
+ **none**      0 No Verification.
+ **standard**  1 Standard Verification of the important properties.
+ **full**      2 Full Verification including even uncles wich leads to higher payload.
+============== = =====================================================================
 ```
 
 #### interface Signer
@@ -1005,7 +1005,7 @@ returns: `Object` : the decoded result. if only one return value is expected the
 
 ##### estimateGas
 
-Makes a call or transaction, which won’t be added to the blockchain and returns the used gas, which can be used for estimating the used gas. 
+Makes a call or transaction, which won't be added to the blockchain and returns the used gas, which can be used for estimating the used gas. 
 
  > public `long` estimateGas([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
 
@@ -1199,7 +1199,7 @@ arguments:
 
 Returns information about a uncle of a block number and uncle index position. 
 
-Note: An uncle doesn’t contain individual transactions. 
+Note: An uncle doesn't contain individual transactions. 
 
  > public [`Block`](#class-block) getUncleByBlockNumberAndIndex([`long`](#class-long) block, [`int`](#class-int) pos);
 
@@ -1250,7 +1250,8 @@ To check if the state has changed, call eth_getFilterChanges.
 
 A note on specifying topic filters: Topics are order-dependent. A transaction with a log with topics [A, B] will be matched by the following topic filters:
 
-[] “anything” [A] “A in first position (and anything after)” [null, B] “anything in first position AND B in second position (and anything after)” [A, B] “A in first position AND B in second position (and anything after)” [[A, B], [A, B]] “(A OR B) in first position AND (A OR B) in second position (and anything after)” 
+[] "anything" [A] "A in first position (and anything after)" [null, B] "anything in first position AND B in second position (and anything after)" [A, B] "A in first position AND B in second position (and anything after)" [[A, B], [A, B]] "(A OR B) in first position AND (A OR B) in second position
+(and anything after)" 
 
  > public `long` newLogFilter([`LogFilter`](#class-logfilter) filter);
 
@@ -1755,7 +1756,7 @@ the Transaction index.
 
 20 Bytes - The address of the receiver. 
 
-null when it’s a contract creation transaction. 
+null when it's a contract creation transaction. 
 
  > public `String` getTo();
 
