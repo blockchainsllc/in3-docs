@@ -52,7 +52,7 @@ Supporting Polkadot or any Substrate-based chains.
 
 ## V1.5 Services - Q1 2021
 
-Generic Interface for any deterministic Service (as docker-container) to be decentralized and verified.
+Generic Interface for any deterministic service (such as docker-container) to be decentralized and verified.
 
 
 
