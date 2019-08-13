@@ -1,6 +1,6 @@
 # Roadmap
 
-Incubed implements 2 Versions. 
+Incubed implements 2 versions: 
  - **Typescript / Javascript** , which is optimized for dapps, webapps or mobile apps.
  - **embedded C** optimized for microcontrollers and all other use cases.  
 
