@@ -68,7 +68,7 @@ As a simple rule, we can define this as:
 
 > **The Incubed network will serve your client requests if you also run an honest node.**
 
-This requires a user to connect a client key (used to sign his requests) with a registered server.
+This requires a user to connect a client key (used to sign their requests) with a registered server.
 Clients are able to share keys as long as the owner of the node is able to ensure their security. This makes it possible to use one key for the same mobile app or device.
 The owner may also register as many keys as they want for their server or even change them from time to time (as long as only one client key points to one server).
 The key is registered in a client-contract, holding a mapping of the key to the server address.
@@ -135,8 +135,8 @@ The key is registered in a client-contract, holding a mapping of the key to the 
 
 ## Ensuring Client Access
 
-Connecting a client key to a server does not mean the key relies on server. Instead, the requests are simply served in the same quality as the connected node serves other clients. 
-This creates a very strong incentive to deliver all clients, because if a server node were offline or refused to deliver, eventually other nodes would likewise deliver less or even stop responding to requests coming from the connected clients.
+Connecting a client key to a server does not mean the key relies on that server. Instead, the requests are simply served in the same quality as the connected node serves other clients. 
+This creates a very strong incentive to deliver to all clients, because if a server node were offline or refused to deliver, eventually other nodes would deliver less or even stop responding to requests coming from the connected clients.
 
 To actually find out which node delivers to clients, each server node uses one of the client keys to send test requests and measure the availability based on verified responses.
 
@@ -169,20 +169,20 @@ To actually find out which node delivers to clients, each server node uses one o
 
 The servers measure the `$ A_{availability}$` by checking periodically (about every hour in order to make sure a malicious server is not only responding to test requests). These requests may be sent through an anonymous network like tor.
 
-Based on the long-term ( >1 day ) and short-term ( <1 day ) availibility, the score is calculated as:
+Based on the long-term (>1 day) and short-term (<1 day) availibility, the score is calculated as:
 
 ```math
 A = \frac{ R_{received} }{ R_{sent} }
 ```
 
-In order to balance long-term and short-term availability, each node measures both and calculates a factor for the score. This factor should ensure that short-term avilability will not drop the score immediately, but keep it up for a while and then drop. Long-term availibility will be rewarded by dropping it slowly.
+In order to balance long-term and short-term availability, each node measures both and calculates a factor for the score. This factor should ensure that short-term avilability will not drop the score immediately, but keep it up for a while before dropping. Long-term availibility will be rewarded by dropping the score slowly.
 
 ```math
 A =  1 - ( 1 - \frac{A_{long} + 5 \cdot A_{short}}6 )^{10} 
 ```
 
-- `$ A_{long}$` - The ratio between valid request received and sent within the last month.
-- `$ A_{short}$` - The ratio between valid request received and sent within the last 24h.
+- `$ A_{long}$` - The ratio between valid requests received and sent within the last month.
+- `$ A_{short}$` - The ratio between valid requests received and sent within the last 24 hours.
 
 ![](./graphAvailable.png)
 
@@ -196,7 +196,7 @@ score =  \frac{ A \cdot D_{weight} \cdot C_{max}}{weight}
 ```
 
 - `$ A$` - The availibility of the node.
-- `$ weight$` - The weight of the incoming request from that servers clients (see LoadBalancing).
+- `$ weight$` - The weight of the incoming request from that server's clients (see LoadBalancing).
 - `$ C_{max}$` - The maximal number of open or parallel requests the server can handle (will be taken from the registry).
 - `$ D_{weight}$` - The weight of the deposit of the node.
 
@@ -214,7 +214,7 @@ This way, nodes reject requests with a lower score when the load increases. For 
 
 ## Deposit
 
-Storing a high deposit brings more security to the network. This is important for proof-of-work-chains.
+Storing a high deposit brings more security to the network. This is important for proof-of-work chains.
 In order to reflect the benefit in the score, the client multiplies it with the `$ D_{weight}$` (the deposit weight).
 
 ```math
@@ -231,20 +231,20 @@ A node without any deposit will only receive 26.8% of the max cap, while any nod
 
 ## LoadBalancing
 
-In an optimal network, each server would handle an equal amount and all clients would have an equal share. In order to prevent situations where 80% of the requests come from clients belonging to the same node, while the node only delivers 10% of requests in the network, we need to decrease the score for clients sending more requests than their shares.
+In an optimal network, each server would handle an equal amount and all clients would have an equal share. In order to prevent situations where 80% of the requests come from clients belonging to the same node, we need to decrease the score for clients sending more requests than their shares.
 Thus, for each node the weight can be calculated by:
 
 ```math
 weight_n =  \frac{{\displaystyle\sum_{i=0}^n} C_i \cdot R_n } { {\displaystyle\sum_{i=0}^n} R_i \cdot C_n  } 
 ```
-- `$ R_n$` - Number of request servered to one of the clients connected to the node.
-- `$ {\displaystyle\sum_{i=0}^n} R_i$` - Total number of request servered. 
-- `$ {\displaystyle\sum_{i=0}^n} C_i$` - Total number of capacities of the registered servers.
-- `$ C_n$` - Capacity of the registered node. 
+- `$ R_n$` - The number of requests servered to one of the clients connected to the node.
+- `$ {\displaystyle\sum_{i=0}^n} R_i$` - The total number of requests servered. 
+- `$ {\displaystyle\sum_{i=0}^n} C_i$` - The total number of capacities of the registered servers.
+- `$ C_n$` - The capacity of the registered node. 
 
 Each node will update the `$ score$` and the `$weight$` for the other nodes after each check in order to prioritize incoming requests.
 
-The capacity of a node is the maximal number of parallel request it can handle and is stored in the ServerRegistry. This way all clients know the cap and will weigh the nodes accordingly, which leads to stronger servers. A node declaring a high capacity will gain a higher score, and its clients will receive more reliable responses. On the other hand, if you cannot deliver the load, you may lose your availability as well as your score.
+The capacity of a node is the maximal number of parallel request it can handle and is stored in the ServerRegistry. This way all clients know the cap and will weigh the nodes accordingly, which leads to stronger servers. A node declaring a high capacity will gain a higher score, and its clients will receive more reliable responses. On the other hand, if a node cannot deliver the load, it may lose its availability as well as its score.
 
 ## Free Access
 
@@ -258,7 +258,7 @@ A low value for freeScore would serve requests only if the current load or the o
 
 ## Convict
 
-Even though servers are allowed to register without a deposit, convicting is still a hard punishment. In this case, the server is not part of the registry anymore and all its connected clients are treated as not having a signature. In this case, the device or app will probably stop working or be extremely slow (depending on the freeScore configured in all the nodes).
+Even though servers are allowed to register without a deposit, convicting is still a hard punishment. In this case, the server is not part of the registry anymore and all its connected clients are treated as not having a signature. The device or app will likely stop working or be extremely slow (depending on the freeScore configured in all the nodes).
 
 ## Handling conflicts
 
@@ -269,7 +269,7 @@ In case of a conflict, each client now has at least one server it knows it can t
 Each registered node creates its own ecosystem with its own score. All the clients belonging to this ecosystem will be served only as well as the score of the ecosystem allows. However, a good score can not only be achieved with a good performance, but also by paying for it. 
 
 For all the payments, a special contract is created. Here, anybody can create their own ecosystem even without running a node. Instead, they can pay for it. 
-The payment will work as following:
+The payment will work as follows:
 
 The user will choose a price and time range (these values can always be increased later). Depending on the price, they also achieve voting power, thus creating a reputation for the registered nodes. 
 
@@ -284,13 +284,13 @@ Why should a node treat a paying client better then others?
 
 Because the higher the price a user paid, the higher the voting power, which they may use to upgrade or downgrade the reputation of the node. This reputation will directly incluence the payment to the node.
 
-That's why, for a node, the score of a client depends as following:
+That's why, for a node, the score of a client depends on what follows:
 
 ```math
 score_c =  \frac{ paid_c \cdot requests_{total}} { requests_c \cdot paid_{total} + 1} 
 ```
 
-The score would be 1 if the payment a node receives has the same percentage of requests from a ecosystem as the payment of the ecosystem represents relative to the total payment per month. So paying a higher price would increase its score. 
+The score would be 1 if the payment a node receives has the same percentage of requests from an ecosystem as the payment of the ecosystem represented relative to the total payment per month. So, paying a higher price would increase its score. 
 
 ## Client Identification
 
@@ -303,10 +303,10 @@ In order to securely identify a client as belonging to a ecosystem, each request
    
    ```js
    proof = rlp.encode(
-      bytes32(registry_id),      // the uinique id of the registry
-      address(client_address),   // the public address of a client
-      uint(ttl),                 // unix timestamp when this proof expires 
-      bytes(signature)           // the signature with the signer-key of the ecosystem. The messagehash is created by rlp.encode the client_address and the ttl 
+      bytes32(registry_id),      // The unique ID of the registry.
+      address(client_address),   // The public address of a client.
+      uint(ttl),                 // Unix timestamp when this proof expires. 
+      bytes(signature)           // The signature with the signer-key of the ecosystem. The message hash is created by rlp.encode, the client_address, and the ttl. 
    )
    ```
    
