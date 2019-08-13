@@ -24,7 +24,7 @@ This was the first stable release, which was published after devcon. It contains
 - **PoA-Support** - For PoA-Chains (using Aura), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura-algorithm to determine the signer from the Validatorlist (with static Validatorlist or contract based validators). 
 - **Finality-Support** - For PoA-Chains, the client can require a configurable number of signatures (in percent) to accept them as final.
 - **Flexible Transport-Layer** - The communication-layer between clients and nodes can be overridden, but the layer already supports different transport formats (json/cbor/in3).
-- **Replace Latest-Blocks** - Since most applications per default always ask request for the latest block, which cannot be considered as final in a PoW-Chain, a configuration allows to automatically use a certain blockheight to run the request. (like 6 blocks)
+- **Replace Latest-Blocks** - Since most applications per default always ask for the latest block, which cannot be considered as final in a PoW-Chain, a configuration allows applications to automatically use a certain blockheight to run the request. (like 6 blocks)
 - **Light Ethereum API** - Incubed comes with a typesafe simple API, which covers all standard JSON-RPC-Requests (`in3.eth.getBalance('0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5')` ). This API also includes support for signing and sending transactions as well as calling methods in smart contracts without a complete ABI by simply passing the signature of the method as argument.
 - **TypeScript Support** - Because Incubed is written 100% in typescript, you get all the advantages of a typesafe tollchain.
 - **Integrations** -  Incubed has been succesfully tested in all major browsers, nodejs and even react-native.
@@ -45,14 +45,14 @@ For `eth_call`-Verification, the client and server must be able to execute the c
 
 ## V1.4 Substrate - Q3 2020
 
-Supporting Polkadot or any Substrate-based chains.
+Supports Polkadot or any Substrate-based chains.
 
 - **Substrate** - Framework support
 - **Runtime-Optimization** - Using pre-compiled Runtimes. 
 
 ## V1.5 Services - Q1 2021
 
-Generic Interface for any deterministic service (such as docker-container) to be decentralized and verified.
+Generic Interface enables any deterministic service (such as docker-container) to be decentralized and verified.
 
 
 
