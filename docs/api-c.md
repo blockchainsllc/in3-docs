@@ -487,7 +487,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`).*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_newBlockFilter
 
@@ -505,7 +505,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`).*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_newPendingTransactionFilter
 
@@ -523,7 +523,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
-*Please make sure you check if it was successfull (`==IN3_OK`).*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_uninstallFilter
 
@@ -561,7 +561,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`).*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_last_error
 
@@ -639,7 +639,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`).*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### free_log
 
@@ -660,7 +660,7 @@ arguments:
 
 USN API. 
 
-This header-file defines easy to use function, which are verifying USN-Messages. 
+This header-file defines an easy-to-use function, which is verifying USN-Messages.
 
 Location: src/api/usn/usn_api.h
 
@@ -690,13 +690,11 @@ The enum type contains the following values:
 
 #### usn_booking_handler
 
-
 ```c
 typedef int(* usn_booking_handler) (usn_event_t *)
 ```
 
 returns: `int(*`
-
 
 #### usn_verify_message
 
@@ -713,7 +711,6 @@ arguments:
 ```
 returns: [`usn_msg_result_t`](#usn-msg-result-t)
 
-
 #### usn_register_device
 
 ```c
@@ -729,8 +726,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### usn_parse_url
 
@@ -745,7 +741,6 @@ arguments:
 ========== ========= 
 ```
 returns: [`usn_url_t`](#usn-url-t)
-
 
 #### usn_update_state
 
@@ -762,7 +757,6 @@ arguments:
 ```
 returns: `unsigned int`
 
-
 #### usn_update_bookings
 
 ```c
@@ -777,8 +771,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### usn_remove_old_bookings
 
@@ -807,7 +800,6 @@ arguments:
 ```
 returns: [`usn_event_t`](#usn-event-t)
 
-
 #### usn_rent
 
 ```c
@@ -827,8 +819,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### usn_return
 
@@ -847,8 +838,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### usn_price
 
@@ -870,17 +860,15 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
-
-## Module bindings/java 
-
+## Module Bindings/java 
 
 set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.6" "-target" "1.6")
 
 ### in3.h
 
-the entry-points for the shares library. 
+The entry points for the shared library. 
 
 Location: src/bindings/java/in3.h
 
@@ -890,10 +878,9 @@ Location: src/bindings/java/in3.h
 in3_t* in3_create();
 ```
 
-creates a new client 
+Creates a new client.
 
 returns: [`in3_t *`](#in3-t)
-
 
 #### in3_send
 
@@ -901,7 +888,7 @@ returns: [`in3_t *`](#in3-t)
 int in3_send(in3_t *c, char *method, char *params, char **result, char **error);
 ```
 
-sends a request and stores the result in the provided buffer 
+Sends a request and stores the result in the provided buffer.
 
 arguments:
 ```eval_rst
@@ -915,14 +902,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### in3_dispose
 
 ```c
 void in3_dispose(in3_t *a);
 ```
 
-frees the references of the client 
+Frees the references of the client.
 
 arguments:
 ```eval_rst
@@ -931,14 +917,11 @@ arguments:
 =================== ======= 
 ```
 
-## Module cmd/in3 
-
-
-
+## Module CMD/in3 
 
 ### in3_storage.h
 
-storage handler storing cache in the home-dir/.in3 
+Storage handler storing cache in the home-dir/.in3.
 
 Location: src/cmd/in3/in3_storage.h
 
@@ -957,7 +940,6 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### storage_set_item
 
 ```c
@@ -973,18 +955,17 @@ arguments:
 ======================= ============= 
 ```
 
-## Module core 
+## Module Core 
 
-
-main incubed module defining the interfaces for transport, verifier and storage.
+Main Incubed module defining the interfaces for transport, verifier, and storage.
 
 This module does not have any dependencies and cannot be used without additional modules providing verification and transport.
 
 ### cache.h
 
-handles caching and storage. 
+Handles caching and storage. 
 
-storing nodelists and other caches with the storage handler as specified in the client. If no storage handler is specified nothing will be cached. 
+Stores NodeLists and other caches with the storage handler as specified in the client. If no storage handler is specified, nothing will be cached.
 
 Location: src/core/client/cache.h
 
@@ -994,21 +975,20 @@ Location: src/core/client/cache.h
 in3_ret_t in3_cache_update_nodelist(in3_t *c, in3_chain_t *chain);
 ```
 
-reads the nodelist from cache. 
+Reads the NodeList from the cache. 
 
-This function is usually called internally to fill the weights and nodelist from the the cache. If you call `in3_cache_init` there is no need to call this explicitly. 
+This function is usually called internally to fill the weights and NodeList from the cache. If you call `in3_cache_init`, there is no need to call this explicitly.
 
 arguments:
 ```eval_rst
 =============================== =========== ==================
-`in3_t * <#in3-t>`_              **c**      the incubed client
+`in3_t * <#in3-t>`_              **c**      the Incubed client
 `in3_chain_t * <#in3-chain-t>`_  **chain**  chain to configure
 =============================== =========== ==================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_cache_store_nodelist
 
@@ -1016,27 +996,26 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_cache_store_nodelist(in3_ctx_t *ctx, in3_chain_t *chain);
 ```
 
-stores the nodelist to thes cache. 
+Stores the NodeList to the cache. 
 
-It will automaticly called if the nodelist has changed and read from the nodes or the wirght of a node changed. 
+It will automatically call if the NodeList or weight of a node has changed, then read from the nodes.
 
 arguments:
 ```eval_rst
 =============================== =========== ===========================
-`in3_ctx_t * <#in3-ctx-t>`_      **ctx**    the current incubed context
-`in3_chain_t * <#in3-chain-t>`_  **chain**  the chain upating to cache
+`in3_ctx_t * <#in3-ctx-t>`_      **ctx**    the current Incubed context
+`in3_chain_t * <#in3-chain-t>`_  **chain**  the chain updating to cache
 =============================== =========== ===========================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### client.h
 
-incubed main client file. 
+Incubed main client file. 
 
-This includes the definition of the client and used enum values. 
+This includes the definition of the client and used enum values.
 
 Location: src/core/client/client.h
 
@@ -1046,97 +1025,92 @@ Location: src/core/client/client.h
 #define IN3_PROTO_VER 0x2
 ```
 
-
 #### IN3_SIGN_ERR_REJECTED
 
-return value used by the signer if the the signature-request was rejected. 
+Return value used by the signer if the the signature-request was rejected.
 
 ```c
 #define IN3_SIGN_ERR_REJECTED -1
 ```
 
-
 #### IN3_SIGN_ERR_ACCOUNT_NOT_FOUND
 
-return value used by the signer if the requested account was not found. 
+Return value used by the signer if the requested account was not found.
 
 ```c
 #define IN3_SIGN_ERR_ACCOUNT_NOT_FOUND -2
 ```
 
-
 #### IN3_SIGN_ERR_INVALID_MESSAGE
 
-return value used by the signer if the message was invalid. 
+Return value used by the signer if the message was invalid.
 
 ```c
 #define IN3_SIGN_ERR_INVALID_MESSAGE -3
 ```
 
-
 #### IN3_SIGN_ERR_GENERAL_ERROR
 
-return value used by the signer for unspecified errors. 
+Return value used by the signer for unspecified errors. 
 
 ```c
 #define IN3_SIGN_ERR_GENERAL_ERROR -4
 ```
 
-
 #### in3_chain_type_t
 
-the type of the chain. 
+The type of chain. 
 
-for incubed a chain can be any distributed network or database with incubed support. Depending on this chain-type the previously registered verifyer will be choosen and used. 
+For Incubed, a chain can be any distributed network or database with Incubed support. Depending on the chain type, the previously registered verifier will be chosen and used.
 
 The enum type contains the following values:
 
 ```eval_rst
 ===================== = =================
- **CHAIN_ETH**        0 Ethereum chain.
+ **CHAIN_ETH**        0 Ethereum chain
  **CHAIN_SUBSTRATE**  1 substrate chain
- **CHAIN_IPFS**       2 ipfs verifiaction
- **CHAIN_BTC**        3 Bitcoin chain.
- **CHAIN_IOTA**       4 IOTA chain.
+ **CHAIN_IPFS**       2 IPFS verification
+ **CHAIN_BTC**        3 Bitcoin chain
+ **CHAIN_IOTA**       4 IOTA chain
  **CHAIN_GENERIC**    5 other chains
 ===================== = =================
 ```
 
 #### in3_proof_t
 
-the type of proof. 
+The type of proof. 
 
-Depending on the proof-type different levels of proof will be requested from the node. 
+Depending on the proof type, different levels of proof will be requested from the node.
 
 The enum type contains the following values:
 
 ```eval_rst
 ==================== = ==================================================
- **PROOF_NONE**      0 No Verification.
- **PROOF_STANDARD**  1 Standard Verification of the important properties.
- **PROOF_FULL**      2 All field will be validated including uncles.
+ **PROOF_NONE**      0 no verification
+ **PROOF_STANDARD**  1 standard verification of important properties
+ **PROOF_FULL**      2 all fields will be validated including uncles
 ==================== = ==================================================
 ```
 
 #### in3_verification_t
 
-verification as delivered by the server. 
+Verification as delivered by the server. 
 
-This will be part of the in3-request and will be generated based on the prooftype. 
+This will be part of the in3-request and will be generated based on the proof type. 
 
 The enum type contains the following values:
 
 ```eval_rst
 ======================================= = ===============================
- **VERIFICATION_NEVER**                 0 No Verifacation.
- **VERIFICATION_PROOF**                 1 Includes the proof of the data.
- **VERIFICATION_PROOF_WITH_SIGNATURE**  2 Proof + Signatures.
+ **VERIFICATION_NEVER**                 0 no verification
+ **VERIFICATION_PROOF**                 1 includes the proof of the data
+ **VERIFICATION_PROOF_WITH_SIGNATURE**  2 proof + signatures
 ======================================= = ===============================
 ```
 
 #### d_signature_type_t
 
-type of the requested signature 
+The type of requested signature.
 
 The enum type contains the following values:
 
@@ -1153,36 +1127,36 @@ The enum type contains the following values:
 
 ```eval_rst
 ==================== = ============================
- **FILTER_EVENT**    0 Event filter.
- **FILTER_BLOCK**    1 Block filter.
- **FILTER_PENDING**  2 Pending filter (Unsupported)
+ **FILTER_EVENT**    0 event filter.
+ **FILTER_BLOCK**    1 block filter.
+ **FILTER_PENDING**  2 pending filter (unsupported)
 ==================== = ============================
 ```
 
 #### in3_request_config_t
 
-the configuration as part of each incubed request. 
+The configuration as part of each Incubed request.
 
-This will be generated for each request based on the client-configuration. the verifier may access this during verification in order to check against the request. 
+This will be generated for each request based on the client configuration. The verifier may access this during verification to check against the request. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =========================================== ========================= ====================================================================
-``uint64_t``                                 **chainId**              the chain to be used. 
+``uint64_t``                                 **chainId**              the chain to be used
                                                                       
-                                                                      this is holding the integer-value of the hexstring.
-``uint8_t``                                  **includeCode**          if true the code needed will always be devlivered.
-``uint8_t``                                  **useFullProof**         this flaqg is set, if the proof is set to "PROOF_FULL"
-``uint8_t``                                  **useBinary**            this flaqg is set, the client should use binary-format
-`bytes_t * <#bytes-t>`_                      **verifiedHashes**       a list of blockhashes already verified. 
+                                                                      this is holding the integer-value of the hexstring
+``uint8_t``                                  **includeCode**          if true, the code needed will always be delivered
+``uint8_t``                                  **useFullProof**         this flaqg is set if the proof is set to "PROOF_FULL"
+``uint8_t``                                  **useBinary**            this flaqg is set; the client should use binary format
+`bytes_t * <#bytes-t>`_                      **verifiedHashes**       a list of blockhashes already verified
                                                                       
-                                                                      The Server will not send any proof for them again .
+                                                                      the server will not send any proof for them again
 ``uint16_t``                                 **verifiedHashesCount**  number of verified blockhashes
-``uint16_t``                                 **latestBlock**          the last blocknumber the nodelistz changed
-``uint16_t``                                 **finality**             number of signatures( in percent) needed in order to reach finality.
-`in3_verification_t <#in3-verification-t>`_  **verification**         Verification-type.
+``uint16_t``                                 **latestBlock**          the last blockNumber the NodeList changed
+``uint16_t``                                 **finality**             number of signatures (in percent) needed to reach finality
+
+`in3_verification_t <#in3-verification-t>`_  **verification**         verification type
 `bytes_t * <#bytes-t>`_                      **clientSignature**      the signature of the client with the client key
 `bytes_t * <#bytes-t>`_                      **signatures**           the addresses of servers requested to sign the blockhash
 ``uint8_t``                                  **signaturesCount**      number or addresses
@@ -1191,21 +1165,20 @@ The stuct contains following fields:
 
 #### in3_node_t
 
-incubed node-configuration. 
+Incubed node configuration. 
 
-These information are read from the Registry contract and stored in this struct representing a server or node. 
+This information is read from the registry contract and stored in this structure, representing a server or a node. 
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ======================= ============== ================================================================================================
-``uint32_t``             **index**     index within the nodelist, also used in the contract as key
+``uint32_t``             **index**     index within the NodeList, which is also used in the contract as a key
 `bytes_t * <#bytes-t>`_  **address**   address of the server
-``uint64_t``             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
-``uint32_t``             **capacity**  the maximal capacity able to handle
-``uint64_t``             **props**     a bit set used to identify the cabalilities of the server.
-``char *``               **url**       the url of the node
+``uint64_t``             **deposit**   the deposit stored in the registry contract, which this would lose if it's sent a wrong blockhash
+``uint32_t``             **capacity**  the maximum capacity able to handle
+``uint64_t``             **props**     a bit set used to identify the capabilities of the server
+``char *``               **url**       the URL of the node
 ======================= ============== ================================================================================================
 ```
 
@@ -1213,107 +1186,95 @@ The stuct contains following fields:
 
 Weight or reputation of a node. 
 
-Based on the past performance of the node a weight is calulcated given faster nodes a heigher weight and chance when selecting the next node from the nodelist. These weights will also be stored in the cache (if available) 
+Based on the past performance of the node, a weight is calculated and given faster nodes, a heigher weight, and a chance when selecting the next node from the NodeList. These weights will also be stored in the cache (if available).
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ============ ========================= ========================================
 ``float``     **weight**               current weight
 ``uint32_t``  **response_count**       counter for responses
 ``uint32_t``  **total_response_time**  total of all response times
-``uint64_t``  **blacklistedUntil**     if >0 this node is blacklisted until k. 
+``uint64_t``  **blacklistedUntil**     if >0 this node is blacklisted until k
                                        
-                                       k is a unix timestamp
+                                       k is a Unix timestamp
 ============ ========================= ========================================
 ```
 
 #### in3_chain_t
 
-Chain definition inside incubed. 
+Chain definition inside Incubed. 
 
-for incubed a chain can be any distributed network or database with incubed support. 
+For Incubed, a chain can be any distributed network or database with Incubed support. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =========================================== ==================== =================================================================================================================
-``uint64_t``                                 **chainId**         chainId, which could be a free or based on the public ethereum networkId
-`in3_chain_type_t <#in3-chain-type-t>`_      **type**            chaintype
-``uint64_t``                                 **lastBlock**       last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
-``bool``                                     **needsUpdate**     if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
-``int``                                      **nodeListLength**  number of nodes in the nodeList
+``uint64_t``                                 **chainId**         chainId, which could be free or based on the public Ethereum networkId
+`in3_chain_type_t <#in3-chain-type-t>`_      **type**            chain type
+``uint64_t``                                 **lastBlock**       last blockNumber the NodeList was updated to, which is used to detect changes in the NodeList
+``bool``                                     **needsUpdate**     if true, the NodeList should be updated and will trigger an `in3_nodeList`-request before the next request is sent
+``int``                                      **nodeListLength**  number of nodes in the NodeList
 `in3_node_t * <#in3-node-t>`_                **nodeList**        array of nodes
 `in3_node_weight_t * <#in3-node-weight-t>`_  **weights**         stats and weights recorded for each node
-`bytes_t ** <#bytes-t>`_                     **initAddresses**   array of addresses of nodes that should always part of the nodeList
+`bytes_t ** <#bytes-t>`_                     **initAddresses**   array of addresses of nodes that should always be part of the NodeList
 `bytes_t * <#bytes-t>`_                      **contract**        the address of the registry contract
 `bytes32_t <#bytes32-t>`_                    **registry_id**     the identifier of the registry
 ``uint8_t``                                  **version**         version of the chain
-`json_ctx_t * <#json-ctx-t>`_                **spec**            optional chain specification, defining the transaitions and forks
+`json_ctx_t * <#json-ctx-t>`_                **spec**            optional chain specification, defining the transactions and forks
 =========================================== ==================== =================================================================================================================
 ```
 
 #### in3_storage_get_item
 
-storage handler function for reading from cache. 
-
+Storage handler function for reading from cache.
 
 ```c
 typedef bytes_t*(* in3_storage_get_item) (void *cptr, char *key)
 ```
 
-returns: [`bytes_t *(*`](#bytes-t) : the found result. if the key is found this function should return the values as bytes otherwise `NULL`. 
-
-
-
+returns: [`bytes_t *(*`](#bytes-t), the found result. If the key is found, this function should return the values as bytes, otherwise `NULL`.
 
 #### in3_storage_set_item
 
-storage handler function for writing to the cache. 
-
+Storage handler function for writing to the cache. 
 
 ```c
 typedef void(* in3_storage_set_item) (void *cptr, char *key, bytes_t *value)
 ```
 
-
 #### in3_storage_handler_t
 
-storage handler to handle cache. 
+Storage handler to handle cache. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =============================================== ============== ============================================================
-`in3_storage_get_item <#in3-storage-get-item>`_  **get_item**  function pointer returning a stored value for the given key.
-`in3_storage_set_item <#in3-storage-set-item>`_  **set_item**  function pointer setting a stored value for the given key.
-``void *``                                       **cptr**      custom pointer which will will be passed to functions
+`in3_storage_get_item <#in3-storage-get-item>`_  **get_item**  function pointer returning a stored value for the given key
+`in3_storage_set_item <#in3-storage-set-item>`_  **set_item**  function pointer setting a stored value for the given key
+``void *``                                       **cptr**      custom pointer, which will be passed to functions
 =============================================== ============== ============================================================
 ```
 
 #### in3_sign
 
-signing function. 
+Signing function. 
 
-signs the given data and write the signature to dst. the return value must be the number of bytes written to dst. In case of an error a negativ value must be returned. It should be one of the IN3_SIGN_ERR... values. 
-
+Signs the given data and writes the signature to dst. The return value must be the number of bytes written to dst. In case of an error, a negative value must be returned. It should be one of the IN3_SIGN_ERR... values.
 
 ```c
 typedef in3_ret_t(* in3_sign) (void *wallet, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
 ```
 
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_signer_t
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ======================= ============ 
@@ -1324,16 +1285,15 @@ The stuct contains following fields:
 
 #### in3_response_t
 
-response-object. 
+Response object. 
 
-if the error has a length>0 the response will be rejected 
+If the error has a length>0, the response will be rejected.
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 =============== ============ ==================================
-`sb_t <#sb-t>`_  **error**   a stringbuilder to add any errors!
+`sb_t <#sb-t>`_  **error**   a stringbuilder to add any errors
 `sb_t <#sb-t>`_  **result**  a stringbuilder to add the result
 =============== ============ ==================================
 ```
@@ -7787,7 +7747,3 @@ arguments:
 ======================================= ========= 
 ```
 returns: `int` : 0 if added -1 if the value could not be handled. 
-
-
-
-
