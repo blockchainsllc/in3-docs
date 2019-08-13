@@ -1,6 +1,6 @@
 # Getting Started 
 
-Incubed can be used in different ways.
+Incubed can be used in different ways:
 
 ```eval_rst
 
