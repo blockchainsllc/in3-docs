@@ -141,7 +141,7 @@ Solution:
 
 Just like the light client there is not 100% protection from malicious servers. The only way to reach this would be to trust special authority nodes for signing the blockhash. For all other nodes, we must always assume they are trying to find ways to cheat.
 
-The risk of losing the deposit is significantly lower if the DataProvider node and the signing nodes are run by the same attacker. In this case, they will not only skip checks but also prepare the data, the proof, and a blockhash that matches the blockheader. If this is the only request and the client has no other anchor, they would accept a malicious response.
+The risk of losing the deposit is significantly lower if the DataProvider node and the signing nodes are run by the same attacker. In this case, they will not only skip checks but also prepare the data, the proof, and a blockhash that matches the blockheader. If this is the only request and the client had no other anchor, they would accept a malicious response.
 
 Depending on how many malicious nodes have registered themselves and are working together, the risk can be calculated. If 10% of all registered nodes would be run by an attacker (with the same deposit as the rest), the risk of getting a malicious response would be 1% with only one signature. The risk would go down to 0.006% with three signatures:
 
