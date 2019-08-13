@@ -28,6 +28,7 @@ Usage
                   :full: full verification 
 
 -np            short for ``-p none``
+-port          specifies the port to run incubed as a server. Opening port 8545 may replace a local parity or geth client.
 -s, -signs     number of signatures to use when verifying.
 -b, -block     the blocknumber to use when making calls. could be either ``latest`` (default),``earliest`` or a hexnumbner
 -pk            the private key as raw as keystorefile
@@ -55,12 +56,13 @@ From Binaries
 
 You can download the binaries here:
 
-- :download:`mac os <downloads/in3_osx>`.
-- :download:`win64 <downloads/in3.exe>`.
-- :download:`armv7 <downloads/in3_armv7>`.
-- :download:`armv7hf <downloads/in3_armv7hf>`.
-- :download:`linux_x86 <downloads/in3_x86>`.
-- :download:`linux_x64 <downloads/in3_x64>`.
+- :download:`mac os <downloads/osx/in3_osx>`.
+- :download:`win64 <downloads/win/in3.exe>`.
+- :download:`armv7 <downloads/armv7/in3_armv7>`.
+- :download:`armv7hf <downloads/armv7hf/in3_armv7hf>`.
+- :download:`linux_x86 <downloads/x86/in3_x86>`.
+- :download:`linux_x64 <downloads/x64/in3_x64>`.
+- :download:`in3.jar <downloads/in3.jar>`.
 - :download:`installer <downloads/install.sh>`.
 
 or just use this one-liner:
@@ -72,12 +74,7 @@ or just use this one-liner:
 From Sources
 ************
 
-Before building just make sure you have these components installed:
-
-- cmake ( should be installed as part of build-essential - ``apt-get install build-essential`` )
-- libcurl
-  for ubuntu use either ``sudo apt-get install libcurl4-gnutls-dev`` or ``apt-get install libcurl4-openssl-dev``
-- if libcurl can not be found conan is used to fetch and build curl.
+For Building from source, checkout the details https://in3.readthedocs.io/en/develop/api-c.html#requirements .
 
 .. code-block:: sh
 
@@ -87,24 +84,26 @@ Before building just make sure you have these components installed:
    # create build-folder
    cd in3-core
    mkdir build && cd build
-   cmake -DEVM_GAS=true -DCMAKE_BUILD_TYPE=Release .. && make in3
+   cmake -DCMAKE_BUILD_TYPE=Release .. && make in3
 
    # Install
    make install
 
+From Docker
+************
 
-When building from source cmake accepts the following flags:
+Incubed can be run as docker container. For this pull the container:
 
--DBUILD_DOC     if true doxygen is used to build the documentation (default: true)
--DDEBUG         if set additional DEBUG-outputs are generated (default: false)
--DEVM_GAS       if true the gas costs are verified when validating a ``eth_call``
+--- code-block:: sh
 
-                This is a optimization since a most call are only interessted in the result.
-                EVM_GAS would be required if the contract uses gas-dependend code.
+   # run a simple statement
+   docker run slockit/in3:latest eth_blockNumber
 
--DFAST_MATH     Enable math optimizations during ``eth_call``(excutable size may increase) (default: false)               
--DTEST          Enable test output and memory leak management, but slows down and should only be used for tests. (default: false)
--DWASM          If WASM is enabled, only the wasm module and its dependencies will be build. (default: false)
+   # to start it as a server
+   docker run -p 8545:8545 slockit/in3:latest -port 8545
+
+   # mount the cache in order to cache nodelists, validatorlists and contract code.
+   docker run -v $(pwd)/cache:/root/.in3 -p 8545:8545 slockit/in3:latest -port 8545
 
 
 Enviroment variables
@@ -170,6 +169,20 @@ As method, the following can be used:
 
            export IN3_PK=`in3 keystore mykeyfile.json` 
 
+
+Running as Server
+#################
+
+
+While you can use ``in3`` to execute a request, return a result and quit, you can also start it as a server using the specified port ( ``-port 8545`` ) to serve RPC-requests. 
+Thiss way you can replace your local parity or geth with a incubed client. All Dapps can then connect to http://localhost:8545. 
+
+.. code-block:: sh
+
+   # starts a server at the standard port for kovan.
+   in3 -c kovan -port 8545
+
+
 Cache
 #####
 
@@ -188,6 +201,8 @@ even though incubed does not need a configuration or set up and runs completly s
 
 
 Per default incubed will use ``~/.in3`` as folder to cache data. 
+
+If you run the docker container, you need to mount ``/root/.in3`` in to persist the cache.
 
 Signing
 #######

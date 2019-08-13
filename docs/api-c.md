@@ -63,12 +63,6 @@ build the comandline utils
 
 Type: `BOOL` , Default-Value: `ON`
 
-#### DEBUG
-
-Turns on Debug output in the code. This would be required if the tests should output additional debug infos.
-
-Type: `BOOL` , Default-Value: `OFF`
-
 #### EVM_GAS
 
 if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
@@ -79,7 +73,7 @@ Type: `BOOL` , Default-Value: `ON`
 
 build the examples.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL` , Default-Value: `ON`
 
 #### FAST_MATH
 
@@ -92,6 +86,12 @@ Type: `BOOL` , Default-Value: `OFF`
 build the USN-API which offer better interfaces and additional functions on top of the pure verification
 
 Type: `BOOL` , Default-Value: `ON`
+
+#### IN3_SERVER
+
+support proxy server
+
+Type: `BOOL` , Default-Value: `OFF`
 
 #### JAVA
 
@@ -108,6 +108,12 @@ Type: `BOOL` , Default-Value: `OFF`
 #### TRANSPORTS
 
 builds transports, which may require extra libraries.
+
+Type: `BOOL` , Default-Value: `ON`
+
+#### USE_CURL
+
+if true
 
 Type: `BOOL` , Default-Value: `ON`
 
@@ -386,7 +392,7 @@ returns: `uint64_t`
 uint64_t eth_gasPrice(in3_t *in3);
 ```
 
-returns the current blockNumber, if bn==0 an error occured and you should check 
+returns the current blockNumber, if bn==0 an error occured and you should check eth_last_error() 
 
 arguments:
 ```eval_rst
@@ -405,7 +411,7 @@ eth_block_t* eth_getBlockByNumber(in3_t *in3, uint64_t number, bool include_tx);
 
 returns the block for the given number (if number==0, the latest will be returned). 
 
-If result is null, check ,! otherwise make sure to free the result after using it! 
+If result is null, check eth_last_error()! otherwise make sure to free the result after using it! 
 
 arguments:
 ```eval_rst
@@ -426,7 +432,7 @@ eth_block_t* eth_getBlockByHash(in3_t *in3, bytes32_t hash, bool include_tx);
 
 returns the block for the given hash. 
 
-If result is null, check ,! otherwise make sure to free the result after using it! 
+If result is null, check eth_last_error()! otherwise make sure to free the result after using it! 
 
 arguments:
 ```eval_rst
@@ -447,7 +453,7 @@ eth_log_t* eth_getLogs(in3_t *in3, char *fopt);
 
 returns a linked list of logs. 
 
-If result is null, check ,! otherwise make sure to free the log, its topics and data after using it! 
+If result is null, check eth_last_error()! otherwise make sure to free the log, its topics and data after using it! 
 
 arguments:
 ```eval_rst
@@ -467,7 +473,7 @@ json_ctx_t* eth_call_fn(in3_t *in3, address_t contract, char *fn_sig,...);
 
 returns the result of a function_call. 
 
-If result is null, check ,! otherwise make sure to free the result after using it with ,! 
+If result is null, check eth_last_error()! otherwise make sure to free the result after using it with free_json()! 
 
 arguments:
 ```eval_rst
@@ -612,11 +618,11 @@ returns: `char *`
 long double as_double(uint256_t d);
 ```
 
-converts a , in a long double. 
+converts a uint256_t in a long double. 
 
 Important: since a long double stores max 16 byte, there is no garantee to have the full precision.
 
-converts a , in a long double. 
+converts a uint256_t in a long double. 
 
 arguments:
 ```eval_rst
@@ -633,11 +639,11 @@ returns: `long double`
 uint64_t as_long(uint256_t d);
 ```
 
-converts a , in a long . 
+converts a uint256_t in a long . 
 
 Important: since a long double stores 8 byte, this will only use the last 8 byte of the value.
 
-converts a , in a long . 
+converts a uint256_t in a long . 
 
 arguments:
 ```eval_rst
@@ -916,64 +922,6 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
-
-## Module bindings/java 
-
-
-set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.6" "-target" "1.6")
-
-### in3.h
-
-the entry-points for the shares library. 
-
-Location: src/bindings/java/in3.h
-
-#### in3_create
-
-```c
-in3_t* in3_create();
-```
-
-creates a new client 
-
-returns: [`in3_t *`](#in3-t)
-
-
-#### in3_send
-
-```c
-int in3_send(in3_t *c, char *method, char *params, char **result, char **error);
-```
-
-sends a request and stores the result in the provided buffer 
-
-arguments:
-```eval_rst
-=================== ============ 
-`in3_t * <#in3-t>`_  **c**       
-``char *``           **method**  
-``char *``           **params**  
-``char **``          **result**  
-``char **``          **error**   
-=================== ============ 
-```
-returns: `int`
-
-
-#### in3_dispose
-
-```c
-void in3_dispose(in3_t *a);
-```
-
-frees the references of the client 
-
-arguments:
-```eval_rst
-=================== ======= 
-`in3_t * <#in3-t>`_  **a**  
-=================== ======= 
-```
 
 ## Module cmd/in3 
 
@@ -4651,6 +4599,23 @@ arguments:
 returns: `int`
 
 
+#### uint256_set
+
+```c
+void uint256_set(uint8_t *src, wlen_t src_len, uint8_t dst[32]);
+```
+
+sets a variable value to 32byte word. 
+
+arguments:
+```eval_rst
+=================== ============= 
+``uint8_t *``        **src**      
+`wlen_t <#wlen-t>`_  **src_len**  
+``uint8_t``          **dst**      
+=================== ============= 
+```
+
 ## Module transport/curl 
 
 
@@ -5066,7 +5031,7 @@ arguments:
 ======================= =========== 
 ```
 
-## Module verifier/eth1/full 
+## Module verifier/eth1/evm 
 
 
 add gas-calculation
@@ -5077,7 +5042,7 @@ add dependency
 
 Ethereum Nanon verification. 
 
-Location: src/verifier/eth1/full/big.h
+Location: src/verifier/eth1/evm/big.h
 
 #### big_is_zero
 
@@ -5318,7 +5283,7 @@ returns: `int`
 
 code cache. 
 
-Location: src/verifier/eth1/full/code.h
+Location: src/verifier/eth1/evm/code.h
 
 #### in3_get_code
 
@@ -5336,43 +5301,14 @@ arguments:
 returns: [`cache_entry_t *`](#cache-entry-t)
 
 
-### eth_full.h
-
-Ethereum Nanon verification. 
-
-Location: src/verifier/eth1/full/eth_full.h
-
-#### in3_verify_eth_full
-
-```c
-int in3_verify_eth_full(in3_vctx_t *v);
-```
-
-entry-function to execute the verification context. 
-
-arguments:
-```eval_rst
-============================= ======= 
-`in3_vctx_t * <#in3-vctx-t>`_  **v**  
-============================= ======= 
-```
-returns: `int`
-
-
-#### in3_register_eth_full
-
-```c
-void in3_register_eth_full();
-```
-
-this function should only be called once and will register the eth-full verifier. 
-
-
 ### evm.h
 
 main evm-file. 
 
-Location: src/verifier/eth1/full/evm.h
+Location: src/verifier/eth1/evm/evm.h
+
+#### gas_options
+
 
 #### EVM_ERROR_EMPTY_STACK
 
@@ -5580,7 +5516,160 @@ stack limit reached
 ```
 
 
+#### MATH_ADD
+
+```c
+#define MATH_ADD 1
+```
+
+
+#### MATH_SUB
+
+```c
+#define MATH_SUB 2
+```
+
+
+#### MATH_MUL
+
+```c
+#define MATH_MUL 3
+```
+
+
+#### MATH_DIV
+
+```c
+#define MATH_DIV 4
+```
+
+
+#### MATH_SDIV
+
+```c
+#define MATH_SDIV 5
+```
+
+
+#### MATH_MOD
+
+```c
+#define MATH_MOD 6
+```
+
+
+#### MATH_SMOD
+
+```c
+#define MATH_SMOD 7
+```
+
+
+#### MATH_EXP
+
+```c
+#define MATH_EXP 8
+```
+
+
+#### MATH_SIGNEXP
+
+```c
+#define MATH_SIGNEXP 9
+```
+
+
+#### CALL_CALL
+
+```c
+#define CALL_CALL 0
+```
+
+
+#### CALL_CODE
+
+```c
+#define CALL_CODE 1
+```
+
+
+#### CALL_DELEGATE
+
+```c
+#define CALL_DELEGATE 2
+```
+
+
+#### CALL_STATIC
+
+```c
+#define CALL_STATIC 3
+```
+
+
+#### OP_AND
+
+```c
+#define OP_AND 0
+```
+
+
+#### OP_OR
+
+```c
+#define OP_OR 1
+```
+
+
+#### OP_XOR
+
+```c
+#define OP_XOR 2
+```
+
+
 #### EVM_DEBUG_BLOCK (...)
+
+
+#### OP_LOG (...)
+
+```c
+#define OP_LOG (...) EVM_ERROR_UNSUPPORTED_CALL_OPCODE
+```
+
+
+#### OP_SLOAD_GAS (...)
+
+
+#### OP_CREATE (...)
+
+```c
+#define OP_CREATE (...) EVM_ERROR_UNSUPPORTED_CALL_OPCODE
+```
+
+
+#### OP_ACCOUNT_GAS (...)
+
+```c
+#define OP_ACCOUNT_GAS (...) 0
+```
+
+
+#### OP_SELFDESTRUCT (...)
+
+```c
+#define OP_SELFDESTRUCT (...) EVM_ERROR_UNSUPPORTED_CALL_OPCODE
+```
+
+
+#### OP_EXTCODECOPY_GAS (evm)
+
+
+#### OP_SSTORE (...)
+
+```c
+#define OP_SSTORE (...) EVM_ERROR_UNSUPPORTED_CALL_OPCODE
+```
 
 
 #### EVM_CALL_MODE_STATIC
@@ -5716,6 +5805,8 @@ The stuct contains following fields:
 `bytes_t <#bytes-t>`_                  **call_value**        value send
 `bytes_t <#bytes-t>`_                  **call_data**         data send in the tx
 `bytes_t <#bytes-t>`_                  **gas_price**         current gasprice
+``uint64_t``                           **gas**               
+````                                   **gas_options**       
 ===================================== ====================== ======================================================
 ```
 
@@ -6053,6 +6144,8 @@ returns: `uint8_t`
 void uint256_set(uint8_t *src, wlen_t src_len, uint8_t dst[32]);
 ```
 
+sets a variable value to 32byte word. 
+
 arguments:
 ```eval_rst
 =================== ============= 
@@ -6062,11 +6155,26 @@ arguments:
 =================== ============= 
 ```
 
+#### evm_execute
+
+```c
+int evm_execute(evm_t *evm);
+```
+
+arguments:
+```eval_rst
+=================== ========= 
+`evm_t * <#evm-t>`_  **evm**  
+=================== ========= 
+```
+returns: `int`
+
+
 ### gas.h
 
 evm gas defines. 
 
-Location: src/verifier/eth1/full/gas.h
+Location: src/verifier/eth1/evm/gas.h
 
 #### op_exec (m,gas)
 
@@ -6242,7 +6350,7 @@ This is paid for an SSTORE operation when the storage value is set to non-zero f
 
 #### G_SRESET
 
-This is the amount for an SSTORE operation when the storage value’s zeroness remains unchanged or is set to zero. 
+This is the amount for an SSTORE operation when the storage value's zeroness remains unchanged or is set to zero. 
 
 ```c
 #define G_SRESET 5000
@@ -6404,7 +6512,7 @@ This is a partial payment for a LOG operation.
 
 #### G_LOGDATA
 
-This is paid for each byte in a LOG operation’s data. 
+This is paid for each byte in a LOG operation's data. 
 
 ```c
 #define G_LOGDATA 8
@@ -6600,6 +6708,83 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 ```c
 #define FRONTIER_G_SLOAD 50
 ```
+
+
+#### FREE_EVM (...)
+
+
+#### INIT_EVM (...)
+
+
+#### INIT_GAS (...)
+
+
+#### SUBGAS (...)
+
+
+#### FINALIZE_SUBCALL_GAS (...)
+
+
+#### UPDATE_SUBCALL_GAS (...)
+
+
+#### FINALIZE_AND_REFUND_GAS (...)
+
+
+#### KEEP_TRACK_GAS (evm)
+
+```c
+#define KEEP_TRACK_GAS (evm) 0
+```
+
+
+#### SELFDESTRUCT_GAS (evm,g)
+
+```c
+#define SELFDESTRUCT_GAS (evm,g) EVM_ERROR_UNSUPPORTED_CALL_OPCODE
+```
+
+
+#### UPDATE_ACCOUNT_CODE (...)
+
+
+## Module verifier/eth1/full 
+
+
+add gas-calculation
+ADD_DEFINITIONS(-DEVM_GAS)
+add dependency
+
+### eth_full.h
+
+Ethereum Nanon verification. 
+
+Location: src/verifier/eth1/full/eth_full.h
+
+#### in3_verify_eth_full
+
+```c
+int in3_verify_eth_full(in3_vctx_t *v);
+```
+
+entry-function to execute the verification context. 
+
+arguments:
+```eval_rst
+============================= ======= 
+`in3_vctx_t * <#in3-vctx-t>`_  **v**  
+============================= ======= 
+```
+returns: `int`
+
+
+#### in3_register_eth_full
+
+```c
+void in3_register_eth_full();
+```
+
+this function should only be called once and will register the eth-full verifier. 
 
 
 ## Module verifier/eth1/nano 

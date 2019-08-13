@@ -10,6 +10,10 @@ like
 ```c
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
+### Downloading
+
+Just download the latest jar-file [here](_downloads/in3.jar).
+
 ### Building
 
 For building the shared library you need to enable java by using the `-DJAVA=true` flag:
@@ -213,7 +217,8 @@ public class Example {
         String myPassphrase = "<secrect>";
 
         // read the keyfile and decoded the private key
-        String account = wallet.addKeyStore(new String(Files.readAllBytes(Paths.get(keyFile)), StandardCharsets.UTF_8),
+        String account = wallet.addKeyStore(
+                Files.readString(Paths.get(keyFile)),
                 myPassphrase);
 
         // use the wallet as signer
