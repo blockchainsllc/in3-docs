@@ -5,7 +5,7 @@ The same applies to other blockchains, whether based on Ethereum or not.
 While current notebooks or desktop computers with a broadband Internet connection are able to run a full node without any problems, smaller devices such as
 tablets and smartphones with less powerful hardware or more restricted Internet connection are capable of running a light node. However, many IoT
 devices are severely limited in terms of computing capacity, connectivity and often also power supply. Connecting an IoT device to a remote node
-enables even low-performance devices to be connected to blockchain. By using distinct remote nodes, the advantages of a decentralized network are underminded without being
+enables even low-performance devices to be connected to blockchain. By using distinct remote nodes, the advantages of a decentralized network are undermined without being
 forced to trust single players or there is a risk of malfunction or attack because there is a single point of failure.
 
 With the presented Trustless Incentivized Remote Node Network, in short INCUBED, it will be possible to establish a decentralized and secure network of remote nodes, which enables trustworthy and fast access to blockchain for a large number of low-performance IoT devices.
