@@ -61,7 +61,7 @@ const block = await web.eth.getBlockByNumber('latest')
 
 Incubed includes a light API, allowing the ability to not only use all RPC methods in a type-safe way but also sign transactions and call functions of a contract without the Web3 library.
 
-For more details, see the API doc (https://github.com/slockit/in3/blob/master/docs/api.md#type-api).
+For more details, see the [API doc](https://github.com/slockit/in3/blob/master/docs/api.md#type-api).
 
 ```js
 
@@ -249,65 +249,65 @@ Currently, Incubed is deployed on the following chains:
 
 ### Mainnet
 
-Registry: [0x2736D225f85740f42D17987100dc8d58e9e16252] (https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
+Registry: [0x2736D225f85740f42D17987100dc8d58e9e16252](https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
 
 ChainId: 0x1 (alias `mainnet`)        
 
-Status: [https://in3.slock.it?n=mainnet] (https://in3.slock.it?n=mainnet)    
+Status: [https://in3.slock.it?n=mainnet](https://in3.slock.it?n=mainnet)    
 
-NodeList: [https://in3.slock.it/mainnet/nd-3] (https://in3.slock.it/mainnet/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/mainnet/nd-3](https://in3.slock.it/mainnet/nd-3/api/in3_nodeList) 
 
 ### Kovan
 
-Registry: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1] (https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
+Registry: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1](https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
 
 ChainId: 0x2a (alias `kovan`)    
 
-Status: [https://in3.slock.it?n=kovan] (https://in3.slock.it?n=kovan)    
+Status: [https://in3.slock.it?n=kovan](https://in3.slock.it?n=kovan)    
 
-NodeList: [https://in3.slock.it/kovan/nd-3] (https://in3.slock.it/kovan/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/kovan/nd-3](https://in3.slock.it/kovan/nd-3/api/in3_nodeList) 
 
 ### Tobalaba
 
-Registry: [0x845E484b505443814B992Bf0319A5e8F5e407879] (https://eth.slock.it/#/tobalaba/0x845E484b505443814B992Bf0319A5e8F5e407879)    
+Registry: [0x845E484b505443814B992Bf0319A5e8F5e407879](https://eth.slock.it/#/tobalaba/0x845E484b505443814B992Bf0319A5e8F5e407879)    
 
 ChainId: 0x44d (alias `tobalaba`)    
 
-Status: [https://in3.slock.it?n=tobalaba] (https://in3.slock.it?n=tobalaba)    
+Status: [https://in3.slock.it?n=tobalaba](https://in3.slock.it?n=tobalaba)    
 
-NodeList: [https://in3.slock.it/tobalaba/nd-3] (https://in3.slock.it/tobalaba/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/tobalaba/nd-3](https://in3.slock.it/tobalaba/nd-3/api/in3_nodeList) 
 
 
 ### Evan
 
-Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e] (https://eth.slock.it/#/evan/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
+Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/evan/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
 
 ChainId: 0x4b1 (alias `evan`)    
 
-Status: [https://in3.slock.it?n=evan] (https://in3.slock.it?n=evan)    
+Status: [https://in3.slock.it?n=evan](https://in3.slock.it?n=evan)    
 
-NodeList: [https://in3.slock.it/evan/nd-3] (https://in3.slock.it/evan/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/evan/nd-3](https://in3.slock.it/evan/nd-3/api/in3_nodeList) 
 
 ### Görli
 
-Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e] (https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
+Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
 
 ChainId: 0x5 (alias `goerli`)    
 
 
-Status: [https://in3.slock.it?n=goerli] (https://in3.slock.it?n=goerli)    
+Status: [https://in3.slock.it?n=goerli](https://in3.slock.it?n=goerli)    
 
-NodeList: [https://in3.slock.it/goerli/nd-3] (https://in3.slock.it/goerli/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/goerli/nd-3](https://in3.slock.it/goerli/nd-3/api/in3_nodeList) 
 
 ### IPFS
 
-Registry: [0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9] (https://eth.slock.it/#/kovan/0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9)    
+Registry: [0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9](https://eth.slock.it/#/kovan/0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9)    
 
 ChainId: 0x7d0 (alias `ipfs`)    
 
-Status: [https://in3.slock.it?n=ipfs] (https://in3.slock.it?n=ipfs)    
+Status: [https://in3.slock.it?n=ipfs](https://in3.slock.it?n=ipfs)    
 
-NodeList: [https://in3.slock.it/ipfs/nd-3] (https://in3.slock.it/ipfs/nd-3/api/in3_nodeList) 
+NodeList: [https://in3.slock.it/ipfs/nd-3](https://in3.slock.it/ipfs/nd-3/api/in3_nodeList) 
 
 ## Registering an Incubed Node
 
