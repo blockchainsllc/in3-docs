@@ -113,12 +113,12 @@ Python script to create test plan:
 Considerations
 ##############
 
- - When the in3 benchmark is run on a new server, create a baseline before applying any changes
- - Run the same benchmark test with the new codebase, test for performance gains
- - The tests can be modified to include number of users and duration of the test. For a stress test, choose 200 users and a test duration of 500 seconds or more. 
- - When running in an EC2 instance, up to 500 users can be simulated without issues. Running in GUI mode reduces this number. 
- - A beneficial method for running the test is to slowly ramp up the user count, start with a test of 10 users for 120 seconds in order to test basic stability. Work your way up to 200 users and longer durations. 
- - Parity might often be the bottleneck, you can confirm this by using the get_avg_stddev_in3_response.sh script in the scripts directory of the in3-test repo. This would help show what optimizations are needed
+ - When the Incubed benchmark is run on a new server, create a baseline before applying any changes.
+ - Run the same benchmark test with the new codebase, test for performance gains.
+ - The tests can be modified to include the number of users and duration of the test. For a stress test, choose 200 users and a test duration of 500 seconds or more. 
+ - When running in an EC2 instance, up to 500 users can be simulated without issues. Running in GUI mode reduces this number.
+ - A beneficial method for running the test is to slowly ramp up the user count. Start with a test of 10 users for 120 seconds in order to test basic stability. Work your way up to 200 users and longer durations. 
+ - Parity might often be the bottleneck; you can confirm this by using the get_avg_stddev_in3_response.sh script in the scripts directory of the in3-test repo. This would help show what optimizations are needed.
 
 Results/Baseline
 ################
