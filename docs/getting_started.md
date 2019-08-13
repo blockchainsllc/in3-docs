@@ -12,7 +12,7 @@ Table
 | TS/JS                 | 2.7 MB (browserified) | TypeScript                          | Web application (client in the browser) or mobile application                               |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | C/C++                 | 200 KB                | C                                   | IoT devices can be integrated nicely on many micro controllers                             |
-|                       |                      |                                     | (like [Zephyr-supported boards](https://docs.zephyrproject.org/latest/boards/index.html)) |
+|                       |                      |                                     | (like Zephyr-supported boards (https://docs.zephyrproject.org/latest/boards/index.html)) |
 |                       |                      |                                     | or any other C/C++ application                                                            |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Java                  | 205 KB                | C                                   | Java implementation of a native wrapper                                                     |
