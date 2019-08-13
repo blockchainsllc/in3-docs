@@ -9,18 +9,18 @@ table
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Stack                 | Size                 | Code Base                           | Use Case                                                                                    |
 +=======================+======================+=====================================+=============================================================================================+
-| TS/JS                 | 2.7MB (browserified) | TypeScript                          | WebApplication (Client in the Browser) or Mobile Applications                               |
+| TS/JS                 | 2.7MB (browserified) | TypeScript                          | Web application (client in the browser) or mobile applications                               |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| C/C++                 | 200kB                | C                                   | IoT-Devices, can be integrated nicely on many micro controllers                             |
+| C/C++                 | 200kB                | C                                   | IoT devices can be integrated nicely on many micro controllers                             |
 |                       |                      |                                     | (like [zephyr-supported boards] (https://docs.zephyrproject.org/latest/boards/index.html) ) |
-|                       |                      |                                     | or anny other C/C++ -Application                                                            |
+|                       |                      |                                     | or any other C/C++ application                                                            |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Java                  | 205kB                | C                                   | Java-Implementation of a native-wrapper                                                     |
+| Java                  | 205kB                | C                                   | Java implementation of a native wrapper                                                     |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Docker                | 74MB                 | TypeScript                          | For replacing existing clients with this docker and connect to incubed via localhost:8545   |
 |                       |                      |                                     | without the need to change the architecture                                                 |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| bash                  | 200kB                | C                                   | the commandline utils can be used directly as executable within bash-script or on the shell |
+| bash                  | 200kB                | C                                   | The command-line utilities can be used directly as executable within Bash script or on the shell |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 ```
 
