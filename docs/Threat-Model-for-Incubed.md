@@ -14,12 +14,12 @@ Solutions:
 
 > But I think the best way is the following:
 > Allow nodes to commit to stay in the registry for a fixed amount of time. In that time, they cannot withdraw their funds.
-> Client will most likely look first for those, especially those who only occasionally need data from the chain.
+> The client will most likely look for those first, especially those who only occasionally need data from the chain.
  
 > SIM: Yes, this could help, but it only protects from regular unregistering. If you convict a server, then this timeout does not help.
 
 > To remove this issue completely, you would need a trusted authority where you could update the NodeList first.
-> But for the 100% decentralized way, you can only reduce it by asking multiple servers. Since they will also pass the latest block number when the NodeList changed, the client will find out that it needs to update the NodeList, and by having multiple requests in parallel, it reduces the risk of relying on a manipulated NodeList. The malicious server may return a correct NodeList for an older block when this server was still valid and even get signatures for this, but the server cannot do so for a newer block number, which can only be found out by asking as many servers an needed.
+> But for the 100% decentralized way, you can only reduce it by asking multiple servers. Since they will also pass the latest block number when the NodeList changed, the client will find out that it needs to update the NodeList, and by having multiple requests in parallel, it reduces the risk of relying on a manipulated NodeList. The malicious server may return a correct NodeList for an older block when this server was still valid and even get signatures for this, but the server cannot do so for a newer block number, which can only be found out by asking as many servers as needed.
 
 > Another point is that as long as the signature does not come from the same server, the DataProvider will always check, so even if you request a signature from a server that is not part of the list anymore, the DataProvider will reject this. To use this attack, both the DataProvider and the BlockHashSigner must work together to provide a proof that matches the wrong blockhash.
 
