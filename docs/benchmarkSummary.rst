@@ -2,7 +2,7 @@
 Benchmarks
 **********
 
-These benchmarktests aim to test the Incubed version for stability and performance on the server. As a result, we can estimate the resources needed to serve many clients.
+These benchmark tests aim to test the Incubed version for stability and performance on the server. As a result, we can estimate the resources needed to serve many clients.
 
 
 Setup and Tools
