@@ -123,8 +123,8 @@ Considerations
 Results/Baseline
 ################
 
- - The baseline test was done with our existing server running multiple docker containers, it is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
- - The baseline for our current system is given below, this system has multithreading enabled and has been tested with ethCalls included in the test plan. 
+ - The baseline test was done with our existing server running multiple docker containers. It is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
+ - The baseline for our current system is given below. This system has multithreading enabled and has been tested with ethCalls included in the test plan. 
  
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
 | Users/duration | Number of requests | tps | getBlockByHash (ms) | getBlockByNumber (ms) | getTransactionHash (ms) | getTransactionReceipt (ms) | EthCall(ms) | eth_getStorage (ms) | Notes                                                                                                                |
