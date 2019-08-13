@@ -109,7 +109,7 @@ The application would then accept the following arguments:
         the limit of nodes to store in the client.
 
     --keepIn3
-        if true, the in3-section of the response will be kept. Otherwise, it will be removed after validating the data. This is useful for debugging or if the proof should be used afterward.
+        if true, the in3-section of the response will be kept. Otherwise, it will be removed after validating the data. This is useful for debugging or if the proof is used afterward.
 
     --format
         the format for sending the data to the client. Default is JSON, but using CBOR means using only 30-40% of the payload since it uses binary encoding.
