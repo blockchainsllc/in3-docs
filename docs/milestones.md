@@ -6,7 +6,7 @@ Incubed implements 2 versions:
 
 ## V1.2 Stable - Q3 2019
 
-The first stable release, which was published after devcon. It contains full verification of all relevant ethereum rpc-calls (except eth_call for eWasm-Contracts), but no payment or incentivisation included yet.
+This was the first stable release, which was published after devcon. It contains full verification of all relevant ethereum rpc-calls (except eth_call for eWasm-Contracts), but no payment or incentivisation included yet.
 
 - **Failsafe Connection** - The Incubed client will connect to any ethereum-blockchain (providing in3-servers) by randomly selecting nodes within the Incubed-network and automatically retry with different nodes, if the node cannot be reached or delivers verifiable responses.
 - **Reputation Management** - Nodes which are not available will be automatically temporarily blacklisted and loose repuatation. The selection of a node is based on the weight (or performance) of the node and its availability. 
