@@ -211,7 +211,9 @@ More details coming soon...
 
 The Java implementation uses a wrapper of the C implemenation. That's why you need to make sure the libin3.so, in3.dll, or libin3.dylib can be found in the java.library.path. For example:
 
+```
 java -Djava.library.path="path_to_in3;${env_var:PATH}" HelloIN3.class
+```
 
 ```java
 import org.json.*;
