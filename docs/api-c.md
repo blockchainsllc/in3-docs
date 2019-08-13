@@ -2,7 +2,7 @@
 
 ## Overview
 
-The C implementation of the Incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules that should be combined. This allows us to only generate the code needed and reduce the requirements for flash and memory.
+The C implementation of the Incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules that should be combined. This allows us to only generate the code needed and reduce requirements for flash and memory.
 
 This is why Incubed consists of different modules. While the core module is always required, additional functions will be prepared by different modules:
 
@@ -18,34 +18,30 @@ Depending on the module, you need to register the verifier before using it. This
 
 ### Transport
 
-To verify responses, you need to be able to send requests. The way to handle them depends heavily on your hardware capabilities. For example, if your device only supports Bluetooth, you may use this connection to deliver the request to a device with an existing internet connection and get the response in the same way, but if your device is able to use a direct internet connection, you may use a curl-library to execute them. This is why the core client only defines a function pointer [in3_transport_send](#in3-transport-send), which must handle the requests.
+To verify responses, you need to be able to send requests. The way to handle them depends heavily on your hardware capabilities. For example, if your device only supports Bluetooth, you may use this connection to deliver the request to a device with an existing internet connection and get the response in the same way, but if your device is able to use a direct internet connection, you may use a curl-library to execute them. This is why the core client only defines function pointer [in3_transport_send](#in3-transport-send), which must handle the requests.
 
-At the moment we offer these modules, other implementation by supported inside different hardware-modules.
+At the moment we offer these modules; other implementations are supported by different hardware modules.
 
-- [curl](#module-transport-curl) : module with a dependency to curl which executes these requests with curl, also supporting HTTPS. This modules is supposed to run an standard os with curl installed.
+1. [curl](#module-transport-curl): module with a dependency on curl, which executes these requests and supports HTTPS. This module runs a standard OS with curl installed.
 
 ### API
 
-While incubed operates on JSON-RPC-Level, as a developer you might want to use a better structed API preparing these requests for you. These APIs are optional but make life easier:
+While Incubed operates on JSON-RPC level, as a developer, you might want to use a better-structured API to prepare these requests for you. These APIs are optional but make life easier:
 
-- [**eth**](#module-eth-api) : This module offers all standard RPC-Functions as descriped in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition it allows you to sign and encode/decode calls and transactions.
-- [**usn**](#module-usn-api) : This module offers basic USN-function like renting or event-handling and message-verifaction.
-
-
-
+1. [**eth**](#module-eth-api): This module offers all standard RPC functions as descriped in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition, it allows you to sign and encode/decode calls and transactions.
+2. [**usn**](#module-usn-api): This module offers basic USN functions like renting, event handling, and message verification.
 
 ## Building
 
-While we provide binaries (TODO put link to releases), you can also build from source:
+While we provide binaries, you can also build from source:
 
-### requirements
+### Requirements
 
-- cmake
-- curl : curl is used as transport for the comandline-tools
-- optional: libsycrypt, which would be used for unlocking keystore files using `scrypt` as kdf method. if it does not exist you can still build, but not decrypt such keys. 
+1. CMake
+2. Curl: curl is used as transport for command-line tools.
+3. Optional: libscrypt, which would be used for unlocking keystore files using `scrypt` as KDF method. If it does not exist, you can still build, but it does not decrypt such keys. 
 
-
- for osx `brew install libscrypt` and for debian `sudo apt-get install libscrypt-dev`
+For osx `brew install libscrypt` and for debian `sudo apt-get install libscrypt-dev`.
 
 Incubed uses cmake for configuring:
 
@@ -54,80 +50,77 @@ mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release .. && make
 make install
 ```
-### CMake options
+### CMake Options
 
 #### CMD
 
-build the comandline utils
+Builds the command-line utilities.
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL`, Default-Value: `ON`
 
 #### DEBUG
 
-Turns on Debug output in the code. This would be required if the tests should output additional debug infos.
+Turns on debug output in the code. This would be required if the tests should output additional debug info.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL`, Default-Value: `OFF`
 
 #### EVM_GAS
 
-if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
+If true, the gas costs are verified when validating an eth_call. This is an optimization since most calls are only interested in the result. EVM_GAS would be required if the contract used gas-dependent opcodes.
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL`, Default-Value: `ON`
 
 #### EXAMPLES
 
-build the examples.
+Builds the examples.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL`, Default-Value: `OFF`
 
 #### FAST_MATH
 
-Math optimizations used in the EVM. This will also increase the filesize.
+Math optimizations used in the EVM. This will also increase the file size.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL`, Default-Value: `OFF`
 
 #### IN3API
 
-build the USN-API which offer better interfaces and additional functions on top of the pure verification
+Builds the USN-API, which offers better interfaces and additional functions on top of pure verification.
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL`, Default-Value: `ON`
 
 #### JAVA
 
-build the java-binding (shared-lib and jar-file)
+Builds the java-binding (shared-lib and jar-file).
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL`, Default-Value: `OFF`
 
 #### TEST
 
-builds the tests and also adds special memory-management, which detects memory leaks, but will cause slower performance
+Builds the tests and also adds special memory management, which detects memory leaks but will cause slower performance.
 
-Type: `BOOL` , Default-Value: `OFF`
+Type: `BOOL`, Default-Value: `OFF`
 
 #### TRANSPORTS
 
-builds transports, which may require extra libraries.
+Builds transports, which may require extra libraries.
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL`, Default-Value: `ON`
 
 #### WASM
 
-Includes the WASM-Build. In order to build it you need emscripten as toolchain. Usually you also want to turn off other builds in this case.
+Includes the WASM-Build. To build it, you need Emscripten as your toolchain. You usually also want to turn off other builds in this case.
 
-Type: `BOOL` , Default-Value: `OFF` 
-
-
-
+Type: `BOOL`, Default-Value: `OFF` 
 
 ## Examples
 
-### creating a incubed instance
+### Creating an Incubed Instance
 
-creating always follow these steps:
+Creating always follow these steps:
 
 ```c
 #include <client/client.h> // the core client
-#include <eth_full.h>      // the full ethereum verifier containing the EVM
+#include <eth_full.h>      // the full Ethereum verifier containing the EVM
 #include <in3_curl.h>      // transport implementation
 
 // register verifiers, in this case a full verifier allowing eth_call
@@ -151,7 +144,8 @@ in3_cache_init(client);
 
 // ready to use ...
 ```
-### calling a function
+
+### Calling a Function
 
 ```c
 // define a address (20byte)
@@ -191,7 +185,7 @@ for (int i = 0; i < number_of_servers; i++) {
   }
 
   // decode data
-  char*    url     = d_get_string_at(response->result, 0); // get the first item of the result (the url)
+  char*    url     = d_get_string_at(response->result, 0); // get the first item of the result (the URL)
   bytes_t* owner   = d_get_bytes_at(response->result, 1);  // get the second item of the result (the owner)
   uint64_t deposit = d_get_long_at(response->result, 2);   // get the third item of the result (the deposit)
 
@@ -205,42 +199,36 @@ for (int i = 0; i < number_of_servers; i++) {
 }
 ```
 
-
-
-## Module api/eth1 
-
-
-
+## Module API/eth1 
 
 ### eth_api.h
 
 Ethereum API. 
 
-This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
+This header-file defines prepares the JSON-RPC request, which is then executed and verified by the Incubed client.
 
 Location: src/api/eth1/eth_api.h
 
 #### eth_tx_t
 
-a transaction 
+A transaction. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ========================= ======================= =========================================
 `bytes32_t <#bytes32-t>`_  **hash**               the blockhash
-`bytes32_t <#bytes32-t>`_  **block_hash**         hash of ther containnig block
+`bytes32_t <#bytes32-t>`_  **block_hash**         hash of the containing block
 ``uint64_t``               **block_number**       number of the containing block
-`address_t <#address-t>`_  **from**               sender of the tx
-``uint64_t``               **gas**                gas send along
+`address_t <#address-t>`_  **from**               sender of the transaction
+``uint64_t``               **gas**                gas sent along
 ``uint64_t``               **gas_price**          gas price used
-`bytes_t <#bytes-t>`_      **data**               data send along with the transaction
+`bytes_t <#bytes-t>`_      **data**               data sent along with the transaction
 ``uint64_t``               **nonce**              nonce of the transaction
 `address_t <#address-t>`_  **to**                 receiver of the address 0x0000. 
                                                   
-                                                  . -Address is used for contract creation.
-`uint256_t <#uint256-t>`_  **value**              the value in wei send
+                                                  Address is used for contract creation.
+`uint256_t <#uint256-t>`_  **value**              the value in wei sent
 ``int``                    **transaction_index**  the transaction index
 ``uint8_t``                **signature**          signature of the transaction
 ========================= ======================= =========================================
@@ -248,10 +236,9 @@ The stuct contains following fields:
 
 #### eth_block_t
 
-a Ethereum Block 
+An Ethereum block.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =========================== ======================= ====================================================
@@ -259,9 +246,9 @@ The stuct contains following fields:
 `bytes32_t <#bytes32-t>`_    **hash**               the blockhash
 ``uint64_t``                 **gasUsed**            gas used by all the transactions
 ``uint64_t``                 **gasLimit**           gasLimit
-`address_t <#address-t>`_    **author**             the author of the block.
-`uint256_t <#uint256-t>`_    **difficulty**         the difficulty of the block.
-`bytes_t <#bytes-t>`_        **extra_data**         the extra_data of the block.
+`address_t <#address-t>`_    **author**             the author of the block
+`uint256_t <#uint256-t>`_    **difficulty**         the difficulty of the block
+`bytes_t <#bytes-t>`_        **extra_data**         the extra_data of the block
 ``uint8_t``                  **logsBloom**          the logsBloom-data
 `bytes32_t <#bytes32-t>`_    **parent_hash**        the hash of the parent-block
 `bytes32_t <#bytes32-t>`_    **sha3_uncles**        root hash of the uncle-trie
@@ -271,32 +258,31 @@ The stuct contains following fields:
 ``int``                      **tx_count**           number of transactions in the block
 `eth_tx_t * <#eth-tx-t>`_    **tx_data**            array of transaction data or NULL if not requested
 `bytes32_t * <#bytes32-t>`_  **tx_hashes**          array of transaction hashes or NULL if not requested
-``uint64_t``                 **timestamp**          the unix timestamp of the block
+``uint64_t``                 **timestamp**          the Unix timestamp of the block
 `bytes_t * <#bytes-t>`_      **seal_fields**        sealed fields
-``int``                      **seal_fields_count**  number of seal fields
+``int``                      **seal_fields_count**  number of sealed fields
 =========================== ======================= ====================================================
 ```
 
 #### eth_log_t
 
-a linked list of Ethereum Logs 
+A linked list of Ethereum logs.
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 =============================== ======================= ==============================================================
-``bool``                         **removed**            true when the log was removed, due to a chain reorganization. 
+``bool``                         **removed**            true when the log was removed, due to a chain reorganization
                                                         
-                                                        false if its a valid log
+                                                        false if it's a valid log
 ``size_t``                       **log_index**          log index position in the block
-``size_t``                       **transaction_index**  transactions index position log was created from
+``size_t``                       **transaction_index**  transaction index position the log was created from
 `bytes32_t <#bytes32-t>`_        **transaction_hash**   hash of the transactions this log was created from
 `bytes32_t <#bytes32-t>`_        **block_hash**         hash of the block where this log was in
 ``uint64_t``                     **block_number**       the block number where this log was in
 `address_t <#address-t>`_        **address**            address from which this log originated
 `bytes_t <#bytes-t>`_            **data**               non-indexed arguments of the log
-`bytes32_t * <#bytes32-t>`_      **topics**             array of 0 to 4 32 Bytes DATA of indexed log arguments
+`bytes32_t * <#bytes32-t>`_      **topics**             array of 0 to 4 32 bytes DATA of indexed log arguments
 ``size_t``                       **topic_count**        counter for topics
 `eth_logstruct , * <#eth-log>`_  **next**               pointer to next log in list or NULL
 =============================== ======================= ==============================================================
@@ -308,7 +294,7 @@ The stuct contains following fields:
 uint256_t eth_getStorageAt(in3_t *in3, address_t account, bytes32_t key, uint64_t block);
 ```
 
-returns the storage value of a given address. 
+Returns the storage value of a given address. 
 
 arguments:
 ```eval_rst
@@ -321,16 +307,15 @@ arguments:
 ```
 returns: [`uint256_t`](#uint256-t)
 
-
 #### eth_getCode
 
 ```c
 bytes_t eth_getCode(in3_t *in3, address_t account, uint64_t block);
 ```
 
-returns the code of the account of given address. 
+Returns the code of the account of a given address.
 
-(Make sure you free the data-point of the result after use.) 
+(Make sure you free the data point of the result after use.) 
 
 arguments:
 ```eval_rst
@@ -342,14 +327,13 @@ arguments:
 ```
 returns: [`bytes_t`](#bytes-t)
 
-
 #### eth_getBalance
 
 ```c
 uint256_t eth_getBalance(in3_t *in3, address_t account, uint64_t block);
 ```
 
-returns the balance of the account of given address. 
+Returns the balance of the account of a given address. 
 
 arguments:
 ```eval_rst
@@ -361,14 +345,13 @@ arguments:
 ```
 returns: [`uint256_t`](#uint256-t)
 
-
 #### eth_blockNumber
 
 ```c
 uint64_t eth_blockNumber(in3_t *in3);
 ```
 
-returns the current price per gas in wei. 
+Returns the current price per gas in wei.
 
 arguments:
 ```eval_rst
@@ -377,7 +360,6 @@ arguments:
 =================== ========= 
 ```
 returns: `uint64_t`
-
 
 #### eth_gasPrice
 
@@ -385,7 +367,7 @@ returns: `uint64_t`
 uint64_t eth_gasPrice(in3_t *in3);
 ```
 
-returns the current blockNumber, if bn==0 an error occured and you should check 
+Returns the current blockNumber. If bn==0, an error occured and you should check.
 
 arguments:
 ```eval_rst
@@ -395,16 +377,15 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### eth_getBlockByNumber
 
 ```c
 eth_block_t* eth_getBlockByNumber(in3_t *in3, uint64_t number, bool include_tx);
 ```
 
-returns the block for the given number (if number==0, the latest will be returned). 
+Returns the block for the given number (if number==0, the latest will be returned).
 
-If result is null, check ,! otherwise make sure to free the result after using it! 
+If result is null, check. Otherwise, make sure to free the result after using it!
 
 arguments:
 ```eval_rst
@@ -416,16 +397,15 @@ arguments:
 ```
 returns: [`eth_block_t *`](#eth-block-t)
 
-
 #### eth_getBlockByHash
 
 ```c
 eth_block_t* eth_getBlockByHash(in3_t *in3, bytes32_t hash, bool include_tx);
 ```
 
-returns the block for the given hash. 
+Returns the block for the given hash.
 
-If result is null, check ,! otherwise make sure to free the result after using it! 
+If result is null, check. Otherwise, make sure to free the result after using it!
 
 arguments:
 ```eval_rst
@@ -437,16 +417,15 @@ arguments:
 ```
 returns: [`eth_block_t *`](#eth-block-t)
 
-
 #### eth_getLogs
 
 ```c
 eth_log_t* eth_getLogs(in3_t *in3, char *fopt);
 ```
 
-returns a linked list of logs. 
+Returns a linked list of logs.
 
-If result is null, check ,! otherwise make sure to free the log, its topics and data after using it! 
+If result is null, check. Otherwise, make sure to free the log, its topics, and data after using it!
 
 arguments:
 ```eval_rst
@@ -457,16 +436,15 @@ arguments:
 ```
 returns: [`eth_log_t *`](#eth-log-t)
 
-
 #### eth_call_fn
 
 ```c
 json_ctx_t* eth_call_fn(in3_t *in3, address_t contract, char *fn_sig,...);
 ```
 
-returns the result of a function_call. 
+Returns the result of a function_call. 
 
-If result is null, check ,! otherwise make sure to free the result after using it with ,! 
+If result is null, check. Otherwise, make sure to free the result after using it!
 
 arguments:
 ```eval_rst
@@ -478,7 +456,6 @@ arguments:
 ========================= ============== 
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
-
 
 #### eth_wait_for_receipt
 
@@ -495,7 +472,6 @@ arguments:
 ```
 returns: `char *`
 
-
 #### eth_newFilter
 
 ```c
@@ -509,10 +485,9 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **options**  
 ============================= ============= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successfull (`==IN3_OK`).*
 
 #### eth_newBlockFilter
 
@@ -520,7 +495,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_newBlockFilter(in3_t *in3);
 ```
 
-creates a new block filter with specified options and returns its id (>0) on success or 0 on failure 
+Creates a new block filter with specified options and returns its ID (>0) on success or 0 on failure.
 
 arguments:
 ```eval_rst
@@ -528,10 +503,9 @@ arguments:
 `in3_t * <#in3-t>`_  **in3**  
 =================== ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successfull (`==IN3_OK`).*
 
 #### eth_newPendingTransactionFilter
 
@@ -539,7 +513,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_newPendingTransactionFilter(in3_t *in3);
 ```
 
-creates a new pending txn filter with specified options and returns its id on success or 0 on failure 
+Creates a new pending transaction filter with specified options and returns its ID on success or 0 on failure.
 
 arguments:
 ```eval_rst
@@ -547,10 +521,9 @@ arguments:
 `in3_t * <#in3-t>`_  **in3**  
 =================== ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successfull (`==IN3_OK`).*
 
 #### eth_uninstallFilter
 
@@ -558,7 +531,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 bool eth_uninstallFilter(in3_t *in3, size_t id);
 ```
 
-uninstalls a filter and returns true on success or false on failure 
+Uninstalls a filter and returns true on success or false on failure.
 
 arguments:
 ```eval_rst
@@ -569,16 +542,13 @@ arguments:
 ```
 returns: `bool`
 
-
 #### eth_getFilterChanges
 
 ```c
 in3_ret_t eth_getFilterChanges(in3_t *in3, size_t id, bytes32_t **block_hashes, eth_log_t **logs);
 ```
 
-sets the logs (for event filter) or blockhashes (for block filter) that match a filter; returns <0 on error, otherwise no. 
-
-of block hashes matched (for block filter) or 0 (for log filer) 
+Sets the logs (for event filter) or blockhashes (for block filter) that match a filter; returns <0 on error, otherwise number of block hashes matched (for block filter) or 0 (for log filer).
 
 arguments:
 ```eval_rst
@@ -591,8 +561,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successfull (`==IN3_OK`).*
 
 #### eth_last_error
 
@@ -600,10 +569,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 char* eth_last_error();
 ```
 
-the current error or null if all is ok 
+The current error or null if all is OK.
 
 returns: `char *`
-
 
 #### as_double
 
@@ -611,11 +579,9 @@ returns: `char *`
 long double as_double(uint256_t d);
 ```
 
-converts a , in a long double. 
+Converts a , in a long double. 
 
-Important: since a long double stores max 16 byte, there is no garantee to have the full precision.
-
-converts a , in a long double. 
+Important: Since a long double stores max 16 bytes, there is no guarantee to have full precision.
 
 arguments:
 ```eval_rst
@@ -625,18 +591,15 @@ arguments:
 ```
 returns: `long double`
 
-
 #### as_long
 
 ```c
 uint64_t as_long(uint256_t d);
 ```
 
-converts a , in a long . 
+Converts a , in a long . 
 
-Important: since a long double stores 8 byte, this will only use the last 8 byte of the value.
-
-converts a , in a long . 
+Important: Since a long double stores 8 bytes, this will only use the last 8 bytes of the value.
 
 arguments:
 ```eval_rst
@@ -645,7 +608,6 @@ arguments:
 ========================= ======= 
 ```
 returns: `uint64_t`
-
 
 #### to_uint256
 
@@ -661,7 +623,6 @@ arguments:
 ```
 returns: [`uint256_t`](#uint256-t)
 
-
 #### decrypt_key
 
 ```c
@@ -676,10 +637,9 @@ arguments:
 `bytes32_t <#bytes32-t>`_    **dst**       
 =========================== ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successfull (`==IN3_OK`).*
 
 #### free_log
 
@@ -694,10 +654,7 @@ arguments:
 =========================== ========= 
 ```
 
-## Module api/usn 
-
-
-
+## Module API/usn
 
 ### usn_api.h
 
