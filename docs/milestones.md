@@ -1,6 +1,6 @@
 # Roadmap
 
-Incubed implements 2 versions: 
+Incubed implements two versions: 
  - **Typescript / Javascript** - optimized for dapps, webapps or mobile apps.
  - **Embedded C** - optimized for microcontrollers and all other use cases.  
 
@@ -17,7 +17,7 @@ This was the first stable release, which was published after devcon. It contains
 - **Full Verification of JSON-RPC-Methods** - Incubed is able to fully verify all important JSON-RPC-Methods. This even includes calling functions in smart contract and verifying their return value (`eth_call`), which means executing each opcode locally in the client in order to confirm the result.  
 - **IPFS-Support** - Incubed is able to write and read IPFS-content and verify the data by hashing and creating the multihash.
 - **Caching Support** - An optional cache enables storage of the results of rpc-requests that can be automatically used again within a configurable time span or if the client is offline. This also includes RPC-Requests, blocks, code and nodelists).
-- **Custom Configuration** - The client is highly customizable. For each single request a configuration can be explicitly passed or by adjusting it through events (`client.on('beforeRequest',...)`). This allows  to optimize proof-level or number of requests to be sent depending on the context.
+- **Custom Configuration** - The client is highly customizable. For each request, a configuration can be explicitly passed or adjusted through events (`client.on('beforeRequest',...)`). This allows the proof-level or number of requests to be sent to be optimized  depending on the context.
 - **Proof-Levels** - Incubed supports different proof-levels: `none` -  for no verifiaction, `standard` - for verifying only relevant properties, and  `full` - for complete vertification, including uncle blocks or previous Transaction (higher payload).
 - **Security-Levels** - Configurable number of signatures (for PoW) and minimal deposit stored.
 - **PoW-Support** - For PoW, blocks are verified based on blockhashes signed by Incubed nodes storing a deposit, which they lose if this blockhash is not correct.
