@@ -1,6 +1,6 @@
 # IN3-Protocol
 
-This document describes the communication between a Incubed client and a Incubed node. This communication is based on requests which use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests this means each node also accepts all standard requests as defined at [Ethereum JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) , which also includes handling Bulk-requests. 
+This document describes the communication between a Incubed client and a Incubed node. This communication is based on requests that use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests, this means each node also accepts all standard requests as defined at [Ethereum JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC), which also includes handling Bulk-requests. 
 
 Each request may add an optional `in3` property defining the verification behavior for Incubed.
 
