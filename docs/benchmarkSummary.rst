@@ -104,7 +104,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 Python script to create test plan:
 
     1. Navigate to the txGenerator folder in the in3-tests repo
-    2. Run the main.py file with mentioning the start block (-s), end block (-e) and number of blocks to choose in this range (-n). The script will randomly choose 3 transactions per block. 
+    2. Run the main.py file while referencing the start block (-s), end block (-e) and number of blocks to choose in this range (-n). The script will randomly choose three transactions per block. 
     3. The transactions chosen are sent through a tumble function, resulting in a randomized list of transactions from random blocks. This should be a relistic scenario to test with, and prevents too many concurrent cache hits. 
     4. Import the generated CSV file into the loaded test plan on JMeter
     5. Refer to existing test plans for information on how to read transactions from CSV files and to see how it can be integrated into the requests
