@@ -52,17 +52,17 @@ A example of an Incubed request may look like this:
 
 ## Incubed Responses
 
-Each incubed node responses is based on JSON-RPC, but also adds then `in3` -property. If the request does not contain a `in3`-property or does not require proof, the response must also omit the `in3` property.
+Each Incubed node response is based on JSON-RPC, but also adds the `in3` -property. If the request does not contain a `in3`-property or does not require proof, the response must also omit the `in3` property.
 
 If the proof is requested, the `in3`-property is defined with the following properties:
 
-*  **proof** [Proof](#proofs) - the Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
+*  **proof** [Proof](#proofs) - The Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
 
-*  **lastNodeList** `number` - the blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber he should update the nodeList.  
+*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodeList.  
 
-*  **lastValidatorChange** `number` - only for PoA-chains. the blocknumber of the last change of the validatorList. If the client has a smaller number he needs to update the validatorlist first. For details see [PoA Validations](#poa-validations)   
+*  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
 
-*  **currentBlock** `number` - the current blocknumber. This number may be stored in the client in order to run sanity checks for `latest` blocks or `eth_blockNumber`, since they cannot be verified directly.   
+*  **currentBlock** `number` - The current blocknumber. This number may be stored in the client in order to run sanity checks for `latest` blocks or `eth_blockNumber`, since they cannot be verified directly.   
 
 An example of such a response would look like this:
 
