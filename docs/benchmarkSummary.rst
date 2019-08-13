@@ -9,8 +9,8 @@ Setup and Tools
 ###############
 
 - JMeter is used to send requests parallel to the server
-- Custom Python scripts to generate lists of transactions to use as well as randomize them - used to create test plan
-- Link for making Jmeter tests online without setting up the server: https://www.blazemeter.com/
+- Custom Python scripts is used to generate lists of transactions as well as randomize them - used to create test plan
+- Link for making JMeter tests online without setting up the server: https://www.blazemeter.com/
 
 JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 
