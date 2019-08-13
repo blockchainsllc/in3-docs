@@ -9,7 +9,7 @@ Each request may add an optional `in3` property defining the verification behavi
 
 Requests without an `in3` property will also get a response without `in3`. This allows any incubed node to also act as a raw ethereum json-rpc endpoint. The `in3` property in the request is defined as following:  
 
-*  **chainId** `string<hex>` - the requested [chainId](#chainid). This property is optinal, but should always be specified in case a node may support multiple chains. In this case the default of the node would be used, which may end up in a undefined behavior since the client can not know the default. 
+*  **chainId** `string<hex>` - the requested [chainId](#chainid). This property is optional, but should always be specified in case a node may support multiple chains. In this case the default of the node would be used, which may end up in a undefined behavior since the client can not know the default. 
 
 *  **includeCode** `boolean` - applies only for `eth_call`-requests. if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards   
 
