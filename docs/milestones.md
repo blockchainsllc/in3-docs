@@ -39,7 +39,7 @@ This release will introduce the Incentivisation-Layer, which should help provide
 
 ## V1.3 eWasm - Q1 2020
 
-For `eth_call`-Verification the client and server must be able to execute the code. This release adds the ability to also 
+For `eth_call`-Verification, the client and server must be able to execute the code. This release adds the ability to also 
 
 - **eWasm** - Support eWasm Contracts in eth_casll.
 
