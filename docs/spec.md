@@ -7,33 +7,33 @@ Each request may add an optional `in3` property defining the verification behavi
 
 ## Incubed Requests
 
-Requests without an `in3` property will also get a response without `in3`. This allows any incubed node to also act as a raw ethereum json-rpc endpoint. The `in3` property in the request is defined as following:  
+Requests without an `in3` property will also get a response without `in3`. This allows any Incubed node to also act as a raw ethereum json-rpc endpoint. The `in3` property in the request is defined as the following:  
 
-*  **chainId** `string<hex>` - the requested [chainId](#chainid). This property is optional, but should always be specified in case a node may support multiple chains. In this case, the default of the node would be used, which may end up in a undefined behavior since the client cannot know the default. 
+*  **chainId** `string<hex>` - The requested [chainId](#chainid). This property is optional, but should always be specified in case a node may support multiple chains. In this case, the default of the node would be used, which may end up in a undefined behavior since the client cannot know the default. 
 
-*  **includeCode** `boolean` - applies only for `eth_call`-requests. If true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case, the client may ask by calling eth_getCode() afterwards.   
+*  **includeCode** `boolean` - Applies only for `eth_call`-requests. If true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case, the client may ask by calling eth_getCode() afterwards.   
 
-*  **verifiedHashes** `string<bytes32>[]` - if the client sends an array of blockhashes, the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This allows the client to skip requiring signed blockhashes for blocks already verified.
+*  **verifiedHashes** `string<bytes32>[]` - If the client sends an array of blockhashes, the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This allows the client to skip requiring signed blockhashes for blocks already verified.
 
-*  **latestBlock** `integer` - if specified, the blocknumber `latest` will be replaced by blockNumber- specified value. This allows the Incubed client to define finality for PoW-Chains, which is important, since the `latest`-block cannot be considered final and therefore it would be unlikely to find nodes willing to sign a blockhash for such a block.    
+*  **latestBlock** `integer` - If specified, the blocknumber `latest` will be replaced by blockNumber- specified value. This allows the Incubed client to define finality for PoW-Chains, which is important, since the `latest`-block cannot be considered final and therefore it would be unlikely to find nodes willing to sign a blockhash for such a block.    
 
-*  **useRef** `boolean` - if true binary-data (starting with a 0x) will be refered if occuring again. This decreases the payload especially for recurring data such as merkle proofs. If supported the server ( and client) will keep track of each binary value storing them in a temporary array. If the previously used value is used again the server replaces it with `:<index>` the client then resolves such refs by lookups in the temp array.   
+*  **useRef** `boolean` - If true, binary-data (starting with a 0x) will be referred if occurring again. This decreases the payload especially for recurring data such as merkle proofs. If supported, the server (and client) will keep track of each binary value storing them in a temporary array. If the previously used value is used again, the server replaces it with `:<index>`. The client then resolves such refs by lookups in the temporary array.   
 
-*  **useBinary** `boolean` - if true binary-data will be used. This format is optimzed for embedded devices and reduces the payload to about 30%. For details see [the Binary-spec](#binary-format)
+*  **useBinary** `boolean` - If true, binary-data will be used. This format is optimzed for embedded devices and reduces the payload to about 30%. For details see [the Binary-spec](#binary-format).
 
-*  **useFullProof** `boolean` - if true all data in the response will be proven, which leads to a higher payload. The result depends on the method called and will be specified there.
+*  **useFullProof** `boolean` - If true, all data in the response will be proven, which leads to a higher payload. The result depends on the method called and will be specified there.
 
-*  **finality** `number` - For PoA-Chains it will deliver additional proof to reach finaliy.  if given, the server will deliver the blockheaders of the following blocks until at least the number in percent of the validators is reached.   
+*  **finality** `number` - For PoA-Chains, it will deliver additional proof to reach finaliy.  If given, the server will deliver the blockheaders of the following blocks until at least the number in percent of the validators is reached.   
 
-*  **verification** `string` - defines the kind of proof the client is asking for   
- Must be one of the these values : 
-    - `'never`' : no proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw json-rpc response will be returned 
-    - `'proof`' : The proof will be created including blockheader, but without any signed blockhashes
-    - `'proofWithSignature`' : The returned proof will also includ signed blockhashes as required in `signatures`
+*  **verification** `string` - Defines the kind of proof the client is asking for   
+ Must be one of the these values: 
+    - `'never`' : No proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw json-rpc response will be returned. 
+    - `'proof`' : The proof will be created including blockheader, but without any signed blockhashes.
+    - `'proofWithSignature`' : The returned proof will also include signed blockhashes as required in `signatures`.
 
-*  **signatures** `string<address>[]` - a list of addresses(as 20bytes in hex) requested to sign the blockhash.    
+*  **signatures** `string<address>[]` - A list of addresses(as 20bytes in hex) requested to sign the blockhash.    
 
-A Example of an incubed request may look like this:
+A example of an Incubed request may look like this:
 
 ```json
 {
