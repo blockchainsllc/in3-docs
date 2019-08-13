@@ -21,7 +21,7 @@ This was the first stable release, which was published after devcon. It contains
 - **Proof-Levels** - Incubed supports different proof-levels: `none` -  for no verifiaction, `standard` - for verifying only relevant properties, and  `full` - for complete vertification, including uncle blocks or previous Transaction (higher payload).
 - **Security-Levels** - Configurable number of signatures (for PoW) and minimal deposit stored.
 - **PoW-Support** - For PoW, blocks are verified based on blockhashes signed by Incubed nodes storing a deposit, which they lose if this blockhash is not correct.
-- **PoA-Support** - For PoA-Chains (using Aura) blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura-algorithm to determine the signer from the Validatorlist (with static Validatorlist or contract based validators). 
+- **PoA-Support** - For PoA-Chains (using Aura), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura-algorithm to determine the signer from the Validatorlist (with static Validatorlist or contract based validators). 
 - **Finality-Support** - For PoA-Chains, the client can require a configurable number of signatures (in percent) to accept them as final.
 - **Flexible Transport-layer** - The communication-layer between clients and nodes can be overridden, but already support different transport formats (json/cbor/in3)
 - **Replace Latest-Blocks** - Since most applications per default always ask request for the latest block, which cannot be considered as final in a PoW-Chain, a configuration allows to automatically use a certain blockheight to run the request. (like 6 blocks)
