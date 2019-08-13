@@ -4,7 +4,7 @@ Incubed can be used in different ways.
 
 ```eval_rst
 
-table
+Table
 
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Stack                 | Size                 | Code Base                           | Use Case                                                                                    |
@@ -12,12 +12,12 @@ table
 | TS/JS                 | 2.7MB (browserified) | TypeScript                          | Web application (client in the browser) or mobile applications                               |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | C/C++                 | 200kB                | C                                   | IoT devices can be integrated nicely on many micro controllers                             |
-|                       |                      |                                     | (like [zephyr-supported boards] (https://docs.zephyrproject.org/latest/boards/index.html) ) |
+|                       |                      |                                     | (like [zephyr-supported boards] (https://docs.zephyrproject.org/latest/boards/index.html)) |
 |                       |                      |                                     | or any other C/C++ application                                                            |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Java                  | 205kB                | C                                   | Java implementation of a native wrapper                                                     |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Docker                | 74MB                 | TypeScript                          | For replacing existing clients with this docker and connect to incubed via localhost:8545   |
+| Docker                | 74MB                 | TypeScript                          | For replacing existing clients with this docker and connecting to Incubed via localhost:8545   |
 |                       |                      |                                     | without the need to change the architecture                                                 |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | bash                  | 200kB                | C                                   | The command-line utilities can be used directly as executable within Bash script or on the shell |
@@ -59,7 +59,7 @@ const block = await web.eth.getBlockByNumber('latest')
 
 ### Direct API
 
-Incubed includes a light API, allowing the ability to not only use all RPC methods in a type-safe way but also to sign transactions and call funnctions of a contract without the Web3 library.
+Incubed includes a light API, allowing the ability to not only use all RPC methods in a type-safe way but also sign transactions and call functions of a contract without the Web3 library.
 
 For more details, see the API doc (https://github.com/slockit/in3/blob/master/docs/api.md#type-api).
 
@@ -109,61 +109,61 @@ The application would then accept the following arguments:
         the limit of nodes to store in the client.
 
     --keepIn3
-        if true, the in3-section of thr response will be kept. Otherwise it will be removed after validating the data. This is useful for debugging or if the proof should be used afterwards.
+        if true, the in3-section of the response will be kept. Otherwise, it will be removed after validating the data. This is useful for debugging or if the proof should be used afterward.
 
     --format
-        the format for sending the data to the client. Default is json, but using cbor means using only 30-40% of the payload since it is using binary encoding.
+        the format for sending the data to the client. Default is JSON, but using CBOR means using only 30-40% of the payload since it uses binary encoding.
 
     --autoConfig
-        if true the config will be adjusted depending on the request
+        if true, the config will be adjusted depending on the request.
     
     --retryWithoutProof
-        if true the request may be handled without proof in case of an error. (use with care!)
+        if true, the request may be handled without proof in case of an error. (Use with care!)
 
     --includeCode
-        if true, the request should include the codes of all accounts. otherwise only the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards
+        if true, the request should include the codes of all accounts. Otherwise, only the codehash is returned. In this case, the client may ask by calling eth_getCode() afterward.
 
     --maxCodeCache
-        number of max bytes used to cache the code in memory
+        max number of bytes used to cache the code in memory
 
     --maxBlockCache
-        number of number of blocks cached  in memory
+        max number of blocks cached in memory
 
     --proof
-        'none' for no verification, 'standard' for verifying all important fields, 'full'  veryfying all fields even if this means a high payload.
+        'none' for no verification, 'standard' for verifying all important fields, and 'full' for verifying all fields even if this means a high payload.
 
     --signatureCount
         number of signatures requested
 
     --finality
-        percenage of validators signed blockheaders - this is used for PoA (aura)
+        percenage of validator-signed blockheaders; this is used for PoA (Aura).
 
     --minDeposit
-        min stake of the server. Only nodes owning at least this amount will be chosen.
+        minimum stake of the server. Only nodes owning at least this amount will be chosen.
 
     --replaceLatestBlock
-        if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
+        if specified, the blockNumber *latest* will be replaced by blockNumber-(specified value).
 
     --requestCount
-        the number of request send when getting a first answer
+        the number of requests sent when getting a first answer.
 
     --timeout
-        specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection.
+        specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
 
     --chainId
-        servers to filter for the given chain. The chain-id based on EIP-155.
+        servers to filter for the given chain. The chainId based on EIP-155.
 
     --chainRegistry
-        main chain-registry contract
+        main chain registry contract
 
     --mainChain
-        main chain-id, where the chain registry is running.
+        main chain ID, where the chain registry is running.
 
     --autoUpdateList
-        if true the nodelist will be automaticly updated if the lastBlock is newer
+        if true, the NodeList will be automaticly updated if the last block is newer.
 
     --loggerUrl
-        a url of RES-Endpoint, the client will log all errors to. The client will post to this endpoint JSON like { id?, level, message, meta? }
+        a URL of RES endpoint, the client will log all errors to. The client will post to this endpoint JSON-like {ID?, level, message, meta?}
 
 ```
 
@@ -174,7 +174,7 @@ The application would then accept the following arguments:
 ```c
 #include <stdio.h>
 #include <in3/client.h>  // the core client
-#include <eth_full.h>    // the full ethereum verifier containing the EVM
+#include <eth_full.h>    // the full Ethereum verifier containing the EVM
 #include <in3/eth_api.h> // wrapper for easier use
 #include <in3_curl.h>    // transport implementation
 
@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
   c->requestCount = 1;         // number of requests to send
   c->chainId      = 0x1;       // use main chain
 
-  // use a ethereum-api instead of pure JSON-RPC-Requests
+  // use an ethereum-api instead of pure JSON-RPC requests
   eth_block_t* block = eth_getBlockByNumber(c, atoi(argv[1]), true);
   if (!block)
     printf("Could not find the Block: %s", eth_last_error());
@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
 
 ```
 
-More details comming soon...
+More details coming soon...
 
 ## Java
 
@@ -249,7 +249,7 @@ Currently, Incubed is deployed on the following chains:
 
 Registry: [0x2736D225f85740f42D17987100dc8d58e9e16252] (https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
 
-ChainID: 0x1 (alias `mainnet`)        
+ChainId: 0x1 (alias `mainnet`)        
 
 Status: [https://in3.slock.it?n=mainnet] (https://in3.slock.it?n=mainnet)    
 
@@ -259,7 +259,7 @@ NodeList: [https://in3.slock.it/mainnet/nd-3] (https://in3.slock.it/mainnet/nd-3
 
 Registry: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1] (https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
 
-ChainID: 0x2a (alias `kovan`)    
+ChainId: 0x2a (alias `kovan`)    
 
 Status: [https://in3.slock.it?n=kovan] (https://in3.slock.it?n=kovan)    
 
@@ -269,7 +269,7 @@ NodeList: [https://in3.slock.it/kovan/nd-3] (https://in3.slock.it/kovan/nd-3/api
 
 Registry: [0x845E484b505443814B992Bf0319A5e8F5e407879] (https://eth.slock.it/#/tobalaba/0x845E484b505443814B992Bf0319A5e8F5e407879)    
 
-ChainID: 0x44d (alias `tobalaba`)    
+ChainId: 0x44d (alias `tobalaba`)    
 
 Status: [https://in3.slock.it?n=tobalaba] (https://in3.slock.it?n=tobalaba)    
 
@@ -280,7 +280,7 @@ NodeList: [https://in3.slock.it/tobalaba/nd-3] (https://in3.slock.it/tobalaba/nd
 
 Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e] (https://eth.slock.it/#/evan/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
 
-ChainID: 0x4b1 (alias `evan`)    
+ChainId: 0x4b1 (alias `evan`)    
 
 Status: [https://in3.slock.it?n=evan] (https://in3.slock.it?n=evan)    
 
@@ -290,7 +290,7 @@ NodeList: [https://in3.slock.it/evan/nd-3] (https://in3.slock.it/evan/nd-3/api/i
 
 Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e] (https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
 
-ChainID: 0x5 (alias `goerli`)    
+ChainId: 0x5 (alias `goerli`)    
 
 
 Status: [https://in3.slock.it?n=goerli] (https://in3.slock.it?n=goerli)    
@@ -301,7 +301,7 @@ NodeList: [https://in3.slock.it/goerli/nd-3] (https://in3.slock.it/goerli/nd-3/a
 
 Registry: [0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9] (https://eth.slock.it/#/kovan/0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9)    
 
-ChainID: 0x7d0 (alias `ipfs`)    
+ChainId: 0x7d0 (alias `ipfs`)    
 
 Status: [https://in3.slock.it?n=ipfs] (https://in3.slock.it?n=ipfs)    
 
