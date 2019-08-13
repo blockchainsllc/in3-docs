@@ -41,7 +41,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
     
     6. Finally, verify the installation by executing jmeter -v
     
-    7. Run JMeter using 'jmeter' which should load the JMeter GUI.
+    7. Run JMeter using 'jmeter' which should load the JMeter GUI
     
  JMeter on EC2 instance CLI only (testing pending):
 
