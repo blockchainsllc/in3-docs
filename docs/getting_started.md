@@ -115,7 +115,7 @@ The application would then accept the following arguments:
         the format for sending the data to the client. Default is JSON, but using CBOR means using only 30-40% of the payload since it uses binary encoding.
 
     --autoConfig
-        if true, the config will be adjusted depending on the request.
+        if true, the configuration will be adjusted depending on the request.
     
     --retryWithoutProof
         if true, the request may be handled without proof in case of an error. (Use with care!)
@@ -124,16 +124,16 @@ The application would then accept the following arguments:
         if true, the request should include the codes of all accounts. Otherwise, only the codehash is returned. In this case, the client may ask by calling eth_getCode() afterward.
 
     --maxCodeCache
-        max number of bytes used to cache the code in memory
+        max number of bytes used to cache the code in memory.
 
     --maxBlockCache
-        max number of blocks cached in memory
+        max number of blocks cached in memory.
 
     --proof
         'none' for no verification, 'standard' for verifying all important fields, and 'full' for verifying all fields even if this means a high payload.
 
     --signatureCount
-        number of signatures requested
+        number of signatures requested.
 
     --finality
         percenage of validator-signed blockheaders; this is used for PoA (Aura).
@@ -154,7 +154,7 @@ The application would then accept the following arguments:
         servers to filter for the given chain. The chainId based on EIP-155.
 
     --chainRegistry
-        main chain registry contract
+        main chain registry contract.
 
     --mainChain
         main chain ID, where the chain registry is running.
