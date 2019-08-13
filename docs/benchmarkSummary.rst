@@ -8,8 +8,8 @@ These benchmarks aim to test the Incubed version for stability and performance o
 Setup and Tools
 ###############
 
-- Jmeter is used to send request parallelly to the server
-- Custom python scripts to generate list of transactions to use as well as randomize them - used to create test plan
+- JMeter is used to send requests parallel to the server
+- Custom Python scripts to generate lists of transactions to use as well as randomize them - used to create test plan
 - Link for making Jmeter tests online without setting up the server: https://www.blazemeter.com/
 
 JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
