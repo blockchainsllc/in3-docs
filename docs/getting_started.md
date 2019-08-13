@@ -142,7 +142,7 @@ The application would then accept the following arguments:
         minimum stake of the server. Only nodes owning at least this amount will be chosen.
 
     --replaceLatestBlock
-        if specified, the blockNumber *latest* will be replaced by blockNumber-(specified value).
+        if specified, the blockNumber "latest" will be replaced by blockNumber-(specified value).
 
     --requestCount
         the number of requests sent when getting a first answer.
@@ -157,13 +157,13 @@ The application would then accept the following arguments:
         main chain registry contract.
 
     --mainChain
-        main chain ID, where the chain registry is running.
+        main chain ID where the chain registry is running.
 
     --autoUpdateList
-        if true, the NodeList will be automaticly updated if the last block is newer.
+        if true, the NodeList will be automatically updated if the last block is newer.
 
     --loggerUrl
-        a URL of RES endpoint, the client will log all errors to. The client will post to this endpoint JSON-like {ID?, level, message, meta?}
+        a URL of RES endpoint. The client will post all errors to this endpoint JSON-like (ID?, level, message, meta?).
 
 ```
 
