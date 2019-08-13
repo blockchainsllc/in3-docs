@@ -142,10 +142,10 @@ The application would then accept the following arguments:
         minimum stake of the server. Only nodes owning at least this amount will be chosen.
 
     --replaceLatestBlock
-        if specified, the blockNumber "latest" will be replaced by blockNumber-(specified value).
+        if specified, the blockNumber 'latest' will be replaced by blockNumber-(specified value).
 
     --requestCount
-        the number of requests sent when getting a first answer.
+        the number of requests sent.
 
     --timeout
         specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
