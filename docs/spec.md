@@ -176,21 +176,21 @@ The following functions are offered within the registry:
 
 ## Binary Format
 
-Since Incubed is optimized for embedded devices, server may not only support JSON, but a special binary-format. 
-You may wonder why we don't want to use any existing binary serialisation for json like cbor or others. The reason is simply, because we do not need to support all features JSON offers. The following features are not supported:
-- no escape sequences (this allows to use the string without copying it)
+Since Incubed is optimized for embedded devices, a server can not only support JSON, but a special binary-format. 
+You may wonder why we don't want to use any existing binary serialization for JSON like CBOR or others. The reason is simply: because we do not need to support all the features JSON offers. The following features are not supported:
+- no escape sequences (this allows use of the string without copying it)
 - no float support (at least for now)
-- no string litersals starting with `0x` since this is always considered as hexcoded bytes
-- no propertyNames within the same object with the same key hash.
+- no string literals starting with `0x` since this is always considered as hexcoded bytes
+- no propertyNames within the same object with the same key hash
 
 Since we are able to accept these restrictions, we can keep the json-parser simple.
-This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with following optimizations:
+This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with the following optimizations:
 
 * All strings starting with `0x`are interpreted as binary data and stored as such, which reduces the size of the data to 50%.
-* Recurring byte-values will use references to previous data, which reduces the payload especially for merkle proofs.
-* All propertyNames of JSON-Objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount. (depending on the propertyName).
+* Recurring byte-values will use references to previous data, which reduces the payload, especially for merkle proofs.
+* All propertyNames of JSON-Objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount (depending on the propertyName).
 
-  the hash is calculated very easy like this:
+  The hash is calculated very easily like this:
   ```c
   static d_key_t key(const char* c) {
     uint16_t val = 0, l = strlen(c);
@@ -201,15 +201,15 @@ This binary-format is highly optimized for small devices and will reduce the pay
 
 
 ```eval_rst
-.. note:: A very important limitation is the fact, that property names are stored as 16bit hashes, which decreases the payload, but does not allow to restore the full json without knowing all property names! 
+.. note:: A very important limitation is the fact that property names are stored as 16bit hashes, which decreases the payload, but does not allow for the restoration of the full json without knowing all property names! 
 ```
 
-The binary format is based on JSON-structure, but uses a RLP-encoding aproach. Each node or value is represented by a these 4 values:
+The binary format is based on JSON-structure, but uses a RLP-encoding approach. Each node or value is represented by a these four values:
 
-*  **key** `uint16_t` - the key hash of the property. This value will only passed before the property node, if the structure is a property of a JSON-Object. 
+*  **key** `uint16_t` - The key hash of the property. This value will only pass before the property node if the structure is a property of a JSON-Object. 
 *  **type** `d_type_t` - 3 bit : defining the type of the element.
 *  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value. 
-*  **data** `bytes_t` - the bytes or value of the node (only for strings or bytes)
+*  **data** `bytes_t` - The bytes or value of the node (only for strings or bytes).
 
 
 ```eval_rst
@@ -237,22 +237,22 @@ d_type_t type = *val >> 5;     // first 3 bits define the type
 uint8_t  len  = *val & 0x1F;   // the other 5 bits  (0-31) the length
 ```
 
-the `len` depends on ther size of the data. so the last 5 bit of the first bytes are interpreted as following:
+The `len` depends on the size of the data. So, the last 5 bit of the first bytes are interpreted as follows:
 
 * `0x00` - `0x1c` : the length is taken as is from the 5 bits.
-* `0x1d` - `0x1f` : the length is taken by reading the bigendian value of the next `len - 0x1c` bytes (len ext).  
+* `0x1d` - `0x1f` : the length is taken by reading the big-endian value of the next `len - 0x1c` bytes (len ext).  
 
-After the type-byte and optional length bytes the 2 bytes representing the property hash is added, but only if the elemtent is a property of a JSON-object.    
+After the type-byte and optional length bytes, the 2 bytes representing the property hash is added, but only if the element is a property of a JSON-object.    
 
-Depending on these type the length will be used to read the next bytes:
+Depending on these types, the length will be used to read the next bytes:
 
 * `0x0` : **binary data** - This would be a value or property with binary data. The `len` will be used to read the number of bytes as binary data.
-* `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead copying memory in RAM.
-* `0x2` : **array** - represents a array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
-* `0x3` : **object** - a JSON-object with `len` properties comming next. In this case the properties following this element will have a leading `key` specified.
-* `0x4` : **boolean** - boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. if `len > 1` this element is a copy of a previous node and may reference the same data. The index of the source node will then be `len-2`.
-* `0x5` : **integer** - a integer-value with max 29 bit (since the 3 bits are used for the type). if the value is higher than `0x20000000`, it will be stored as binary data.
-* `0x6` : **null** - represents a null-value. if this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
+* `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead of copying memory in RAM.
+* `0x2` : **array** - Represents an array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
+* `0x3` : **object** - A JSON-object with `len` properties comming next. In this case the properties following this element will have a leading `key` specified.
+* `0x4` : **boolean** - Boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. If `len > 1` this element is a copy of a previous node and may reference the same data. The index of the source node will then be `len-2`.
+* `0x5` : **integer** - An integer-value with max 29 bit (since the 3 bits are used for the type). If the value is higher than `0x20000000`, it will be stored as binary data.
+* `0x6` : **null** - Represents a null-value. If this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
 
 
 ## Communication
