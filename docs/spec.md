@@ -172,7 +172,7 @@ The following functions are offered within the registry:
 
 //TODO add interface for new contract.
 
-### BlockHashRegistry functions
+### BlockHashRegistry Functions
 
 ## Binary Format
 
