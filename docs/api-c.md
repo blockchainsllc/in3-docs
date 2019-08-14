@@ -28,7 +28,7 @@ At the moment we offer these modules; other implementations are supported by dif
 
 While Incubed operates on JSON-RPC level, as a developer, you might want to use a better-structured API to prepare these requests for you. These APIs are optional but make life easier:
 
-1. [**eth**](#module-eth-api): This module offers all standard RPC functions as descriped in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition, it allows you to sign and encode/decode calls and transactions.
+1. [**eth**](#module-eth-api): This module offers all standard RPC functions as described in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition, it allows you to sign and encode/decode calls and transactions.
 2. [**usn**](#module-usn-api): This module offers basic USN functions like renting, event handling, and message verification.
 
 ## Building
@@ -39,17 +39,18 @@ While we provide binaries, you can also build from source:
 
 1. CMake
 2. Curl: curl is used as transport for command-line tools.
-3. Optional: libscrypt, which would be used for unlocking keystore files using `scrypt` as KDF method. If it does not exist, you can still build, but it does not decrypt such keys. 
+3. Optional: libscrypt, which would be used for unlocking keystore files using `scrypt` as KDF method. If it does not exist, you can still build, but it does not decrypt such keys.
 
 For osx `brew install libscrypt` and for debian `sudo apt-get install libscrypt-dev`.
 
-Incubed uses cmake for configuring:
+Incubed uses Cmake for configuring:
 
 ```c
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release .. && make
 make install
 ```
+
 ### CMake Options
 
 #### CMD
@@ -139,7 +140,7 @@ client->cacheStorage = &storage_handler;
 // configure transport by using curl
 client->transport    = send_curl;
 
-// init cache by reading the nodelist from the cache >(if exists)
+// initializes cache by reading the NodeList from the cache >(if it exists)
 in3_cache_init(client);
 
 // ready to use ...
@@ -148,7 +149,7 @@ in3_cache_init(client);
 ### Calling a Function
 
 ```c
-// define a address (20byte)
+// define an address (20 byte)
 address_t contract;
 
 // copy the hexcoded string into this address
@@ -163,19 +164,19 @@ if (!response) {
   return;
 }
 
-// convert the result to a integer
+// convert the result to an integer
 int number_of_servers = d_int(response->result);
 
-// don't forget the free the response!
+// don't forget to free the response!
 free_json(response);
 
-// out put result
+// output result
 printf("Found %i servers registered : \n", number_of_servers);
 
 // now we call a function with a complex result...
 for (int i = 0; i < number_of_servers; i++) {
 
-  // get all the details for one server.
+  // get all the details for one server
   response = eth_call_fn(c, contract, "servers(uint256):(string,address,uint,uint,uint,address)", to_uint256(i));
 
   // handle error
@@ -205,7 +206,7 @@ for (int i = 0; i < number_of_servers; i++) {
 
 Ethereum API. 
 
-This header-file defines prepares the JSON-RPC request, which is then executed and verified by the Incubed client.
+This header-file defines and prepares the JSON-RPC request, which is then executed and verified by the Incubed client.
 
 Location: src/api/eth1/eth_api.h
 
@@ -213,7 +214,7 @@ Location: src/api/eth1/eth_api.h
 
 A transaction. 
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ========================= ======================= =========================================
@@ -225,7 +226,7 @@ The stucture contains following fields:
 ``uint64_t``               **gas_price**          gas price used
 `bytes_t <#bytes-t>`_      **data**               data sent along with the transaction
 ``uint64_t``               **nonce**              nonce of the transaction
-`address_t <#address-t>`_  **to**                 receiver of the address 0x0000. 
+`address_t <#address-t>`_  **to**                 Receiver of the address 0x0000.
                                                   
                                                   Address is used for contract creation.
 `uint256_t <#uint256-t>`_  **value**              the value in wei sent
@@ -238,7 +239,7 @@ The stucture contains following fields:
 
 An Ethereum block.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================== ======================= ====================================================
@@ -268,7 +269,7 @@ The stucture contains following fields:
 
 A linked list of Ethereum logs.
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============================== ======================= ==============================================================
@@ -367,7 +368,7 @@ returns: `uint64_t`
 uint64_t eth_gasPrice(in3_t *in3);
 ```
 
-Returns the current blockNumber. If bn==0, an error occured and you should check.
+Returns the current blockNumber. If bn==0, an error occurred and you should check.
 
 arguments:
 ```eval_rst
@@ -442,7 +443,7 @@ returns: [`eth_log_t *`](#eth-log-t)
 json_ctx_t* eth_call_fn(in3_t *in3, address_t contract, char *fn_sig,...);
 ```
 
-Returns the result of a function_call. 
+Returns the result of a function_call.
 
 If result is null, check. Otherwise, make sure to free the result after using it!
 
@@ -559,7 +560,7 @@ arguments:
 `eth_log_t ** <#eth-log-t>`_  **logs**          
 ============================ ================== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -579,7 +580,7 @@ returns: `char *`
 long double as_double(uint256_t d);
 ```
 
-Converts a , in a long double. 
+Converts a , in a long double.
 
 Important: Since a long double stores max 16 bytes, there is no guarantee to have full precision.
 
@@ -597,7 +598,7 @@ returns: `long double`
 uint64_t as_long(uint256_t d);
 ```
 
-Converts a , in a long . 
+Converts a , in a long .
 
 Important: Since a long double stores 8 bytes, this will only use the last 8 bytes of the value.
 
@@ -658,7 +659,7 @@ arguments:
 
 ### usn_api.h
 
-USN API. 
+USN API.
 
 This header-file defines an easy-to-use function, which is verifying USN-Messages.
 
@@ -724,7 +725,7 @@ arguments:
 ``char *``                                   **url**   
 =========================================== ========== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -769,7 +770,7 @@ arguments:
 `usn_device_conf_t * <#usn-device-conf-t>`_  **conf**  
 =========================================== ========== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -817,7 +818,7 @@ arguments:
 `bytes32_t <#bytes32-t>`_  **tx_hash**   
 ========================= ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -836,7 +837,7 @@ arguments:
 `bytes32_t <#bytes32-t>`_  **tx_hash**   
 ========================= ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -858,7 +859,7 @@ arguments:
 `bytes32_t <#bytes32-t>`_  **price**       
 ========================= ================ 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -868,7 +869,7 @@ set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.6" "-target" "1.6")
 
 ### in3.h
 
-The entry points for the shared library. 
+The entry points for the shared library.
 
 Location: src/bindings/java/in3.h
 
@@ -975,7 +976,7 @@ Location: src/core/client/cache.h
 in3_ret_t in3_cache_update_nodelist(in3_t *c, in3_chain_t *chain);
 ```
 
-Reads the NodeList from the cache. 
+Reads the NodeList from the cache.
 
 This function is usually called internally to fill the weights and NodeList from the cache. If you call `in3_cache_init`, there is no need to call this explicitly.
 
@@ -986,7 +987,7 @@ arguments:
 `in3_chain_t * <#in3-chain-t>`_  **chain**  chain to configure
 =============================== =========== ==================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -1007,7 +1008,7 @@ arguments:
 `in3_chain_t * <#in3-chain-t>`_  **chain**  the chain updating to cache
 =============================== =========== ===========================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -1027,7 +1028,7 @@ Location: src/core/client/client.h
 
 #### IN3_SIGN_ERR_REJECTED
 
-Return value used by the signer if the the signature-request was rejected.
+Returns value used by the signer if the signature-request was rejected.
 
 ```c
 #define IN3_SIGN_ERR_REJECTED -1
@@ -1035,7 +1036,7 @@ Return value used by the signer if the the signature-request was rejected.
 
 #### IN3_SIGN_ERR_ACCOUNT_NOT_FOUND
 
-Return value used by the signer if the requested account was not found.
+Returns value used by the signer if the requested account was not found.
 
 ```c
 #define IN3_SIGN_ERR_ACCOUNT_NOT_FOUND -2
@@ -1043,7 +1044,7 @@ Return value used by the signer if the requested account was not found.
 
 #### IN3_SIGN_ERR_INVALID_MESSAGE
 
-Return value used by the signer if the message was invalid.
+Returns value used by the signer if the message was invalid.
 
 ```c
 #define IN3_SIGN_ERR_INVALID_MESSAGE -3
@@ -1051,7 +1052,7 @@ Return value used by the signer if the message was invalid.
 
 #### IN3_SIGN_ERR_GENERAL_ERROR
 
-Return value used by the signer for unspecified errors. 
+Returns value used by the signer for unspecified errors.
 
 ```c
 #define IN3_SIGN_ERR_GENERAL_ERROR -4
@@ -1059,7 +1060,7 @@ Return value used by the signer for unspecified errors.
 
 #### in3_chain_type_t
 
-The type of chain. 
+The type of chain.
 
 For Incubed, a chain can be any distributed network or database with Incubed support. Depending on the chain type, the previously registered verifier will be chosen and used.
 
@@ -1094,9 +1095,9 @@ The enum type contains the following values:
 
 #### in3_verification_t
 
-Verification as delivered by the server. 
+Verification as delivered by the server.
 
-This will be part of the in3-request and will be generated based on the proof type. 
+This will be part of the in3-request and will be generated based on the proof type.
 
 The enum type contains the following values:
 
@@ -1127,8 +1128,8 @@ The enum type contains the following values:
 
 ```eval_rst
 ==================== = ============================
- **FILTER_EVENT**    0 event filter.
- **FILTER_BLOCK**    1 block filter.
+ **FILTER_EVENT**    0 event filter
+ **FILTER_BLOCK**    1 block filter
  **FILTER_PENDING**  2 pending filter (unsupported)
 ==================== = ============================
 ```
@@ -1139,7 +1140,7 @@ The configuration as part of each Incubed request.
 
 This will be generated for each request based on the client configuration. The verifier may access this during verification to check against the request. 
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================================== ========================= ====================================================================
@@ -1147,8 +1148,8 @@ The stucture contains following fields:
                                                                       
                                                                       this is holding the integer-value of the hexstring
 ``uint8_t``                                  **includeCode**          if true, the code needed will always be delivered
-``uint8_t``                                  **useFullProof**         this flaqg is set if the proof is set to "PROOF_FULL"
-``uint8_t``                                  **useBinary**            this flaqg is set; the client should use binary format
+``uint8_t``                                  **useFullProof**         this flag is set if the proof is set to "PROOF_FULL"
+``uint8_t``                                  **useBinary**            this flag is set if the client should use binary format
 `bytes_t * <#bytes-t>`_                      **verifiedHashes**       a list of blockhashes already verified
                                                                       
                                                                       the server will not send any proof for them again
@@ -1169,13 +1170,13 @@ Incubed node configuration.
 
 This information is read from the registry contract and stored in this structure, representing a server or a node. 
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ======================= ============== ================================================================================================
 ``uint32_t``             **index**     index within the NodeList, which is also used in the contract as a key
 `bytes_t * <#bytes-t>`_  **address**   address of the server
-``uint64_t``             **deposit**   the deposit stored in the registry contract, which this would lose if it's sent a wrong blockhash
+``uint64_t``             **deposit**   the deposit stored in the registry contract, which this would lose if it were sent a wrong blockhash
 ``uint32_t``             **capacity**  the maximum capacity able to handle
 ``uint64_t``             **props**     a bit set used to identify the capabilities of the server
 ``char *``               **url**       the URL of the node
@@ -1188,14 +1189,14 @@ Weight or reputation of a node.
 
 Based on the past performance of the node, a weight is calculated and given faster nodes, a heigher weight, and a chance when selecting the next node from the NodeList. These weights will also be stored in the cache (if available).
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ============ ========================= ========================================
 ``float``     **weight**               current weight
 ``uint32_t``  **response_count**       counter for responses
 ``uint32_t``  **total_response_time**  total of all response times
-``uint64_t``  **blacklistedUntil**     if >0 this node is blacklisted until k
+``uint64_t``  **blacklistedUntil**     if >0, this node is blacklisted until k
                                        
                                        k is a Unix timestamp
 ============ ========================= ========================================
@@ -1203,11 +1204,11 @@ The stucture contains following fields:
 
 #### in3_chain_t
 
-Chain definition inside Incubed. 
+Chain definition inside Incubed.
 
-For Incubed, a chain can be any distributed network or database with Incubed support. 
+For Incubed, a chain can be any distributed network or database with Incubed support.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================================== ==================== =================================================================================================================
@@ -1238,7 +1239,7 @@ returns: [`bytes_t *(*`](#bytes-t), the found result. If the key is found, this 
 
 #### in3_storage_set_item
 
-Storage handler function for writing to the cache. 
+Storage handler function for writing to the cache.
 
 ```c
 typedef void(* in3_storage_set_item) (void *cptr, char *key, bytes_t *value)
@@ -1246,9 +1247,9 @@ typedef void(* in3_storage_set_item) (void *cptr, char *key, bytes_t *value)
 
 #### in3_storage_handler_t
 
-Storage handler to handle cache. 
+Storage handler to handle cache.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============================================== ============== ============================================================
@@ -1274,7 +1275,7 @@ returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the fun
 
 #### in3_signer_t
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ======================= ============ 
@@ -1285,11 +1286,11 @@ The stucture contains following fields:
 
 #### in3_response_t
 
-Response object. 
+Response object.
 
 If the error has a length>0, the response will be rejected.
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============== ============ ==================================
@@ -1312,11 +1313,11 @@ returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the fun
 
 #### in3_filter_t
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ========================================= ================ ==========================================================
-`in3_filter_type_t <#in3-filter-type-t>`_  **type**        filter type: (event, block, or pending)
+`in3_filter_type_t <#in3-filter-type-t>`_  **type**        filter type (event, block, or pending)
 ``char *``                                 **options**     associated filter options
 ``uint64_t``                               **last_block**  block number
                                                            
@@ -1327,7 +1328,7 @@ The stucture contains following fields:
 
 #### in3_filter_handler_t
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ================================== =========== ================
@@ -1342,7 +1343,7 @@ Incubed configuration.
 
 This structure holds the configuration and also points to internal resources, such as filters or chain configurations. 
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =================================================== ======================== =======================================================================================
@@ -1360,13 +1361,13 @@ The stucture contains following fields:
 ``uint16_t``                                         **replaceLatestBlock**  If specified, the blockNumber *latest* will be replaced by blockNumber-(specified value).
 ``uint16_t``                                         **finality**            the number of signatures in percent required for the request
 ``uint16_t``                                         **max_attempts**        the max number of attempts before giving up
-``uint32_t``                                         **timeout**             specifies the number of milliseconds before the request times out
+``uint32_t``                                         **timeout**             Specifies the number of milliseconds before the request times out.
                                                                              
-                                                                             increasing may be helpful if the device uses a slow connection
+                                                                             Increasing may be helpful if the device uses a slow connection.
 ``uint64_t``                                         **chainId**             servers to filter for the given chain
                                                                              
                                                                              The chain-id based on EIP-155.
-``uint8_t``                                          **autoUpdateList**      if true, the NodeList will be automatically updated if the lastBlock is newer
+``uint8_t``                                          **autoUpdateList**      If true, the NodeList will be automatically updated if the lastBlock is newer.
 `in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**        a cache handler offering two functions (setItem(string,string), getItem(string))
 `in3_signer_t * <#in3-signer-t>`_                    **signer**              signer structure managing a wallet
 `in3_transport_send <#in3-transport-send>`_          **transport**           the transport handler sending requests
@@ -1389,7 +1390,7 @@ Creates a new Incubed configuration and returns the pointer.
 
 You need to free this instance with `in3_free` after use!
 
-Before using the client, you still need to set the transport and optional the storage handlers:
+Before using the client, you still need to set the transport and optional storage handlers:
 
 - Example of initialization:
 
@@ -1417,7 +1418,7 @@ in3_cache_init(client);
 // ready to use ...
 ```
 
-returns: [`in3_t *`](#in3-t) : the incubed instance. 
+returns: [`in3_t *`](#in3-t): the Incubed instance.
 
 #### in3_client_rpc
 
@@ -1432,12 +1433,12 @@ arguments:
 =================== ============ ======================================================================================================================================================
 `in3_t * <#in3-t>`_  **c**       the pointer to the Incubed client configuration
 ``char *``           **method**  the name of the RPC function to call
-``char *``           **params**  docs for input parameter v
+``char *``           **params**  docs for input parameter
 ``char **``          **result**  Pointer to string, which will be set if the request was successful. This will hold the result as json-rpc-string. (Make sure you free this after use!)
 ``char **``          **error**   pointer to a string containing the error-message. (Make sure you free this after use!)
 =================== ============ ======================================================================================================================================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -1452,16 +1453,16 @@ Registers a new chain or replaces an existing one (but keeps the NodeList).
 arguments:
 ```eval_rst
 ======================================= ================= =========================================
-`in3_t * <#in3-t>`_                      **client**       the pointer to the incubed client config.
-``uint64_t``                             **chain_id**     the chain id.
-`in3_chain_type_t <#in3-chain-type-t>`_  **type**         the verification type of the chain.
-`address_t <#address-t>`_                **contract**     contract of the registry.
-`bytes32_t <#bytes32-t>`_                **registry_id**  the identifier of the registry.
-``uint8_t``                              **version**      the chain version.
-`json_ctx_t * <#json-ctx-t>`_            **spec**         chainspec or NULL.
+`in3_t * <#in3-t>`_                      **client**       the pointer to the Incubed client configuration
+``uint64_t``                             **chain_id**     the chain-id.
+`in3_chain_type_t <#in3-chain-type-t>`_  **type**         the verification type of the chain
+`address_t <#address-t>`_                **contract**     contract of the registry
+`bytes32_t <#bytes32-t>`_                **registry_id**  the identifier of the registry
+``uint8_t``                              **version**      the chain version
+`json_ctx_t * <#json-ctx-t>`_            **spec**         chainspec or NULL
 ======================================= ================= =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -1473,7 +1474,7 @@ in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, uint6
 
 Adds a node to a chain or updates an existing node.
 
-[in] public address of the signer. 
+[in] public address of the signer.
 
 arguments:
 ```eval_rst
@@ -1497,7 +1498,7 @@ in3_ret_t in3_client_remove_node(in3_t *client, uint64_t chain_id, address_t add
 
 Removes a node from a NodeList.
 
-[in] public address of the signer. 
+[in] public address of the signer.
 
 arguments:
 ```eval_rst
@@ -1519,7 +1520,7 @@ in3_ret_t in3_client_clear_nodes(in3_t *client, uint64_t chain_id);
 
 Removes all nodes from the NodeList.
 
-[in] the chain-id. 
+[in] the chain-id.
 
 arguments:
 ```eval_rst
@@ -1577,7 +1578,7 @@ Location: src/core/client/context.h
 
 The weight of a certain node as a linked list.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================================== ============ ===========================================================
@@ -1827,9 +1828,9 @@ returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the funct
 
 ### send.h
 
-Handles caching and storage. 
+Handles caching and storage.
 
-Handles the request. 
+Handles the request.
 
 Location: src/core/client/send.h
 
@@ -1883,7 +1884,7 @@ returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the fun
 
 #### in3_verifier_t
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ======================================= ================ 
@@ -2014,7 +2015,7 @@ typedef uint_fast8_t wlen_t
 
 A byte array.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ============= ========== =================================
@@ -2126,7 +2127,7 @@ arguments:
 bytes_t* b_dup(bytes_t *a);
 ```
 
-clones a byte array 
+Clones a byte array.
 
 arguments:
 ```eval_rst
@@ -2135,7 +2136,6 @@ arguments:
 ======================= ======= 
 ```
 returns: [`bytes_t *`](#bytes-t)
-
 
 #### b_read_byte
 
@@ -2295,7 +2295,7 @@ returns: [`bytes_builder_t *`](#bytes-builder-t)
 void bb_free(bytes_builder_t *bb);
 ```
 
-frees a bytebuilder and its content.
+Frees a bytebuilder and its content.
 
 arguments:
 ```eval_rst
@@ -2614,13 +2614,13 @@ The parser can read from:
 - JSON
 - bin
 
-When reading from JSON, all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as an integer. 
+When reading from JSON, all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as an integer.
 
 Location: src/core/util/data.h
 
 #### DATA_DEPTH_MAX
 
-The max DEPTH of the JSON-data allowed. 
+The max DEPTH of the JSON-data allowed.
 
 It will throw an error if reached.
 
@@ -2654,7 +2654,7 @@ It will throw an error if reached.
 
 #### d_type_t
 
-type of a token. 
+Type of a token.
 
 The enum type contains the following values:
 
@@ -2680,9 +2680,9 @@ typedef uint16_t d_key_t
 
 A token holding any kind of value.
 
-Use d_type, d_len or the cast-function to get the value.
+Use d_type, d_len, or the cast-function to get the value.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ============= ========== =====================================================================
@@ -2696,7 +2696,7 @@ The stucture contains following fields:
 
 Internal type used to represent the range within a string. 
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ========== ========== ==================================
@@ -2707,11 +2707,11 @@ The stucture contains following fields:
 
 #### json_ctx_t
 
-Parser for JSON or binary-data. 
+Parser for JSON or binary-data.
 
 It needs to freed after usage.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================== =============== ============================================================
@@ -2737,7 +2737,7 @@ for (d_iterator_t iter = d_iter( parent ); iter.left ; d_iter_next(&iter)) {
 }
 ```
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =========================== =========== =====================
@@ -2878,7 +2878,7 @@ uint64_t d_long(const d_token_t *item);
 
 Returns the value as long. 
 
-Only if type is integer or bytes, but short enough.
+Only if type is integer or bytes but short enough.
 
 arguments:
 ```eval_rst
@@ -2896,7 +2896,7 @@ uint64_t d_longd(const d_token_t *item, const uint64_t def_val);
 
 Returns the value as long or if NULL, the default.
 
-Only if type is integer or bytes, but short enough.
+Only if type is integer or bytes but short enough.
 
 arguments:
 ```eval_rst
@@ -2945,7 +2945,7 @@ returns: [`d_type_t`](#d-type-t)
 static int d_len(const d_token_t *item);
 ```
 
-Number of elements in the token (only for object or array, other will return 0).
+Number of elements in the token (only for object or array, others will return 0).
 
 arguments:
 ```eval_rst
@@ -3130,7 +3130,7 @@ returns: [`json_ctx_t *`](#json-ctx-t)
 json_ctx_t* parse_json(char *js);
 ```
 
-Rarses JSON-data, which needs to be freed after usage!
+Parses JSON-data, which needs to be freed after usage!
 
 arguments:
 ```eval_rst
@@ -3179,7 +3179,7 @@ returns: [`str_range_t`](#str-range-t)
 char* d_create_json(d_token_t *item);
 ```
 
-Creates a JSON-string. 
+Creates a JSON-string.
 
 It does not work for objects if the parsed data is binary!
 
@@ -3799,8 +3799,8 @@ The enum type contains the following values:
 
 ```eval_rst
 ================== === ============================================================
- **IN3_OK**        0   Success
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error message
+ **IN3_OK**         0  Success
+ **IN3_EUNKNOWN**  -1  Unknown error, usually accompanied by specific error message
  **IN3_ENOMEM**    -2  No memory
  **IN3_ENOTSUP**   -3  Not supported
  **IN3_EINVAL**    -4  Invalid value
@@ -3829,7 +3829,7 @@ Location: src/core/util/scache.h
 
 #### cache_entry_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ======================================= =============== 
@@ -3899,7 +3899,7 @@ Location: src/core/util/stringbuilder.h
 
 #### sb_t
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ========== ============== 
@@ -4387,7 +4387,7 @@ returns: `char *`
 int min_bytes_len(uint64_t val);
 ```
 
-Calculate the minimum number of bytes to represents the len.
+Calculate the minimum number of bytes to represent the len.
 
 arguments:
 ```eval_rst
@@ -4399,7 +4399,7 @@ returns: `int`
 
 ## Module Transport/curl 
 
-Add an option.
+Adds an option.
 
 ### in3_curl.h
 
@@ -4430,7 +4430,7 @@ returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the funct
 
 For detecting Windows compilers.
 
-target_link_libraries(transport_curl ws2_32 wsock32 pthread )
+target_link_libraries(transport_curl ws2_32 wsock32 pthread)
 
 ### in3_http.h
 
@@ -4453,7 +4453,7 @@ arguments:
 `in3_response_t * <#in3-response-t>`_  **result**    
 ===================================== ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -4520,7 +4520,7 @@ arguments:
 `bytes_t * <#bytes-t>`_        **tx_hash**  
 ============================= ============= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -4530,7 +4530,7 @@ returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the funct
 in3_ret_t eth_verify_account_proof(in3_vctx_t *vc);
 ```
 
-Verifies account proofs. 
+Verifies account proofs.
 
 arguments:
 ```eval_rst
@@ -4604,7 +4604,7 @@ arguments:
 `in3_response_t ** <#in3-response-t>`_  **response**  
 ====================================== ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
 *Please make sure you check if it was successful (`==IN3_OK`).*
 
@@ -4696,15 +4696,15 @@ returns: `int(*`
 
 Single node in the Merkle trie.
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ======================================= ================ ===============================================
 ``uint8_t``                              **hash**        the hash of the node
 `bytes_t <#bytes-t>`_                    **data**        the raw data
 `bytes_t <#bytes-t>`_                    **items**       the data as a list
-``uint8_t``                              **own_memory**  if true, this is an embedded node with own memory
-`trie_node_type_t <#trie-node-type-t>`_  **type**        type of the node
+``uint8_t``                              **own_memory**  if true, this is an embedded node with its own memory
+`trie_node_type_t <#trie-node-type-t>`_  **type**        type of node
 `trie_nodestruct , * <#trie-node>`_      **next**        used as linked list
 ======================================= ================ ===============================================
 ```
@@ -4713,7 +4713,7 @@ The stucture contains the following fields:
 
 The codec used to encode nodes.
 
-The stucture contains following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ===================================== =================== 
@@ -4728,9 +4728,9 @@ The stucture contains following fields:
 
 A merkle trie implementation.
 
-This is a Patricia Merkle tree. 
+This is a Patricia Merkle tree.
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ================================= ============ ==============================
@@ -4747,7 +4747,7 @@ The stucture contains the following fields:
 trie_t* trie_new();
 ```
 
-Creates a new Merkle trie. 
+Creates a new Merkle trie.
 
 returns: [`trie_t *`](#trie-t)
 
@@ -4785,7 +4785,7 @@ arguments:
 ======================= =========== 
 ```
 
-## Module verifier/eth1/full 
+## Module Verifier/eth1/full 
 
 Adds gas-calculation.
 
@@ -5082,7 +5082,7 @@ Location: src/verifier/eth1/full/evm.h
 
 #### EVM_ERROR_EMPTY_STACK
 
-The no more elements on the stack.
+No more elements on the stack.
 
 ```c
 #define EVM_ERROR_EMPTY_STACK -1
@@ -5098,7 +5098,7 @@ The opcode is not supported.
 
 #### EVM_ERROR_BUFFER_TOO_SMALL
 
-Reading data from a position, which is not initialized.
+Reading data from a position that is not initialized.
 
 ```c
 #define EVM_ERROR_BUFFER_TOO_SMALL -3
@@ -5146,7 +5146,7 @@ The EVM ran into a loop.
 
 #### EVM_ERROR_INVALID_ENV
 
-The enviroment could not deliver the data.
+The environment could not deliver the data.
 
 ```c
 #define EVM_ERROR_INVALID_ENV -9
@@ -5288,7 +5288,7 @@ Stack limit reached.
 
 #### evm_state
 
-The current state of the EVM. 
+The current state of the EVM.
 
 The enum type contains the following values:
 
@@ -5319,7 +5319,7 @@ returns: `int(*`
 
 #### storage_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============================================== =========== 
@@ -5331,7 +5331,7 @@ The stucture contains the following fields:
 
 #### logs_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ========================= ============ 
@@ -5343,7 +5343,7 @@ The stucture contains the following fields:
 
 #### account_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============================== ============= 
@@ -5358,7 +5358,7 @@ The stucture contains the following fields:
 
 #### evm_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ===================================== ====================== ======================================================
@@ -5378,8 +5378,8 @@ The stucture contains the following fields:
 ``uint8_t *``                          **account**           the address of the code
 ``uint8_t *``                          **origin**            the address of original sender of the root-transaction
 ``uint8_t *``                          **caller**            the address of the parent sender
-`bytes_t <#bytes-t>`_                  **call_value**        value send
-`bytes_t <#bytes-t>`_                  **call_data**         data send in the transaction
+`bytes_t <#bytes-t>`_                  **call_value**        value sent
+`bytes_t <#bytes-t>`_                  **call_data**         data sent in the transaction
 `bytes_t <#bytes-t>`_                  **gas_price**         current gas price
 ===================================== ====================== ======================================================
 ```
@@ -5556,7 +5556,7 @@ returns: `int`
 int evm_sub_call(evm_t *parent, uint8_t address[20], uint8_t account[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint8_t origin[20], uint64_t gas, wlen_t mode, uint32_t out_offset, uint32_t out_len);
 ```
 
-Handle internal calls.
+Handles internal calls.
 
 arguments:
 ```eval_rst
@@ -5619,7 +5619,7 @@ returns: `int`
 int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, bytes_t **result);
 ```
 
-Run a evm-call.
+Runs an evm-call.
 
 arguments:
 ```eval_rst
@@ -5712,7 +5712,7 @@ arguments:
 
 ### gas.h
 
-EVM gas defines.
+EVM gas defined.
 
 Location: src/verifier/eth1/full/gas.h
 
@@ -5790,7 +5790,7 @@ Nothing is paid for operations of the set Wzero.
 
 #### G_JUMPDEST
 
-JUMP DEST.
+Jump destination.
 
 ```c
 #define G_JUMPDEST 1
@@ -6046,7 +6046,7 @@ This is paid for each word (rounded up) for input data to a SHA3 operation.
 
 #### G_COPY
 
-This is a partial payment for *COPY operations, multiplied by the number of words copied, rounded up.
+This is a partial payment for COPY operations, multiplied by the number of words copied, rounded up.
 
 ```c
 #define G_COPY 3
@@ -6223,7 +6223,7 @@ The enum type contains the following values:
 #### eip_transition_t
 
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ============ ====================== 
@@ -6234,7 +6234,7 @@ The stucture contains the following fields:
 
 #### consensus_transition_t
 
-The stuct contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 =============================================== ====================== 
@@ -6247,7 +6247,7 @@ The stuct contains the following fields:
 
 #### chainspec_t
 
-The stucture contains the following fields:
+The structure contains the following fields:
 
 ```eval_rst
 ===================================================== =============================== 
@@ -6266,7 +6266,7 @@ The stucture contains the following fields:
 struct __attribute__((__packed__)) eip_;
 ```
 
-Defines the flags for the current activated EIPs.
+Defines the flags for the currently activated EIPs.
 
 Since it does not make sense to support an EVM defined before Homestead, Homestead's EIP is always turned on!
 
@@ -6748,7 +6748,7 @@ int eth_verify_signature(in3_vctx_t *vc, bytes_t *msg_hash, d_token_t *sig);
 
 Verifies a single-signature blockheader.
 
-This function will return a positive integer with a bitmask holding the bit set according to the address that signed it. This is based on the signatiures in the request-config.
+This function will return a positive integer with a bitmask holding the bit set according to the address that signed it. This is based on the signatures in the request-config.
 
 arguments:
 ```eval_rst
@@ -6864,8 +6864,8 @@ int trie_verify_proof(bytes_t *rootHash, bytes_t *path, bytes_t **proof, bytes_t
 Verifies a Merkle proof. 
 
 expectedValue == NULL: value must not exist
-expectedValue.data ==NULL: please copy the data; I want to evaluate it afterward.
-expectedValue.data !=NULL: value must match the data.
+expectedValue.data ==NULL: please copy the data; I want to evaluate it afterward
+expectedValue.data !=NULL: value must match the data
 
 arguments:
 ```eval_rst
@@ -6895,7 +6895,7 @@ arguments:
 ``int``                **use_prefix**  
 ===================== ================ 
 ```
-returns: `uint8_t *`: the resulting bytes represent a 4-bit number each and are terminated with a 0xFF.
+returns: `uint8_t *`: the resulting bytes each represent a 4-bit number and are terminated with a 0xFF.
 
 #### trie_matching_nibbles
 
@@ -6955,9 +6955,10 @@ bytes_t item;
 // decodes the tx_raw by letting the item point to range of the first element, which should be the body of a list.
 if (rlp_decode(tx_raw, 0, &item) !=2) return -1 ;
 
-// now decode the 4th element (which is the value) and let item point to that range.
+// now decode the fourth element (which is the value) and let the item point to that range.
 if (rlp_decode(&item, 4, &item) !=1) return -1 ;
 ```
+
 arguments:
 ```eval_rst
 ======================= =========== 
@@ -6979,14 +6980,15 @@ int rlp_decode_in_list(bytes_t *b, int index, bytes_t *dst);
 
 This function expects a list item (like the blockheader as first item and will then find the item within this list).
 
-It is a shortcut for:
+It's a shortcut for:
 
 ```c
 // decode the list
 if (rlp_decode(b,0,dst)!=2) return 0;
-// and the decode the item
+// and then decode the item
 return rlp_decode(dst,index,dst);
 ```
+
 arguments:
 ```eval_rst
 ======================= =========== 
@@ -7101,7 +7103,7 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
-returns: [`bytes_builder_t *`](#bytes-builder-t): the same builder. 
+returns: [`bytes_builder_t *`](#bytes-builder-t): the same builder.
 
 #### rlp_encode_to_item
 
@@ -7142,7 +7144,7 @@ arguments:
 
 Serialization of ETH-Objects.
 
-Theincoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
+The incoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
 
 Location: src/verifier/eth1/nano/serialize.h
 
