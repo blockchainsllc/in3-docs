@@ -1300,38 +1300,34 @@ The stucture contains the following fields:
 
 #### in3_transport_send
 
-the transport function to be implemented by the transport provider. 
-
+The transport function to be implemented by the transport provider.
 
 ```c
 typedef in3_ret_t(* in3_transport_send) (char **urls, int urls_len, char *payload, in3_response_t *results)
 ```
 
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_filter_t
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ========================================= ================ ==========================================================
-`in3_filter_type_t <#in3-filter-type-t>`_  **type**        filter type: (event, block or pending)
+`in3_filter_type_t <#in3-filter-type-t>`_  **type**        filter type: (event, block, or pending)
 ``char *``                                 **options**     associated filter options
-``uint64_t``                               **last_block**  block no. 
+``uint64_t``                               **last_block**  block number
                                                            
-                                                           when filter was created OR eth_getFilterChanges was called
+                                                           when filter was created or eth_getFilterChanges was called
 ``void(*``                                 **release**     method to release owned resources
 ========================================= ================ ==========================================================
 ```
 
 #### in3_filter_handler_t
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ================================== =========== ================
@@ -1342,43 +1338,42 @@ The stuct contains following fields:
 
 #### in3_t
 
-Incubed Configuration. 
+Incubed configuration. 
 
-This struct holds the configuration and also point to internal resources such as filters or chain configs. 
+This structure holds the configuration and also points to internal resources, such as filters or chain configurations. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =================================================== ======================== =======================================================================================
-``uint32_t``                                         **cacheTimeout**        number of seconds requests can be cached.
-``uint16_t``                                         **nodeLimit**           the limit of nodes to store in the client.
+``uint32_t``                                         **cacheTimeout**        number of seconds requests can be cached
+``uint16_t``                                         **nodeLimit**           the limit of nodes to store in the client
 `bytes_t * <#bytes-t>`_                              **key**                 the client key to sign requests
 ``uint32_t``                                         **maxCodeCache**        number of max bytes used to cache the code in memory
-``uint32_t``                                         **maxBlockCache**       number of number of blocks cached in memory
+``uint32_t``                                         **maxBlockCache**       number of blocks cached in memory
 `in3_proof_t <#in3-proof-t>`_                        **proof**               the type of proof used
-``uint8_t``                                          **requestCount**        the number of request send when getting a first answer
-``uint8_t``                                          **signatureCount**      the number of signatures used to proof the blockhash.
-``uint64_t``                                         **minDeposit**          min stake of the server. 
+``uint8_t``                                          **requestCount**        the number of requests sent when getting a first answer
+``uint8_t``                                          **signatureCount**      the number of signatures used to proof the blockhash
+``uint64_t``                                         **minDeposit**          minimum stake of the server
                                                                              
                                                                              Only nodes owning at least this amount will be chosen.
-``uint16_t``                                         **replaceLatestBlock**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
+``uint16_t``                                         **replaceLatestBlock**  If specified, the blockNumber *latest* will be replaced by blockNumber-(specified value).
 ``uint16_t``                                         **finality**            the number of signatures in percent required for the request
 ``uint16_t``                                         **max_attempts**        the max number of attempts before giving up
-``uint32_t``                                         **timeout**             specifies the number of milliseconds before the request times out. 
+``uint32_t``                                         **timeout**             specifies the number of milliseconds before the request times out
                                                                              
-                                                                             increasing may be helpful if the device uses a slow connection.
-``uint64_t``                                         **chainId**             servers to filter for the given chain. 
+                                                                             increasing may be helpful if the device uses a slow connection
+``uint64_t``                                         **chainId**             servers to filter for the given chain
                                                                              
                                                                              The chain-id based on EIP-155.
-``uint8_t``                                          **autoUpdateList**      if true the nodelist will be automaticly updated if the lastBlock is newer
-`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**        a cache handler offering 2 functions ( setItem(string,string), getItem(string) )
-`in3_signer_t * <#in3-signer-t>`_                    **signer**              signer-struct managing a wallet
-`in3_transport_send <#in3-transport-send>`_          **transport**           the transporthandler sending requests
-``uint8_t``                                          **includeCode**         includes the code when sending eth_call-requests
-``uint8_t``                                          **use_binary**          if true the client will use binary format
-``uint8_t``                                          **use_http**            if true the client will try to use http instead of https
-`in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and nodeList definitions
+``uint8_t``                                          **autoUpdateList**      if true, the NodeList will be automatically updated if the lastBlock is newer
+`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**        a cache handler offering two functions (setItem(string,string), getItem(string))
+`in3_signer_t * <#in3-signer-t>`_                    **signer**              signer structure managing a wallet
+`in3_transport_send <#in3-transport-send>`_          **transport**           the transport handler sending requests
+``uint8_t``                                          **includeCode**         includes the code when sending eth_call requests
+``uint8_t``                                          **use_binary**          if true, the client will use binary format
+``uint8_t``                                          **use_http**            if true, the client will try to use HTTP instead of HTTPS
+`in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and NodeList definitions
 ``uint16_t``                                         **chainsCount**         number of configured chains
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**             filter handler
 =================================================== ======================== =======================================================================================
@@ -1390,13 +1385,13 @@ The stuct contains following fields:
 in3_t* in3_new();
 ```
 
-creates a new Incubes configuration and returns the pointer. 
+Creates a new Incubed configuration and returns the pointer.
 
-you need to free this instance with `in3_free` after use!
+You need to free this instance with `in3_free` after use!
 
-Before using the client you still need to set the tramsport and optional the storage handlers:
+Before using the client, you still need to set the transport and optional the storage handlers:
 
-- example of initialization: 
+- Example of initialization:
 
 ```c
 // register verifiers
@@ -1424,31 +1419,27 @@ in3_cache_init(client);
 
 returns: [`in3_t *`](#in3-t) : the incubed instance. 
 
-
-
-
 #### in3_client_rpc
 
 ```c
 in3_ret_t in3_client_rpc(in3_t *c, char *method, char *params, char **result, char **error);
 ```
 
-sends a request and stores the result in the provided buffer 
+Sends a request and stores the result in the provided buffer.
 
 arguments:
 ```eval_rst
 =================== ============ ======================================================================================================================================================
-`in3_t * <#in3-t>`_  **c**       the pointer to the incubed client config.
-``char *``           **method**  the name of the rpc-funcgtion to call.
-``char *``           **params**  docs for input parameter v.
-``char **``          **result**  pointer to string which will be set if the request was successfull. This will hold the result as json-rpc-string. (make sure you free this after use!)
-``char **``          **error**   pointer to a string containg the error-message. (make sure you free it after use!)
+`in3_t * <#in3-t>`_  **c**       the pointer to the Incubed client configuration
+``char *``           **method**  the name of the RPC function to call
+``char *``           **params**  docs for input parameter v
+``char **``          **result**  Pointer to string, which will be set if the request was successful. This will hold the result as json-rpc-string. (Make sure you free this after use!)
+``char **``          **error**   pointer to a string containing the error-message. (Make sure you free this after use!)
 =================== ============ ======================================================================================================================================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_client_register_chain
 
@@ -1456,7 +1447,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_client_register_chain(in3_t *client, uint64_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version, json_ctx_t *spec);
 ```
 
-registers a new chain or replaces a existing (but keeps the nodelist) 
+Registers a new chain or replaces an existing one (but keeps the NodeList).
 
 arguments:
 ```eval_rst
@@ -1472,8 +1463,7 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_client_add_node
 
@@ -1481,24 +1471,23 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, uint64_t props, address_t address);
 ```
 
-adds a node to a chain ore updates a existing node 
+Adds a node to a chain or updates an existing node.
 
 [in] public address of the signer. 
 
 arguments:
 ```eval_rst
 ========================= ============== =========================================
-`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
-``uint64_t``               **chain_id**  the chain id.
-``char *``                 **url**       url of the nodes.
-``uint64_t``               **props**     properties of the node.
+`in3_t * <#in3-t>`_        **client**    the pointer to the Incubed client configuration
+``uint64_t``               **chain_id**  the chain-id
+``char *``                 **url**       URL of the nodes
+``uint64_t``               **props**     properties of the node
 `address_t <#address-t>`_  **address**   
 ========================= ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_client_remove_node
 
@@ -1506,22 +1495,21 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_client_remove_node(in3_t *client, uint64_t chain_id, address_t address);
 ```
 
-removes a node from a nodelist 
+Removes a node from a NodeList.
 
 [in] public address of the signer. 
 
 arguments:
 ```eval_rst
 ========================= ============== =========================================
-`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
-``uint64_t``               **chain_id**  the chain id.
+`in3_t * <#in3-t>`_        **client**    the pointer to the Incubed client configuration
+``uint64_t``               **chain_id**  the chain-id
 `address_t <#address-t>`_  **address**   
 ========================= ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_client_clear_nodes
 
@@ -1529,21 +1517,20 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_client_clear_nodes(in3_t *client, uint64_t chain_id);
 ```
 
-removes all nodes from the nodelist 
+Removes all nodes from the NodeList.
 
-[in] the chain id. 
+[in] the chain-id. 
 
 arguments:
 ```eval_rst
 =================== ============== =========================================
-`in3_t * <#in3-t>`_  **client**    the pointer to the incubed client config.
+`in3_t * <#in3-t>`_  **client**    the pointer to the Incubed client configuration
 ``uint64_t``         **chain_id**  
 =================== ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_free
 
@@ -1551,12 +1538,12 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 void in3_free(in3_t *a);
 ```
 
-frees the references of the client 
+Frees the references of the client.
 
 arguments:
 ```eval_rst
 =================== ======= =================================================
-`in3_t * <#in3-t>`_  **a**  the pointer to the incubed client config to free.
+`in3_t * <#in3-t>`_  **a**  the pointer to the Incubed client configuration to free
 =================== ======= =================================================
 ```
 
@@ -1566,41 +1553,39 @@ arguments:
 in3_ret_t in3_cache_init(in3_t *c);
 ```
 
-inits the cache. 
+Initializes the cache.
 
 arguments:
 ```eval_rst
 =================== ======= ==================
-`in3_t * <#in3-t>`_  **c**  the incubed client
+`in3_t * <#in3-t>`_  **c**  the Incubed client
 =================== ======= ==================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### context.h
 
-Request Context. 
+Requests context. 
 
-This is used for each request holding request and response-pointers. 
+This is used for each request holding requests and response-pointers.
 
 Location: src/core/client/context.h
 
 #### node_weight_t
 
-the weight of a ceertain node as linked list 
+The weight of a certain node as a linked list.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =========================================== ============ ===========================================================
-`in3_node_t * <#in3-node-t>`_                **node**    the node definition including the url
+`in3_node_t * <#in3-node-t>`_                **node**    the node definition including the URL
 `in3_node_weight_t * <#in3-node-weight-t>`_  **weight**  the current weight and blacklisting-stats
-``float``                                    **s**       The starting value.
+``float``                                    **s**       the starting value
 ``float``                                    **w**       weight value
-`weightstruct , * <#weight>`_                **next**    next in the linkedlistt or NULL if this is the last element
+`weightstruct , * <#weight>`_                **next**    next in the linked list or NULL if this is the last element
 =========================================== ============ ===========================================================
 ```
 
@@ -1610,9 +1595,9 @@ The stuct contains following fields:
 in3_ctx_t* new_ctx(in3_t *client, char *req_data);
 ```
 
-creates a new context. 
+Creates a new context.
 
-the request data will be parsed and represented in the context. 
+The request data will be parsed and represented in the context.
 
 arguments:
 ```eval_rst
@@ -1622,7 +1607,6 @@ arguments:
 =================== ============== 
 ```
 returns: [`in3_ctx_t *`](#in3-ctx-t)
-
 
 #### ctx_parse_response
 
@@ -1638,10 +1622,9 @@ arguments:
 ``int``                      **len**            
 =========================== =================== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### free_ctx
 
@@ -1669,10 +1652,9 @@ arguments:
 `sb_t * <#sb-t>`_            **sb**  
 =========================== ======== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function.
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### ctx_set_error
 
@@ -1688,10 +1670,9 @@ arguments:
 `in3_ret_t <#in3-ret-t>`_    **errnumber**  
 =========================== =============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### ctx_get_error
 
@@ -1706,10 +1687,9 @@ arguments:
 ``int``                      **id**   
 =========================== ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_client_rpc_ctx
 
@@ -1717,9 +1697,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ctx_t* in3_client_rpc_ctx(in3_t *c, char *method, char *params);
 ```
 
-sends a request and returns a context used to access the result or errors. 
+Sends a request and returns a context used to access the result or errors.
 
-This context *MUST* be freed with free_ctx(ctx) after usage to release the resources. 
+This context MUST be freed with free_ctx(ctx) after use to release the resources.
 
 arguments:
 ```eval_rst
@@ -1730,7 +1710,6 @@ arguments:
 =================== ============ 
 ```
 returns: [`in3_ctx_t *`](#in3-ctx-t)
-
 
 #### free_ctx_nodes
 
@@ -1759,10 +1738,9 @@ arguments:
 ```
 returns: `int`
 
-
 ### nodelist.h
 
-handles nodelists. 
+Handles NodeLists.
 
 Location: src/core/client/nodelist.h
 
@@ -1772,7 +1750,7 @@ Location: src/core/client/nodelist.h
 void in3_nodelist_clear(in3_chain_t *chain);
 ```
 
-removes all nodes and their weights from the nodelist 
+Removes all nodes and their weights from the NodeList.
 
 arguments:
 ```eval_rst
@@ -1787,9 +1765,9 @@ arguments:
 in3_ret_t in3_node_list_get(in3_ctx_t *ctx, uint64_t chain_id, bool update, in3_node_t **nodeList, int *nodeListLength, in3_node_weight_t **weights);
 ```
 
-check if the nodelist is up to date. 
+Checks if the NodeList is up to date.
 
-if not it will fetch a new version first (if the needs_update-flag is set). 
+If not, it will fetch a new version first (if the needs_update-flag is set).
 
 arguments:
 ```eval_rst
@@ -1802,10 +1780,9 @@ arguments:
 `in3_node_weight_t ** <#in3-node-weight-t>`_  **weights**         
 ============================================ ==================== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_node_list_fill_weight
 
@@ -1813,7 +1790,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 node_weight_t* in3_node_list_fill_weight(in3_t *c, in3_node_t *all_nodes, in3_node_weight_t *weights, int len, _time_t now, float *total_weight, int *total_found);
 ```
 
-filters and fills the weights on a returned linked list. 
+Filters and fills the weights on a returned linked list.
 
 arguments:
 ```eval_rst
@@ -1829,14 +1806,13 @@ arguments:
 ```
 returns: [`node_weight_t *`](#node-weight-t)
 
-
 #### in3_node_list_pick_nodes
 
 ```c
 in3_ret_t in3_node_list_pick_nodes(in3_ctx_t *ctx, node_weight_t **nodes);
 ```
 
-picks (based on the config) a random number of nodes and returns them as weightslist. 
+Picks (based on the configuration) a random number of nodes and returns them as a weights list.
 
 arguments:
 ```eval_rst
@@ -1845,16 +1821,15 @@ arguments:
 `node_weight_t ** <#node-weight-t>`_  **nodes**  
 ==================================== =========== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### send.h
 
-handles caching and storage. 
+Handles caching and storage. 
 
-handles the request. 
+Handles the request. 
 
 Location: src/core/client/send.h
 
@@ -1864,7 +1839,7 @@ Location: src/core/client/send.h
 in3_ret_t in3_send_ctx(in3_ctx_t *ctx);
 ```
 
-executes a request context by picking nodes and sending it. 
+Executes a request context by picking nodes and sending it.
 
 arguments:
 ```eval_rst
@@ -1872,49 +1847,43 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**  
 =========================== ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### verifier.h
 
-Verification Context. 
+Verification context.
 
-This context is passed to the verifier. 
+This context is passed to the verifier.
 
 Location: src/core/client/verifier.h
 
 #### in3_verify
 
-function to verify the result. 
-
+Function to verify the result. 
 
 ```c
 typedef in3_ret_t(* in3_verify) (in3_vctx_t *c)
 ```
 
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_pre_handle
-
 
 ```c
 typedef in3_ret_t(* in3_pre_handle) (in3_ctx_t *ctx, in3_response_t **response)
 ```
 
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t(*`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_verifier_t
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ======================================= ================ 
@@ -1931,7 +1900,7 @@ The stuct contains following fields:
 in3_verifier_t* in3_get_verifier(in3_chain_type_t type);
 ```
 
-returns the verifier for the given chainType 
+Returns the verifier for the given chain type.
 
 arguments:
 ```eval_rst
@@ -1940,7 +1909,6 @@ arguments:
 ======================================= ========== 
 ```
 returns: [`in3_verifier_t *`](#in3-verifier-t)
-
 
 #### in3_register_verifier
 
@@ -1968,14 +1936,13 @@ arguments:
 ``char *``                     **msg**  
 ============================= ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### bytes.h
 
-util helper on byte arrays. 
+Utility helper on byte arrays.
 
 Location: src/core/util/bytes.h
 
@@ -1985,13 +1952,11 @@ Location: src/core/util/bytes.h
 #define bb_new () bb_newl(32)
 ```
 
-
 #### bb_read (_bb_,_i_,_vptr_)
 
 ```c
 #define bb_read (_bb_,_i_,_vptr_) bb_readl((_bb_), (_i_), (_vptr_), sizeof(*_vptr_))
 ```
-
 
 #### bb_read_next (_bb_,_iptr_,_vptr_)
 
@@ -2003,13 +1968,11 @@ Location: src/core/util/bytes.h
   } while (0)
 ```
 
-
 #### bb_readl (_bb_,_i_,_vptr_,_l_)
 
 ```c
 #define bb_readl (_bb_,_i_,_vptr_,_l_) memcpy((_vptr_), (_bb_)->b.data + (_i_), _l_)
 ```
-
 
 #### b_read (_b_,_i_,_vptr_)
 
@@ -2017,18 +1980,15 @@ Location: src/core/util/bytes.h
 #define b_read (_b_,_i_,_vptr_) b_readl((_b_), (_i_), _vptr_, sizeof(*_vptr_))
 ```
 
-
 #### b_readl (_b_,_i_,_vptr_,_l_)
 
 ```c
 #define b_readl (_b_,_i_,_vptr_,_l_) memcpy(_vptr_, (_b_)->data + (_i_), (_l_))
 ```
 
-
 #### address_t
 
-pointer to a 20byte address 
-
+Pointer to a 20-byte address.
 
 ```c
 typedef uint8_t address_t[20]
@@ -2036,8 +1996,7 @@ typedef uint8_t address_t[20]
 
 #### bytes32_t
 
-pointer to a 32byte word 
-
+Pointer to a 32-byte word. 
 
 ```c
 typedef uint8_t bytes32_t[32]
@@ -2045,8 +2004,7 @@ typedef uint8_t bytes32_t[32]
 
 #### wlen_t
 
-number of bytes within a word (min 1byte but usually a uint) 
-
+Number of bytes within a word (minimum 1 byte but usually a uint).
 
 ```c
 typedef uint_fast8_t wlen_t
@@ -2054,14 +2012,13 @@ typedef uint_fast8_t wlen_t
 
 #### bytes_t
 
-a byte array 
+A byte array.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ============= ========== =================================
-``uint32_t``   **len**   the length of the array ion bytes
+``uint32_t``   **len**   the length of the array in bytes
 ``uint8_t *``  **data**  the byte-data
 ============= ========== =================================
 ```
@@ -2072,7 +2029,7 @@ The stuct contains following fields:
 bytes_t* b_new(char *data, int len);
 ```
 
-allocates a new byte array with 0 filled 
+Allocates a new byte array with 0 filled.
 
 arguments:
 ```eval_rst
@@ -2083,14 +2040,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### b_print
 
 ```c
 void b_print(bytes_t *a);
 ```
 
-prints a the bytes as hex to stdout 
+Prints the bytes as hex to stdout.
 
 arguments:
 ```eval_rst
@@ -2105,7 +2061,7 @@ arguments:
 void ba_print(uint8_t *a, size_t l);
 ```
 
-prints a the bytes as hex to stdout 
+Prints the bytes as hex to stdout.
 
 arguments:
 ```eval_rst
@@ -2121,7 +2077,7 @@ arguments:
 int b_cmp(bytes_t *a, bytes_t *b);
 ```
 
-compares 2 byte arrays and returns 1 for equal and 0 for not equal 
+Compares 2 byte arrays and returns 1 for equal and 0 for not equal.
 
 arguments:
 ```eval_rst
@@ -2132,14 +2088,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### bytes_cmp
 
 ```c
 int bytes_cmp(bytes_t a, bytes_t b);
 ```
 
-compares 2 byte arrays and returns 1 for equal and 0 for not equal 
+Compares 2 byte arrays and returns 1 for equal and 0 for not equal.
 
 arguments:
 ```eval_rst
@@ -2150,14 +2105,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### b_free
 
 ```c
 void b_free(bytes_t *a);
 ```
 
-frees the data 
+Frees the data.
 
 arguments:
 ```eval_rst
@@ -2189,7 +2143,7 @@ returns: [`bytes_t *`](#bytes-t)
 uint8_t b_read_byte(bytes_t *b, size_t *pos);
 ```
 
-reads a byte on the current position and updates the pos afterwards. 
+Reads a byte on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2200,14 +2154,13 @@ arguments:
 ```
 returns: `uint8_t`
 
-
 #### b_read_short
 
 ```c
 uint16_t b_read_short(bytes_t *b, size_t *pos);
 ```
 
-reads a short on the current position and updates the pos afterwards. 
+Reads a short on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2218,14 +2171,13 @@ arguments:
 ```
 returns: `uint16_t`
 
-
 #### b_read_int
 
 ```c
 uint32_t b_read_int(bytes_t *b, size_t *pos);
 ```
 
-reads a integer on the current position and updates the pos afterwards. 
+Reads an integer on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2236,14 +2188,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### b_read_int_be
 
 ```c
 uint32_t b_read_int_be(bytes_t *b, size_t *pos, size_t len);
 ```
 
-reads a unsigned integer as bigendian on the current position and updates the pos afterwards. 
+Reads an unsigned integer as big-endian on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2255,14 +2206,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### b_read_long
 
 ```c
 uint64_t b_read_long(bytes_t *b, size_t *pos);
 ```
 
-reads a long on the current position and updates the pos afterwards. 
+Reads a long on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2273,14 +2223,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### b_new_chars
 
 ```c
 char* b_new_chars(bytes_t *b, size_t *pos);
 ```
 
-creates a new string (needs to be freed) on the current position and updates the pos afterwards. 
+Creates a new string (needs to be freed) on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2291,14 +2240,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### b_new_dyn_bytes
 
 ```c
 bytes_t* b_new_dyn_bytes(bytes_t *b, size_t *pos);
 ```
 
-reads bytesn (which have the length stored as prefix) on the current position and updates the pos afterwards. 
+Reads bytes (which have the length stored as prefix) on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2309,14 +2257,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### b_new_fixed_bytes
 
 ```c
 bytes_t* b_new_fixed_bytes(bytes_t *b, size_t *pos, int len);
 ```
 
-reads bytes with a fixed length on the current position and updates the pos afterwards. 
+Reads bytes with a fixed length on the current position and updates the pos afterward.
 
 arguments:
 ```eval_rst
@@ -2327,7 +2274,6 @@ arguments:
 ======================= ========= 
 ```
 returns: [`bytes_t *`](#bytes-t)
-
 
 #### bb_newl
 
@@ -2343,14 +2289,13 @@ arguments:
 ```
 returns: [`bytes_builder_t *`](#bytes-builder-t)
 
-
 #### bb_free
 
 ```c
 void bb_free(bytes_builder_t *bb);
 ```
 
-frees a bytebuilder and its content. 
+frees a bytebuilder and its content.
 
 arguments:
 ```eval_rst
@@ -2365,7 +2310,7 @@ arguments:
 int bb_check_size(bytes_builder_t *bb, size_t len);
 ```
 
-internal helper to increase the buffer if needed 
+Internal helper to increase the buffer if needed.
 
 arguments:
 ```eval_rst
@@ -2376,14 +2321,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### bb_write_chars
 
 ```c
 void bb_write_chars(bytes_builder_t *bb, char *c, int len);
 ```
 
-writes a string to the builder. 
+Writes a string to the builder.
 
 arguments:
 ```eval_rst
@@ -2400,7 +2344,7 @@ arguments:
 void bb_write_dyn_bytes(bytes_builder_t *bb, bytes_t *src);
 ```
 
-writes bytes to the builder with a prefixed length. 
+Writes bytes to the builder with a prefixed length.
 
 arguments:
 ```eval_rst
@@ -2416,7 +2360,7 @@ arguments:
 void bb_write_fixed_bytes(bytes_builder_t *bb, bytes_t *src);
 ```
 
-writes fixed bytes to the builder. 
+Writes fixed bytes to the builder.
 
 arguments:
 ```eval_rst
@@ -2432,7 +2376,7 @@ arguments:
 void bb_write_int(bytes_builder_t *bb, uint32_t val);
 ```
 
-writes a ineteger to the builder. 
+Writes an integer to the builder.
 
 arguments:
 ```eval_rst
