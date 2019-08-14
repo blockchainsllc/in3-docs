@@ -31,7 +31,7 @@ Requests without an `in3` property will also get a response without `in3`. This 
     - `'proof`' : The proof will be created including blockheader, but without any signed blockhashes.
     - `'proofWithSignature`' : The returned proof will also include signed blockhashes as required in `signatures`.
 
-*  **signatures** `string<address>[]` - A list of addresses(as 20bytes in hex) requested to sign the blockhash.    
+*  **signatures** `string<address>[]` - A list of addresses (as 20bytes in hex) requested to sign the blockhash.    
 
 A example of an Incubed request may look like this:
 
