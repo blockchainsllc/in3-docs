@@ -4568,8 +4568,7 @@ returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the funct
 void in3_register_eth_basic();
 ```
 
-this function should only be called once and will register the eth-nano verifier. 
-
+This function should only be called once and will register the eth-nano verifier.
 
 #### eth_verify_eth_getLog
 
@@ -4577,7 +4576,7 @@ this function should only be called once and will register the eth-nano verifier
 in3_ret_t eth_verify_eth_getLog(in3_vctx_t *vc, int l_logs);
 ```
 
-verify logs 
+Verifies logs.
 
 arguments:
 ```eval_rst
@@ -4586,10 +4585,9 @@ arguments:
 ``int``                        **l_logs**  
 ============================= ============ 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_handle_intern
 
@@ -4597,7 +4595,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_handle_intern(in3_ctx_t *ctx, in3_response_t **response);
 ```
 
-this is called before a request is send 
+This is called before a request is sent.
 
 arguments:
 ```eval_rst
@@ -4606,14 +4604,13 @@ arguments:
 `in3_response_t ** <#in3-response-t>`_  **response**  
 ====================================== ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### signer.h
 
-Ethereum Nano verification. 
+Ethereum nano verification.
 
 Location: src/verifier/eth1/basic/signer.h
 
@@ -4623,7 +4620,7 @@ Location: src/verifier/eth1/basic/signer.h
 in3_ret_t eth_set_pk_signer(in3_t *in3, bytes32_t pk);
 ```
 
-sets the signer and a pk to the client 
+Sets the signer and a pk to the client.
 
 arguments:
 ```eval_rst
@@ -4632,62 +4629,54 @@ arguments:
 `bytes32_t <#bytes32-t>`_  **pk**   
 ========================= ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 ### trie.h
 
-Patricia Merkle Tree Imnpl. 
+Patricia Merkle tree implementation.
 
 Location: src/verifier/eth1/basic/trie.h
 
 #### trie_node_type_t
 
-Node types. 
+Node types.
 
 The enum type contains the following values:
 
 ```eval_rst
 ================= = ============================
  **NODE_EMPTY**   0 empty node
- **NODE_BRANCH**  1 a Branch
- **NODE_LEAF**    2 a leaf containing the value.
- **NODE_EXT**     3 a extension
+ **NODE_BRANCH**  1 a branch
+ **NODE_LEAF**    2 a leaf containing the value
+ **NODE_EXT**     3 an extension
 ================= = ============================
 ```
 
 #### in3_hasher_t
 
-hash-function 
-
+Hash-function.
 
 ```c
 typedef void(* in3_hasher_t) (bytes_t *src, uint8_t *dst)
 ```
 
-
 #### in3_codec_add_t
 
-codec to organize the encoding of the nodes 
-
+Codec to organize the encoding of the nodes.
 
 ```c
 typedef void(* in3_codec_add_t) (bytes_builder_t *bb, bytes_t *val)
 ```
 
-
 #### in3_codec_finish_t
-
 
 ```c
 typedef void(* in3_codec_finish_t) (bytes_builder_t *bb, bytes_t *dst)
 ```
 
-
 #### in3_codec_decode_size_t
-
 
 ```c
 typedef int(* in3_codec_decode_size_t) (bytes_t *src)
@@ -4695,9 +4684,7 @@ typedef int(* in3_codec_decode_size_t) (bytes_t *src)
 
 returns: `int(*`
 
-
 #### in3_codec_decode_index_t
-
 
 ```c
 typedef int(* in3_codec_decode_index_t) (bytes_t *src, int index, bytes_t *dst)
@@ -4705,20 +4692,18 @@ typedef int(* in3_codec_decode_index_t) (bytes_t *src, int index, bytes_t *dst)
 
 returns: `int(*`
 
-
 #### trie_node_t
 
-single node in the merkle trie. 
+Single node in the Merkle trie.
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ======================================= ================ ===============================================
 ``uint8_t``                              **hash**        the hash of the node
 `bytes_t <#bytes-t>`_                    **data**        the raw data
-`bytes_t <#bytes-t>`_                    **items**       the data as list
-``uint8_t``                              **own_memory**  if true this is a embedded node with own memory
+`bytes_t <#bytes-t>`_                    **items**       the data as a list
+``uint8_t``                              **own_memory**  if true, this is an embedded node with own memory
 `trie_node_type_t <#trie-node-type-t>`_  **type**        type of the node
 `trie_nodestruct , * <#trie-node>`_      **next**        used as linked list
 ======================================= ================ ===============================================
@@ -4726,10 +4711,9 @@ The stuct contains following fields:
 
 #### trie_codec_t
 
-the codec used to encode nodes. 
+The codec used to encode nodes.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ===================================== =================== 
@@ -4742,19 +4726,18 @@ The stuct contains following fields:
 
 #### trie_t
 
-a merkle trie implementation. 
+A merkle trie implementation.
 
-This is a Patricia Merkle Tree. 
+This is a Patricia Merkle tree. 
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ================================= ============ ==============================
-`in3_hasher_t <#in3-hasher-t>`_    **hasher**  hash-function.
-`trie_codec_t * <#trie-codec-t>`_  **codec**   encoding of the nocds.
-``uint8_t``                        **root**    The root-hash.
-`trie_node_t * <#trie-node-t>`_    **nodes**   linked list of containes nodes
+`in3_hasher_t <#in3-hasher-t>`_    **hasher**  hash-function
+`trie_codec_t * <#trie-codec-t>`_  **codec**   encoding of the nodes
+``uint8_t``                        **root**    the root-hash
+`trie_node_t * <#trie-node-t>`_    **nodes**   linked list of contained nodes
 ================================= ============ ==============================
 ```
 
@@ -4764,10 +4747,9 @@ The stuct contains following fields:
 trie_t* trie_new();
 ```
 
-creates a new Merkle Trie. 
+Creates a new Merkle trie. 
 
 returns: [`trie_t *`](#trie-t)
-
 
 #### trie_free
 
@@ -4775,7 +4757,7 @@ returns: [`trie_t *`](#trie-t)
 void trie_free(trie_t *val);
 ```
 
-frees all resources of the trie. 
+Frees all resources of the trie.
 
 arguments:
 ```eval_rst
@@ -4790,9 +4772,9 @@ arguments:
 void trie_set_value(trie_t *t, bytes_t *key, bytes_t *value);
 ```
 
-sets a value in the trie. 
+Sets a value in the trie.
 
-The root-hash will be updated automaticly. 
+The root-hash will be updated automatically.
 
 arguments:
 ```eval_rst
@@ -4805,14 +4787,15 @@ arguments:
 
 ## Module verifier/eth1/full 
 
+Adds gas-calculation.
 
-add gas-calculation
-ADD_DEFINITIONS(-DEVM_GAS)
-add dependency
+ADD_DEFINITIONS(-DEVM_GAS).
+
+Adds dependency.
 
 ### big.h
 
-Ethereum Nanon verification. 
+Ethereum nano verification.
 
 Location: src/verifier/eth1/full/big.h
 
@@ -4830,7 +4813,6 @@ arguments:
 =================== ========== 
 ```
 returns: `uint8_t`
-
 
 #### big_shift_left
 
@@ -4879,16 +4861,15 @@ arguments:
 ```
 returns: `int`
 
-
 #### big_signed
 
 ```c
 int big_signed(uint8_t *val, wlen_t len, uint8_t *dst);
 ```
 
-returns 0 if the value is positive or 1 if negavtive. 
+Returns 0 if the value is positive or 1 if negative.
 
-in this case the absolute value is copied to dst. 
+In this case, the absolute value is copied to dst.
 
 arguments:
 ```eval_rst
@@ -4899,7 +4880,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int`
-
 
 #### big_int
 
@@ -4915,7 +4895,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int32_t`
-
 
 #### big_add
 
@@ -4936,7 +4915,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### big_sub
 
 ```c
@@ -4954,7 +4932,6 @@ arguments:
 =================== =========== 
 ```
 returns: `int`
-
 
 #### big_mul
 
@@ -4975,7 +4952,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### big_div
 
 ```c
@@ -4994,7 +4970,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int`
-
 
 #### big_mod
 
@@ -5015,7 +4990,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### big_exp
 
 ```c
@@ -5034,7 +5008,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### big_log256
 
 ```c
@@ -5050,10 +5023,9 @@ arguments:
 ```
 returns: `int`
 
-
 ### code.h
 
-code cache. 
+Code cache. 
 
 Location: src/verifier/eth1/full/code.h
 
@@ -5072,10 +5044,9 @@ arguments:
 ```
 returns: [`cache_entry_t *`](#cache-entry-t)
 
-
 ### eth_full.h
 
-Ethereum Nanon verification. 
+Ethereum nano verification.
 
 Location: src/verifier/eth1/full/eth_full.h
 
@@ -5085,7 +5056,7 @@ Location: src/verifier/eth1/full/eth_full.h
 int in3_verify_eth_full(in3_vctx_t *v);
 ```
 
-entry-function to execute the verification context. 
+Entry function to execute the verification context.
 
 arguments:
 ```eval_rst
@@ -5095,129 +5066,115 @@ arguments:
 ```
 returns: `int`
 
-
 #### in3_register_eth_full
 
 ```c
 void in3_register_eth_full();
 ```
 
-this function should only be called once and will register the eth-full verifier. 
-
+This function should only be called once and will register the eth-full verifier.
 
 ### evm.h
 
-main evm-file. 
+Main evm-file.
 
 Location: src/verifier/eth1/full/evm.h
 
 #### EVM_ERROR_EMPTY_STACK
 
-the no more elements on the stack 
+The no more elements on the stack.
 
 ```c
 #define EVM_ERROR_EMPTY_STACK -1
 ```
 
-
 #### EVM_ERROR_INVALID_OPCODE
 
-the opcode is not supported 
+The opcode is not supported.
 
 ```c
 #define EVM_ERROR_INVALID_OPCODE -2
 ```
 
-
 #### EVM_ERROR_BUFFER_TOO_SMALL
 
-reading data from a position, which is not initialized 
+Reading data from a position, which is not initialized.
 
 ```c
 #define EVM_ERROR_BUFFER_TOO_SMALL -3
 ```
 
-
 #### EVM_ERROR_ILLEGAL_MEMORY_ACCESS
 
-the memory-offset does not exist 
+The memory-offset does not exist.
 
 ```c
 #define EVM_ERROR_ILLEGAL_MEMORY_ACCESS -4
 ```
 
-
 #### EVM_ERROR_INVALID_JUMPDEST
 
-the jump destination is not marked as valid destination 
+The jump destination is not marked as a valid destination.
 
 ```c
 #define EVM_ERROR_INVALID_JUMPDEST -5
 ```
 
-
 #### EVM_ERROR_INVALID_PUSH
 
-the push data is empy 
+The push data is empty.
 
 ```c
 #define EVM_ERROR_INVALID_PUSH -6
 ```
 
-
 #### EVM_ERROR_UNSUPPORTED_CALL_OPCODE
 
-error handling the call, usually because static-calls are not allowed to change state 
+Error handling the call, usually because static-calls are not allowed to change state.
 
 ```c
 #define EVM_ERROR_UNSUPPORTED_CALL_OPCODE -7
 ```
 
-
 #### EVM_ERROR_TIMEOUT
 
-the evm ran into a loop 
+The EVM ran into a loop.
 
 ```c
 #define EVM_ERROR_TIMEOUT -8
 ```
 
-
 #### EVM_ERROR_INVALID_ENV
 
-the enviroment could not deliver the data 
+The enviroment could not deliver the data.
 
 ```c
 #define EVM_ERROR_INVALID_ENV -9
 ```
 
-
 #### EVM_ERROR_OUT_OF_GAS
 
-not enough gas to exewcute the opcode 
+Not enough gas to execute the opcode.
 
 ```c
 #define EVM_ERROR_OUT_OF_GAS -10
 ```
 
-
 #### EVM_ERROR_BALANCE_TOO_LOW
 
-not enough funds to transfer the requested value. 
+Not enough funds to transfer the requested value.
 
 ```c
 #define EVM_ERROR_BALANCE_TOO_LOW -11
 ```
 
-
 #### EVM_ERROR_STACK_LIMIT
 
-stack limit reached 
+Stack limit reached.
 
 ```c
 #define EVM_ERROR_STACK_LIMIT -12
 ```
-
 
 #### EVM_PROP_FRONTIER
 
@@ -5225,13 +5182,11 @@ stack limit reached
 #define EVM_PROP_FRONTIER 1
 ```
 
-
 #### EVM_PROP_EIP150
 
 ```c
 #define EVM_PROP_EIP150 2
 ```
-
 
 #### EVM_PROP_EIP158
 
@@ -5239,13 +5194,11 @@ stack limit reached
 #define EVM_PROP_EIP158 4
 ```
 
-
 #### EVM_PROP_CONSTANTINOPL
 
 ```c
 #define EVM_PROP_CONSTANTINOPL 16
 ```
-
 
 #### EVM_PROP_NO_FINALIZE
 
@@ -5253,13 +5206,11 @@ stack limit reached
 #define EVM_PROP_NO_FINALIZE 32768
 ```
 
-
 #### EVM_PROP_STATIC
 
 ```c
 #define EVM_PROP_STATIC 256
 ```
-
 
 #### EVM_ENV_BALANCE
 
@@ -5267,13 +5218,11 @@ stack limit reached
 #define EVM_ENV_BALANCE 1
 ```
 
-
 #### EVM_ENV_CODE_SIZE
 
 ```c
 #define EVM_ENV_CODE_SIZE 2
 ```
-
 
 #### EVM_ENV_CODE_COPY
 
@@ -5281,13 +5230,11 @@ stack limit reached
 #define EVM_ENV_CODE_COPY 3
 ```
 
-
 #### EVM_ENV_BLOCKHASH
 
 ```c
 #define EVM_ENV_BLOCKHASH 4
 ```
-
 
 #### EVM_ENV_STORAGE
 
@@ -5295,13 +5242,11 @@ stack limit reached
 #define EVM_ENV_STORAGE 5
 ```
 
-
 #### EVM_ENV_BLOCKHEADER
 
 ```c
 #define EVM_ENV_BLOCKHEADER 6
 ```
-
 
 #### EVM_ENV_CODE_HASH
 
@@ -5309,16 +5254,13 @@ stack limit reached
 #define EVM_ENV_CODE_HASH 7
 ```
 
-
 #### EVM_ENV_NONCE
 
 ```c
 #define EVM_ENV_NONCE 8
 ```
 
-
 #### EVM_DEBUG_BLOCK (...)
-
 
 #### EVM_CALL_MODE_STATIC
 
@@ -5326,13 +5268,11 @@ stack limit reached
 #define EVM_CALL_MODE_STATIC 1
 ```
 
-
 #### EVM_CALL_MODE_DELEGATE
 
 ```c
 #define EVM_CALL_MODE_DELEGATE 2
 ```
-
 
 #### EVM_CALL_MODE_CALLCODE
 
@@ -5340,23 +5280,21 @@ stack limit reached
 #define EVM_CALL_MODE_CALLCODE 3
 ```
 
-
 #### EVM_CALL_MODE_CALL
 
 ```c
 #define EVM_CALL_MODE_CALL 4
 ```
 
-
 #### evm_state
 
-the current state of the evm 
+The current state of the EVM. 
 
 The enum type contains the following values:
 
 ```eval_rst
 ======================== = =====================================
- **EVM_STATE_INIT**      0 just initialised, but not yet started
+ **EVM_STATE_INIT**      0 just initialized but not yet started
  **EVM_STATE_RUNNING**   1 started and still running
  **EVM_STATE_STOPPED**   2 successfully stopped
  **EVM_STATE_REVERTED**  3 stopped, but results must be reverted
@@ -5365,18 +5303,13 @@ The enum type contains the following values:
 
 #### evm_state_t
 
-the current state of the evm 
-
-
-The stuct contains following fields:
-
+The current state of the EVM.
 
 #### evm_get_env
 
-This function provides data from the enviroment. 
+This function provides data from the environment.
 
-depending on the key the function will set the out_data-pointer to the result. This means the enviroment is responsible for memory management and also to clean up resources afterwards.
-
+Depending on the key, the function will set the out_data-pointer to the result. This means the environment is responsible for memory management and also to clean up resources afterward.
 
 ```c
 typedef int(* evm_get_env) (void *evm, uint16_t evm_key, uint8_t *in_data, int in_len, uint8_t **out_data, int offset, int len)
@@ -5384,11 +5317,9 @@ typedef int(* evm_get_env) (void *evm, uint16_t evm_key, uint8_t *in_data, int i
 
 returns: `int(*`
 
-
 #### storage_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 =============================================== =========== 
@@ -5400,8 +5331,7 @@ The stuct contains following fields:
 
 #### logs_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ========================= ============ 
@@ -5413,8 +5343,7 @@ The stuct contains following fields:
 
 #### account_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 =============================== ============= 
@@ -5429,8 +5358,7 @@ The stuct contains following fields:
 
 #### evm_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ===================================== ====================== ======================================================
@@ -5451,8 +5379,8 @@ The stuct contains following fields:
 ``uint8_t *``                          **origin**            the address of original sender of the root-transaction
 ``uint8_t *``                          **caller**            the address of the parent sender
 `bytes_t <#bytes-t>`_                  **call_value**        value send
-`bytes_t <#bytes-t>`_                  **call_data**         data send in the tx
-`bytes_t <#bytes-t>`_                  **gas_price**         current gasprice
+`bytes_t <#bytes-t>`_                  **call_data**         data send in the transaction
+`bytes_t <#bytes-t>`_                  **gas_price**         current gas price
 ===================================== ====================== ======================================================
 ```
 
@@ -5472,7 +5400,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_push_ref
 
 ```c
@@ -5489,7 +5416,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_push_int
 
 ```c
@@ -5505,7 +5431,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_push_long
 
 ```c
@@ -5520,7 +5445,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int`
-
 
 #### evm_stack_get_ref
 
@@ -5538,7 +5462,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_pop
 
 ```c
@@ -5555,7 +5478,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_pop_ref
 
 ```c
@@ -5570,7 +5492,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int`
-
 
 #### evm_stack_pop_byte
 
@@ -5587,7 +5508,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_stack_pop_int
 
 ```c
@@ -5601,7 +5521,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int32_t`
-
 
 #### evm_stack_peek_len
 
@@ -5617,7 +5536,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_run
 
 ```c
@@ -5632,14 +5550,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_sub_call
 
 ```c
 int evm_sub_call(evm_t *parent, uint8_t address[20], uint8_t account[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint8_t origin[20], uint64_t gas, wlen_t mode, uint32_t out_offset, uint32_t out_len);
 ```
 
-handle internal calls. 
+Handle internal calls.
 
 arguments:
 ```eval_rst
@@ -5661,7 +5578,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_ensure_memory
 
 ```c
@@ -5676,7 +5592,6 @@ arguments:
 =================== ============= 
 ```
 returns: `int`
-
 
 #### in3_get_env
 
@@ -5698,14 +5613,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_call
 
 ```c
 int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, bytes_t **result);
 ```
 
-run a evm-call 
+Run a evm-call.
 
 arguments:
 ```eval_rst
@@ -5722,7 +5636,6 @@ arguments:
 ======================== ============= 
 ```
 returns: `int`
-
 
 #### evm_print_stack
 
@@ -5767,7 +5680,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### evm_is_precompiled
 
 ```c
@@ -5782,7 +5694,6 @@ arguments:
 =================== ============= 
 ```
 returns: `uint8_t`
-
 
 #### uint256_set
 
@@ -5801,7 +5712,7 @@ arguments:
 
 ### gas.h
 
-evm gas defines. 
+EVM gas defines.
 
 Location: src/verifier/eth1/full/gas.h
 
@@ -5811,414 +5722,367 @@ Location: src/verifier/eth1/full/gas.h
 #define op_exec (m,gas) return m;
 ```
 
-
 #### subgas (g)
-
 
 #### GAS_CC_NET_SSTORE_NOOP_GAS
 
-Once per SSTORE operation if the value doesn't change. 
+Once per SSTORE operation if the value doesn't change.
 
 ```c
 #define GAS_CC_NET_SSTORE_NOOP_GAS 200
 ```
 
-
 #### GAS_CC_NET_SSTORE_INIT_GAS
 
-Once per SSTORE operation from clean zero. 
+Once per SSTORE operation from clean zero.
 
 ```c
 #define GAS_CC_NET_SSTORE_INIT_GAS 20000
 ```
 
-
 #### GAS_CC_NET_SSTORE_CLEAN_GAS
 
-Once per SSTORE operation from clean non-zero. 
+Once per SSTORE operation from clean non-zero.
 
 ```c
 #define GAS_CC_NET_SSTORE_CLEAN_GAS 5000
 ```
 
-
 #### GAS_CC_NET_SSTORE_DIRTY_GAS
 
-Once per SSTORE operation from dirty. 
+Once per SSTORE operation from dirty.
 
 ```c
 #define GAS_CC_NET_SSTORE_DIRTY_GAS 200
 ```
 
-
 #### GAS_CC_NET_SSTORE_CLEAR_REFUND
 
-Once per SSTORE operation for clearing an originally existing storage slot. 
+Once per SSTORE operation for clearing an originally existing storage slot.
 
 ```c
 #define GAS_CC_NET_SSTORE_CLEAR_REFUND 15000
 ```
 
-
 #### GAS_CC_NET_SSTORE_RESET_REFUND
 
-Once per SSTORE operation for resetting to the original non-zero value. 
+Once per SSTORE operation for resetting to the original non-zero value.
 
 ```c
 #define GAS_CC_NET_SSTORE_RESET_REFUND 4800
 ```
 
-
 #### GAS_CC_NET_SSTORE_RESET_CLEAR_REFUND
 
-Once per SSTORE operation for resetting to the original zero valuev. 
+Once per SSTORE operation for resetting to the original zero value.
 
 ```c
 #define GAS_CC_NET_SSTORE_RESET_CLEAR_REFUND 19800
 ```
 
-
 #### G_ZERO
 
-Nothing is paid for operations of the set Wzero. 
+Nothing is paid for operations of the set Wzero.
 
 ```c
 #define G_ZERO 0
 ```
 
-
 #### G_JUMPDEST
 
-JUMP DEST. 
+JUMP DEST.
 
 ```c
 #define G_JUMPDEST 1
 ```
 
-
 #### G_BASE
 
-This is the amount of gas to pay for operations of the set Wbase. 
+This is the amount of gas to pay for operations of the set Wbase.
 
 ```c
 #define G_BASE 2
 ```
 
-
 #### G_VERY_LOW
 
-This is the amount of gas to pay for operations of the set Wverylow. 
+This is the amount of gas to pay for operations of the set Wverylow.
 
 ```c
 #define G_VERY_LOW 3
 ```
 
-
 #### G_LOW
 
-This is the amount of gas to pay for operations of the set Wlow. 
+This is the amount of gas to pay for operations of the set Wlow.
 
 ```c
 #define G_LOW 5
 ```
 
-
 #### G_MID
 
-This is the amount of gas to pay for operations of the set Wmid. 
+This is the amount of gas to pay for operations of the set Wmid.
 
 ```c
 #define G_MID 8
 ```
 
-
 #### G_HIGH
 
-This is the amount of gas to pay for operations of the set Whigh. 
+This is the amount of gas to pay for operations of the set Whigh.
 
 ```c
 #define G_HIGH 10
 ```
 
-
 #### G_EXTCODE
 
-This is the amount of gas to pay for operations of the set Wextcode. 
+This is the amount of gas to pay for operations of the set Wextcode.
 
 ```c
 #define G_EXTCODE 700
 ```
 
-
 #### G_BALANCE
 
-This is the amount of gas to pay for a BALANCE operation. 
+This is the amount of gas to pay for a BALANCE operation.
 
 ```c
 #define G_BALANCE 400
 ```
 
-
 #### G_SLOAD
 
-This is paid for an SLOAD operation. 
+This is paid for an SLOAD operation.
 
 ```c
 #define G_SLOAD 200
 ```
 
-
 #### G_SSET
 
-This is paid for an SSTORE operation when the storage value is set to non-zero from zero. 
+This is paid for an SSTORE operation when the storage value is set to non-zero from zero.
 
 ```c
 #define G_SSET 20000
 ```
 
-
 #### G_SRESET
 
-This is the amount for an SSTORE operation when the storage value’s zeroness remains unchanged or is set to zero. 
+This is the amount for an SSTORE operation when the storage value’s zeroness remains unchanged or is set to zero.
 
 ```c
 #define G_SRESET 5000
 ```
 
-
 #### R_SCLEAR
 
-This is the refund given (added into the refund counter) when the storage value is set to zero from non-zero. 
+This is the refund given (added into the refund counter) when the storage value is set to zero from non-zero.
 
 ```c
 #define R_SCLEAR 15000
 ```
 
-
 #### R_SELFDESTRUCT
 
-This is the refund given (added into the refund counter) for self-destructing an account. 
+This is the refund given (added into the refund counter) for self-destructing an account.
 
 ```c
 #define R_SELFDESTRUCT 24000
 ```
 
-
 #### G_SELFDESTRUCT
 
-This is the amount of gas to pay for a SELFDESTRUCT operation. 
+This is the amount of gas to pay for a SELFDESTRUCT operation.
 
 ```c
 #define G_SELFDESTRUCT 5000
 ```
 
-
 #### G_CREATE
 
-This is paid for a CREATE operation. 
+This is paid for a CREATE operation.
 
 ```c
 #define G_CREATE 32000
 ```
 
-
 #### G_CODEDEPOSIT
 
-This is paid per byte for a CREATE operation to succeed in placing code into the state. 
+This is paid per byte for a CREATE operation to succeed in placing code into the state.
 
 ```c
 #define G_CODEDEPOSIT 200
 ```
 
-
 #### G_CALL
 
-This is paid for a CALL operation. 
+This is paid for a CALL operation.
 
 ```c
 #define G_CALL 700
 ```
 
-
 #### G_CALLVALUE
 
-This is paid for a non-zero value transfer as part of the CALL operation. 
+This is paid for a non-zero value transfer as part of the CALL operation.
 
 ```c
 #define G_CALLVALUE 9000
 ```
 
-
 #### G_CALLSTIPEND
 
-This is a stipend for the called contract subtracted from Gcallvalue for a non-zero value transfer. 
+This is a stipend for the called contract subtracted from Gcallvalue for a non-zero value transfer.
 
 ```c
 #define G_CALLSTIPEND 2300
 ```
 
-
 #### G_NEWACCOUNT
 
-This is paid for a CALL or for a SELFDESTRUCT operation which creates an account. 
+This is paid for a CALL or for a SELFDESTRUCT operation, which creates an account.
 
 ```c
 #define G_NEWACCOUNT 25000
 ```
 
-
 #### G_EXP
 
-This is a partial payment for an EXP operation. 
+This is a partial payment for an EXP operation.
 
 ```c
 #define G_EXP 10
 ```
 
-
 #### G_EXPBYTE
 
-This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation. 
+This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation.
 
 ```c
 #define G_EXPBYTE 50
 ```
 
-
 #### G_MEMORY
 
-This is paid for every additional word when expanding memory. 
+This is paid for every additional word when expanding memory.
 
 ```c
 #define G_MEMORY 3
 ```
 
-
 #### G_TXCREATE
 
-This is paid by all contract-creating transactions after the Homestead transition. 
+This is paid by all contract-creating transactions after the Homestead transition.
 
 ```c
 #define G_TXCREATE 32000
 ```
 
-
 #### G_TXDATA_ZERO
 
-This is paid for every zero byte of data or code for a transaction. 
+This is paid for every zero byte of data or code for a transaction.
 
 ```c
 #define G_TXDATA_ZERO 4
 ```
 
-
 #### G_TXDATA_NONZERO
 
-This is paid for every non-zero byte of data or code for a transaction. 
+This is paid for every non-zero byte of data or code for a transaction.
 
 ```c
 #define G_TXDATA_NONZERO 68
 ```
 
-
 #### G_TRANSACTION
 
-This is paid for every transaction. 
+This is paid for every transaction.
 
 ```c
 #define G_TRANSACTION 21000
 ```
 
-
 #### G_LOG
 
-This is a partial payment for a LOG operation. 
+This is a partial payment for a LOG operation.
 
 ```c
 #define G_LOG 375
 ```
 
-
 #### G_LOGDATA
 
-This is paid for each byte in a LOG operation’s data. 
+This is paid for each byte in a LOG operation’s data.
 
 ```c
 #define G_LOGDATA 8
 ```
 
-
 #### G_LOGTOPIC
 
-This is paid for each topic of a LOG operation. 
+This is paid for each topic of a LOG operation.
 
 ```c
 #define G_LOGTOPIC 375
 ```
 
-
 #### G_SHA3
 
-This is paid for each SHA3 operation. 
+This is paid for each SHA3 operation.
 
 ```c
 #define G_SHA3 30
 ```
 
-
 #### G_SHA3WORD
 
-This is paid for each word (rounded up) for input data to a SHA3 operation. 
+This is paid for each word (rounded up) for input data to a SHA3 operation.
 
 ```c
 #define G_SHA3WORD 6
 ```
 
-
 #### G_COPY
 
-This is a partial payment for *COPY operations, multiplied by the number of words copied, rounded up. 
+This is a partial payment for *COPY operations, multiplied by the number of words copied, rounded up.
 
 ```c
 #define G_COPY 3
 ```
 
-
 #### G_BLOCKHASH
 
-This is a payment for a BLOCKHASH operation. 
+This is a payment for a BLOCKHASH operation.
 
 ```c
 #define G_BLOCKHASH 20
 ```
 
-
 #### G_PRE_EC_RECOVER
 
-Precompile EC RECOVER. 
+Precompile EC RECOVER.
 
 ```c
 #define G_PRE_EC_RECOVER 3000
 ```
 
-
 #### G_PRE_SHA256
 
-Precompile SHA256. 
+Precompile SHA256.
 
 ```c
 #define G_PRE_SHA256 60
 ```
 
-
 #### G_PRE_SHA256_WORD
 
-Precompile SHA256 per word. 
+Precompile SHA256 per word.
 
 ```c
 #define G_PRE_SHA256_WORD 12
 ```
-
 
 #### G_PRE_RIPEMD160
 
@@ -6228,24 +6092,21 @@ Precompile RIPEMD160.
 #define G_PRE_RIPEMD160 600
 ```
 
-
 #### G_PRE_RIPEMD160_WORD
 
-Precompile RIPEMD160 per word. 
+Precompile RIPEMD160 per word.
 
 ```c
 #define G_PRE_RIPEMD160_WORD 120
 ```
 
-
 #### G_PRE_IDENTITY
 
-Precompile IDENTIY (copyies data) 
+Precompile IDENTITY (copies data).
 
 ```c
 #define G_PRE_IDENTITY 15
 ```
-
 
 #### G_PRE_IDENTITY_WORD
 
@@ -6255,98 +6116,87 @@ Precompile IDENTIY per word.
 #define G_PRE_IDENTITY_WORD 3
 ```
 
-
 #### G_PRE_MODEXP_GQUAD_DIVISOR
 
-Gquaddivisor from modexp precompile for gas calculation. 
+Gquaddivisor from modexp precompile for gas calculation.
 
 ```c
 #define G_PRE_MODEXP_GQUAD_DIVISOR 20
 ```
 
-
 #### G_PRE_ECADD
 
-Gas costs for curve addition precompile. 
+Gas costs for curve addition precompile.
 
 ```c
 #define G_PRE_ECADD 500
 ```
 
-
 #### G_PRE_ECMUL
 
-Gas costs for curve multiplication precompile. 
+Gas costs for curve multiplication precompile.
 
 ```c
 #define G_PRE_ECMUL 40000
 ```
 
-
 #### G_PRE_ECPAIRING
 
-Base gas costs for curve pairing precompile. 
+Base gas costs for curve pairing precompile.
 
 ```c
 #define G_PRE_ECPAIRING 100000
 ```
 
-
 #### G_PRE_ECPAIRING_WORD
 
-Gas costs regarding curve pairing precompile input length. 
+Gas costs regarding curve pairing precompile input length.
 
 ```c
 #define G_PRE_ECPAIRING_WORD 80000
 ```
 
-
 #### EVM_STACK_LIMIT
 
-max elements of the stack 
+Max elements of the stack.
 
 ```c
 #define EVM_STACK_LIMIT 1024
 ```
 
-
 #### EVM_MAX_CODE_SIZE
 
-max size of the code 
+Max size of the code.
 
 ```c
 #define EVM_MAX_CODE_SIZE 24576
 ```
 
-
 #### FRONTIER_G_EXPBYTE
 
-fork values 
+Fork values.
 
-This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation. 
+This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation.
 
 ```c
 #define FRONTIER_G_EXPBYTE 10
 ```
 
-
 #### FRONTIER_G_SLOAD
 
-This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation. 
+This is a partial payment when multiplied by dlog256(exponent)e for the EXP operation.
 
 ```c
 #define FRONTIER_G_SLOAD 50
 ```
 
+## Module Verifier/eth1/nano 
 
-## Module verifier/eth1/nano 
-
-
-static lib
+Static lib.
 
 ### chainspec.h
 
-Ethereum chain specification. 
+Ethereum chain specification.
 
 Location: src/verifier/eth1/nano/chainspec.h
 
@@ -6356,25 +6206,24 @@ Location: src/verifier/eth1/nano/chainspec.h
 #define BLOCK_LATEST 0xFFFFFFFFFFFFFFFF
 ```
 
-
 #### eth_consensus_type_t
 
-the consensus type. 
+The consensus type.
 
 The enum type contains the following values:
 
 ```eval_rst
 ==================== = ================================
- **ETH_POW**         0 Pro of Work (Ethash)
- **ETH_POA_AURA**    1 Proof of Authority using Aura.
- **ETH_POA_CLIQUE**  2 Proof of Authority using clique.
+ **ETH_POW**         0 proof of work (Ethash)
+ **ETH_POA_AURA**    1 proof of authority using Aura
+ **ETH_POA_CLIQUE**  2 proof of authority using Clique
 ==================== = ================================
 ```
 
 #### eip_transition_t
 
 
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ============ ====================== 
@@ -6385,8 +6234,7 @@ The stuct contains following fields:
 
 #### consensus_transition_t
 
-
-The stuct contains following fields:
+The stuct contains the following fields:
 
 ```eval_rst
 =============================================== ====================== 
@@ -6399,8 +6247,7 @@ The stuct contains following fields:
 
 #### chainspec_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ===================================================== =============================== 
@@ -6419,11 +6266,11 @@ The stuct contains following fields:
 struct __attribute__((__packed__)) eip_;
 ```
 
-defines the flags for the current activated EIPs. 
+Defines the flags for the current activated EIPs.
 
-Since it does not make sense to support a evm defined before Homestead, homestead EIP is always turned on! 
+Since it does not make sense to support an EVM defined before Homestead, Homestead's EIP is always turned on!
 
-< REVERT instruction 
+< REVERT instruction
 
 
 
@@ -6465,7 +6312,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Bitwise shifting instructions in EVM 
+ < Bitwise shifting instructions in EVM
 
 
 
@@ -6504,7 +6351,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Gas cost changes for IO-heavy operations 
+ < Gas cost changes for IO-heavy operations
 
 
 
@@ -6540,7 +6387,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Simple replay attack protection 
+ < Simple replay attack protection
 
 
 
@@ -6573,7 +6420,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < EXP cost increase 
+ < EXP cost increase
 
 
 
@@ -6603,7 +6450,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Contract code size limit 
+ < Contract code size limit
 
 
 
@@ -6630,7 +6477,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Precompiled contracts for addition and scalar multiplication on the elliptic curve alt_bn128 
+ < Precompiled contracts for addition and scalar multiplication on the elliptic curve alt_bn128
 
 
 
@@ -6654,7 +6501,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Precompiled contracts for optimal ate pairing check on the elliptic curve alt_bn128 
+ < Precompiled contracts for optimal Ate pairing check on the elliptic curve alt_bn128
 
 
 
@@ -6675,7 +6522,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Big integer modular exponentiation 
+ < Big integer modular exponentiation
 
 
 
@@ -6693,7 +6540,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < New opcodes: RETURNDATASIZE and RETURNDATACOPY 
+ < New opcodes: RETURNDATASIZE and RETURNDATACOPY
 
 
 
@@ -6708,7 +6555,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < New opcode STATICCALL 
+ < New opcode STATICCALL
 
 
 
@@ -6720,7 +6567,7 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Embedding transaction status code in receipts 
+ < Embedding transaction status code in receipts
 
 
 
@@ -6729,16 +6576,16 @@ Since it does not make sense to support a evm defined before Homestead, homestea
 
 
 
- < Skinny CREATE2 
+ < Skinny CREATE2
 
 
 
 
 
- < EXTCODEHASH opcode 
+ < EXTCODEHASH opcode
 
 
- < Net gas metering for SSTORE without dirty maps 
+ < Net gas metering for SSTORE without dirty maps
 
 arguments:
 ```eval_rst
@@ -6747,7 +6594,6 @@ arguments:
 ================  
 ```
 returns: `struct`
-
 
 #### chainspec_create_from_json
 
@@ -6762,7 +6608,6 @@ arguments:
 =========================== ========== 
 ```
 returns: [`chainspec_t *`](#chainspec-t)
-
 
 #### chainspec_get_eip
 
@@ -6779,7 +6624,6 @@ arguments:
 ```
 returns: `eip_t`
 
-
 #### chainspec_get_consensus
 
 ```c
@@ -6794,7 +6638,6 @@ arguments:
 =============================== ================== 
 ```
 returns: [`consensus_transition_t *`](#consensus-transition-t)
-
 
 #### chainspec_to_bin
 
@@ -6811,7 +6654,6 @@ arguments:
 ```
 returns: `int`
 
-
 #### chainspec_from_bin
 
 ```c
@@ -6826,7 +6668,6 @@ arguments:
 ```
 returns: [`chainspec_t *`](#chainspec-t)
 
-
 #### chainspec_get
 
 ```c
@@ -6840,7 +6681,6 @@ arguments:
 ============ ============== 
 ```
 returns: [`chainspec_t *`](#chainspec-t)
-
 
 #### chainspec_put
 
@@ -6858,7 +6698,7 @@ arguments:
 
 ### eth_nano.h
 
-Ethereum Nanon verification. 
+Ethereum nano verification.
 
 Location: src/verifier/eth1/nano/eth_nano.h
 
@@ -6868,7 +6708,7 @@ Location: src/verifier/eth1/nano/eth_nano.h
 in3_ret_t in3_verify_eth_nano(in3_vctx_t *v);
 ```
 
-entry-function to execute the verification context. 
+Entry function to execute the verification context.
 
 arguments:
 ```eval_rst
@@ -6876,10 +6716,9 @@ arguments:
 `in3_vctx_t * <#in3-vctx-t>`_  **v**  
 ============================= ======= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_blockheader
 
@@ -6887,9 +6726,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_blockheader(in3_vctx_t *vc, bytes_t *header, bytes_t *expected_blockhash);
 ```
 
-verifies a blockheader. 
-
-verifies a blockheader. 
+Verifies a blockheader.
 
 arguments:
 ```eval_rst
@@ -6899,10 +6736,9 @@ arguments:
 `bytes_t * <#bytes-t>`_        **expected_blockhash**  
 ============================= ======================== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_signature
 
@@ -6910,9 +6746,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 int eth_verify_signature(in3_vctx_t *vc, bytes_t *msg_hash, d_token_t *sig);
 ```
 
-verifies a single signature blockheader. 
+Verifies a single-signature blockheader.
 
-This function will return a positive integer with a bitmask holding the bit set according to the address that signed it. This is based on the signatiures in the request-config. 
+This function will return a positive integer with a bitmask holding the bit set according to the address that signed it. This is based on the signatiures in the request-config.
 
 arguments:
 ```eval_rst
@@ -6924,14 +6760,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### ecrecover_signature
 
 ```c
 bytes_t* ecrecover_signature(bytes_t *msg_hash, d_token_t *sig);
 ```
 
-returns the address of the signature if the msg_hash is correct 
+Returns the address of the signature if the msg_hash is correct.
 
 arguments:
 ```eval_rst
@@ -6942,14 +6777,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### eth_verify_eth_getTransactionReceipt
 
 ```c
 in3_ret_t eth_verify_eth_getTransactionReceipt(in3_vctx_t *vc, bytes_t *tx_hash);
 ```
 
-verifies a transaction receipt. 
+Verifies a transaction receipt.
 
 arguments:
 ```eval_rst
@@ -6958,10 +6792,9 @@ arguments:
 `bytes_t * <#bytes-t>`_        **tx_hash**  
 ============================= ============= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_in3_nodelist
 
@@ -6969,7 +6802,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_in3_nodelist(in3_vctx_t *vc, uint32_t node_limit, bytes_t *seed, d_token_t *required_addresses);
 ```
 
-verifies the nodelist. 
+Verifies the NodeList.
 
 arguments:
 ```eval_rst
@@ -6980,10 +6813,9 @@ arguments:
 `d_token_t * <#d-token-t>`_    **required_addresses**  
 ============================= ======================== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_register_eth_nano
 
@@ -6991,8 +6823,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 void in3_register_eth_nano();
 ```
 
-this function should only be called once and will register the eth-nano verifier. 
-
+This function should only be called once and will register the eth-nano verifier.
 
 #### create_tx_path
 
@@ -7000,9 +6831,9 @@ this function should only be called once and will register the eth-nano verifier
 bytes_t* create_tx_path(uint32_t index);
 ```
 
-helper function to rlp-encode the transaction_index. 
+Helper function to rlp-encode the transaction_index.
 
-The result must be freed after use! 
+The result must be freed after use!
 
 arguments:
 ```eval_rst
@@ -7012,10 +6843,9 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 ### merkle.h
 
-Merkle Proof Verification. 
+Merkle proof verification.
 
 Location: src/verifier/eth1/nano/merkle.h
 
@@ -7025,16 +6855,17 @@ Location: src/verifier/eth1/nano/merkle.h
 #define MERKLE_DEPTH_MAX 64
 ```
 
-
 #### trie_verify_proof
 
 ```c
 int trie_verify_proof(bytes_t *rootHash, bytes_t *path, bytes_t **proof, bytes_t *expectedValue);
 ```
 
-verifies a merkle proof. 
+Verifies a Merkle proof. 
 
-expectedValue == NULL : value must not exist expectedValue.data ==NULL : please copy the data I want to evaluate it afterwards. expectedValue.data !=NULL : the value must match the data.
+expectedValue == NULL: value must not exist
+expectedValue.data ==NULL: please copy the data; I want to evaluate it afterward.
+expectedValue.data !=NULL: value must match the data.
 
 arguments:
 ```eval_rst
@@ -7047,14 +6878,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### trie_path_to_nibbles
 
 ```c
 uint8_t* trie_path_to_nibbles(bytes_t path, int use_prefix);
 ```
 
-helper function split a path into 4-bit nibbles. 
+Helper function split a path into 4-bit nibbles.
 
 The result must be freed after use!
 
@@ -7065,10 +6895,7 @@ arguments:
 ``int``                **use_prefix**  
 ===================== ================ 
 ```
-returns: `uint8_t *` : the resulting bytes represent a 4bit-number each and are terminated with a 0xFF. 
-
-
-
+returns: `uint8_t *`: the resulting bytes represent a 4-bit number each and are terminated with a 0xFF.
 
 #### trie_matching_nibbles
 
@@ -7076,7 +6903,7 @@ returns: `uint8_t *` : the resulting bytes represent a 4bit-number each and are 
 int trie_matching_nibbles(uint8_t *a, uint8_t *b);
 ```
 
-helper function to find the number of nibbles matching both paths. 
+Helper function to find the number of nibbles matching both paths.
 
 arguments:
 ```eval_rst
@@ -7087,14 +6914,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### trie_free_proof
 
 ```c
 void trie_free_proof(bytes_t **proof);
 ```
 
-used to free the NULL-terminated proof-array. 
+Used to free the NULL-terminated proof-array.
 
 arguments:
 ```eval_rst
@@ -7107,7 +6933,7 @@ arguments:
 
 RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ethereum/wiki/wiki/RLP). 
 
-This decoding works without allocating new memory. 
+This decoding works without allocating new memory.
 
 Location: src/verifier/eth1/nano/rlp.h
 
@@ -7117,9 +6943,9 @@ Location: src/verifier/eth1/nano/rlp.h
 int rlp_decode(bytes_t *b, int index, bytes_t *dst);
 ```
 
-this function decodes the given bytes and returns the element with the given index by updating the reference of dst. 
+This function decodes the given bytes and returns the element with the given index by updating the reference of dst.
 
-the bytes will only hold references and do **not** need to be freed!
+The bytes will only hold references and do **not** need to be freed!
 
 ```c
 bytes_t* tx_raw = serialize_tx(tx);
@@ -7140,12 +6966,10 @@ arguments:
 `bytes_t * <#bytes-t>`_  **dst**    
 ======================= =========== 
 ```
-returns: `int` : - 0 : means item out of range
-- 1 : item found
-- 2 : list found ( you can then decode the same bytes again)
-
-
-
+returns: `int`:
+- 0: item is out of range
+- 1: item found
+- 2: list found (you can then decode the same bytes again)
 
 #### rlp_decode_in_list
 
@@ -7153,9 +6977,9 @@ returns: `int` : - 0 : means item out of range
 int rlp_decode_in_list(bytes_t *b, int index, bytes_t *dst);
 ```
 
-this function expects a list item (like the blockheader as first item and will then find the item within this list). 
+This function expects a list item (like the blockheader as first item and will then find the item within this list).
 
-It is a shortcut for
+It is a shortcut for:
 
 ```c
 // decode the list
@@ -7171,12 +6995,10 @@ arguments:
 `bytes_t * <#bytes-t>`_  **dst**    
 ======================= =========== 
 ```
-returns: `int` : - 0 : means item out of range
-- 1 : item found
-- 2 : list found ( you can then decode the same bytes again)
-
-
-
+returns: `int`: 
+- 0: item is out of range
+- 1: item found
+- 2: list found (you can then decode the same bytes again)
 
 #### rlp_decode_len
 
@@ -7184,7 +7006,7 @@ returns: `int` : - 0 : means item out of range
 int rlp_decode_len(bytes_t *b);
 ```
 
-returns the number of elements found in the data. 
+Returns the number of elements found in the data.
 
 arguments:
 ```eval_rst
@@ -7194,14 +7016,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### rlp_decode_item_len
 
 ```c
 int rlp_decode_item_len(bytes_t *b, int index);
 ```
 
-returns the number of bytes of the element specified by index. 
+Returns the number of bytes of the element specified by index.
 
 arguments:
 ```eval_rst
@@ -7210,10 +7031,7 @@ arguments:
 ``int``                  **index**  
 ======================= =========== 
 ```
-returns: `int` : the number of bytes or 0 if not found. 
-
-
-
+returns: `int`: the number of bytes or 0 if not found.
 
 #### rlp_decode_item_type
 
@@ -7221,7 +7039,7 @@ returns: `int` : the number of bytes or 0 if not found.
 int rlp_decode_item_type(bytes_t *b, int index);
 ```
 
-returns the type of the element specified by index. 
+Returns the type of the element specified by index.
 
 arguments:
 ```eval_rst
@@ -7230,12 +7048,10 @@ arguments:
 ``int``                  **index**  
 ======================= =========== 
 ```
-returns: `int` : - 0 : means item out of range
-- 1 : item found
-- 2 : list found ( you can then decode the same bytes again)
-
-
-
+returns: `int`: 
+- 0: item is out of range
+- 1: item found
+- 2: list found (you can then decode the same bytes again)
 
 #### rlp_encode_item
 
@@ -7243,7 +7059,7 @@ returns: `int` : - 0 : means item out of range
 void rlp_encode_item(bytes_builder_t *bb, bytes_t *val);
 ```
 
-encode a item as single string and add it to the bytes_builder. 
+Encode an item as single string and add it to the bytes_builder.
 
 arguments:
 ```eval_rst
@@ -7259,7 +7075,7 @@ arguments:
 void rlp_encode_list(bytes_builder_t *bb, bytes_t *val);
 ```
 
-encode a the value as list of already encoded items. 
+Encode the value as list of already encoded items.
 
 arguments:
 ```eval_rst
@@ -7275,9 +7091,9 @@ arguments:
 bytes_builder_t* rlp_encode_to_list(bytes_builder_t *bb);
 ```
 
-converts the data in the builder to a list. 
+Converts the data in the builder to a list.
 
-This function is optimized to not increase the memory more than needed and is fastet than creating a second builder to encode the data.
+This function is optimized to not increase the memory more than needed and is faster than creating a second builder to encode the data.
 
 arguments:
 ```eval_rst
@@ -7285,10 +7101,7 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
-returns: [`bytes_builder_t *`](#bytes-builder-t) : the same builder. 
-
-
-
+returns: [`bytes_builder_t *`](#bytes-builder-t): the same builder. 
 
 #### rlp_encode_to_item
 
@@ -7296,9 +7109,9 @@ returns: [`bytes_builder_t *`](#bytes-builder-t) : the same builder.
 bytes_builder_t* rlp_encode_to_item(bytes_builder_t *bb);
 ```
 
-converts the data in the builder to a rlp-encoded item. 
+Converts the data in the builder to an rlp-encoded item.
 
-This function is optimized to not increase the memory more than needed and is fastet than creating a second builder to encode the data.
+This function is optimized to not increase the memory more than needed and is faster than creating a second builder to encode the data.
 
 arguments:
 ```eval_rst
@@ -7306,10 +7119,7 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
-returns: [`bytes_builder_t *`](#bytes-builder-t) : the same builder. 
-
-
-
+returns: [`bytes_builder_t *`](#bytes-builder-t): the same builder. 
 
 #### rlp_add_length
 
@@ -7317,7 +7127,7 @@ returns: [`bytes_builder_t *`](#bytes-builder-t) : the same builder.
 void rlp_add_length(bytes_builder_t *bb, uint32_t len, uint8_t offset);
 ```
 
-helper to encode the prefix for a value 
+Helper to encode the prefix for a value.
 
 arguments:
 ```eval_rst
@@ -7330,9 +7140,9 @@ arguments:
 
 ### serialize.h
 
-serialization of ETH-Objects. 
+Serialization of ETH-Objects.
 
-This incoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
+Theincoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
 
 Location: src/verifier/eth1/nano/serialize.h
 
@@ -7342,13 +7152,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_PARENT_HASH 0
 ```
 
-
 #### BLOCKHEADER_SHA3_UNCLES
 
 ```c
 #define BLOCKHEADER_SHA3_UNCLES 1
 ```
-
 
 #### BLOCKHEADER_MINER
 
@@ -7356,13 +7164,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_MINER 2
 ```
 
-
 #### BLOCKHEADER_STATE_ROOT
 
 ```c
 #define BLOCKHEADER_STATE_ROOT 3
 ```
-
 
 #### BLOCKHEADER_TRANSACTIONS_ROOT
 
@@ -7370,13 +7176,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_TRANSACTIONS_ROOT 4
 ```
 
-
 #### BLOCKHEADER_RECEIPT_ROOT
 
 ```c
 #define BLOCKHEADER_RECEIPT_ROOT 5
 ```
-
 
 #### BLOCKHEADER_LOGS_BLOOM
 
@@ -7384,13 +7188,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_LOGS_BLOOM 6
 ```
 
-
 #### BLOCKHEADER_DIFFICULTY
 
 ```c
 #define BLOCKHEADER_DIFFICULTY 7
 ```
-
 
 #### BLOCKHEADER_NUMBER
 
@@ -7398,13 +7200,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_NUMBER 8
 ```
 
-
 #### BLOCKHEADER_GAS_LIMIT
 
 ```c
 #define BLOCKHEADER_GAS_LIMIT 9
 ```
-
 
 #### BLOCKHEADER_GAS_USED
 
@@ -7412,13 +7212,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_GAS_USED 10
 ```
 
-
 #### BLOCKHEADER_TIMESTAMP
 
 ```c
 #define BLOCKHEADER_TIMESTAMP 11
 ```
-
 
 #### BLOCKHEADER_EXTRA_DATA
 
@@ -7426,13 +7224,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_EXTRA_DATA 12
 ```
 
-
 #### BLOCKHEADER_SEALED_FIELD1
 
 ```c
 #define BLOCKHEADER_SEALED_FIELD1 13
 ```
-
 
 #### BLOCKHEADER_SEALED_FIELD2
 
@@ -7440,13 +7236,11 @@ Location: src/verifier/eth1/nano/serialize.h
 #define BLOCKHEADER_SEALED_FIELD2 14
 ```
 
-
 #### BLOCKHEADER_SEALED_FIELD3
 
 ```c
 #define BLOCKHEADER_SEALED_FIELD3 15
 ```
-
 
 #### serialize_tx_receipt
 
@@ -7454,7 +7248,7 @@ Location: src/verifier/eth1/nano/serialize.h
 bytes_t* serialize_tx_receipt(d_token_t *receipt);
 ```
 
-creates rlp-encoded raw bytes for a receipt. 
+Ceates rlp-encoded raw bytes for a receipt. 
 
 The bytes must be freed with b_free after use!
 
