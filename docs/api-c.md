@@ -2392,7 +2392,7 @@ arguments:
 void bb_write_long(bytes_builder_t *bb, uint64_t val);
 ```
 
-writes s long to the builder. 
+Writes long to the builder.
 
 arguments:
 ```eval_rst
@@ -2408,7 +2408,7 @@ arguments:
 void bb_write_long_be(bytes_builder_t *bb, uint64_t val, int len);
 ```
 
-writes any integer value with the given length of bytes 
+Writes any integer value with the given length of bytes.
 
 arguments:
 ```eval_rst
@@ -2425,7 +2425,7 @@ arguments:
 void bb_write_byte(bytes_builder_t *bb, uint8_t val);
 ```
 
-writes a single byte to the builder. 
+Writes a single byte to the builder.
 
 arguments:
 ```eval_rst
@@ -2441,7 +2441,7 @@ arguments:
 void bb_write_short(bytes_builder_t *bb, uint16_t val);
 ```
 
-writes a short to the builder. 
+Writes a short to the builder.
 
 arguments:
 ```eval_rst
@@ -2457,7 +2457,7 @@ arguments:
 void bb_write_raw_bytes(bytes_builder_t *bb, void *ptr, size_t len);
 ```
 
-writes the bytes to the builder. 
+Writes the bytes to the builder.
 
 arguments:
 ```eval_rst
@@ -2474,7 +2474,7 @@ arguments:
 void bb_clear(bytes_builder_t *bb);
 ```
 
-resets the content of the builder. 
+Resets the content of the builder.
 
 arguments:
 ```eval_rst
@@ -2489,7 +2489,7 @@ arguments:
 void bb_replace(bytes_builder_t *bb, int offset, int delete_len, uint8_t *data, int data_len);
 ```
 
-replaces or deletes a part of the content. 
+Replaces or deletes a part of the content.
 
 arguments:
 ```eval_rst
@@ -2508,7 +2508,7 @@ arguments:
 bytes_t* bb_move_to_bytes(bytes_builder_t *bb);
 ```
 
-frees the builder and moves the content in a newly created bytes struct (which needs to be freed later). 
+Frees the builder and moves the content in a newly created byte structure (which needs to be freed later).
 
 arguments:
 ```eval_rst
@@ -2517,7 +2517,6 @@ arguments:
 ======================================= ======== 
 ```
 returns: [`bytes_t *`](#bytes-t)
-
 
 #### bb_push
 
@@ -2549,7 +2548,6 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### bb_read_int
 
 ```c
@@ -2564,7 +2562,6 @@ arguments:
 ======================================= ======== 
 ```
 returns: `uint32_t`
-
 
 #### bytes
 
@@ -2581,7 +2578,6 @@ arguments:
 ```
 returns: [`bytes_t`](#bytes-t)
 
-
 #### cloned_bytes
 
 ```c
@@ -2595,7 +2591,6 @@ arguments:
 ===================== ========== 
 ```
 returns: [`bytes_t`](#bytes-t)
-
 
 #### b_optimize_len
 
@@ -2612,27 +2607,26 @@ arguments:
 
 ### data.h
 
-json-parser. 
+JSON parser. 
 
-The parser can read from :
+The parser can read from:
 
-- json
+- JSON
 - bin
 
-When reading from json all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as integer. 
+When reading from JSON, all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as an integer. 
 
 Location: src/core/util/data.h
 
 #### DATA_DEPTH_MAX
 
-the max DEPTH of the JSON-data allowed. 
+The max DEPTH of the JSON-data allowed. 
 
-It will throw an error if reached. 
+It will throw an error if reached.
 
 ```c
 #define DATA_DEPTH_MAX 11
 ```
-
 
 #### printX
 
@@ -2640,13 +2634,11 @@ It will throw an error if reached.
 #define printX printf
 ```
 
-
 #### fprintX
 
 ```c
 #define fprintX fprintf
 ```
-
 
 #### snprintX
 
@@ -2654,13 +2646,11 @@ It will throw an error if reached.
 #define snprintX snprintf
 ```
 
-
 #### vprintX
 
 ```c
 #define vprintX vprintf
 ```
-
 
 #### d_type_t
 
@@ -2670,18 +2660,17 @@ The enum type contains the following values:
 
 ```eval_rst
 =============== = =====================================================
- **T_BYTES**    0 content is stored as data ptr.
- **T_STRING**   1 content is stored a c-str
+ **T_BYTES**    0 content is stored as data ptr
+ **T_STRING**   1 content is stored as c-str
  **T_ARRAY**    2 the node is an array with the length stored in length
  **T_OBJECT**   3 the node is an object with properties
  **T_BOOLEAN**  4 boolean with the value stored in len
- **T_INTEGER**  5 a integer with the value stored
- **T_NULL**     6 a NULL-value
+ **T_INTEGER**  5 an integer with the value stored
+ **T_NULL**     6 a NULL value
 =============== = =====================================================
 ```
 
 #### d_key_t
-
 
 ```c
 typedef uint16_t d_key_t
@@ -2689,27 +2678,25 @@ typedef uint16_t d_key_t
 
 #### d_token_t
 
-a token holding any kind of value. 
+A token holding any kind of value.
 
-use d_type, d_len or the cast-function to get the value. 
+Use d_type, d_len or the cast-function to get the value.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ============= ========== =====================================================================
-``uint32_t``   **len**   the length of the content (or number of properties) depending + type.
+``uint32_t``   **len**   the length of the content (or number of properties) depending + type
 ``uint8_t *``  **data**  the byte or string-data
-``d_key_t``    **key**   the key of the property.
+``d_key_t``    **key**   the key of the property
 ============= ========== =====================================================================
 ```
 
 #### str_range_t
 
-internal type used to represent the a range within a string. 
+Internal type used to represent the range within a string. 
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ========== ========== ==================================
@@ -2720,20 +2707,19 @@ The stuct contains following fields:
 
 #### json_ctx_t
 
-parser for json or binary-data. 
+Parser for JSON or binary-data. 
 
-it needs to freed after usage. 
+It needs to freed after usage.
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 =========================== =============== ============================================================
-`d_token_t * <#d-token-t>`_  **result**     the list of all tokens. 
+`d_token_t * <#d-token-t>`_  **result**     the list of all tokens
                                             
-                                            the first token is the main-token as returned by the parser.
+                                            the first token is the main token as returned by the parser
 ``size_t``                   **allocated**  
-``size_t``                   **len**        amount of tokens allocated result
+``size_t``                   **len**        amount of tokens allocated in result
 ``size_t``                   **depth**      number of tokens in result
 ``char *``                   **c**          max depth of tokens in result
 =========================== =============== ============================================================
@@ -2741,9 +2727,9 @@ The stuct contains following fields:
 
 #### d_iterator_t
 
-iterator over elements of a array opf object. 
+Iterator over elements of an array OPF object. 
 
-usage: 
+Usage:
 
 ```c
 for (d_iterator_t iter = d_iter( parent ); iter.left ; d_iter_next(&iter)) {
@@ -2751,7 +2737,7 @@ for (d_iterator_t iter = d_iter( parent ); iter.left ; d_iter_next(&iter)) {
 }
 ```
 
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 =========================== =========== =====================
@@ -2766,9 +2752,9 @@ The stuct contains following fields:
 bytes_t d_to_bytes(d_token_t *item);
 ```
 
-returns the byte-representation of token. 
+Returns the byte-representation of token.
 
-In case of a number it is returned as bigendian. booleans as 0x01 or 0x00 and NULL as 0x. Objects or arrays will return 0x. 
+In case of a number, it is returned as big-endian. Booleans as 0x01 or 0x00 and NULL as 0x. Objects or arrays will return 0x.
 
 arguments:
 ```eval_rst
@@ -2778,16 +2764,15 @@ arguments:
 ```
 returns: [`bytes_t`](#bytes-t)
 
-
 #### d_bytes_to
 
 ```c
 int d_bytes_to(d_token_t *item, uint8_t *dst, const int max);
 ```
 
-writes the byte-representation to the dst. 
+Writes the byte-representation to the dst.
 
-details see d_to_bytes. 
+For details, see d_to_bytes.
 
 arguments:
 ```eval_rst
@@ -2799,14 +2784,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### d_bytes
 
 ```c
 bytes_t* d_bytes(const d_token_t *item);
 ```
 
-returns the value as bytes (Carefully, make sure that the token is a bytes-type!) 
+Returns the value as bytes. (Carefully make sure that the token is a bytes-type!)
 
 arguments:
 ```eval_rst
@@ -2816,14 +2800,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_bytesl
 
 ```c
 bytes_t* d_bytesl(d_token_t *item, size_t l);
 ```
 
-returns the value as bytes with length l (may reallocates) 
+Returns the value as bytes with length l (may reallocate).
 
 arguments:
 ```eval_rst
@@ -2834,16 +2817,15 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_string
 
 ```c
 char* d_string(const d_token_t *item);
 ```
 
-converts the value as string. 
+Converts the value as string.
 
-Make sure the type is string! 
+Make sure the type is string!
 
 arguments:
 ```eval_rst
@@ -2853,16 +2835,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_int
 
 ```c
 uint32_t d_int(const d_token_t *item);
 ```
 
-returns the value as integer. 
-
-only if type is integer 
+Returns the value as integer (but only if the type is integer).
 
 arguments:
 ```eval_rst
@@ -2872,16 +2851,15 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_intd
 
 ```c
 uint32_t d_intd(const d_token_t *item, const uint32_t def_val);
 ```
 
-returns the value as integer or if NULL the default. 
+Returns the value as integer or if NULL, the default.
 
-only if type is integer 
+Only if type is integer.
 
 arguments:
 ```eval_rst
@@ -2892,16 +2870,15 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_long
 
 ```c
 uint64_t d_long(const d_token_t *item);
 ```
 
-returns the value as long. 
+Returns the value as long. 
 
-only if type is integer or bytes, but short enough 
+Only if type is integer or bytes, but short enough.
 
 arguments:
 ```eval_rst
@@ -2911,16 +2888,15 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### d_longd
 
 ```c
 uint64_t d_longd(const d_token_t *item, const uint64_t def_val);
 ```
 
-returns the value as long or if NULL the default. 
+Returns the value as long or if NULL, the default.
 
-only if type is integer or bytes, but short enough 
+Only if type is integer or bytes, but short enough.
 
 arguments:
 ```eval_rst
@@ -2930,7 +2906,6 @@ arguments:
 ================================== ============= 
 ```
 returns: `uint64_t`
-
 
 #### d_create_bytes_vec
 
@@ -2946,16 +2921,15 @@ arguments:
 ```
 returns: [`bytes_t **`](#bytes-t)
 
-
 #### d_type
 
 ```c
 static d_type_t d_type(const d_token_t *item);
 ```
 
-creates a array of bytes from JOSN-array 
+Creates an array of bytes from JSON-array.
 
-type of the token 
+Type of the token.
 
 arguments:
 ```eval_rst
@@ -2965,14 +2939,13 @@ arguments:
 ```
 returns: [`d_type_t`](#d-type-t)
 
-
 #### d_len
 
 ```c
 static int d_len(const d_token_t *item);
 ```
 
-number of elements in the token (only for object or array, other will return 0) 
+Number of elements in the token (only for object or array, other will return 0).
 
 arguments:
 ```eval_rst
@@ -2982,14 +2955,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### d_eq
 
 ```c
 bool d_eq(const d_token_t *a, const d_token_t *b);
 ```
 
-compares 2 token and if the value is equal 
+Compares two tokens and if the value is equal.
 
 arguments:
 ```eval_rst
@@ -3000,14 +2972,13 @@ arguments:
 ```
 returns: `bool`
 
-
 #### keyn
 
 ```c
 d_key_t keyn(const char *c, const int len);
 ```
 
-generates the keyhash for the given stringrange as defined by len 
+Generates the keyhash for the given stringrange as defined by len.
 
 arguments:
 ```eval_rst
@@ -3018,14 +2989,13 @@ arguments:
 ```
 returns: `d_key_t`
 
-
 #### d_get
 
 ```c
 d_token_t* d_get(d_token_t *item, const uint16_t key);
 ```
 
-returns the token with the given propertyname (only if item is a object) 
+Returns the token with the given property name (only if item is an object).
 
 arguments:
 ```eval_rst
@@ -3036,16 +3006,15 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### d_get_or
 
 ```c
 d_token_t* d_get_or(d_token_t *item, const uint16_t key1, const uint16_t key2);
 ```
 
-returns the token with the given propertyname or if not found, tries the other. 
+Returns the token with the given property name or if not found, tries the other.
 
-(only if item is a object) 
+Only if item is an object.
 
 arguments:
 ```eval_rst
@@ -3057,14 +3026,13 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### d_get_at
 
 ```c
 d_token_t* d_get_at(d_token_t *item, const uint32_t index);
 ```
 
-returns the token of an array with the given index 
+Returns the token of an array with the given index.
 
 arguments:
 ```eval_rst
@@ -3075,14 +3043,13 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### d_next
 
 ```c
 d_token_t* d_next(d_token_t *item);
 ```
 
-returns the next sibling of an array or object 
+Returns the next sibling of an array or object.
 
 arguments:
 ```eval_rst
@@ -3091,7 +3058,6 @@ arguments:
 =========================== ========== 
 ```
 returns: [`d_token_t *`](#d-token-t)
-
 
 #### d_prev
 
@@ -3099,7 +3065,7 @@ returns: [`d_token_t *`](#d-token-t)
 d_token_t* d_prev(d_token_t *item);
 ```
 
-returns the prev sibling of an array or object 
+Returns the previous sibling of an array or object.
 
 arguments:
 ```eval_rst
@@ -3109,14 +3075,13 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### d_serialize_binary
 
 ```c
 void d_serialize_binary(bytes_builder_t *bb, d_token_t *t);
 ```
 
-write the token as binary data into the builder 
+Writes the token as binary data into the builder.
 
 arguments:
 ```eval_rst
@@ -3132,7 +3097,7 @@ arguments:
 json_ctx_t* parse_binary(bytes_t *data);
 ```
 
-parses the data and returns the context with the token, which needs to be freed after usage! 
+Parses the data and returns the context with the token, which needs to be freed after usage!
 
 arguments:
 ```eval_rst
@@ -3142,14 +3107,13 @@ arguments:
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
-
 #### parse_binary_str
 
 ```c
 json_ctx_t* parse_binary_str(char *data, int len);
 ```
 
-parses the data and returns the context with the token, which needs to be freed after usage! 
+Parses the data and returns the context with the token, which needs to be freed after usage!
 
 arguments:
 ```eval_rst
@@ -3160,14 +3124,13 @@ arguments:
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
-
 #### parse_json
 
 ```c
 json_ctx_t* parse_json(char *js);
 ```
 
-parses json-data, which needs to be freed after usage! 
+Rarses JSON-data, which needs to be freed after usage!
 
 arguments:
 ```eval_rst
@@ -3177,14 +3140,13 @@ arguments:
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
-
 #### free_json
 
 ```c
 void free_json(json_ctx_t *parser_ctx);
 ```
 
-frees the parse-context after usage 
+Frees the parse-context after usage.
 
 arguments:
 ```eval_rst
@@ -3199,9 +3161,9 @@ arguments:
 str_range_t d_to_json(d_token_t *item);
 ```
 
-returns the string for a object or array. 
+Returns the string for an object or array.
 
-This only works for json as string. For binary it will not work! 
+This only works for JSON as string. For binary, it will not work!
 
 arguments:
 ```eval_rst
@@ -3211,16 +3173,15 @@ arguments:
 ```
 returns: [`str_range_t`](#str-range-t)
 
-
 #### d_create_json
 
 ```c
 char* d_create_json(d_token_t *item);
 ```
 
-creates a json-string. 
+Creates a JSON-string. 
 
-It does not work for objects if the parsed data were binary! 
+It does not work for objects if the parsed data is binary!
 
 arguments:
 ```eval_rst
@@ -3230,7 +3191,6 @@ arguments:
 ```
 returns: `char *`
 
-
 #### json_create
 
 ```c
@@ -3238,7 +3198,6 @@ json_ctx_t* json_create();
 ```
 
 returns: [`json_ctx_t *`](#json-ctx-t)
-
 
 #### json_create_null
 
@@ -3253,7 +3212,6 @@ arguments:
 ============================= ======== 
 ```
 returns: [`d_token_t *`](#d-token-t)
-
 
 #### json_create_bool
 
@@ -3270,7 +3228,6 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_create_int
 
 ```c
@@ -3285,7 +3242,6 @@ arguments:
 ============================= =========== 
 ```
 returns: [`d_token_t *`](#d-token-t)
-
 
 #### json_create_string
 
@@ -3302,7 +3258,6 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_create_bytes
 
 ```c
@@ -3318,7 +3273,6 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_create_object
 
 ```c
@@ -3333,7 +3287,6 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_create_array
 
 ```c
@@ -3347,7 +3300,6 @@ arguments:
 ============================= ======== 
 ```
 returns: [`d_token_t *`](#d-token-t)
-
 
 #### json_object_add_prop
 
@@ -3365,7 +3317,6 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_array_add_value
 
 ```c
@@ -3381,14 +3332,13 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### json_get_int_value
 
 ```c
 int json_get_int_value(char *js, char *prop);
 ```
 
-parses the json and return the value as int. 
+Parses the JSON and returns the value as int.
 
 arguments:
 ```eval_rst
@@ -3399,14 +3349,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### json_get_str_value
 
 ```c
 void json_get_str_value(char *js, char *prop, char *dst);
 ```
 
-parses the json and return the value as string. 
+Parses the JSON and returns the value as string.
 
 arguments:
 ```eval_rst
@@ -3423,7 +3372,7 @@ arguments:
 char* json_get_json_value(char *js, char *prop);
 ```
 
-parses the json and return the value as json-string. 
+Parses the JSON and returns the value as JSON-string.
 
 arguments:
 ```eval_rst
@@ -3434,16 +3383,15 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_get_keystr
 
 ```c
 char* d_get_keystr(d_key_t k);
 ```
 
-returns the string for a key. 
+Returns the string for a key.
 
-This only works track_keynames was activated before! 
+This only works if track_keynames was activated before!
 
 arguments:
 ```eval_rst
@@ -3453,14 +3401,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_track_keynames
 
 ```c
 void d_track_keynames(uint8_t v);
 ```
 
-activates the keyname-cache, which stores the string for the keys when parsing. 
+Activates the keyname-cache, which stores the string for the keys when parsing.
 
 arguments:
 ```eval_rst
@@ -3475,8 +3422,7 @@ arguments:
 void d_clear_keynames();
 ```
 
-delete the cached keynames 
-
+Deletes the cached keynames.
 
 #### key
 
@@ -3492,14 +3438,13 @@ arguments:
 ```
 returns: `d_key_t`
 
-
 #### d_get_stringk
 
 ```c
 static char* d_get_stringk(d_token_t *r, d_key_t k);
 ```
 
-reads token of a property as string. 
+Reads token of a property as string.
 
 arguments:
 ```eval_rst
@@ -3510,14 +3455,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_get_string
 
 ```c
 static char* d_get_string(d_token_t *r, char *k);
 ```
 
-reads token of a property as string. 
+Reads token of a property as string.
 
 arguments:
 ```eval_rst
@@ -3528,14 +3472,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_get_string_at
 
 ```c
 static char* d_get_string_at(d_token_t *r, uint32_t pos);
 ```
 
-reads string at given pos of an array. 
+Reads string at given pos of an array.
 
 arguments:
 ```eval_rst
@@ -3546,14 +3489,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### d_get_intk
 
 ```c
 static uint32_t d_get_intk(d_token_t *r, d_key_t k);
 ```
 
-reads token of a property as int. 
+Reads token of a property as int. 
 
 arguments:
 ```eval_rst
@@ -3564,14 +3506,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_get_intkd
 
 ```c
 static uint32_t d_get_intkd(d_token_t *r, d_key_t k, uint32_t d);
 ```
 
-reads token of a property as int. 
+Reads token of a property as int.
 
 arguments:
 ```eval_rst
@@ -3583,14 +3524,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_get_int
 
 ```c
 static uint32_t d_get_int(d_token_t *r, char *k);
 ```
 
-reads token of a property as int. 
+Reads token of a property as int.
 
 arguments:
 ```eval_rst
@@ -3601,14 +3541,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_get_int_at
 
 ```c
 static uint32_t d_get_int_at(d_token_t *r, uint32_t pos);
 ```
 
-reads a int at given pos of an array. 
+Reads an int at given pos of an array.
 
 arguments:
 ```eval_rst
@@ -3619,14 +3558,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### d_get_longk
 
 ```c
 static uint64_t d_get_longk(d_token_t *r, d_key_t k);
 ```
 
-reads token of a property as long. 
+Reads token of a property as long.
 
 arguments:
 ```eval_rst
@@ -3637,14 +3575,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### d_get_longkd
 
 ```c
 static uint64_t d_get_longkd(d_token_t *r, d_key_t k, uint64_t d);
 ```
 
-reads token of a property as long. 
+Reads token of a property as long.
 
 arguments:
 ```eval_rst
@@ -3656,14 +3593,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### d_get_long
 
 ```c
 static uint64_t d_get_long(d_token_t *r, char *k);
 ```
 
-reads token of a property as long. 
+Reads token of a property as long.
 
 arguments:
 ```eval_rst
@@ -3674,14 +3610,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### d_get_long_at
 
 ```c
 static uint64_t d_get_long_at(d_token_t *r, uint32_t pos);
 ```
 
-reads long at given pos of an array. 
+Reads long at given pos of an array.
 
 arguments:
 ```eval_rst
@@ -3692,14 +3627,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### d_get_bytesk
 
 ```c
 static bytes_t* d_get_bytesk(d_token_t *r, d_key_t k);
 ```
 
-reads token of a property as bytes. 
+Reads token of a property as bytes.
 
 arguments:
 ```eval_rst
@@ -3710,14 +3644,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_get_bytes
 
 ```c
 static bytes_t* d_get_bytes(d_token_t *r, char *k);
 ```
 
-reads token of a property as bytes. 
+Reads token of a property as bytes.
 
 arguments:
 ```eval_rst
@@ -3728,14 +3661,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_get_bytes_at
 
 ```c
 static bytes_t* d_get_bytes_at(d_token_t *r, uint32_t pos);
 ```
 
-reads bytes at given pos of an array. 
+Reads bytes at given pos of an array.
 
 arguments:
 ```eval_rst
@@ -3746,14 +3678,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_is_binary_ctx
 
 ```c
 static bool d_is_binary_ctx(json_ctx_t *ctx);
 ```
 
-check if the parser context was created from binary data. 
+Checks if the parser context was created from binary data.
 
 arguments:
 ```eval_rst
@@ -3762,7 +3693,6 @@ arguments:
 ============================= ========= 
 ```
 returns: `bool`
-
 
 #### d_get_byteskl
 
@@ -3780,7 +3710,6 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### d_getl
 
 ```c
@@ -3797,14 +3726,13 @@ arguments:
 ```
 returns: [`d_token_t *`](#d-token-t)
 
-
 #### d_iter
 
 ```c
 static d_iterator_t d_iter(d_token_t *parent);
 ```
 
-creates a iterator for a object or array 
+Creates an iterator for an object or array.
 
 arguments:
 ```eval_rst
@@ -3814,14 +3742,13 @@ arguments:
 ```
 returns: [`d_iterator_t`](#d-iterator-t)
 
-
 #### d_iter_next
 
 ```c
 static bool d_iter_next(d_iterator_t *const iter);
 ```
 
-fetched the next token an returns a boolean indicating whther there is a next or not. 
+Fetches the next token and returns a boolean indicating whether there is a next or not.
 
 arguments:
 ```eval_rst
@@ -3831,18 +3758,15 @@ arguments:
 ```
 returns: `bool`
 
-
 ### debug.h
 
-logs debug data only if the DEBUG-flag is set. 
+Logs debug data only if the DEBUG-flag is set.
 
 Location: src/core/util/debug.h
 
 #### dbg_log (msg,...)
 
-
 #### dbg_log_raw (msg,...)
-
 
 #### msg_dump
 
@@ -3861,52 +3785,51 @@ arguments:
 
 ### error.h
 
-defines the return-values of a function call. 
+Defines the return-values of a function call.
 
 Location: src/core/util/error.h
 
 #### in3_ret_t
 
-ERROR types used as return values. 
+ERROR types used as return values.
 
-All values (except IN3_OK) indicate an error. 
+All values (except IN3_OK) indicate an error.
 
 The enum type contains the following values:
 
 ```eval_rst
 ================== === ============================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
+ **IN3_OK**        0   Success
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error message
+ **IN3_ENOMEM**    -2  No memory
+ **IN3_ENOTSUP**   -3  Not supported
+ **IN3_EINVAL**    -4  Invalid value
+ **IN3_EFIND**     -5  Not found
+ **IN3_ECONFIG**   -6  Invalid configuration
+ **IN3_ELIMIT**    -7  Limit reached
+ **IN3_EVERS**     -8  Version mismatch
+ **IN3_EINVALDT**  -9  Data invalid (e.g., 
                        
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
+                       invalid/incomplete JSON)
+ **IN3_EPASS**     -10 Wrong password
+ **IN3_ERPC**      -11 RPC error (e.g., 
                        
                        in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERPCNRES**  -12 RPC no response
+ **IN3_EUSNURL**   -13 USN URL parse error
+ **IN3_ETRANS**    -14 Transport error
 ================== === ============================================================
 ```
 
 ### scache.h
 
-util helper on byte arrays. 
+Utility helper on byte arrays.
 
 Location: src/core/util/scache.h
 
 #### cache_entry_t
 
-
-The stuct contains following fields:
+The stucture contains the following fields:
 
 ```eval_rst
 ======================================= =============== 
@@ -3933,7 +3856,6 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### in3_cache_add_entry
 
 ```c
@@ -3950,7 +3872,6 @@ arguments:
 ```
 returns: [`cache_entry_t *`](#cache-entry-t)
 
-
 #### in3_cache_free
 
 ```c
@@ -3966,7 +3887,7 @@ arguments:
 
 ### stringbuilder.h
 
-simple string buffer used to dynamicly add content. 
+Simple string buffer used to dynamically add content.
 
 Location: src/core/util/stringbuilder.h
 
@@ -3976,16 +3897,14 @@ Location: src/core/util/stringbuilder.h
 #define sb_add_hexuint (sb,i) sb_add_hexuint_l(sb, i, sizeof(i))
 ```
 
-
 #### sb_t
 
-
-The stuct contains following fields:
+The stucture contains following fields:
 
 ```eval_rst
 ========== ============== 
 ``char *``  **data**      
-``size_t``  **allocted**  
+``size_t``  **allocated**  
 ``size_t``  **len**       
 ========== ============== 
 ```
@@ -4004,7 +3923,6 @@ arguments:
 ```
 returns: [`sb_t *`](#sb-t)
 
-
 #### sb_init
 
 ```c
@@ -4018,7 +3936,6 @@ arguments:
 ================= ======== 
 ```
 returns: [`sb_t *`](#sb-t)
-
 
 #### sb_free
 
@@ -4048,7 +3965,6 @@ arguments:
 ```
 returns: [`sb_t *`](#sb-t)
 
-
 #### sb_add_chars
 
 ```c
@@ -4063,7 +3979,6 @@ arguments:
 ================= =========== 
 ```
 returns: [`sb_t *`](#sb-t)
-
 
 #### sb_add_range
 
@@ -4081,7 +3996,6 @@ arguments:
 ================= =========== 
 ```
 returns: [`sb_t *`](#sb-t)
-
 
 #### sb_add_key_value
 
@@ -4101,7 +4015,6 @@ arguments:
 ```
 returns: [`sb_t *`](#sb-t)
 
-
 #### sb_add_bytes
 
 ```c
@@ -4120,14 +4033,13 @@ arguments:
 ```
 returns: [`sb_t *`](#sb-t)
 
-
 #### sb_add_hexuint_l
 
 ```c
 sb_t* sb_add_hexuint_l(sb_t *sb, uintmax_t uint, size_t l);
 ```
 
-Other types not supported 
+Other types not supported.
 
 arguments:
 ```eval_rst
@@ -4139,10 +4051,9 @@ arguments:
 ```
 returns: [`sb_t *`](#sb-t)
 
-
 ### utils.h
 
-utility functions. 
+Utility functions.
 
 Location: src/core/util/utils.h
 
@@ -4156,20 +4067,17 @@ Location: src/core/util/utils.h
   }
 ```
 
-
 #### min (a,b)
 
 ```c
 #define min (a,b) ((a) < (b) ? (a) : (b))
 ```
 
-
 #### max (a,b)
 
 ```c
 #define max (a,b) ((a) > (b) ? (a) : (b))
 ```
-
 
 #### optimize_len (a,l)
 
@@ -4180,7 +4088,6 @@ Location: src/core/util/utils.h
   }
 ```
 
-
 #### TRY (exp)
 
 ```c
@@ -4189,7 +4096,6 @@ Location: src/core/util/utils.h
     if (_r < 0) return _r; \
   }
 ```
-
 
 #### TRY_SET (var,exp)
 
@@ -4200,7 +4106,6 @@ Location: src/core/util/utils.h
   }
 ```
 
-
 #### TRY_GOTO (exp)
 
 ```c
@@ -4210,16 +4115,13 @@ Location: src/core/util/utils.h
   }
 ```
 
-
 #### pb_size_t
-
 
 ```c
 typedef uint32_t pb_size_t
 ```
 
 #### pb_byte_t
-
 
 ```c
 typedef uint_least8_t pb_byte_t
@@ -4231,7 +4133,7 @@ typedef uint_least8_t pb_byte_t
 uint64_t bytes_to_long(uint8_t *data, int len);
 ```
 
-converts the bytes to a unsigned long (at least the last max len bytes) 
+Converts the bytes to an unsigned long (at least the last max len bytes).
 
 arguments:
 ```eval_rst
@@ -4242,14 +4144,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### bytes_to_int
 
 ```c
 static uint32_t bytes_to_int(uint8_t *data, int len);
 ```
 
-converts the bytes to a unsigned int (at least the last max len bytes) 
+Converts the bytes to an unsigned int (at least the last max len bytes).
 
 arguments:
 ```eval_rst
@@ -4260,14 +4161,13 @@ arguments:
 ```
 returns: `uint32_t`
 
-
 #### c_to_long
 
 ```c
 uint64_t c_to_long(char *a, int l);
 ```
 
-converts a character into a uint64_t 
+Converts a character into a uint64_t.
 
 arguments:
 ```eval_rst
@@ -4278,14 +4178,13 @@ arguments:
 ```
 returns: `uint64_t`
 
-
 #### size_of_bytes
 
 ```c
 int size_of_bytes(int str_len);
 ```
 
-the number of bytes used for a conerting a hex into bytes. 
+The number of bytes used for converting a hex into bytes.
 
 arguments:
 ```eval_rst
@@ -4295,14 +4194,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### strtohex
 
 ```c
 uint8_t strtohex(char c);
 ```
 
-converts a hexchar to byte (4bit) 
+Converts a hexchar to byte (4-bit).
 
 arguments:
 ```eval_rst
@@ -4312,16 +4210,13 @@ arguments:
 ```
 returns: `uint8_t`
 
-
 #### u64tostr
 
 ```c
 const unsigned char* u64tostr(uint64_t value, char *pBuf, int szBuf);
 ```
 
-converts a uint64_t to string (char*); buffer-size min. 
-
-21 bytes 
+Converts a uint64_t to string (char*), buffer-size minimum 21 bytes.
 
 arguments:
 ```eval_rst
@@ -4333,14 +4228,13 @@ arguments:
 ```
 returns: `const unsigned char *`
 
-
 #### hex2byte_arr
 
 ```c
 int hex2byte_arr(char *buf, int len, uint8_t *out, int outbuf_size);
 ```
 
-convert a c string to a byte array storing it into a existing buffer 
+Convert a C string to a byte array, storing it into an existing buffer.
 
 arguments:
 ```eval_rst
@@ -4353,14 +4247,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### hex2byte_new_bytes
 
 ```c
 bytes_t* hex2byte_new_bytes(char *buf, int len);
 ```
 
-convert a c string to a byte array creating a new buffer 
+Convert a C string to a byte array, creating a new buffer.
 
 arguments:
 ```eval_rst
@@ -4371,14 +4264,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### bytes_to_hex
 
 ```c
 int bytes_to_hex(uint8_t *buffer, int len, char *out);
 ```
 
-convefrts a bytes into hex 
+Converts bytes into hex.
 
 arguments:
 ```eval_rst
@@ -4390,14 +4282,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### sha3
 
 ```c
 bytes_t* sha3(bytes_t *data);
 ```
 
-hashes the bytes and creates a new bytes_t 
+Hashes the bytes and creates a new bytes_t.
 
 arguments:
 ```eval_rst
@@ -4407,14 +4298,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### sha3_to
 
 ```c
 int sha3_to(bytes_t *data, void *dst);
 ```
 
-writes 32 bytes to the pointer. 
+Writes 32 bytes to the pointer.
 
 arguments:
 ```eval_rst
@@ -4425,14 +4315,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### long_to_bytes
 
 ```c
 void long_to_bytes(uint64_t val, uint8_t *dst);
 ```
 
-converts a long to 8 bytes 
+Converts a long to 8 bytes.
 
 arguments:
 ```eval_rst
@@ -4448,7 +4337,7 @@ arguments:
 void int_to_bytes(uint32_t val, uint8_t *dst);
 ```
 
-converts a int to 4 bytes 
+Converts an int to 4 bytes.
 
 arguments:
 ```eval_rst
@@ -4464,7 +4353,7 @@ arguments:
 int hash_cmp(uint8_t *a, uint8_t *b);
 ```
 
-compares 32 bytes and returns 0 if equal 
+Compares 32 bytes and returns 0 if equal.
 
 arguments:
 ```eval_rst
@@ -4475,14 +4364,13 @@ arguments:
 ```
 returns: `int`
 
-
 #### _strdupn
 
 ```c
 char* _strdupn(char *src, int len);
 ```
 
-duplicate the string 
+Duplicates the string.
 
 arguments:
 ```eval_rst
@@ -4493,14 +4381,13 @@ arguments:
 ```
 returns: `char *`
 
-
 #### min_bytes_len
 
 ```c
 int min_bytes_len(uint64_t val);
 ```
 
-calculate the min number of byte to represents the len 
+Calculate the minimum number of bytes to represents the len.
 
 arguments:
 ```eval_rst
@@ -4510,15 +4397,13 @@ arguments:
 ```
 returns: `int`
 
+## Module Transport/curl 
 
-## Module transport/curl 
-
-
-add a option
+Add an option.
 
 ### in3_curl.h
 
-transport-handler using libcurl. 
+Transport-handler using libcurl.
 
 Location: src/transport/curl/in3_curl.h
 
@@ -4537,20 +4422,19 @@ arguments:
 `in3_response_t * <#in3-response-t>`_  **result**    
 ===================================== ============== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
+## Module Transport/http 
 
-## Module transport/http 
+For detecting Windows compilers.
 
-
-for detecting Windows compilers
 target_link_libraries(transport_curl ws2_32 wsock32 pthread )
 
 ### in3_http.h
 
-transport-handler using simple http. 
+Transport-handler using simple HTTP.
 
 Location: src/transport/http/in3_http.h
 
@@ -4571,17 +4455,15 @@ arguments:
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
+## Module Verifier/eth1/basic 
 
-## Module verifier/eth1/basic 
-
-
-static lib
+Static lib.
 
 ### eth_basic.h
 
-Ethereum Nanon verification. 
+Ethereum nano verification.
 
 Location: src/verifier/eth1/basic/eth_basic.h
 
@@ -4591,7 +4473,7 @@ Location: src/verifier/eth1/basic/eth_basic.h
 in3_ret_t in3_verify_eth_basic(in3_vctx_t *v);
 ```
 
-entry-function to execute the verification context. 
+Entry function to execute the verification context.
 
 arguments:
 ```eval_rst
@@ -4599,10 +4481,9 @@ arguments:
 `in3_vctx_t * <#in3-vctx-t>`_  **v**  
 ============================= ======= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_tx_values
 
@@ -4610,7 +4491,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_tx_values(in3_vctx_t *vc, d_token_t *tx, bytes_t *raw);
 ```
 
-verifies internal tx-values. 
+Verifies internal tx-values.
 
 arguments:
 ```eval_rst
@@ -4620,10 +4501,9 @@ arguments:
 `bytes_t * <#bytes-t>`_        **raw**  
 ============================= ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_eth_getTransaction
 
@@ -4631,7 +4511,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_eth_getTransaction(in3_vctx_t *vc, bytes_t *tx_hash);
 ```
 
-verifies a transaction. 
+Verifies a transaction.
 
 arguments:
 ```eval_rst
@@ -4640,10 +4520,9 @@ arguments:
 `bytes_t * <#bytes-t>`_        **tx_hash**  
 ============================= ============= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_account_proof
 
@@ -4651,7 +4530,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_account_proof(in3_vctx_t *vc);
 ```
 
-verify account-proofs 
+Verifies account proofs. 
 
 arguments:
 ```eval_rst
@@ -4659,10 +4538,9 @@ arguments:
 `in3_vctx_t * <#in3-vctx-t>`_  **vc**  
 ============================= ======== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### eth_verify_eth_getBlock
 
@@ -4670,7 +4548,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t eth_verify_eth_getBlock(in3_vctx_t *vc, bytes_t *block_hash, uint64_t blockNumber);
 ```
 
-verifies a block 
+Verifies a block.
 
 arguments:
 ```eval_rst
@@ -4680,10 +4558,9 @@ arguments:
 ``uint64_t``                   **blockNumber**  
 ============================= ================= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_t`](#in3-ret-t), the [result-status](#in3-ret-t) of the function. 
 
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
+*Please make sure you check if it was successful (`==IN3_OK`).*
 
 #### in3_register_eth_basic
 
