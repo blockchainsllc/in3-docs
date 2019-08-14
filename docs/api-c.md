@@ -140,7 +140,7 @@ client->cacheStorage = &storage_handler;
 // configure transport by using curl
 client->transport    = send_curl;
 
-// initializes cache by reading the NodeList from the cache >(if it exists)
+// initializes cache by reading the NodeList from the cache (if it exists)
 in3_cache_init(client);
 
 // ready to use ...
