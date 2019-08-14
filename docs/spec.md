@@ -25,8 +25,7 @@ Requests without an `in3` property will also get a response without `in3`. This 
 
 *  **finality** `number` - For PoA-Chains, it will deliver additional proof to reach finaliy.  If given, the server will deliver the blockheaders of the following blocks until at least the number in percent of the validators is reached.   
 
-*  **verification** `string` - Defines the kind of proof the client is asking for.   
- Must be one of the these values: 
+*  **verification** `string` - Defines the kind of proof the client is asking for. Must be one of the these values: 
     - `'never`' : No proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw json-rpc response will be returned. 
     - `'proof`' : The proof will be created including blockheader, but without any signed blockhashes.
     - `'proofWithSignature`' : The returned proof will also include signed blockhashes as required in `signatures`.
