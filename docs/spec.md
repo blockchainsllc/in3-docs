@@ -121,50 +121,49 @@ An example of such a response would look like this:
 
 ## ChainId
 
-Incubed support multiple chains and a client may even run request to different chains in parallel. While in most cases a chain refers to a specific running blockchain, chainIds may also refer to abstract networks such as ipfs. So then definition of a chain in the context of incubed is simply a distributed data domain offering verifieable api-functions implemented in a in3-node.
+Incubed supports multiple chains and a client may even run requests to different chains in parallel. While, in most cases, a chain refers to a specific running blockchain, chainIds may also refer to abstract networks such as ipfs. So, the definition of a chain in the context of Incubed is simply a distributed data domain offering verifiable api-functions implemented in an in3-node.
 
-Each Chain is identified by a `uint64` identifier written as hex-value. (without leading zeros)
-Since incubed started with ethereum, the chainIds for public ethereum-chains are based on the intrinsic chainId of the ethereum-chain. See https://chainid.network .
+Each Chain is identified by a `uint64` identifier written as hex-value (without leading zeros). Since incubed started with ethereum, the chainIds for public ethereum-chains are based on the intrinsic chainId of the ethereum-chain. See https://chainid.network.
 
-For each Chain incubed manages a list of nodes as stored in the [server registry](#registry) and a chainspec describing the verification. These chainspecs are hold in the client as they specify the rules how responses may be validated.
+For each Chain, Incubed manages a list of nodes as stored in the [server registry](#registry) and a chainspec describing the verification. These chainspecs are held in the client, as they specify the rules about how responses may be validated.
 
 ## Registry
 
-As Incubed aims for a fully decentralized access to the blockchain, the registry is implemented as a ethereum smart contract. 
+As Incubed aims for fully decentralized access to the blockchain, the registry is implemented as an ethereum smart contract. 
 
-This contract serves different purposes. Primary it serves to manage all the incubed nodes, i.e. it manages both the onboarding and also unregistering process. In order to do so, it also has to manage the deposits: reverting when the amount of provided ether is smaller than the current minimum deposit; but also locking and/or sending back deposits after a servers leaves the in3-netwerk.
+This contract serves different purposes. Primarily, it manages all the Incubed nodes, both the onboarding and also unregistering process. In order to do so, it must also manage the deposits: reverting when the amount of provided ether is smaller than the current minimum deposit; but also locking and/or sending back deposits after a server leaves the in3-netwerk.
 
-In addition, the contract is also used to secure the in3-netwerk by providing functions to convict servers that provided a wrongly signed block and also having a function to vote out inactive servers.
+In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
 ### Node structure
 
-Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as 
+Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as: 
 
-*  **url** `string` - the public url of the node, which must accept JSON-RPC Requests.
+*  **url** `string` - The public url of the node, which must accept JSON-RPC requests.
 
-*  **owner** `address` - the owner of the node with the permission to edit or remove the node.  
+*  **owner** `address` - The owner of the node with the permission to edit or remove the node.  
 
-*  **signer** `address` - the address used when signing blockhashes. This address must be unique withitn the nodeList.   
+*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodeList.   
 
-*  **timeout** `uint64` - timeout after which the owner is allowed to receive his stored deposit. This information is also important for the client, since a invalid blockhash-signature can only convicted as long as the server is registered. A long timout may give a higher security since the node can not lie and unregister right away.
+*  **timeout** `uint64` - Timeout after which the owner is allowed to receive its stored deposit. This information is also important for the client, since an invalid blockhash-signature can only "convict" as long as the server is registered. A long timeout may provide higher security since the node can not lie and unregister right away.
 
-*  **deposit** `uint256` - the deposit stored for the node, which the node will lose if it signes a wrong blockhash.
+*  **deposit** `uint256` - The deposit stored for the node, which the node will lose if it signs a wrong blockhash.
 
-*  **props** `uint64` - a bitmask defining the capabilities of the node:
+*  **props** `uint64` - A bitmask defining the capabilities of the node:
 
-    - `0x01` : **proof** :  the node is able to deliver proof, if not set it may only server pure Ethereum JSON/RPC, thus also simple remote nodes may be registered as incubed nodes.
-    - `0x02` : **multichain** : the same rpc endpoint may also accept requests for different chains.
-    - `0x04` : **archive** : if set, the node is able to support archive requests returning older states. If not only a pruned node is running.
-    - `0x08` : **http** : if set the node will also server requests on standardn http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
-    - `0x10` : **binary** : if set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
+    - `0x01` : **proof** :  The node is able to deliver proof. If not set, it may only serve pure Ethereum JSON/RPC. Thus, simple remote nodes may also be registered as Incubed nodes.
+    - `0x02` : **multichain** : The same rpc endpoint may also accept requests for different chains.
+    - `0x04` : **archive** : If set, the node is able to support archive requests returning older states. If not, only a pruned node is running.
+    - `0x08` : **http** : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
+    - `0x10` : **binary** : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
 
     More properties will be added in future versions.
 
-*  **unregisterTime** `uint64` - the earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests a unregister. For the client nodes with a `unregisterTime` set have a less trust, since he will not be able to convict after this timestamp.
+*  **unregisterTime** `uint64` - The earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests a unregister. The client nodes with an `unregisterTime` set have less trust, since they will not be able to convict after this timestamp.
 
-*  **registerTime** `uint64` - the timestamp, when the server was registered.
+*  **registerTime** `uint64` - The timestamp, when the server was registered.
 
-*  **weight** `uint64` - the number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used withtin the incentivication layer to calculate the score.
+*  **weight** `uint64` - The number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used within the incentivization layer to calculate the score.
 
 The following functions are offered within the registry:
 
