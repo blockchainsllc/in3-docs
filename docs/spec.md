@@ -51,7 +51,7 @@ A example of an Incubed request may look like this:
 
 ## Incubed Responses
 
-Each Incubed node response is based on JSON-RPC, but also adds the `in3` -property. If the request does not contain a `in3`-property or does not require proof, the response must also omit the `in3` property.
+Each Incubed node response is based on JSON-RPC, but also adds the `in3` property. If the request does not contain a `in3`-property or does not require proof, the response must also omit the `in3` property.
 
 If the proof is requested, the `in3`-property is defined with the following properties:
 
