@@ -7248,7 +7248,7 @@ Location: src/verifier/eth1/nano/serialize.h
 bytes_t* serialize_tx_receipt(d_token_t *receipt);
 ```
 
-Ceates rlp-encoded raw bytes for a receipt. 
+Creates rlp-encoded raw bytes for a receipt.
 
 The bytes must be freed with b_free after use!
 
@@ -7260,14 +7260,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### serialize_tx
 
 ```c
 bytes_t* serialize_tx(d_token_t *tx);
 ```
 
-creates rlp-encoded raw bytes for a transaction. 
+Creates rlp-encoded raw bytes for a transaction.
 
 The bytes must be freed with b_free after use!
 
@@ -7279,16 +7278,15 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### serialize_tx_raw
 
 ```c
 bytes_t* serialize_tx_raw(bytes_t nonce, bytes_t gas_price, bytes_t gas_limit, bytes_t to, bytes_t value, bytes_t data, uint64_t v, bytes_t r, bytes_t s);
 ```
 
-creates rlp-encoded raw bytes for a transaction from direct values. 
+Creates rlp-encoded raw bytes for a transaction from direct values.
 
-The bytes must be freed with b_free after use! 
+The bytes must be freed with b_free after use!
 
 arguments:
 ```eval_rst
@@ -7306,16 +7304,15 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### serialize_account
 
 ```c
 bytes_t* serialize_account(d_token_t *a);
 ```
 
-creates rlp-encoded raw bytes for a account. 
+Creates rlp-encoded raw bytes for an account.
 
-The bytes must be freed with b_free after use! 
+The bytes must be freed with b_free after use!
 
 arguments:
 ```eval_rst
@@ -7325,14 +7322,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### serialize_block_header
 
 ```c
 bytes_t* serialize_block_header(d_token_t *block);
 ```
 
-creates rlp-encoded raw bytes for a blockheader. 
+Creates rlp-encoded raw bytes for a blockheader.
 
 The bytes must be freed with b_free after use!
 
@@ -7344,14 +7340,13 @@ arguments:
 ```
 returns: [`bytes_t *`](#bytes-t)
 
-
 #### rlp_add
 
 ```c
 int rlp_add(bytes_builder_t *rlp, d_token_t *t, int ml);
 ```
 
-adds the value represented by the token rlp-encoded to the byte_builder. 
+Adds the value represented by the token rlp-encoded to the byte_builder.
 
 arguments:
 ```eval_rst
@@ -7361,4 +7356,4 @@ arguments:
 ``int``                                  **ml**   
 ======================================= ========= 
 ```
-returns: `int` : 0 if added -1 if the value could not be handled. 
+returns: `int`: 0 if added, -1 if the value could not be handled.
