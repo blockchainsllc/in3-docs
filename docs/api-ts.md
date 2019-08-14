@@ -1231,7 +1231,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 ### Type AuraValidatoryProof
 
 
-An object holding proofs for validator logs. The key is the blockNumber as hex.
+An object holding proofs for validator logs. The key is the block number as hex.
 
 
 Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/types.ts#L56)
@@ -1307,7 +1307,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 * **[key](https://github.com/slockit/in3/blob/master/src/types/types.ts#L123)** :`any` *(optional)*  - The client key to sign requests.
     Example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
 
-* **[loggerUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L217)** :`string` *(optional)*  - A url of RES-endpoint the client will log all errors to. The client will post to this endpoint JSON like {ID?, level, message, meta?}.
+* **[loggerUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L217)** :`string` *(optional)*  - A URL of RES-endpoint the client will log all errors to. The client will post to this endpoint JSON like {ID?, level, message, meta?}.
 
 * **[mainChain](https://github.com/slockit/in3/blob/master/src/types/types.ts#L204)** :`string` *(optional)*  - Main chain-ID where the chain registry is running.
     Example: 0x1
@@ -1329,7 +1329,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 * **[proof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L160)** :`'none'`|`'standard'`|`'full'` *(optional)*  - If true, the nodes should send a proof of the response.
     Example: true
 
-* **[replaceLatestBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L174)** :`number` *(optional)*  - If specified, the *latest* block number will be replaced by a blockNumber-specified value.
+* **[replaceLatestBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L174)** :`number` *(optional)*  - If specified, the *latest* block number will be replaced by a block number-specific value.
     Example: 6
 
 * **[requestCount](https://github.com/slockit/in3/blob/master/src/types/types.ts#L179)** :`number` - The number of request sent when getting a first answer.
@@ -1337,7 +1337,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[retryWithoutProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L131)** :`boolean` *(optional)*  - If true, the  request may be handled without proof in case of an error. (Use with care!)
 
-* **[rpc](https://github.com/slockit/in3/blob/master/src/types/types.ts#L221)** :`string` *(optional)*  - Url of one or more RPC-endpoints to use. (List can be comma seperated.)
+* **[rpc](https://github.com/slockit/in3/blob/master/src/types/types.ts#L221)** :`string` *(optional)*  - URL of one or more RPC-endpoints to use. (List can be comma seperated.)
 
 * **[servers](https://github.com/slockit/in3/blob/master/src/types/types.ts#L225)** *(optional)*  - The node list per chain.
 
@@ -1463,13 +1463,13 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
     * **[comment](https://github.com/slockit/in3/blob/master/src/types/types.ts#L414)** :`string` *(optional)*  - Comments for the node.
 
-    * **[icon](https://github.com/slockit/in3/blob/master/src/types/types.ts#L402)** :`string` *(optional)*  - Url to an icon or logo of company offering this node.
+    * **[icon](https://github.com/slockit/in3/blob/master/src/types/types.ts#L402)** :`string` *(optional)*  - URL to an icon or logo of company offering this node.
 
     * **[name](https://github.com/slockit/in3/blob/master/src/types/types.ts#L410)** :`string` *(optional)*  - Name of the node or company.
 
     * **[noStats](https://github.com/slockit/in3/blob/master/src/types/types.ts#L418)** :`boolean` *(optional)*  - If active, the stats will not be shown (default:false).
 
-    * **[url](https://github.com/slockit/in3/blob/master/src/types/types.ts#L406)** :`string` *(optional)*  - Url of the website of the company.
+    * **[url](https://github.com/slockit/in3/blob/master/src/types/types.ts#L406)** :`string` *(optional)*  - URL of the website of the company.
 
 
 ### Type IN3RPCHandlerConfig
@@ -1496,7 +1496,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
     * **[depositUnit](https://github.com/slockit/in3/blob/master/src/types/types.ts#L544)** :`'ether'`|`'finney'`|`'szabo'`|`'wei'` *(optional)*  - Unit of the deposit value.
 
-    * **[url](https://github.com/slockit/in3/blob/master/src/types/types.ts#L532)** :`string` - The public url to reach this node.
+    * **[url](https://github.com/slockit/in3/blob/master/src/types/types.ts#L532)** :`string` - The public URL to reach this node.
 
 * **[clientKeys](https://github.com/slockit/in3/blob/master/src/types/types.ts#L483)** :`string` *(optional)*  - A comma sepearted list of client keys to use for simulating clients for the watchdog.
 
@@ -1504,7 +1504,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[handler](https://github.com/slockit/in3/blob/master/src/types/types.ts#L467)** :`'eth'`|`'ipfs'`|`'btc'` *(optional)*  - The impl used to handle the calls.
 
-* **[ipfsUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L471)** :`string` *(optional)*  - The url of the ipfs-client.
+* **[ipfsUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L471)** :`string` *(optional)*  - The URL of the ipfs-client.
 
 * **[maxThreads](https://github.com/slockit/in3/blob/master/src/types/types.ts#L499)** :`number` *(optional)*  - The maximal number of threads running parallel to the processes.
 
@@ -1516,11 +1516,11 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[privateKeyPassphrase](https://github.com/slockit/in3/blob/master/src/types/types.ts#L519)** :`string` *(optional)*  - The password used to decrpyt the private key.
 
-* **[registry](https://github.com/slockit/in3/blob/master/src/types/types.ts#L523)** :`string` - The address of the server registry used in order to update the nodeList.
+* **[registry](https://github.com/slockit/in3/blob/master/src/types/types.ts#L523)** :`string` - The address of the server registry used in order to update the node list.
 
-* **[registryRPC](https://github.com/slockit/in3/blob/master/src/types/types.ts#L527)** :`string` *(optional)*  - The url of the client in case the registry is not on the same chain.
+* **[registryRPC](https://github.com/slockit/in3/blob/master/src/types/types.ts#L527)** :`string` *(optional)*  - The URL of the client in case the registry is not on the same chain.
 
-* **[rpcUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L479)** :`string` - The url of the client.
+* **[rpcUrl](https://github.com/slockit/in3/blob/master/src/types/types.ts#L479)** :`string` - The URL of the client.
 
 * **[startBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L507)** :`number` *(optional)*  - Blocknumber to start watching the registry.
 
@@ -1551,7 +1551,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 * **[includeCode](https://github.com/slockit/in3/blob/master/src/types/types.ts#L570)** :`boolean` *(optional)*  - If true, the request should include the codes of all accounts. Otherwise, only the the codeHash is returned. In this case, the client may ask by calling eth_getCode() afterwards.
     Example: true
 
-* **[latestBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L579)** :`number` *(optional)*  - If specified, the *latest* block number will be replaced by blockNumber-specified value.
+* **[latestBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L579)** :`number` *(optional)*  - If specified, the *latest* block number will be replaced by block number-specific value.
     Example: 6
 
 * **[signatures](https://github.com/slockit/in3/blob/master/src/types/types.ts#L609)** :`string`[] *(optional)*  - A list of addresses requested to sign the blockhash.
