@@ -257,13 +257,13 @@ Depending on these types, the length will be used to read the next bytes:
 
 ## Communication
 
-Incubed requests follow a simple request/response schema allowing even devices with a small bandwith to retrieve all required data with one request. But there are exceptions when a additional need to fetched.
+Incubed requests follow a simple request/response schema allowing even devices with a small bandwith to retrieve all the required data with one request. But there are exceptions when additional data need to be fetched.
 
 These are:
 
 1. **Changes in the NodeRegistry**    
 
-    Changes in the NodeRegistry are based on one of the following event : 
+    Changes in the NodeRegistry are based on one of the following events : 
     
     - `LogNodeRegistered`
     - `LogNodeRemoved`
@@ -271,7 +271,7 @@ These are:
 
     The server needs to watch for events from the `NodeRegistry` contract, and update the nodelist when needed.
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList` a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
 
   ```eval_rst
     .. uml::
