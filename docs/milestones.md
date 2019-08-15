@@ -1,7 +1,7 @@
 # Roadmap
 
 Incubed implements two versions: 
- - **Typescript / Javascript**: optimized for dApps, web apps or mobile apps.
+ - **TypeScript / JavaScript**: optimized for dApps, web apps or mobile apps.
  - **Embedded C**: optimized for microcontrollers and all other use cases.
 
 ## V1.2 Stable: Q3 2019
