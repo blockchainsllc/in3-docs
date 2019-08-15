@@ -108,7 +108,7 @@ public class HelloIN3 {
 ```
 ### Using the API
 
-Incubed also offers a API for getting Information directly in a structured way.
+Incubed also offers an API for getting information directly in a structured way.
 
 #### Reading Blocks
 
@@ -147,7 +147,7 @@ public class HelloIN3 {
 ```
 #### Calling Functions of Contracts
 
-This Example shows how to call functions and use the decoded results. Here we get the struct from the registry.
+The following example shows how to call functions and use the decoded results. Here we get the struct from the registry.
 
 ```c
 import in3.*;
@@ -180,7 +180,7 @@ public class HelloIN3 {
 ```
 #### Sending Transactions
 
-In order to send, you need a Signer. The SimpleWallet class is a basic implementation which can be used.
+In order to send, you need a signer. The SimpleWallet class is a basic implementation that can be used.
 
 ```c
 package in3;
