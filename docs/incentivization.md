@@ -280,9 +280,9 @@ The share depends on the current reputation of the node.
 payment_n =  \frac{weight_n \cdot reputation_n \cdot balance_{total}} { weight_{total} } 
 ```
 
-Why should a node treat a paying client better then others?
+Why should a node treat a paying client better than others?
 
-Because the higher the price a user paid, the higher the voting power, which they may use to upgrade or downgrade the reputation of the node. This reputation will directly incluence the payment to the node.
+Because the higher the price a user paid, the higher the voting power, which they may use to upgrade or downgrade the reputation of the node. This reputation will directly influence the payment to the node.
 
 That's why, for a node, the score of a client depends on what follows:
 
@@ -294,9 +294,9 @@ The score would be 1 if the payment a node receives has the same percentage of r
 
 ## Client Identification
 
-As a requirement for identification, each client needs to generate a uniqe private key, which must never leave the device.
+As a requirement for identification, each client needs to generate a unique private key, which must never leave the device.
 
-In order to securely identify a client as belonging to a ecosystem, each requests needs 2 signatures:
+In order to securely identify a client as belonging to an ecosystem, each request needs two signatures:
 
 1. **The Ecosystem-Proof**    
    This proof consists of the following information:
@@ -324,7 +324,7 @@ In order to securely identify a client as belonging to a ecosystem, each request
    )
    ```
    
-With each request the client needs to send both proofs.
+With each request, the client needs to send both proofs.
 
 
 The server may cache the ecosystem-proof, but it needs to verify the client signature with each request, thus ensuring the identity of the sending client.
