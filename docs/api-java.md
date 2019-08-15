@@ -10,7 +10,7 @@ java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
 ### Building
 
-For building the shared library you need to enable java by using the `-DJAVA=true` flag:
+To build the shared library, you need to enable java by using the `-DJAVA=true` flag:
 
 ```c
 git clone git@github.com:slockit/in3-core.git
@@ -22,11 +22,11 @@ You will find the `in3.jar` in the build/lib - folder.
 
 ### Android
 
-In order to use incubed in android simply follow these steps:
+In order to use Incubed in android, simply follow these steps:
 
-Step 1: Create a top-level CMakeLists.txt in android project inside app folder and link this to gradle. Follow the steps using this [guide](https://developer.android.com/studio/projects/gradle-external-native-builds) on howto link.
+Step 1: Create a top-level CMakeLists.txt in android project inside the app folder and link this to Gradle. Follow the steps using this [guide](https://developer.android.com/studio/projects/gradle-external-native-builds) on how to link.
 
-The Content of the `CMakeLists.txt` should look like this:
+The content of the `CMakeLists.txt` should look like this:
 
 ```c
 cmake_minimum_required(VERSION 3.4.1)
@@ -34,8 +34,8 @@ cmake_minimum_required(VERSION 3.4.1)
 # turn off FAST_MATH in the evm.
 ADD_DEFINITIONS(-DIN3_MATH_LITE)
 
-# loop through the required module and cretae the build-folders
-foreach(module 
+# loop through the required module and create the build-folders
+for each (module 
   core 
   verifier/eth1/nano 
   verifier/eth1/evm 
@@ -49,7 +49,7 @@ foreach(module
         add_subdirectory( in3-core/src/${module} in3-core/src/${module}/outputs )
 endforeach()
 ```
-Step 2: clone [in3-core](https://git.slock.it/in3/c/in3-core.git) into the `app`-folder or use this script to clone and update incubed:
+Step 2: clone [in3-core](https://git.slock.it/in3/c/in3-core.git) into the `app`-folder or use this script to clone and update Incubed:
 
 ```c
 #!/usr/bin/env sh
