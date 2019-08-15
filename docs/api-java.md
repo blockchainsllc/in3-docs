@@ -270,7 +270,7 @@ Sets the number of seconds requests can be cached.
 
  > public `native void` setCacheTimeout([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
