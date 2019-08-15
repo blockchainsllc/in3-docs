@@ -238,13 +238,13 @@ Thus, for each node the weight can be calculated by:
 weight_n =  \frac{{\displaystyle\sum_{i=0}^n} C_i \cdot R_n } { {\displaystyle\sum_{i=0}^n} R_i \cdot C_n  } 
 ```
 - `$ R_n$` - The number of requests served to one of the clients connected to the node.
-- `$ {\displaystyle\sum_{i=0}^n} R_i$` - The total number of requests servered. 
+- `$ {\displaystyle\sum_{i=0}^n} R_i$` - The total number of requests served. 
 - `$ {\displaystyle\sum_{i=0}^n} C_i$` - The total number of capacities of the registered servers.
 - `$ C_n$` - The capacity of the registered node. 
 
 Each node will update the `$ score$` and the `$weight$` for the other nodes after each check in order to prioritize incoming requests.
 
-The capacity of a node is the maximal number of parallel request it can handle and is stored in the ServerRegistry. This way all clients know the cap and will weigh the nodes accordingly, which leads to stronger servers. A node declaring a high capacity will gain a higher score, and its clients will receive more reliable responses. On the other hand, if a node cannot deliver the load, it may lose its availability as well as its score.
+The capacity of a node is the maximal number of parallel requests it can handle and is stored in the ServerRegistry. This way, all clients know the cap and will weigh the nodes accordingly, which leads to stronger servers. A node declaring a high capacity will gain a higher score, and its clients will receive more reliable responses. On the other hand, if a node cannot deliver the load, it may lose its availability as well as its score.
 
 ## Free Access
 
