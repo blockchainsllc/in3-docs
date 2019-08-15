@@ -33,7 +33,7 @@ This was the first stable release, which was published after Devcon. It contains
 
 This release will introduce the incentivization layer, which should help provide more nodes to create the decentralized network.
 
-- **PoA Clique**: Supports Clique PoA to verify blockheader.
+- **PoA Clique**: Supports Clique PoA to verify blockheaders.
 - **Signed Requests**: Incubed supports the incentivization layer, which requires signed requests to assign client requests to certain nodes.
 - **Network Balancing**: Nodes will balance the network based on load and reputation.
 
@@ -48,7 +48,7 @@ For `eth_call` verification, the client and server must be able to execute the c
 Supports Polkadot or any substrate-based chains.
 
 - **Substrate**: Framework support.
-- **Runtime-Optimization**: Using precompiled runtimes.
+- **Runtime Optimization**: Using precompiled runtimes.
 
 ## V1.5 Services: Q1 2021
 
