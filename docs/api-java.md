@@ -3,7 +3,7 @@
 
 ## Installing
 
-The Incubed Java client uses JNI in order to call native functions. But all the native-libraries are bundled inside the jar-file. This jar file ha **no** dependencies and can even be used standalone:
+The Incubed Java client uses JNI in order to call native functions. But all the native-libraries are bundled inside the jar-file. This jar file has **no** dependencies and can even be used as a standalone:
 
 like
 
