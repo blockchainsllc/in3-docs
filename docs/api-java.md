@@ -654,7 +654,7 @@ Arguments:
 ```
 ##### IN3
 
-Constrcutor. 
+Constructor. 
 
 Creates a new Incubed client. 
 
@@ -689,21 +689,21 @@ Arguments:
 ``String``  **prop**  the name of the property.
 ========== ========== =========================
 ```
-returns: `Object` : the raw object. 
+Returns: `Object` : the raw object. 
 
 
 
 ##### put
 
-adds values. 
+Adds values. 
 
-This function will be called from the JNI-Iterface.
+This function will be called from the JNI-Interface.
 
 Internal use only! 
 
  > public `void` put([`int`](#class-int) key, [`Object`](#class-object) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ===================
 ``int``     **key**  the hash of the key
@@ -712,65 +712,65 @@ arguments:
 ```
 ##### getLong
 
-returns the property as long 
+Returns the property as long. 
 
  > public `long` getLong([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ================
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-returns: `long` : the long value 
+Returns: `long` : the long value. 
 
 
 
 ##### getBigInteger
 
-returns the property as BigInteger 
+Returns the property as BigInteger. 
 
  > public `BigInteger` getBigInteger([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ================
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-returns: `BigInteger` : the BigInteger value 
+Returns: `BigInteger` : the BigInteger value. 
 
 
 
 ##### getStringArray
 
-returns the property as StringArray 
+Returns the property as StringArray. 
 
  > public `String []` getStringArray([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ================
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-returns: `String []` : the array or null 
+Returns: `String []` : the array or null. 
 
 
 
 ##### getString
 
-returns the property as String or in case of a number as hexstring. 
+Returns the property as String or, in case of a number, as hexstring. 
 
  > public `String` getString([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ================
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-returns: `String` : the hexstring 
+Returns: `String` : the hexstring. 
 
 
 
@@ -778,7 +778,7 @@ returns: `String` : the hexstring
 
  > public `String []` asStringArray([`Object`](#class-object) o);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======= 
 ``Object``  **o**  
@@ -792,7 +792,7 @@ arguments:
 
  > public static `BigInteger` asBigInteger([`Object`](#class-object) o);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======= 
 ``Object``  **o**  
@@ -802,7 +802,7 @@ arguments:
 
  > public static `long` asLong([`Object`](#class-object) o);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======= 
 ``Object``  **o**  
@@ -812,7 +812,7 @@ arguments:
 
  > public static `int` asInt([`Object`](#class-object) o);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======= 
 ``Object``  **o**  
@@ -822,7 +822,7 @@ arguments:
 
  > public static `String` asString([`Object`](#class-object) o);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======= 
 ``Object``  **o**  
@@ -832,7 +832,7 @@ arguments:
 
  > public static `String` toJson([`Object`](#class-object) ob);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ======== 
 ``Object``  **ob**  
@@ -842,7 +842,7 @@ arguments:
 
  > public static `void` appendKey([`StringBuilder`](#class-stringbuilder) sb, [`String`](#class-string) key, [`Object`](#class-object) value);
 
-arguments:
+Arguments:
 ```eval_rst
 ================= =========== 
 ``StringBuilder``  **sb**     
@@ -860,31 +860,31 @@ arguments:
 
 #### class TempStorageProvider
 
-a simple Storage Provider storing the cache in the temp-folder. 
+A simple Storage Provider storing the cache in the temp-folder. 
 
 ##### getItem
 
-returns a item from cache () 
+Returns an item from cache (). 
 
  > public `byte []` getItem([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= 
 ``String``  **key**  
 ========== ========= 
 ```
-returns: `byte []` : the bytes or null if not found. 
+Returns: `byte []` : the bytes or null if not found. 
 
 
 
 ##### setItem
 
-stores a item in the cache. 
+Stores an item in the cache. 
 
  > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ============= 
 ``String``   **key**      
@@ -894,7 +894,7 @@ arguments:
 
 #### enum Proof
 
-The Proof type indicating how much proof is required. 
+The proof type indicating how much proof is required. 
 
 The enum type contains the following values:
 
@@ -908,17 +908,17 @@ The enum type contains the following values:
 
 #### interface Signer
 
-a Interface responsible for signing data or transactions. 
+An Interface responsible for signing data or transactions. 
 
 ##### prepareTransaction
 
-optiional method which allows to change the transaction-data before sending it. 
+Optional method that allows you to change the transaction-data before sending it. 
 
 This can be used for redirecting it through a multisig. 
 
  > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
 
-arguments:
+Arguments:
 ```eval_rst
 ================================================= ========= 
 `IN3 <#class-in3>`_                                **in3**  
@@ -927,11 +927,11 @@ arguments:
 ```
 ##### hasAccount
 
-returns true if the account is supported (or unlocked) 
+Returns true if the account is supported (or unlocked). 
 
  > public `boolean` hasAccount([`String`](#class-string) address);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **address**  
@@ -939,11 +939,11 @@ arguments:
 ```
 ##### sign
 
-signing of the raw data. 
+Signing of the raw data. 
 
  > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **data**     
@@ -953,33 +953,33 @@ arguments:
 
 #### interface StorageProvider
 
-Provider methods to cache data. 
+Provides methods to cache data. 
 
 These data could be nodelists, contract codes or validator changes. 
 
 ##### getItem
 
-returns a item from cache () 
+Returns an item from cache (). 
 
  > public `byte []` getItem([`String`](#class-string) key);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= ====================
 ``String``  **key**  the key for the item
 ========== ========= ====================
 ```
-returns: `byte []` : the bytes or null if not found. 
+Returns: `byte []` : the bytes or null if not found. 
 
 
 
 ##### setItem
 
-stores a item in the cache. 
+Stores an item in the cache. 
 
  > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ============= ====================
 ``String``   **key**      the key for the item
@@ -991,15 +991,15 @@ arguments:
 
 #### class API
 
-a Wrapper for the incubed client offering Type-safe Access and additional helper functions. 
+A wrapper for the Incubed client offering Type-safe Access and additional helper functions. 
 
 ##### API
 
-creates a API using the given incubed instance. 
+Creates an API using the given Incubed instance. 
 
  > public  API([`IN3`](#class-in3) in3);
 
-arguments:
+Arguments:
 ```eval_rst
 =================== ========= 
 `IN3 <#class-in3>`_  **in3**  
@@ -1007,13 +1007,13 @@ arguments:
 ```
 ##### getBlockByNumber
 
-finds the Block as specified by the number. 
+Finds the block as specified by the number. 
 
-use `Block.LATEST` for getting the lastest block. 
+Use `Block.LATEST` for getting the lastest block. 
 
  > public [`Block`](#class-block) getBlockByNumber([`long`](#class-long) block, [`boolean`](#class-boolean) includeTransactions);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ========================= ================================================================================================
 ``long``     **block**                
@@ -1026,7 +1026,7 @@ Returns information about a block by hash.
 
  > public [`Block`](#class-block) getBlockByHash([`String`](#class-string) blockHash, [`boolean`](#class-boolean) includeTransactions);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ========================= ================================================================================================
 ``String``   **blockHash**            
@@ -1035,13 +1035,13 @@ arguments:
 ```
 ##### getBlockNumber
 
-the current BlockNumber. 
+The current BlockNumber. 
 
  > public `long` getBlockNumber();
 
 ##### getGasPrice
 
-the current Gas Price. 
+The current Gas Price. 
 
  > public `long` getGasPrice();
 
@@ -1055,45 +1055,45 @@ Null is returned if not available.
 
 ##### call
 
-calls a function of a smart contract and returns the result. 
+Calls a function of a smart contract and returns the result. 
 
  > public `Object` call([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ================================================= ============= =============================================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
 ``long``                                           **block**    < the transaction to call. < the Block used to for the state.
 ================================================= ============= =============================================================
 ```
-returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
+Returns: `Object` : the decoded result. If only one returns, value is expected the Object will be returned. If not, an array of objects will be the result. 
 
 
 
 ##### estimateGas
 
-Makes a call or transaction, which won't be added to the blockchain and returns the used gas, which can be used for estimating the used gas. 
+Makes a call or transaction that won't be added to the blockchain, and returns the used gas, which can be used for estimating the used gas. 
 
  > public `long` estimateGas([`TransactionRequest`](#class-transactionrequest) request, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ================================================= ============= =============================================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
 ``long``                                           **block**    < the transaction to call. < the Block used to for the state.
 ================================================= ============= =============================================================
 ```
-returns: `long` : the gas required to call the function. 
+Returns: `long` : the gas required to call the function. 
 
 
 
 ##### getBalance
 
-Returns the balance of the account of given address in wei. 
+Returns the balance of the account of a given address in wei. 
 
  > public `BigInteger` getBalance([`String`](#class-string) address, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **address**  
@@ -1106,7 +1106,7 @@ Returns code at a given address.
 
  > public `String` getCode([`String`](#class-string) address, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **address**  
@@ -1119,7 +1119,7 @@ Returns the value from a storage position at a given address.
 
  > public `String` getStorageAt([`String`](#class-string) address, [`BigInteger`](#class-biginteger) position, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ============== ============== 
 ``String``      **address**   
@@ -1133,7 +1133,7 @@ Returns the number of transactions in a block from a block matching the given bl
 
  > public `long` getBlockTransactionCountByHash([`String`](#class-string) blockHash);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== =============== 
 ``String``  **blockHash**  
@@ -1145,7 +1145,7 @@ Returns the number of transactions in a block from a block matching the given bl
 
  > public `long` getBlockTransactionCountByNumber([`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== =========== 
 ``long``  **block**  
