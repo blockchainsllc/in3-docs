@@ -301,43 +301,43 @@ These are:
 
 ## Proofs
 
-Proofs are crucial part of the security concept for incubed. Whenever a request asks for a response with `verification`: `proof`, the node must provide the proof needed to validaten the response result. The proof itself depends on the chain.
+Proofs are a crucial part of the security concept for Incubed. Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
 
 ### Ethereum
 
-For Ethereum all proofs are based on the correct block hash. That's why verification differientiates between [Verifying the blockhash](poa.html) (which depends on the used consensus) and the actual result data.
+For Ethereum, all proofs are based on the correct block hash. That's why verification differentiates between [Verifying the blockhash](poa.html) (which depends on the user consensus) and the actual result data.
 
-There is also another reason why the BlockHash is so important. This is the only value you are able to access from within a SmartContract, because the evm supports a OpCode (`BLOCKHASH`), which allows you to read the last 256 Blockhashes, which gives us the chance to even verify the blockhash onchain.
+There is another reason why the BlockHash is so important. This is the only value you are able to access from within a SmartContract, because the evm supports a OpCode (`BLOCKHASH`), which allows you to read the last 256 blockhashes, which gives us the chance to verify even the blockhash onchain.
 
 Depending on the method, different proofs are needed, which are described in this document.
 
-- **[Block Proof](#blockproof)** - verifies the content of the BlockHeader
-- **[Transaction Proof](#transaction-proof)** - verifies the input data of a transaction
-- **[Receipt Proof](#receipt-proof)** - verifies the outcome of a transaction
-- **[Log Proof](#log-proof)** - verifies the response of `eth_getPastLogs`
-- **[Account Proof](#account-proof)** - verifies the state of an account
-- **[Call Proof](#call-proof)** - verifies the result of a `eth_call` - response
+- **[Block Proof](#blockproof)** - Verifies the content of the BlockHeader
+- **[Transaction Proof](#transaction-proof)** - Verifies the input data of a transaction
+- **[Receipt Proof](#receipt-proof)** - Verifies the outcome of a transaction
+- **[Log Proof](#log-proof)** - Verifies the response of `eth_getPastLogs`
+- **[Account Proof](#account-proof)** - Verifies the state of an account
+- **[Call Proof](#call-proof)** - Verifies the result of an `eth_call` - response
 
-Each `in3`-section of the response containing proof contains a property with a proof-object with the following properties:
+Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
 
-*  **type** `string` (required)  - the type of the proof   
+*  **type** `string` (required)  - The type of the proof   
  Must be one of the these values : `'transactionProof`', `'receiptProof`', `'blockProof`', `'accountProof`', `'callProof`', `'logProof`'
-*  **block** `string` - the serialized blockheader as hex, required in most proofs 
-*  **finalityBlocks** `array` - the serialized foloowing blockheaders as hex, required in case of finality asked. (only relevant for PoA-chains) The server muist deliver enough blockheaders to cover more then 50% of the validators. In order to verify them, they must be linkable (with the parentHash).    
-*  **transactions** `array` - the list of raw transactions of the block if needed to create a merkle trie for the transactions. 
-*  **uncles** `array` - the list of uncle-headers of the block. This will only be set, if full verification is required in order to create a merkle trie for the uncles and so prove the uncle_hash.   
-*  **merkleProof** `string[]` - the serialized merkle-nodes beginning with the root-node. ( depending on the content to prove)
-*  **merkleProofPrev** `string[]` - the serialized merkle-noodes beginning with the root-node of the previous entry (only for full proof of receipts)   
-*  **txProof** `string[]` - the serialized merkle-nodes beginning with the root-node in order to prrof the transactionIndex  ( onle needed for transaction receipts )
-*  **logProof** [LogProof](#logproof) - the Log Proof in case of a `eth_getLogs`-Request   
-*  **accounts** `object` - a map of addresses and their AccountProof   
-*  **txIndex** `integer` - the transactionIndex within the block ( for transaactions and receipts)   
-*  **signatures** `Signature[]` - requested signatures   
+*  **block** `string` - The serialized blockheader as hex, required in most proofs 
+*  **finalityBlocks** `array` - The serialized foloowing blockheaders as hex, required in case of finality asked (only relevant for PoA-chains). The server must deliver enough blockheaders to cover more then 50% of the validators. In order to verify them, they must be linkable (with the parentHash)    
+*  **transactions** `array` - The list of raw transactions of the block, if needed to create a merkle trie for the transactions 
+*  **uncles** `array` - The list of uncle-headers of the block. This will only be set, if full verification is required in order to create a merkle trie for the uncles and so prove the uncle_hash   
+*  **merkleProof** `string[]` - The serialized merkle-nodes beginning with the root-node (depending on the content to prove)
+*  **merkleProofPrev** `string[]` - The serialized merkle-noodes beginning with the root-node of the previous entry (only for full proof of receipts)   
+*  **txProof** `string[]` - The serialized merkle-nodes beginning with the root-node in order to proof the transactionIndex (only needed for transaction receipts )
+*  **logProof** [LogProof](#logproof) - The Log Proof in case of a `eth_getLogs`-Request   
+*  **accounts** `object` - A map of addresses and their AccountProof   
+*  **txIndex** `integer` - The transactionIndex within the block (for transaactions and receipts)   
+*  **signatures** `Signature[]` - Requested signatures   
 
 
 #### BlockProof
 
-BlockProofs are used whenever you want to read data of a Block and verify them. This would be:
+BlockProofs are used whenever you want to read data of a block and verify them. This would be:
 
 - [eth_getBlockTransactionCountByHash
 ](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbyhash)
