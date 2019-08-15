@@ -237,15 +237,15 @@ public class Example {
 
 
 
-## Package in3
+## Package Incubed
 
-#### class Example
+#### Class Example
 
 ##### main
 
  > public static `void` main([`String[]`](#class-string[]) args);
 
-arguments:
+Arguments:
 ```eval_rst
 ============= ========== 
 ``String []``  **args**  
@@ -254,19 +254,19 @@ arguments:
 
 #### class IN3
 
-This is the main class creating the incubed client. 
+This is the main class creating the Incubed client. 
 
 The client can then be configured. 
 
 ##### getCacheTimeout
 
-number of seconds requests can be cached. 
+The number of seconds requests can be cached. 
 
  > public `native int` getCacheTimeout();
 
 ##### setCacheTimeout
 
-sets number of seconds requests can be cached. 
+Sets the number of seconds requests can be cached. 
 
  > public `native void` setCacheTimeout([`int`](#class-int) val);
 
@@ -278,17 +278,17 @@ arguments:
 ```
 ##### getNodeLimit
 
-the limit of nodes to store in the client. 
+The limit of nodes to store in the client. 
 
  > public `native int` getNodeLimit();
 
 ##### setNodeLimit
 
-sets the limit of nodes to store in the client. 
+Sets the limit of nodes to store in the client. 
 
  > public `native void` setNodeLimit([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -296,17 +296,17 @@ arguments:
 ```
 ##### getKey
 
-the client key to sign requests 
+The client key to sign requests. 
 
  > public `native byte []` getKey();
 
 ##### setKey
 
-sets the client key to sign requests 
+Sets the client key to sign requests. 
 
  > public `native void` setKey([`byte[]`](#class-byte[]) val);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ========= 
 ``byte []``  **val**  
@@ -314,11 +314,11 @@ arguments:
 ```
 ##### setKey
 
-sets the client key as hexstring to sign requests 
+Sets the client key as hexstring to sign requests. 
 
  > public `void` setKey([`String`](#class-string) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========= 
 ``String``  **val**  
@@ -326,17 +326,17 @@ arguments:
 ```
 ##### getMaxCodeCache
 
-number of max bytes used to cache the code in memory 
+Number of max bytes used to cache the code in memory. 
 
  > public `native int` getMaxCodeCache();
 
 ##### setMaxCodeCache
 
-sets number of max bytes used to cache the code in memory 
+Sets number of max bytes used to cache the code in memory. 
 
  > public `native void` setMaxCodeCache([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -344,17 +344,17 @@ arguments:
 ```
 ##### getMaxBlockCache
 
-number of blocks cached in memory 
+Number of blocks cached in memory. 
 
  > public `native int` getMaxBlockCache();
 
 ##### setMaxBlockCache
 
-sets the number of blocks cached in memory 
+Sets the number of blocks cached in memory. 
 
  > public `native void` setMaxBlockCache([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -362,17 +362,17 @@ arguments:
 ```
 ##### getProof
 
-the type of proof used 
+The type of proof used. 
 
  > public [`Proofnative `](#class-proof) getProof();
 
 ##### setProof
 
-sets the type of proof used 
+Sets the type of proof used. 
 
  > public `native void` setProof([`Proof`](#class-proof) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======================= ========= 
 `Proof <#class-proof>`_  **val**  
@@ -380,17 +380,17 @@ arguments:
 ```
 ##### getRequestCount
 
-the number of request send when getting a first answer 
+The number of requests sent when getting a first answer. 
 
  > public `native int` getRequestCount();
 
 ##### setRequestCount
 
-sets the number of requests send when getting a first answer 
+Sets the number of requests sent when getting a first answer.
 
  > public `native void` setRequestCount([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -398,17 +398,17 @@ arguments:
 ```
 ##### getSignatureCount
 
-the number of signatures used to proof the blockhash. 
+The number of signatures used to proof the blockhash. 
 
  > public `native int` getSignatureCount();
 
 ##### setSignatureCount
 
-sets the number of signatures used to proof the blockhash. 
+Sets the number of signatures used to proof the blockhash. 
 
  > public `native void` setSignatureCount([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -416,7 +416,7 @@ arguments:
 ```
 ##### getMinDeposit
 
-min stake of the server. 
+Min stake of the server. 
 
 Only nodes owning at least this amount will be chosen. 
 
@@ -424,13 +424,13 @@ Only nodes owning at least this amount will be chosen.
 
 ##### setMinDeposit
 
-sets min stake of the server. 
+Sets min stake of the server. 
 
 Only nodes owning at least this amount will be chosen. 
 
  > public `native void` setMinDeposit([`long`](#class-long) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ========= 
 ``long``  **val**  
@@ -438,17 +438,17 @@ arguments:
 ```
 ##### getReplaceLatestBlock
 
-if specified, the blocknumber *latest* will be replaced by blockNumber- specified value 
+If specified, the blocknumber *latest* will be replaced by blockNumber- specified value 
 
  > public `native int` getReplaceLatestBlock();
 
 ##### setReplaceLatestBlock
 
-replaces the *latest* with blockNumber- specified value 
+Replaces the *latest* with blockNumber- specified value 
 
  > public `native void` setReplaceLatestBlock([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -456,17 +456,17 @@ arguments:
 ```
 ##### getFinality
 
-the number of signatures in percent required for the request 
+The number of signatures in percent required for the request. 
 
  > public `native int` getFinality();
 
 ##### setFinality
 
-sets the number of signatures in percent required for the request 
+Sets the number of signatures in percent required for the request. 
 
  > public `native void` setFinality([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -474,17 +474,17 @@ arguments:
 ```
 ##### getMaxAttempts
 
-the max number of attempts before giving up 
+The max number of attempts before giving up. 
 
  > public `native int` getMaxAttempts();
 
 ##### setMaxAttempts
 
-sets the max number of attempts before giving up 
+Sets the max number of attempts before giving up. 
 
  > public `native void` setMaxAttempts([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -492,23 +492,23 @@ arguments:
 ```
 ##### getSigner
 
-returns the signer or wallet. 
+Returns the signer or wallet. 
 
  > public [`Signer`](#class-signer) getSigner();
 
 ##### getEth1API
 
-gets the ethereum-api 
+Gets the ethereum-api. 
 
  > public [`in3.eth1.API`](#class-in3.eth1.api) getEth1API();
 
 ##### setSigner
 
-sets the signer or wallet. 
+Sets the signer or wallet. 
 
  > public `void` setSigner([`Signer`](#class-signer) signer);
 
-arguments:
+Arguments:
 ```eval_rst
 ========================= ============ 
 `Signer <#class-signer>`_  **signer**  
@@ -516,21 +516,21 @@ arguments:
 ```
 ##### getTimeout
 
-specifies the number of milliseconds before the request times out. 
+Specifies the number of milliseconds before the request times out. 
 
-increasing may be helpful if the device uses a slow connection. 
+Increasing may be helpful if the device uses a slow connection. 
 
  > public `native int` getTimeout();
 
 ##### setTimeout
 
-specifies the number of milliseconds before the request times out. 
+Specifies the number of milliseconds before the request times out. 
 
-increasing may be helpful if the device uses a slow connection. 
+Increasing may be helpful if the device uses a slow connection. 
 
  > public `native void` setTimeout([`int`](#class-int) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======= ========= 
 ``int``  **val**  
@@ -538,7 +538,7 @@ arguments:
 ```
 ##### getChainId
 
-servers to filter for the given chain. 
+Servers to filter for the given chain. 
 
 The chain-id based on EIP-155. 
 
@@ -546,13 +546,13 @@ The chain-id based on EIP-155.
 
 ##### setChainId
 
-sets the chain to be used. 
+Sets the chain to be used. 
 
 The chain-id based on EIP-155. 
 
  > public `native void` setChainId([`long`](#class-long) val);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ========= 
 ``long``  **val**  
@@ -560,17 +560,17 @@ arguments:
 ```
 ##### isAutoUpdateList
 
-if true the nodelist will be automaticly updated if the lastBlock is newer 
+If true, the nodelist will be automatically updated if the lastBlock is newer. 
 
  > public `native boolean` isAutoUpdateList();
 
 ##### setAutoUpdateList
 
-activates the auto update.if true the nodelist will be automaticly updated if the lastBlock is newer 
+Activates the auto update. If true, the nodelist will be automatically updated if the lastBlock is newer. 
 
  > public `native void` setAutoUpdateList([`boolean`](#class-boolean) val);
 
-arguments:
+Arguments:
 ```eval_rst
 =========== ========= 
 ``boolean``  **val**  
@@ -578,17 +578,17 @@ arguments:
 ```
 ##### getStorageProvider
 
-provides the ability to cache content 
+Provides the ability to cache content. 
 
  > public [`StorageProvider`](#class-storageprovider) getStorageProvider();
 
 ##### setStorageProvider
 
-provides the ability to cache content like nodelists, contract codes and validatorlists 
+Provides the ability to cache content like nodelists, contract codes, and validatorlists. 
 
  > public `void` setStorageProvider([`StorageProvider`](#class-storageprovider) val);
 
-arguments:
+Arguments:
 ```eval_rst
 =========================================== ========= 
 `StorageProvider <#class-storageprovider>`_  **val**  
@@ -596,13 +596,13 @@ arguments:
 ```
 ##### send
 
-send a request. 
+Send a request. 
 
-The request must a valid json-string with method and params 
+The request must be a valid json-string with method and params. 
 
  > public `native String` send([`String`](#class-string) request);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **request**  
@@ -610,13 +610,13 @@ arguments:
 ```
 ##### sendobject
 
-send a request but returns a object like array or map with the parsed response. 
+Send a request but return an object like array or map with the parsed response. 
 
-The request must a valid json-string with method and params 
+The request must be a valid json-string with method and params. 
 
  > public `native Object` sendobject([`String`](#class-string) request);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **request**  
@@ -624,13 +624,13 @@ arguments:
 ```
 ##### sendRPC
 
-send a RPC request by only passing the method and params. 
+Send an RPC request by only passing the method and params. 
 
 It will create the raw request from it and return the result. 
 
  > public `String` sendRPC([`String`](#class-string) method, [`Object[]`](#class-object[]) params);
 
-arguments:
+Arguments:
 ```eval_rst
 ============= ============ 
 ``String``     **method**  
@@ -639,13 +639,13 @@ arguments:
 ```
 ##### sendRPCasObject
 
-send a RPC request by only passing the method and params. 
+Send an RPC request by only passing the method and params. 
 
 It will create the raw request from it and return the result. 
 
  > public `Object` sendRPCasObject([`String`](#class-string) method, [`Object[]`](#class-object[]) params);
 
-arguments:
+Arguments:
 ```eval_rst
 ============= ============ 
 ``String``     **method**  
@@ -654,9 +654,9 @@ arguments:
 ```
 ##### IN3
 
-constrcutor. 
+Constrcutor. 
 
-creates a new Incubed client. 
+Creates a new Incubed client. 
 
  > public  IN3();
 
@@ -664,7 +664,7 @@ creates a new Incubed client.
 
  > public static `void` main([`String[]`](#class-string[]) args);
 
-arguments:
+Arguments:
 ```eval_rst
 ============= ========== 
 ``String []``  **args**  
@@ -673,17 +673,17 @@ arguments:
 
 #### class JSON
 
-internal helper tool to represent a JSON-Object. 
+Internal helper tool to represent a JSON-Object. 
 
-Since the internal representation of JSON in incubed uses hashes instead of name, the getter will creates these hashes. 
+Since the internal representation of JSON in Incubed uses hashes instead of names, the getter will creates these hashes. 
 
 ##### get
 
-gets the property 
+Gets the property. 
 
  > public `Object` get([`String`](#class-string) prop);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========== =========================
 ``String``  **prop**  the name of the property.
