@@ -237,7 +237,7 @@ Thus, for each node the weight can be calculated by:
 ```math
 weight_n =  \frac{{\displaystyle\sum_{i=0}^n} C_i \cdot R_n } { {\displaystyle\sum_{i=0}^n} R_i \cdot C_n  } 
 ```
-- `$ R_n$` - The number of requests servered to one of the clients connected to the node.
+- `$ R_n$` - The number of requests served to one of the clients connected to the node.
 - `$ {\displaystyle\sum_{i=0}^n} R_i$` - The total number of requests servered. 
 - `$ {\displaystyle\sum_{i=0}^n} C_i$` - The total number of capacities of the registered servers.
 - `$ C_n$` - The capacity of the registered node. 
