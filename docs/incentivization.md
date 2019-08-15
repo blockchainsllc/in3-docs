@@ -1,6 +1,6 @@
 # Incentivization
 
-*Important: This concept is still in development and discussion and not yet fully implemented.*
+*Important: This concept is still in development and discussion and is not yet fully implemented.*
 
 The original idea of blockchain is a permissionless peer-to-peer network in which anybody can participate if they run a node and sync with other peers. Since this is still true, we know that such a node won't run on a small IoT-device.
 
