@@ -348,11 +348,11 @@ BlockProofs are used whenever you want to read data of a block and verify them. 
 - [eth_getBlockByNumber
 ](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber)
 
-The `eth_getBlockBy...` methods return the Block-Data. In this case all we need is somebody verifying the blockhash, which is don by requiring somebody who stored a deposit and would lose it, to sign this blockhash.
+The `eth_getBlockBy...` methods return the Block-Data. In this case, all we need is somebody verifying the blockhash, which is done by requiring somebody who stored a deposit and would otherwise lose it, to sign this blockhash.
 
-The Verification is then donne by simply creating the blockhash and comparing this to the signed one.
+The verification is then done by simply creating the blockhash and comparing this to the signed one.
 
-The Blockhash is calculated by [serializing the blockdata](https://github.com/slockit/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
+The blockhash is calculated by [serializing the blockdata](https://github.com/slockit/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
 
 ```js
 blockHeader = rlp.encode([
@@ -379,14 +379,14 @@ blockHeader = rlp.encode([
 ])
 ```
 
-For POA-Chains the blockheader will use the `sealFields` (instead of mixHash and nonce) which are already rlp-encoded and should be added as raw data when using rlp.encode.
+For POA-chains, the blockheader will use the `sealFields` (instead of mixHash and nonce) which are already rlp-encoded and should be added as raw data when using rlp.encode.
 
 ```js
 if (keccak256(blockHeader) !== singedBlockHash) 
   throw new Error('Invalid Block')
 ```
 
-In case of the `eth_getBlockTransactionCountBy...` the proof contains the full blockHeader already serilalized + all transactionHashes. This is needed in order to verify them in a merkleTree and compare them with the `transactionRoot`
+In case of the `eth_getBlockTransactionCountBy...`, the proof contains the full blockHeader already serilalized + all transactionHashes. This is needed in order to verify them in a merkletree and compare them with the `transactionRoot`.
 
 
 #### Transaction Proof
