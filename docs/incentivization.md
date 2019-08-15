@@ -254,7 +254,7 @@ Each node may allow free access for clients without any signature. A special opt
   if (!signature) score = conf.freeScore
 ```
 
-A low value for freeScore would serve requests only if the current load or the open requests are less then this number, which would mean that getting a response from the network without signing may take longer as the client would have to send a lot of requests until they are lucky enough to get a response if the load is high. Chances are higher if the load is very low.
+A low value for freeScore would serve requests only if the current load or the open requests are less than this number, which would mean that getting a response from the network without signing may take longer as the client would have to send a lot of requests until they are lucky enough to get a response if the load is high. Chances are higher if the load is very low.
 
 ## Convict
 
