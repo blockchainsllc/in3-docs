@@ -58,7 +58,7 @@ So the first step is to decentralize remote nodes by sharing rpc-nodes with othe
 
 
 
-## Incentivization for nodes
+## Incentivization for Nodes
 
 In order to incentivize a node to serve requests to clients, there must be something to gain (payment) or to lose (access to other nodes for its clients).
 
