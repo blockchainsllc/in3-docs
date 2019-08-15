@@ -23,8 +23,8 @@ This was the first stable release, which was published after Devcon. It contains
 - **PoW Support**: For PoW, blocks are verified based on blockhashes signed by Incubed nodes storing a deposit, which they lose if this blockhash is not correct.
 - **PoA Support**: For PoA chains (using Aura), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura algorithm to determine the signer from the validatorlist (with static validatorlist or contract-based validators).
 - **Finality Support**: For PoA chains, the client can require a configurable number of signatures (in percent) to accept them as final.
-- **Flexible Transport Layer**: The communication layer between clients and nodes can be overridden, but the layer already supports different transport formats (JSON/CBOR/in3).
-- **Replace Latest Blocks**: Since most applications per default always ask for the latest block, which cannot be considered as final in a PoW chain, a configuration allows applications to automatically use a certain block height to run the request (like six blocks).
+- **Flexible Transport Layer**: The communication layer between clients and nodes can be overridden, but the layer already supports different transport formats (JSON/CBOR/Incubed).
+- **Replace Latest Blocks**: Since most applications per default always ask for the latest block, which cannot be considered final in a PoW chain, a configuration allows applications to automatically use a certain block height to run the request (like six blocks).
 - **Light Ethereum API**: Incubed comes with a type-safe simple API, which covers all standard JSON RPC requests (`in3.eth.getBalance('0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5')` ). This API also includes support for signing and sending transactions as well as calling methods in smart contracts without a complete ABI by simply passing the signature of the method as an argument.
 - **TypeScript Support**: Because Incubed is written 100% in TypeScript, you get all the advantages of a type-safe toolchain.
 - **Integrations**: Incubed has been successfully tested in all major browsers, Node.js, and even React Native.
