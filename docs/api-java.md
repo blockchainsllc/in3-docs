@@ -1525,42 +1525,42 @@ The block number.
 
 ##### getParentHash
 
-the hash of the parent-block. 
+The hash of the parent-block. 
 
  > public `String` getParentHash();
 
 ##### getUncles
 
-returns the blockhashes of all uncles-blocks. 
+Returns the blockhashes of all uncles-blocks. 
 
  > public `String []` getUncles();
 
 
 #### class Log
 
-a log entry of a transaction receipt. 
+A log entry of a transaction receipt. 
 
 ##### isRemoved
 
-true when the log was removed, due to a chain reorganization. 
+True when the log was removed, due to a chain re-organization. 
 
-false if its a valid log. 
+False if it's a valid log. 
 
  > public `boolean` isRemoved();
 
 ##### getLogIndex
 
-integer of the log index position in the block. 
+Integer of the log index position in the block. 
 
-null when its pending log. 
+Null when it's a pending log. 
 
  > public `int` getLogIndex();
 
 ##### gettTansactionIndex
 
-integer of the transactions index position log was created from. 
+Integer of the transactions index position the log was created from. 
 
-null when its pending log. 
+Null when it's a pending log. 
 
  > public `int` gettTansactionIndex();
 
@@ -1568,7 +1568,7 @@ null when its pending log.
 
 Hash, 32 Bytes - hash of the transactions this log was created from. 
 
-null when its pending log. 
+Null when it's a pending log. 
 
  > public `String` getTransactionHash();
 
@@ -1576,15 +1576,15 @@ null when its pending log.
 
 Hash, 32 Bytes - hash of the block where this log was in. 
 
-null when its pending. null when its pending log. 
+Null when it's pending. Null when it's a pending log. 
 
  > public `String` getBlockHash();
 
 ##### getBlockNumber
 
-the block number where this log was in. 
+The block number where this log was in. 
 
-null when its pending. null when its pending log. 
+Null when it's pending. Null when it's a pending log. 
 
  > public `long` getBlockNumber();
 
@@ -1598,7 +1598,7 @@ null when its pending. null when its pending log.
 
 Array of 0 to 4 32 Bytes DATA of indexed log arguments. 
 
-(In solidity: The first topic is the hash of the signature of the event (e.g. Deposit(address,bytes32,uint256)), except you declared the event with the anonymous specifier.) 
+(In solidity: The first topic is the hash of the signature of the event (e.g. Deposit(address,bytes32,uint256)), except if you declared the event with the anonymous specifier.) 
 
  > public `String []` getTopics();
 
@@ -1609,22 +1609,22 @@ Log configuration for search logs.
 
 ##### toString
 
-creates a JSON-String. 
+Creates a JSON-String. 
 
  > public `String` toString();
 
 
 #### class SimpleWallet
 
-a simple Implementation for holding private keys to sing data or transactions. 
+A simple implementation for holding private keys to sign data or transactions. 
 
 ##### addRawKey
 
-adds a key to the wallet and returns its public address. 
+Adds a key to the wallet and returns it's public address. 
 
  > public `String` addRawKey([`String`](#class-string) data);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========== 
 ``String``  **data**  
@@ -1632,11 +1632,11 @@ arguments:
 ```
 ##### addKeyStore
 
-adds a key to the wallet and returns its public address. 
+Adds a key to the wallet and returns it's public address. 
 
  > public `String` addKeyStore([`String`](#class-string) jsonData, [`String`](#class-string) passphrase);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ================ 
 ``String``  **jsonData**    
@@ -1645,13 +1645,13 @@ arguments:
 ```
 ##### prepareTransaction
 
-optiional method which allows to change the transaction-data before sending it. 
+Optional method that allows you to change the transaction-data before sending it. 
 
 This can be used for redirecting it through a multisig. 
 
  > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
 
-arguments:
+Arguments:
 ```eval_rst
 ================================================= ========= 
 `IN3 <#class-in3>`_                                **in3**  
@@ -1660,11 +1660,11 @@ arguments:
 ```
 ##### hasAccount
 
-returns true if the account is supported (or unlocked) 
+Returns true if the account is supported (or unlocked). 
 
  > public `boolean` hasAccount([`String`](#class-string) address);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **address**  
@@ -1672,11 +1672,11 @@ arguments:
 ```
 ##### sign
 
-signing of the raw data. 
+Signing of the raw data. 
 
  > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **data**     
@@ -1686,144 +1686,144 @@ arguments:
 
 #### class Transaction
 
-represents a Transaction in ethereum. 
+Represents a transaction in ethereum. 
 
 ##### getBlockHash
 
-the blockhash of the block containing this transaction. 
+The blockhash of the block containing this transaction. 
 
  > public `String` getBlockHash();
 
 ##### getBlockNumber
 
-the block number of the block containing this transaction. 
+The block number of the block containing this transaction. 
 
  > public `long` getBlockNumber();
 
 ##### getChainId
 
-the chainId of this transaction. 
+The chainId of this transaction. 
 
  > public `String` getChainId();
 
 ##### getCreatedContractAddress
 
-the address of the deployed contract (if successfull) 
+The address of the deployed contract (if successful) 
 
  > public `String` getCreatedContractAddress();
 
 ##### getFrom
 
-the address of the sender. 
+The address of the sender. 
 
  > public `String` getFrom();
 
 ##### getHash
 
-the Transaction hash. 
+The transaction hash. 
 
  > public `String` getHash();
 
 ##### getData
 
-the Transaction data or input data. 
+The transaction data or input data. 
 
  > public `String` getData();
 
 ##### getNonce
 
-the nonce used in the transaction. 
+The nonce used in the transaction. 
 
  > public `long` getNonce();
 
 ##### getPublicKey
 
-the public key of the sender. 
+The public key of the sender. 
 
  > public `String` getPublicKey();
 
 ##### getValue
 
-the value send in wei. 
+The value send in wei. 
 
  > public `BigInteger` getValue();
 
 ##### getRaw
 
-the raw transaction as rlp encoded data. 
+The raw transaction as rlp encoded data. 
 
  > public `String` getRaw();
 
 ##### getTo
 
-the address of the receipient or contract. 
+The address of the receipient or contract. 
 
  > public `String` getTo();
 
 ##### getSignature
 
-the signature of the sender - a array of the [ r, s, v] 
+The signature of the sender - an array of the [ r, s, v] 
 
  > public `String []` getSignature();
 
 ##### getGasPrice
 
-the gas price provided by the sender. 
+The gas price provided by the sender. 
 
  > public `long` getGasPrice();
 
 ##### getGas
 
-the gas provided by the sender. 
+The gas provided by the sender. 
 
  > public `long` getGas();
 
 
 #### class TransactionReceipt
 
-represents a Transaction receipt in ethereum. 
+Represents a transaction receipt in ethereum. 
 
 ##### getBlockHash
 
-the blockhash of the block containing this transaction. 
+The blockhash of the block containing this transaction. 
 
  > public `String` getBlockHash();
 
 ##### getBlockNumber
 
-the block number of the block containing this transaction. 
+The block number of the block containing this transaction. 
 
  > public `long` getBlockNumber();
 
 ##### getCreatedContractAddress
 
-the address of the deployed contract (if successfull) 
+The address of the deployed contract (if successful). 
 
  > public `String` getCreatedContractAddress();
 
 ##### getFrom
 
-the address of the sender. 
+The address of the sender. 
 
  > public `String` getFrom();
 
 ##### getTransactionHash
 
-the Transaction hash. 
+The transaction hash. 
 
  > public `String` getTransactionHash();
 
 ##### getTransactionIndex
 
-the Transaction index. 
+The transaction index. 
 
  > public `int` getTransactionIndex();
 
 ##### getTo
 
-20 Bytes - The address of the receiver. 
+20 Bytes - the address of the receiver. 
 
-null when it's a contract creation transaction. 
+Null when it's a contract creation transaction. 
 
  > public `String` getTo();
 
@@ -1835,94 +1835,94 @@ The amount of gas used by this specific transaction alone.
 
 ##### getLogs
 
-Array of log objects, which this transaction generated. 
+Array of log objects that this transaction generated. 
 
  > public [`Log []`](#class-log) getLogs();
 
 ##### getLogsBloom
 
-256 Bytes - A bloom filter of logs/events generated by contracts during transaction execution. 
+256 Bytes - a bloom filter of logs/events generated by contracts during transaction execution. 
 
-Used to efficiently rule out transactions without expected logs 
+Used to efficiently rule out transactions without expected logs. 
 
  > public `String` getLogsBloom();
 
 ##### getRoot
 
-32 Bytes - Merkle root of the state trie after the transaction has been executed (optional after Byzantium hard fork EIP609). 
+32 Bytes - merkle root of the state trie after the transaction has been executed (optional after Byzantium hard fork EIP609). 
 
  > public `String` getRoot();
 
 ##### getStatus
 
-success of a Transaction. 
+Success of a transaction. 
 
-true indicates transaction failure , false indicates transaction success. Set for blocks mined after Byzantium hard fork EIP609, null before. 
+True indicates transaction failure, false indicates transaction success. Set for blocks mined after Byzantium hard fork EIP609, null before. 
 
  > public `boolean` getStatus();
 
 
 #### class TransactionRequest
 
-represents a Transaction Request which should be send or called. 
+Represents a Transaction Request which should be sent or called. 
 
 ##### from
 
-the from address 
+The from address. 
 
 Type: `String`
 
 ##### to
 
-the recipients address 
+The recipient's address. 
 
 Type: `String`
 
 ##### data
 
-the data 
+The data. 
 
 Type: `String`
 
 ##### value
 
-the value of the transaction 
+The value of the transaction. 
 
 Type: `BigInteger`
 
 ##### nonce
 
-the nonce (transactionCount of the sender) 
+The nonce (transactionCount of the sender). 
 
 Type: `long`
 
 ##### gas
 
-the gas to use 
+The gas to use. 
 
 Type: `long`
 
 ##### gasPrice
 
-the gas price to use 
+The gas price to use. 
 
 Type: `long`
 
 ##### function
 
-the signature for the function to call 
+The signature for the function to call. 
 
 Type: `String`
 
 ##### params
 
-the params to use for encoding in the data 
+The params to use for encoding in the data. 
 
 Type: `Object []`
 
 ##### getData
 
-creates the data based on the function/params values. 
+Creates the data based on the function/params values. 
 
  > public `String` getData();
 
@@ -1934,7 +1934,7 @@ creates the data based on the function/params values.
 
  > public `Object` getResult([`String`](#class-string) data);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========== 
 ``String``  **data**  
