@@ -8,7 +8,7 @@ Incubed implements two versions:
 
 This was the first stable release, which was published after Devcon. It contains full verification of all relevant Ethereum rpc-calls (except eth_call for eWasm-Contracts), but there is no payment or incentivization included yet.
 
-- **Failsafe Connection**: The Incubed client will connect to any ethereum-blockchain (providing in3-servers) by randomly selecting nodes within the Incubed network and automatically retrying with different nodes, if the node cannot be reached or does not deliver verifiable responses.
+- **Failsafe Connection**: The Incubed client will connect to any Ethereum blockchain (providing Incubed servers) by randomly selecting nodes within the Incubed network and automatically retrying with different nodes, if the node cannot be reached or does not deliver verifiable responses.
 - **Reputation Management**: Nodes that are not available will be automatically temporarily blacklisted and lose reputation. The selection of a node is based on the weight (or performance) of the node and its availability.
 - **Automatic NodeList Updates**: All Incubed nodes are registered in smart contracts on chain and will trigger events if the NodeList changes. Each request will always return the blockNumber of the last event so that the client knows when to update its NodeList.
 - **Partial Nodelist**: To support small devices, the NodeList can be limited and still be fully verified by basing the selection of nodes deterministically on a client-generated seed.
