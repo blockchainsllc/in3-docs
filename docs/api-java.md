@@ -1153,11 +1153,11 @@ Arguments:
 ```
 ##### getFilterChangesFromLogs
 
-Polling method for a filter, which returns an array of logs which occurred since last poll. 
+Polling method for a filter, which returns an array of logs that occurred since the last poll. 
 
  > public [`Log []`](#class-log) getFilterChangesFromLogs([`long`](#class-long) id);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ======== 
 ``long``  **id**  
@@ -1165,11 +1165,11 @@ arguments:
 ```
 ##### getFilterChangesFromBlocks
 
-Polling method for a filter, which returns an array of logs which occurred since last poll. 
+Polling method for a filter, which returns an array of logs that occurred since the last poll. 
 
  > public [`Block []`](#class-block) getFilterChangesFromBlocks([`long`](#class-long) id);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ======== 
 ``long``  **id**  
@@ -1177,11 +1177,11 @@ arguments:
 ```
 ##### getFilterLogs
 
-Polling method for a filter, which returns an array of logs which occurred since last poll. 
+Polling method for a filter, which returns an array of logs that occurred since the last poll. 
 
  > public [`Log []`](#class-log) getFilterLogs([`long`](#class-long) id);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ======== 
 ``long``  **id**  
@@ -1189,11 +1189,11 @@ arguments:
 ```
 ##### getLogs
 
-Polling method for a filter, which returns an array of logs which occurred since last poll. 
+Polling method for a filter, which returns an array of logs that occurred since the last poll. 
 
  > public [`Log []`](#class-log) getLogs([`LogFilter`](#class-logfilter) filter);
 
-arguments:
+Arguments:
 ```eval_rst
 =============================== ============ 
 `LogFilter <#class-logfilter>`_  **filter**  
@@ -1205,7 +1205,7 @@ Returns information about a transaction by block hash and transaction index posi
 
  > public [`Transaction`](#class-transaction) getTransactionByBlockHashAndIndex([`String`](#class-string) blockHash, [`int`](#class-int) index);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== =============== 
 ``String``  **blockHash**  
@@ -1218,7 +1218,7 @@ Returns information about a transaction by block number and transaction index po
 
  > public [`Transaction`](#class-transaction) getTransactionByBlockNumberAndIndex([`long`](#class-long) block, [`int`](#class-int) index);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== =========== 
 ``long``  **block**  
@@ -1231,7 +1231,7 @@ Returns the information about a transaction requested by transaction hash.
 
  > public [`Transaction`](#class-transaction) getTransactionByHash([`String`](#class-string) transactionHash);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ===================== 
 ``String``  **transactionHash**  
@@ -1243,7 +1243,7 @@ Returns the number of transactions sent from an address.
 
  > public `BigInteger` getTransactionCount([`String`](#class-string) address, [`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ============= 
 ``String``  **address**  
@@ -1256,7 +1256,7 @@ Returns the number of transactions sent from an address.
 
  > public [`TransactionReceipt`](#class-transactionreceipt) getTransactionReceipt([`String`](#class-string) transactionHash);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ===================== 
 ``String``  **transactionHash**  
@@ -1264,13 +1264,13 @@ arguments:
 ```
 ##### getUncleByBlockNumberAndIndex
 
-Returns information about a uncle of a block number and uncle index position. 
+Returns information about an uncle of a block number and uncle index position. 
 
 Note: An uncle doesn't contain individual transactions. 
 
  > public [`Block`](#class-block) getUncleByBlockNumberAndIndex([`long`](#class-long) block, [`int`](#class-int) pos);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== =========== 
 ``long``  **block**  
@@ -1283,7 +1283,7 @@ Returns the number of uncles in a block from a block matching the given block ha
 
  > public `long` getUncleCountByBlockHash([`String`](#class-string) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== =========== 
 ``String``  **block**  
@@ -1295,7 +1295,7 @@ Returns the number of uncles in a block from a block matching the given block ha
 
  > public `long` getUncleCountByBlockNumber([`long`](#class-long) block);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== =========== 
 ``long``  **block**  
@@ -1322,7 +1322,7 @@ A note on specifying topic filters: Topics are order-dependent. A transaction wi
 
  > public `long` newLogFilter([`LogFilter`](#class-logfilter) filter);
 
-arguments:
+Arguments:
 ```eval_rst
 =============================== ============ 
 `LogFilter <#class-logfilter>`_  **filter**  
@@ -1330,11 +1330,11 @@ arguments:
 ```
 ##### uninstallFilter
 
-uninstall filter. 
+Uninstall filter. 
 
  > public `long` uninstallFilter([`long`](#class-long) filter);
 
-arguments:
+Arguments:
 ```eval_rst
 ======== ============ 
 ``long``  **filter**  
@@ -1346,25 +1346,25 @@ Creates new message call transaction or a contract creation for signed transacti
 
  > public `String` sendRawTransaction([`String`](#class-string) data);
 
-arguments:
+Arguments:
 ```eval_rst
 ========== ========== 
 ``String``  **data**  
 ========== ========== 
 ```
-returns: `String` : transactionHash 
+Returns: `String` : transactionHash. 
 
 
 
 ##### sendTransaction
 
-sends a Transaction as desribed by the TransactionRequest. 
+Sends a transaction as described by the TransactionRequest. 
 
 This will require a signer to be set in order to sign the transaction. 
 
  > public `String` sendTransaction([`TransactionRequest`](#class-transactionrequest) tx);
 
-arguments:
+Arguments:
 ```eval_rst
 ================================================= ======== 
 `TransactionRequest <#class-transactionrequest>`_  **tx**  
@@ -1372,11 +1372,11 @@ arguments:
 ```
 ##### call
 
-the current Gas Price. 
+The current gas price. 
 
  > public `Object` call([`String`](#class-string) to, [`String`](#class-string) function, [`Object...`](#class-object...) params);
 
-arguments:
+Arguments:
 ```eval_rst
 ============= ============== 
 ``String``     **to**        
@@ -1384,14 +1384,14 @@ arguments:
 ``Object...``  **params**    
 ============= ============== 
 ```
-returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
+Returns: `Object` : the decoded result. If only one return value is expected, the object will be returned. If not, an array of objects will be the result. 
 
 
 
 
 #### class Block
 
-represents a Block in ethereum. 
+Represents a block in ethereum. 
 
 ##### LATEST
 
@@ -1407,103 +1407,103 @@ Type: static `long`
 
 ##### getTotalDifficulty
 
-returns the total Difficulty as a sum of all difficulties starting from genesis. 
+Returns the total difficulty as a sum of all difficulties starting from genesis. 
 
  > public `BigInteger` getTotalDifficulty();
 
 ##### getGasLimit
 
-the gas limit of the block. 
+The gas limit of the block. 
 
  > public `BigInteger` getGasLimit();
 
 ##### getExtraData
 
-the extra data of the block. 
+The extra data of the block. 
 
  > public `String` getExtraData();
 
 ##### getDifficulty
 
-the difficulty of the block. 
+The difficulty of the block. 
 
  > public `BigInteger` getDifficulty();
 
 ##### getAuthor
 
-the author or miner of the block. 
+The author or miner of the block. 
 
  > public `String` getAuthor();
 
 ##### getTransactionsRoot
 
-the roothash of the merkletree containing all transaction of the block. 
+The roothash of the merkletree containing all transactions of the block. 
 
  > public `String` getTransactionsRoot();
 
 ##### getTransactionReceiptsRoot
 
-the roothash of the merkletree containing all transaction receipts of the block. 
+The roothash of the merkletree containing all transaction receipts of the block. 
 
  > public `String` getTransactionReceiptsRoot();
 
 ##### getStateRoot
 
-the roothash of the merkletree containing the complete state. 
+The roothash of the merkletree containing the complete state. 
 
  > public `String` getStateRoot();
 
 ##### getTransactionHashes
 
-the transaction hashes of the transactions in the block. 
+The transaction hashes of the transactions in the block. 
 
  > public `String []` getTransactionHashes();
 
 ##### getTransactions
 
-the transactions of the block. 
+The transactions of the block. 
 
  > public [`Transaction []`](#class-transaction) getTransactions();
 
 ##### getTimeStamp
 
-the unix timestamp in seconds since 1970. 
+The unix timestamp in seconds since 1970. 
 
  > public `long` getTimeStamp();
 
 ##### getSha3Uncles
 
-the roothash of the merkletree containing all uncles of the block. 
+The roothash of the merkletree containing all uncles of the block. 
 
  > public `String` getSha3Uncles();
 
 ##### getSize
 
-the size of the block. 
+The size of the block. 
 
  > public `long` getSize();
 
 ##### getSealFields
 
-the seal fields used for proof of authority. 
+The seal fields used for proof of authority. 
 
  > public `String []` getSealFields();
 
 ##### getHash
 
-the block hash of the of the header. 
+The block hash of the header. 
 
  > public `String` getHash();
 
 ##### getLogsBloom
 
-the bloom filter of the block. 
+The bloom filter of the block. 
 
  > public `String` getLogsBloom();
 
 ##### getMixHash
 
-the mix hash of the block. 
+The mix hash of the block. 
 
 (only valid of proof of work) 
 
@@ -1511,7 +1511,7 @@ the mix hash of the block.
 
 ##### getNonce
 
-the mix hash of the block. 
+The mix hash of the block. 
 
 (only valid of proof of work) 
 
@@ -1519,7 +1519,7 @@ the mix hash of the block.
 
 ##### getNumber
 
-the block number 
+The block number. 
 
  > public `long` getNumber();
 
