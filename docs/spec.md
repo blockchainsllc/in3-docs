@@ -551,9 +551,9 @@ transactionReceipt = rlp.encode([
 ].slice(r.status === null && r.root === null ? 1 : 0))
 ``` 
 
-and stored it in a merkle-trie with `elp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle trie. A Merkle-Proof with the transactionIndex of the target transaction receipt will then be created from this trie.
+and store them in a merkle-trie with `elp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle trie. A MerkleProof with the transactionIndex of the target transaction receipt will then be created from this trie.
 
-Since the merkle-Proof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the Transaction itself as described in the [Transaction Proof](#transaction-proof)
+Since the MerkleProof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the transaction itself as described in the [Transaction Proof](#transaction-proof).
 
 #### Log Proof
 
