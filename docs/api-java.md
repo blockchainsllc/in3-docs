@@ -49,7 +49,7 @@ for each (module
         add_subdirectory( in3-core/src/${module} in3-core/src/${module}/outputs )
 endforeach()
 ```
-Step 2: clone [in3-core](https://git.slock.it/in3/c/in3-core.git) into the `app`-folder or use this script to clone and update Incubed:
+Step 2: Clone [in3-core](https://git.slock.it/in3/c/in3-core.git) into the `app`-folder or use this script to clone and update Incubed:
 
 ```c
 #!/usr/bin/env sh
@@ -75,15 +75,15 @@ cp -r in3-core/src/bindings/java/in3 src/main/java/
 # but not the native libs, since these will be build
 rm -rf src/main/java/in3/native
 ```
-Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
+Step 3: Use the methods available in app/src/main/java/in3/IN3.java from android activity to access Incubed functions.
 
-Here is example how to use it:
+Here is an example of how to use it:
 
 [https://github.com/SlockItEarlyAccess/in3-android-example](https://github.com/SlockItEarlyAccess/in3-android-example)
 
 ## Examples
 
-### Using Incubed directly
+### Using Incubed Directly
 
 ```c
 import in3.IN3;
