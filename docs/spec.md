@@ -263,13 +263,13 @@ These are:
 
 1. **Changes in the NodeRegistry**    
 
-    Changes in the NodeRegistry are based on one of the following events : 
+    Changes in the NodeRegistry are based on one of the following events: 
     
     - `LogNodeRegistered`
     - `LogNodeRemoved`
     - `LogNodeChanged`
 
-    The server needs to watch for events from the `NodeRegistry` contract, and update the nodelist when needed.
+    The server needs to watch for events from the `NodeRegistry` contract, and update the nodeList when needed.
     
     Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
 
@@ -290,13 +290,13 @@ These are:
 
 2. **Changes in the ValidatorList**    
 
-    This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on ther consensys Changes in the ValidatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. Thism`lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
+    This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on the consensus, changes in the validatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. This `lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of a not verifyable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In case the node is not able proof the new nodeList, client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
 
 3. **Failover**    
 
-    Another reason for a second request is the case of not delivering a valid response. This could happen if a node does not respond at all or the response can not be validated. In both cases the client may blacklist the node for a while and sends the same request to another node.
+    It is also good to have a second request in the event that a valid response is not delivered. This could happen if a node does not respond at all or the response cannot be validated. In both cases, the client may blacklist the node for a while and send the same request to another node.
 
 
 ## Proofs
