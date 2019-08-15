@@ -564,12 +564,12 @@ Proofs for logs are only for the one rpc-method:
 
 Since logs or events are based on the TransactionReceipts, the only way to prove them is by proving the TransactionReceipt each event belongs to.
 
-That's why this proof needs to provide
+That's why this proof needs to provide:
 - all blockheaders where these events occured
 - all TransactionReceipts + their MerkleProof of the logs
 - all MerkleProofs for the transactions in order to prove the transactionIndex
 
-The Proof data structure will look like this:
+The proof data structure will look like this:
 
 ```ts
   Proof {
@@ -595,7 +595,7 @@ The merkle-proofs for receipts are created as described in the [Receipt Proof](#
 
 #### Account Proof
 
-Prooving an account-value applies to these functions:
+Proofing an account-value applies to these functions:
 
 - [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance)
 - [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
@@ -613,9 +613,9 @@ account = rlp.encode([
 ])
 ```
 
-The proof an account is created by taking the state merkle trie and  creating a merkle proof. Since all of the above RPC-Method only provide a single value, the proof must contain all 4 values in order to encode them and verify the value of the merkle proof. 
+The proof of an account is created by taking the state merkle trie and creating a MerkleProof. Since all of the above rpc-methods only provide a single value, the proof must contain all four values in order to encode them and verify the value of the MerkleProof. 
 
-For verification the `stateRoot` of the blockHeader is used and `keccak(accountProof.address)` ass the path or key within the merkle trie.
+For verification, the `stateRoot` of the blockHeader is used and `keccak(accountProof.address)` as the path or key within the merkle trie.
 
 ```js
 verifyMerkleProof(
@@ -626,14 +626,14 @@ verifyMerkleProof(
 )
 ```
 
-In case the account does exist yet, (which is the case if `none` == `startNonce` and `codeHash` == `'0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'`), the proof may end with one of these nodes:
+In case the account does not exist yet (which is the case if `none` == `startNonce` and `codeHash` == `'0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'`), the proof may end with one of these nodes:
     
-- the last node is a branch, where the child of the next step does not exist.
-- the last node is a leaf with different relative key
+- The last node is a branch, where the child of the next step does not exist.
+- The last node is a leaf with a different relative key
 
-Both would prove, that this key does not exist.
+Both would prove that this key does not exist.
 
-For `eth_getStorageAt` a additional storage proof is required. This is created by using the `storageHash` of the account and creating a merkle proof using the has of the storage key (`keccak(key)`)  as path.
+For `eth_getStorageAt`, an additional storage proof is required. This is created by using the `storageHash` of the account and creating a MerkleProof using the hash of the storage key (`keccak(key)`) as path.
 
 
 ```js
@@ -701,24 +701,24 @@ verifyMerkleProof(
 
 #### Call Proof
 
-Call Proofs are used whenever you are calling a read-only function of smart contract:
+Call proofs are used whenever you are calling a read-only function of a smart contract:
 
 - [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
 
 
-Verifying the result of a `eth_call` is a little bit more complex. Because the response is a result of executing opcodes in the vm. The only way to do so, is to reproduce it and execute the same code. That's why a Call Proof needs to provide all data used within the call. This means :
+Verifying the result of an `eth_call` is a little bit more complex because the response is a result of executing opcodes in the vm. The only way to do so is to reproduce it and execute the same code. That's why a call proof needs to provide all data used within the call. This means:
 
-- all referred accounts including the code (if it is a contract), storageHash, nonce and balance.
-- all storage keys, which are used ( This can be found by tracing the transaction and collecting data based on th `SLOAD`-opcode )
-- all blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks) 
+- All referred accounts including the code (if it is a contract), storageHash, nonce and balance.
+- All storage keys that are used (this can be found by tracing the transaction and collecting data based on the `SLOAD`-opcode).
+- All blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks). 
 
-For Verifying you need to follow these steps:
+For verifying, you need to follow these steps:
 
-1. serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof))
+1. Serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof).)
 
-2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof)
+2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof).
 
-3. create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
+3. Create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
 
 
 ```js 
@@ -765,7 +765,7 @@ For Verifying you need to follow these steps:
   return result.vm.return
 ```
 
-In the future we will be using the same approach to verify calls with ewasm.
+In the future, we will be using the same approach to verify calls with ewasm.
 
 
 ## RPC-Methods Ethereum 
@@ -778,7 +778,7 @@ This section describes the behavior for each standard-rpc-method.
 Returns the underlying client version.
 
 See [web3_clientversion](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_clientversion) for spec.
-No Proof or verifiaction possible.
+No proof or verification possible.
 
 
 ### web3_sha3
@@ -786,7 +786,7 @@ No Proof or verifiaction possible.
 Returns Keccak-256 (not the standardized SHA3-256) of the given data.
 
 See [web3_sha3](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_sha3) for spec.
-No Proof returned, but the client must verify the result by hashing the request data itself.
+No proof returned, but the client must verify the result by hashing the request data itself.
 
 ### net_version
 
@@ -800,15 +800,15 @@ No Proof returned, but the client must verify the result by comparing it to the 
 Returns the number of most recent block.
 
 See [eth_blockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blockNumber) for spec.
-No Proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from other. With the `blockTime` from the chainspec including a tolerance the cuurrent blocknumber may be checked if in the proposed range.
+No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
 ### eth_getBalance
 
-Returns the balance of the account of given address.
+Returns the balance of the account of a given address.
 
 See [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBalance) for spec.
 
-A AccountProof, since there is none, but the client should verify the result by comparing it to the current blocks returned from other. With the `blockTime` from the chainspec including a tolerance the cuurrent blocknumber may be checked if in the proposed range.
+An AccountProof, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
 
 
