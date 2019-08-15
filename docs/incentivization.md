@@ -328,4 +328,3 @@ With each request, the client needs to send both proofs.
 
 
 The server may cache the ecosystem-proof, but it needs to verify the client signature with each request, thus ensuring the identity of the sending client.
-  .
