@@ -2,7 +2,7 @@
 API Reference Node
 ********************
 
-Nodes are the backend of Incubed. Each node serves RPC requests to Incubed clients. The node itself is running like a proxy for an Ethereum client (Geth, Parity, etc.), but instead of simply passing the raw response, it will add the required proof needed by the client to verify the response.
+Nodes are the backend of Incubed. Each node serves RPC requests to Incubed clients. The node itself runs like a proxy for an Ethereum client (Geth, Parity, etc.), but instead of simply passing the raw response, it will add the required proof needed by the client to verify the response.
 
 To run such a node, you need to have an Ethereum client running where you want to forward the request to. At the moment, the minimum requirement is that this client needs to support ``eth_getProof`` (see http://eips.ethereum.org/EIPS/eip-1186).
 
