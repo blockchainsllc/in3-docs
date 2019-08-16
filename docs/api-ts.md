@@ -388,7 +388,7 @@ Source: [client/Client.ts](https://github.com/slockit/in3/blob/master/src/client
 
 * **[call](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L217)**(method :`string`, params :`any`, chain :`string`, config :[`Partial<IN3Config>`](#type-partial)) :`Promise<any>` - Sends a simple RPC-request.
 
-* **[clearStats](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L249)**() :`void` - Clears all stats and weights, like blocklisted nodes.
+* **[clearStats](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L249)**() :`void` - Clears all stats and weights, like blacklisted nodes.
 
 * **[createWeb3Provider](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L110)**() :`any` 
 
