@@ -117,11 +117,11 @@ import Client,{util} from "in3"
 
 * [**IN3Client**](#type-client) : `class`  - Client for Incubed.
 
-* [**IN3Config**](#type-in3config) : `interface`  - The iguration of the IN3-Client. This can be paritally overriden for every request.
+* [**IN3Config**](#type-in3config) : `interface`  - The configuration of the IN3-Client. This can be partially overridden for every request.
 
 * [**IN3NodeConfig**](#type-in3nodeconfig) : `interface`  - A configuration of an IN3-server.
 
-* [**IN3NodeWeight**](#type-in3nodeweight) : `interface`  - The local weight of an N3-node. (This is used internally to weigh the requests.)
+* [**IN3NodeWeight**](#type-in3nodeweight) : `interface`  - The local weight of an IN3-node. (This is used internally to weigh the requests.)
 
 * [**IN3RPCConfig**](#type-in3rpcconfig) : `interface`  - The configuration for the RPC-handler.
 
