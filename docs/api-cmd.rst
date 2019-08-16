@@ -92,7 +92,7 @@ Before building, make sure you have these components installed:
 
 When building from source, CMake accepts the following flags:
 
--DBUILD_DOC     If true, doxygen is used to build the documentation (default: true).
+-DBUILD_DOC     If true, Doxygen is used to build the documentation (default: true).
 -DDEBUG         If set, additional DEBUG-outputs are generated (default: false).
 -DEVM_GAS       If true, the gas costs are verified when validating an ``eth_call``.
 
