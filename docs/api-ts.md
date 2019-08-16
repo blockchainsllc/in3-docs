@@ -1198,7 +1198,7 @@ Source: [modules/ipfs/api.ts](https://github.com/slockit/in3/blob/master/src/mod
 
 
 
-## Package types
+## Package Types
 
 
 ### Type AccountProof
@@ -1211,7 +1211,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 
 
-* **[accountProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L10)** :`string`[] - The serialized merle-nodes beginning with the root-node.
+* **[accountProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L10)** :`string`[] - The serialized merkle-nodes beginning with the root-node.
 
 * **[address](https://github.com/slockit/in3/blob/master/src/types/types.ts#L14)** :`string` - The address of this account.
 
