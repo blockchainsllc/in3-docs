@@ -86,7 +86,7 @@ Before building, make sure you have these components installed:
    mkdir build && cd build
    cmake -DEVM_GAS=true -DCMAKE_BUILD_TYPE=Release .. && make in3
 
-   # Install
+   # install
    make install
 
 
