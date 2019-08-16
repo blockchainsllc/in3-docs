@@ -1337,7 +1337,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[retryWithoutProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L131)** :`boolean` *(optional)*  - If true, the  request may be handled without proof in case of an error. (Use with care!)
 
-* **[rpc](https://github.com/slockit/in3/blob/master/src/types/types.ts#L221)** :`string` *(optional)*  - URL of one or more RPC-endpoints to use. (List can be comma seperated.)
+* **[rpc](https://github.com/slockit/in3/blob/master/src/types/types.ts#L221)** :`string` *(optional)*  - URL of one or more RPC-endpoints to use. (List can be comma separated.)
 
 * **[servers](https://github.com/slockit/in3/blob/master/src/types/types.ts#L225)** *(optional)*  - The node list per chain.
 
