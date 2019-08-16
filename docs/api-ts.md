@@ -376,7 +376,7 @@ Source: [client/Client.ts](https://github.com/slockit/in3/blob/master/src/client
 
 * `constructor` **[constructor](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L63)**(config :[`Partial<IN3Config>`](#type-partial) =  {}, transport :[`Transport`](#type-transport)) :[`Client`](#type-client) - creates a new Client.
 
-* **[defConfig](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L61)** :[`IN3Config`](#type-in3config) - The configuration of the IN3-client. This can be paritally overriden for every request.
+* **[defConfig](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L61)** :[`IN3Config`](#type-in3config) - The configuration of the IN3-client. This can be partially overridden for every request.
 
 * **[eth](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L57)** :[`EthAPI`](#type-ethapi) 
 
