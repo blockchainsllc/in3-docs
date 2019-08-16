@@ -124,7 +124,7 @@ As methods, the following can be used:
         All officially supported `JSON-RPC methods <https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-methods>`_ may be used.
      send <signature> ...args
         Based on the ``-to``, ``-value``, and ``-pk``, a transaction is built, signed, and sent.
-        If there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional arguments of the function.
+        If there is another argument after `send`, this would be taken as a function signature of the smart contract followed by optional arguments of the function.
 
         .. code-block:: sh
            
@@ -134,7 +134,7 @@ As methods, the following can be used:
            in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
      call <signature> ...args
-        ``eth_call`` to call a function. After the ``call`` argument, the function-signature and its arguments must follow. 
+        ``eth_call`` to call a function. After the ``call`` argument, the function signature and its arguments must follow. 
      in3_nodeList
         Returns the NodeList of the Incubed NodeRegistry as JSON.
      in3_sign <blocknumber>
