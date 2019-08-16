@@ -462,7 +462,7 @@ Source: [client/ChainContext.ts](https://github.com/slockit/in3/blob/master/src/
 
 * **[handleIntern](https://github.com/slockit/in3/blob/master/src/client/ChainContext.ts#L61)**(request :[`RPCRequest`](#type-rpcrequest)) :[`Promise<RPCResponse>`](#type-rpcresponse) - This function is called before the server is asked.
     If it returns a promise then the request is handled internally, otherwise the server will handle the response.
-    This function should be overriden by modules that want to handle calls internally.
+    This function should be overridden by modules that want to handle calls internally.
 
 * **[initCache](https://github.com/slockit/in3/blob/master/src/client/ChainContext.ts#L66)**() :`void` 
 
