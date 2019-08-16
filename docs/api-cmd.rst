@@ -236,7 +236,7 @@ e.g., ``uint`` -> ``uint256``
 Examples
 ########
 
-Getting the current block
+Getting the Current Block
 *************************
 
 .. code-block:: sh
@@ -256,7 +256,7 @@ Getting the current block
    # As part of shell script:
    BLOCK_NUMBER=`in3 eth_blockNumber`
 
-Using jq to filter JSON
+Using jq to Filter JSON
 ***********************
 
 .. code-block:: sh
