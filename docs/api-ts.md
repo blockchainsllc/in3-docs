@@ -50,7 +50,7 @@ const in3 = new In3Client({
     chainId       : 'mainnet'
 })
 
-// use the api to call a funnction..
+// use the api to call a function..
 const myBalance = await in3.eth.callFn(myTokenContract, 'balanceOf(address):uint', myAccount)
 
 // ot to send a transaction..
