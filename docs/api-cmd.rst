@@ -187,7 +187,7 @@ Signing
 While Incubed itself uses an abstract definition for signing, at the moment, the command-line utility only supports raw private keys.
 There are two ways you can specify the private keys that Incubed should use to sign transactions:
 
-1. Use the environment variable ``IN3_PK``
+1. Use the environment variable ``IN3_PK``.
    This makes it easier to hide the key.
 
    .. code-block:: sh
