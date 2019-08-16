@@ -229,9 +229,9 @@ In general, the signature is built by simply removing all names and only holding
 
    <FUNCTION_NAME>(<ARGUMENT_TYPES>):(<RETURN_TYPES>)
 
-It is important to mention that the type names must always be the full Solidity names. Most Solidity function use aliases. They would need to be replaced with the full type name.
+It is important to mention that the type names must always be the full Solidity names. Most Solidity functions use aliases. They would need to be replaced with the full type name.
 
-e.g. ``uint`` -> ``uint256`` 
+e.g., ``uint`` -> ``uint256`` 
 
 Examples
 ########
