@@ -73,7 +73,7 @@ To run an Incubed node, you simply use docker-compose:
             command:
             - --privateKey=/secure/myKey.json                       # Internal path to the key.
             - --privateKeyPassphrase=dummy                          # Passphrase to unlock the key.
-            - --chain=0x1                                           # Chain (Kovan)
+            - --chain=0x1                                           # Chain (Kovan).
             - --rpcUrl=http://incubed-parity:8545                   # URL of the Kovan client.
             - --registry=0xFdb0eA8AB08212A1fFfDB35aFacf37C3857083ca # URL of the Incubed registry. 
             - --autoRegistry-url=http://in3.server:8500             # Check or register this node for this URL.
