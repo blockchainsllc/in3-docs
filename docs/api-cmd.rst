@@ -2,7 +2,7 @@
 API Reference CMD
 *****************
 
-Incubed can be used as a command-line utility or as a tool in bash-scripts. This tool will execute a JSON-RPC request and write the result to standard output.
+Incubed can be used as a command-line utility or as a tool in Bash scripts. This tool will execute a JSON-RPC request and write the result to standard output.
 
 Usage
 #####
