@@ -42,7 +42,7 @@ This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input.
 -json          If given, the result will be returned as JSON, which is especially important for ``eth_call``, which results in complex structres.
 -hex           If given, the result will be returned as hex.
 -debug         If given, Incubed will output debug information when executing.
--ri            Reads the response from standard input instead of sending the request allowing for offline use cases.
+-ri            Reads the response from standard input instead of sending the request, allowing for offline use cases.
 -ro            Writes the raw response from the node to standard output.
 
 Install
