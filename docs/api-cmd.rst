@@ -134,7 +134,7 @@ As methods, the following can be used:
            in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
      call <signature> ...args
-        Sses ``eth_call`` to call a function. After the ``call`` argument, the function-signature and its arguments must follow. 
+        ``eth_call`` to call a function. After the ``call`` argument, the function-signature and its arguments must follow. 
      in3_nodeList
         Returns the NodeList of the Incubed NodeRegistry as JSON.
      in3_sign <blocknumber>
