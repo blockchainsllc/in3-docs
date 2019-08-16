@@ -329,7 +329,7 @@ import Client,{util} from "in3"
 
 * **[util](https://github.com/slockit/in3/blob/master/src/index.ts#L28)**
 
-    * **[checkForError](https://github.com/slockit/in3/blob/master/src/util/util.ts#L58)**(res :[`T`](#type-t)) :[`T`](#type-t) - Checks an RPC-response for errors and rejects the premise if found.
+    * **[checkForError](https://github.com/slockit/in3/blob/master/src/util/util.ts#L58)**(res :[`T`](#type-t)) :[`T`](#type-t) - Checks an RPC-response for errors and rejects the promise if found.
 
     * **[getAddress](https://github.com/slockit/in3/blob/master/src/util/util.ts#L162)**(pk :`string`) :`string` - Returns an address from a private key.
 
