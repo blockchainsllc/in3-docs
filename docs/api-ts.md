@@ -421,7 +421,7 @@ Source: [client/Client.ts](https://github.com/slockit/in3/blob/master/src/client
 * **[removeListener](https://github.com/slockit/in3/blob/master/src//Users/simon/ws/in3/ts/in3/node_modules/@types/node/events.d.ts#L16)**(event :`string`|`symbol`, listener :) :`this` 
 
 * **[send](https://github.com/slockit/in3/blob/master/src/client/Client.ts#L229)**(request :[`RPCRequest`](#type-rpcrequest)[]|[`RPCRequest`](#type-rpcrequest), callback :, config :[`Partial<IN3Config>`](#type-partial)) :`Promise<>` - Sends one or multiple requests.
-    Ff the request is an array, the response will be an array as well.
+    If the request is an array, the response will be an array as well.
     If the callback is given it will be called with the response. If not, a promise will be returned.
     This function supports callbacks so it can be used as a provider for the web3.
 
