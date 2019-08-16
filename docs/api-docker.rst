@@ -23,13 +23,13 @@ The application will then accept the following arguments:
 --maxBlockCache         Number of blocks cached in memory.
 --proof                 'None' for no verification, 'standard' for verifying all important fields, and 'full' for verifying all fields even if this means a high payload.
 --signatureCount        Number of signatures requested.
---finality              Percenage of validator-signed blockheaders; this is used for PoA (Aura).
+--finality              Percentage of validator-signed blockheaders; this is used for PoA (Aura).
 --minDeposit            Minimum stake of the server. Only nodes owning at least this amount will be chosen.
 --replaceLatestBlock    If specified, the block number *latest* will be replaced by blockNumber-(specific value).
 --requestCount          The number of requests sent when receiving a first answer.
 --timeout               Specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
---chainId               Servers to filter for the given chain. The chain-ID is based on EIP 155.
+--chainId               Servers to filter for the given chain. The chain ID is based on EIP 155.
 --chainRegistry         Mainchain registry contract.
 --mainChain             Mainchain ID where the chain registry is running.
 --autoUpdateList        If true, the NodeList will be automatically updated if the last block is newer.
---loggerUrl             A URL the RES-endpoint client will log all errors to. The client will post to this endpoint JSON-like (ID?, level, message, meta?)
+--loggerUrl             A URL the RES-endpoint client will log all errors to. The client will post to this endpoint JSON-like (ID?, level, message, meta?).
