@@ -65,7 +65,7 @@ const receipt = await in3.eth.sendTransaction({
 ...
 ```
 
-### Reading event with Incubed
+### Reading Event with Incubed
 
 
 ```js
