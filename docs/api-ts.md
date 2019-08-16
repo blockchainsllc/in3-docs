@@ -1271,7 +1271,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 ### Type IN3Config
 
 
-The configuration of the IN3-client. This can be paritally overriden for every request.
+The configuration of the IN3-client. This can be partially overridden for every request.
 
 
 Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/types.ts#L100)
