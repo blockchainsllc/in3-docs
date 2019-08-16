@@ -19,7 +19,7 @@ Command-line Arguments
 --chain                                  ChainId.
 --clientKeys                             A comma-separated list of client keys to use for simulating clients for the watchdog.
 --db-database                            Name of the database.
---db-host                                Db-host (default = localhost).
+--db-host                                Db-host (default: local host).
 --db-password                            Password for db-access.
 --db-user                                Username for the db.
 --defaultChain                           The default chainId in case the request does not contain one.
