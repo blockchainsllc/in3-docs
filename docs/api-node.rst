@@ -47,8 +47,8 @@ Command-line Arguments
 --registry                               The address of the server registry used to update the NodeList.
 --registryRPC                            The URL of the client in case the registry is not on the same chain.
 --rpcUrl                                 The URL of the client.
---startBlock                             BlocknNumber to start watching the registry.
---timeout                                Number of milliseconds needed to wait before a request is timed out.
+--startBlock                             BlockNumber to start watching the registry.
+--timeout                                Number of milliseconds needed to wait before a request times out.
 --version                                Output of the version number.
 --watchInterval                          The number of seconds before a new event.
 --watchdogInterval                       Average time between sending requests to the same node. 0 turns it off (default).
