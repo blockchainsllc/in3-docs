@@ -29,7 +29,7 @@ Usage
 -np            Short for ``-p none``.
 -s, -signs     Number of signatures to use when verifying.
 -b, -block     The block number to use when making calls. Could be either ``latest`` (default),``earliest``, or a hex number.
--pk            The private key as raw as keystore file.
+-pk            The private key as raw keystore file.
 -pwd           Password to unlock the key.
 -to            The target address of the call.
 -d, -data      The data for a transaction. 
