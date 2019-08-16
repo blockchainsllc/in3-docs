@@ -357,10 +357,10 @@ import Client,{util} from "in3"
 * **[validate](https://github.com/slockit/in3/blob/master/src/util/validate.ts#L55)**(ob :`any`, def :`any`) :`void` 
 
 
-## Package client
+## Package Client
 
 
-### Type client
+### Type Client
 
 
 Client for Incubed
