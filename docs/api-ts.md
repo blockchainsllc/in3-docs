@@ -96,7 +96,7 @@ for (const ev of logs)
 
 ...
 ``` 
-## Main module
+## Main Module
 
  Importing Incubed is as easy as: 
 ```ts
