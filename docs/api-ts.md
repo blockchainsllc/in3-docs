@@ -1347,7 +1347,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 * **[timeout](https://github.com/slockit/in3/blob/master/src/types/types.ts#L189)** :`number` *(optional)*  - Specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
     Example: 3000
 
-* **[verifiedHashes](https://github.com/slockit/in3/blob/master/src/types/types.ts#L155)** :`string`[] *(optional)*  - If the client sends an array of block hashes, the server will not deliver any signatures or blockheaders for these blocks. Instead, it will only return a string with a number. This is automatically updated by the cache, but can be overriden per request.
+* **[verifiedHashes](https://github.com/slockit/in3/blob/master/src/types/types.ts#L155)** :`string`[] *(optional)*  - If the client sends an array of block hashes, the server will not deliver any signatures or blockheaders for these blocks. Instead, it will only return a string with a number. This is automatically updated by the cache, but can be overridden per request.
 
 
 ### Type IN3NodeConfig
