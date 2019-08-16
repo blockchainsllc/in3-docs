@@ -2,8 +2,7 @@
 API Reference CMD
 *****************
 
-Incubed can be used as a command line utility or as a tool in bash-scripts.
-This tool will execute a JSON-RPC request and write the result to standard output.
+Incubed can be used as a command-line utility or as a tool in bash-scripts. This tool will execute a JSON-RPC request and write the result to standard output.
 
 Usage
 #####
@@ -16,36 +15,35 @@ Usage
 
                  :mainnet: Mainnet 
                  :kovan: Kovan testnet
-                 :tobalaba: EWF-Testchain
-                 :goerli: Goerli Testchain using clique.
+                 :tobalaba: EWF testchain
+                 :goerli: Goerli testchain using Clique
                  :local: Use the local client on http://localhost:8545
-                 :RPCURL: If any other RPC-URL is passed as chain name this as used, but without verification.
+                 :RPCURL: If any other RPC-URL is passed as chain name, this is used but without verification
                  
 -p, -proof     Specifies the verification level: 
 
                   :none: No proof
                   :standard: Standard verification (default)
-                  :full: Full verification 
+                  :full: Full verification
 
--np            Short for ``-p none``
+-np            Short for ``-p none``.
 -s, -signs     Number of signatures to use when verifying.
--b, -block     The block number to use when making calls. Could be either ``latest`` (default),``earliest`` or a hex number.
+-b, -block     The block number to use when making calls. Could be either ``latest`` (default),``earliest``, or a hex number.
 -pk            The private key as raw as keystore file.
 -pwd           Password to unlock the key.
 -to            The target address of the call.
 -d, -data      The data for a transaction. 
 
-               This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input. If a method signature is given with data, they will be combined and used as constructor arguments when deploying.
+This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input. If a method signature is given with the data, they will be combined and used as constructor arguments when deploying.
                
-
--gas           The gas limit to use when sending transactions. (Default: 100000) 
--value         The value to send when conducting a transaction. Can be hex value or a float/integer with the suffix ``eth`` or ``wei`` like ``1.8eth``. (Default: 0)
--w, -wait      If given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transaction hash after sending, but wait until the transaction is mined and returned to the transaction receipt.
--json          If given, the result will be returned as JSON, which is especially important for ``eth_call`` which results in complex structres.
+-gas           The gas limit to use when sending transactions (default: 100000).
+-value         The value to send when conducting a transaction. Can be a hex value or a float/integer with the suffix ``eth`` or ``wei`` like ``1.8eth`` (default: 0).
+-w, -wait      If given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transaction hash after sending but also wait until the transaction is mined and returned to the transaction receipt.
+-json          If given, the result will be returned as JSON, which is especially important for ``eth_call``, which results in complex structres.
 -hex           If given, the result will be returned as hex.
--debug         If given, Incubed will output debug information when executing. 
+-debug         If given, Incubed will output debug information when executing.
 -ri            Reads the response from standard input instead of sending the request allowing for offline use cases.
--ro            Writes the raw response from the node to standard output. 
+-ro            Writes the raw response from the node to standard output.
 
 Install
 #######
@@ -63,7 +61,7 @@ You can download the binaries here:
 - :download:`linux_x64 <downloads/in3_x64>`.
 - :download:`installer <downloads/install.sh>`.
 
-or just use this one-liner:
+Or simply use this one-liner:
 
 .. code-block:: sh
 
@@ -72,12 +70,11 @@ or just use this one-liner:
 From Sources
 ************
 
-Before building just make sure you have these components installed:
+Before building, make sure you have these components installed:
 
-- cmake (Should be installed as part of the build-essential - ``apt-get install build-essential``)
-- libcurl
-  For ubuntu use either ``sudo apt-get install libcurl4-gnutls-dev`` or ``apt-get install libcurl4-openssl-dev``
-- If libcurl can not be found conan is used to fetch and build curl.
+- CMake (should be installed as part of the build-essential: ``apt-get install build-essential``)
+- libcurl (for Ubuntu, use either ``sudo apt-get install libcurl4-gnutls-dev`` or ``apt-get install libcurl4-openssl-dev``)
+- If libcurl cannot be found, Conan is used to fetch and build curl
 
 .. code-block:: sh
 
@@ -93,21 +90,19 @@ Before building just make sure you have these components installed:
    make install
 
 
-When building from source cmake accepts the following flags:
+When building from source, CMake accepts the following flags:
 
--DBUILD_DOC     If true, doxygen is used to build the documentation. (Default: true)
--DDEBUG         If set, additional DEBUG-outputs are generated. (Default: false)
--DEVM_GAS       If true, the gas costs are verified when validating a ``eth_call``.
+-DBUILD_DOC     If true, doxygen is used to build the documentation (default: true).
+-DDEBUG         If set, additional DEBUG-outputs are generated (default: false).
+-DEVM_GAS       If true, the gas costs are verified when validating an ``eth_call``.
 
-                This is an optimization since most calls are only interessted in the result.
-                EVM_GAS would be required if the contract uses gas-dependend code.
+This is an optimization since most calls are only interested in the result. EVM_GAS would be required if the contract used gas-dependent code.
 
--DFAST_MATH     Enable math optimizations during ``eth_call``(excutable size may increase). (Default: false)               
--DTEST          Enable test output and memory leak management, but slows down and should only be used for tests. (Default: false)
--DWASM          If WASM is enabled, only the WASM module and its dependencies will be built. (Default: false)
+-DFAST_MATH     Enable math optimizations during ``eth_call``(excutable size may increase) (default: false).               
+-DTEST          Enable test output and memory leak management, but it slows down and should only be used for tests (default: false).
+-DWASM          If Wasm is enabled, only the Wasm module and its dependencies will be built (default: false).
 
-
-Enviroment Variables
+Environment Variables
 ####################
 
 The following environment variables may be used to define defaults:
@@ -117,25 +112,23 @@ The following environment variables may be used to define defaults:
    IN3_PK
       The raw private key used for signing (same as -pk).
    IN3_CHAIN
-      The chain to use (default: mainnet) (same as -c). Of a URL is passed, this server will be used instead.
-
-
+      The chain to use (default: mainnet) (same as -c). If a URL is passed, this server will be used instead.
 
 Methods
 #######
 
-As method, the following can be used:
+As methods, the following can be used:
 
 .. glossary::
      <JSON-RPC>-method
-        All officially supported `JSON-RPC-Method <https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-methods>`_ may be used.
+        All officially supported `JSON-RPC methods <https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-methods>`_ may be used.
      send <signature> ...args
-        Based on the ``-to``, ``-value`` and ``-pk`` a transaction is built, signed, and sent. 
+        Based on the ``-to``, ``-value``, and ``-pk``, a transaction is built, signed, and sent.
         If there is another argument after `send`, this would be taken as a function-signature of the smart contract followed by optional arguments of the function.
 
         .. code-block:: sh
            
-           # Send some eth (requires to set the IN3_PK-variable before).
+           # Send some ETH (requires setting the IN3_PK-variable before).
            in3 send -to 0x1234556 -value 0.5eth  
            # Send a text to a function.
            in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
@@ -143,9 +136,9 @@ As method, the following can be used:
      call <signature> ...args
         Sses ``eth_call`` to call a function. After the ``call`` argument, the function-signature and its arguments must follow. 
      in3_nodeList
-        Returns the nodeList of the Incubed NodeRegistry as JSON.
+        Returns the NodeList of the Incubed NodeRegistry as JSON.
      in3_sign <blocknumber>
-        Requests a node to sign. In order to specify the signer, you need to pass the URL like this:
+        Requests a node to sign. To specify the signer, you need to pass the URL like this:
 
         .. code-block:: sh
            
@@ -153,18 +146,18 @@ As method, the following can be used:
            in3 in3_sign -c https://in3.slock.it/mainnet/nd-1 6000000
 
      in3_stats
-        Returns the stats of a node. Unless you specify the node with ``-c <rpcurl>`` it will pick a random node. 
+        Returns the stats of a node. Unless you specify the node with ``-c <rpcurl>``, it will pick a random node.
      abi_encode <signature> ...args
-        Encodes the arguments as described in the method signature using ABI-encoding.
+        Encodes the arguments as described in the method signature using ABI encoding.
      abi_decode <signature> data
         Decodes the data based on the signature.
      pk2address <privatekey>
         Extracts the public address from a private key.
      createkey
-        Generates a raw random private key.
+        Generates a random raw private key.
      key <keyfile>
-        Reads the private key from JSON-Keystore file from the first argument and returns the private key. This may ask the user to enter the passphrase (unless provided with ``-pwd``).
-        In order to unlock the key to reuse it within the shell, you can set the enviroment variable like this:
+        Reads the private key from JSON keystore file from the first argument and returns the private key. This may ask the user to enter the passphrase (unless provided with ``-pwd``).
+        To unlock the key to reuse it within the shell, you can set the environment variable like this:
 
         .. code-block:: sh
 
@@ -173,30 +166,28 @@ As method, the following can be used:
 Cache
 #####
 
-Even though Incubed does not need a configuration or set up and runs completly statelessly, caching already verified data can boost the performance. That's why ``in3`` uses a cache to store.
+Even though Incubed does not need a configuration or setup and runs completely statelessly, caching already verified data can boost the performance. That's why ``in3`` uses a cache to store.
 
 .. glossary::
 
-     Nodelists
+     NodeLists
         List of all nodes as verified from the registry.
      Reputations
         Holding the score for each node to improve weights for honest nodes.
      Code
-        For ``eth_call`` Incubed needs the code of the contract, but this can be taken from a cache if possible. 
+        For ``eth_call``, Incubed needs the code of the contract, but this can be taken from a cache if possible. 
      Validators
         For PoA changes, the validators and their changes over time will be stored.
-
 
 By default, Incubed will use ``~/.in3`` as a folder to cache data. 
 
 Signing
 #######
 
+While Incubed itself uses an abstract definition for signing, at the moment, the command-line utility only supports raw private keys.
+There are two ways you can specify the private keys that Incubed should use to sign transactions:
 
-While Incubed itself uses an abstract definition for signing, at the moment the command line utility only supports raw private keys.
-There are two ways you can specify your private keys that Incubed should use to sign transactions:
-
-1. Use the enviroment variable ``IN3_PK``
+1. Use the environment variable ``IN3_PK``
    This makes it easier to hide the key.
 
    .. code-block:: sh
@@ -215,12 +206,12 @@ There are two ways you can specify your private keys that Incubed should use to 
       in3 -pk 27a37a1210df14f7e058393d27a37a1210df14f7e058393d026e2fb53b7cf8c1 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 200eth -wait send
       in3 -pk `cat my_private_key` -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 200ETH -wait send
 
-Usually, it is a bad idea to heavily privatize keys or to even use them as an option since this would mean they also appear in the bash history. That's why the first approach is highly recommended. In the future, other signing approaches will be supported.
+Usually, it is a bad idea to heavily privatize keys or to even use them as an option since this would mean they also appear in the Bash history. That's why the first approach is highly recommended. In the future, other signing approaches will be supported.
 
 Autocompletion
 ##############
 
-If you want autocompletion, simply add these lines to your `.bashrc` or `.bash_profile` : 
+If you want autocompletion, simply add these lines to your `.bashrc` or `.bash_profile`:
 
 .. code-block:: sh
    
@@ -230,22 +221,17 @@ If you want autocompletion, simply add these lines to your `.bashrc` or `.bash_p
 Function Signatures
 ###################
 
-When using ``send`` or ``call`` the next optional parameter is the function siignature. This signature describes not only the name of the function to call, but also the types of arguments and return values.
+When using ``send`` or ``call``, the next optional parameter is the function signature. This signature describes not only the name of the function to call but also the types of arguments and return values.
 
-In general, the signature is builT by simply removing all names and only holdidng onto the types:
+In general, the signature is built by simply removing all names and only holding onto the types:
 
 .. code-block:: js
 
    <FUNCTION_NAME>(<ARGUMENT_TYPES>):(<RETURN_TYPES>)
 
-It is important to mention that the type names must always be the full solidity names. Most solidity function use aliases. They would need to be replaced with the full type name.
+It is important to mention that the type names must always be the full Solidity names. Most Solidity function use aliases. They would need to be replaced with the full type name.
 
 e.g. ``uint`` -> ``uint256`` 
-
-
-
-
-
 
 Examples
 ########
@@ -253,10 +239,9 @@ Examples
 Getting the current block
 *************************
 
-
 .. code-block:: sh
 
-   # On a comandline:
+   # On a command line:
    in3 eth_blockNumber
    > 8035324
 
@@ -270,7 +255,6 @@ Getting the current block
 
    # As part of shell script:
    BLOCK_NUMBER=`in3 eth_blockNumber`
-
 
 Using jq to filter JSON
 ***********************
@@ -306,8 +290,7 @@ Using jq to filter JSON
       "value": "0x3aefa89df48ed400"
      }
 
-
-Calling a function of a smart contract
+Calling a Function of a Smart Contract
 **************************************
 
 .. code-block:: sh
@@ -329,7 +312,6 @@ Calling a function of a smart contract
    in3 -to 0x2736D225f85740f42D17987100dc8d58e9e16252 -json call "servers(uint256):(string,address,uint256,uint256,uint256,address)" 1
    > ["https://in3.slock.it/mainnet/nd-4","0xbc0ea09c1651a3d5d40bacb4356fb59159a99564","0xffff","0xffff","0x00","0x0000000000000000000000000000000000000000"]
 
-
 Sending a Transaction
 *********************
 
@@ -345,9 +327,8 @@ Deploying a Contract
 
 .. code-block:: sh
 
-   # Compiling the solidity code, filtering the binary, and sending it as transaction returning the txhash:
+   # Compiling the Solidity code, filtering the binary, and sending it as a transaction returning the txhash:
    solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk `cat my_private_key.txt` -d - send
 
-   # If you want the address, we would need to wait until the text is mined before obtaining the receipt:
+   # If you want the address, you would need to wait until the text is mined before obtaining the receipt:
    solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk `cat my_private_key.txt` -d - -wait send | jq -r .contractAddress
-
