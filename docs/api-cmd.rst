@@ -98,7 +98,7 @@ When building from source, CMake accepts the following flags:
 
 This is an optimization since most calls are only interested in the result. EVM_GAS would be required if the contract used gas-dependent code.
 
--DFAST_MATH     Enable math optimizations during ``eth_call``(excutable size may increase) (default: false).               
+-DFAST_MATH     Enable math optimizations during ``eth_call`` (excutable size may increase) (default: false).               
 -DTEST          Enable test output and memory leak management, but it slows down and should only be used for tests (default: false).
 -DWASM          If Wasm is enabled, only the Wasm module and its dependencies will be built (default: false).
 
