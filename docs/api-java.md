@@ -7,6 +7,7 @@ The Incubed Java client uses JNI to call native functions, but all the native li
 ```c
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
+
 ### Building
 
 To build the shared library, you need to enable Java by using the `-DJAVA=true` flag:
@@ -17,6 +18,7 @@ mkdir -p in3-core/build
 cd in3-core/build
 cmake -DJAVA=true .. && make
 ```
+
 You will find the `in3.jar` in the build/lib folder.
 
 ### Android
@@ -30,7 +32,7 @@ The content of the `CMakeLists.txt` should look like this:
 ```c
 cmake_minimum_required(VERSION 3.4.1)
 
-# turn off FAST_MATH in the EVM.
+# turn off FAST_MATH in the EVM
 ADD_DEFINITIONS(-DIN3_MATH_LITE)
 
 # loop through the required module and create the build folders
@@ -107,6 +109,7 @@ public class HelloIN3 {
    }
 }
 ```
+
 ### Using the API
 
 Incubed also offers an API for getting information directly in a structured way.
@@ -164,7 +167,7 @@ public class HelloIN3 {
        // configure
        in3.setChainId(0x1);  // set it to mainnet (which is also the default)
 
-       // call a contract, which uses eth_call to get the result. 
+       // call a contract, which uses eth_call to get the result
        Object[] result = (Object[]) in3.getEth1API().call(                                   // call a function of a contract
             "0x2736D225f85740f42D17987100dc8d58e9e16252",                       // address of the contract
             "servers(uint256):(string,address,uint256,uint256,uint256,address)",// function signature
@@ -277,6 +280,7 @@ Arguments:
 ``int``  **val**  
 ======= ========= 
 ```
+
 ##### getNodeLimit
 
 The limit of nodes to store in the client.
@@ -313,6 +317,7 @@ Arguments:
 ``byte []``  **val**  
 =========== ========= 
 ```
+
 ##### setKey
 
 Sets the client key as hexstring to sign requests.
@@ -442,6 +447,7 @@ Arguments:
 ``long``  **val**  
 ======== ========= 
 ```
+
 ##### getReplaceLatestBlock
 
 If specified, the blockNumber "latest" will be replaced by blockNumber-(specified value).
@@ -507,7 +513,7 @@ Returns the signer or wallet.
 
 ##### getEth1API
 
-Gets the ethereum-api.
+Gets the Ethereum API.
 
  > public [`in3.eth1.API`](#class-in3.eth1.api) getEth1API();
 
@@ -551,7 +557,7 @@ Arguments:
 
 Servers to filter for the given chain.
 
-The chain-id based on EIP 155.
+The chainId based on EIP 155.
 
  > public `native long` getChainId();
 
@@ -559,7 +565,7 @@ The chain-id based on EIP 155.
 
 Sets the chain to be used.
 
-The chain-id based on EIP 155.
+The chainId based on EIP 155.
 
  > public `native void` setChainId([`long`](#class-long) val);
 
@@ -612,7 +618,7 @@ Arguments:
 
 Sends a request. 
 
-The request must be a valid json-string with method and params.
+The request must be a valid JSON-string with method and params.
 
  > public `native String` send([`String`](#class-string) request);
 
@@ -625,9 +631,9 @@ Arguments:
 
 ##### sendobject
 
-Sends a request but returns an object like an array or map with the parsed response.
+Sends a request but returns an object, such as an array or map, with the parsed response.
 
-The request must be a valid json-string with method and params.
+The request must be a valid JSON-string with method and params.
 
  > public `native Object` sendobject([`String`](#class-string) request);
 
@@ -640,7 +646,7 @@ Arguments:
 
 ##### sendRPC
 
-Send an RPC request by only passing the method and params.
+Sends an RPC request by only passing the method and params.
 
 It will create the raw request from it and return the result.
 
@@ -656,7 +662,7 @@ Arguments:
 
 ##### sendRPCasObject
 
-Send an RPC request by only passing the method and params.
+Sends an RPC request by only passing the method and params.
 
 It will create the raw request from it and return the result.
 
@@ -715,7 +721,7 @@ Adds values.
 
 This function will be called from the JNI-Interface.
 
-Internal use only! 
+For internal use only!
 
  > public `void` put([`int`](#class-int) key, [`Object`](#class-object) val);
 
@@ -753,7 +759,7 @@ Arguments:
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-Returns: `BigInteger`: the BigInteger value. 
+Returns: `BigInteger`: the BigInteger value.
 
 ##### getStringArray
 
@@ -767,7 +773,7 @@ Arguments:
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-Returns: `String []`: the array or null. 
+Returns: `String []`: the array or null.
 
 ##### getString
 
@@ -781,7 +787,7 @@ Arguments:
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-Returns: `String`: the hexstring. 
+Returns: `String`: the hexstring.
 
 ##### asStringArray
 
@@ -830,6 +836,7 @@ Arguments:
 ``Object``  **o**  
 ========== ======= 
 ```
+
 ##### asString
 
  > public static `String` asString([`Object`](#class-object) o);
@@ -840,6 +847,7 @@ Arguments:
 ``Object``  **o**  
 ========== ======= 
 ```
+
 ##### toJson
 
  > public static `String` toJson([`Object`](#class-object) ob);
@@ -935,6 +943,7 @@ Arguments:
 `TransactionRequest <#class-transactionrequest>`_  **tx**   
 ================================================= ========= 
 ```
+
 ##### hasAccount
 
 Returns true if the account is supported (or unlocked).
@@ -947,6 +956,7 @@ Arguments:
 ``String``  **address**  
 ========== ============= 
 ```
+
 ##### sign
 
 Signing of the raw data.
@@ -965,7 +975,7 @@ Arguments:
 
 Provides methods to cache data.
 
-These data could be NodeLists, contract codes or validator changes.
+These data could be NodeLists, contract codes, or validator changes.
 
 ##### getItem
 
@@ -1013,6 +1023,7 @@ Arguments:
 `IN3 <#class-in3>`_  **in3**  
 =================== ========= 
 ```
+
 ##### getBlockByNumber
 
 Finds the block as specified by the number.
@@ -1028,6 +1039,7 @@ Arguments:
 ``boolean``  **includeTransactions**  < the blockNumber < if true, all transactions will be included; if not, only the transaction hashes
 =========== ========================= ================================================================================================
 ```
+
 ##### getBlockByHash
 
 Returns information about a block by hash.
@@ -1041,6 +1053,7 @@ Arguments:
 ``boolean``  **includeTransactions**  < the blockNumber < if true, all transactions will be included; if not, only the transaction hashes
 =========== ========================= ================================================================================================
 ```
+
 ##### getBlockNumber
 
 The current blockNumber.
@@ -1055,7 +1068,7 @@ The current gas price.
 
 ##### getChainId
 
-Returns the EIP 155 chain ID used for transaction signing at the currently best block.
+Returns the EIP 155 chainId used for transaction signing at the currently best block.
 
 Null is returned if not available.
 
@@ -1071,7 +1084,7 @@ Arguments:
 ```eval_rst
 ================================================= ============= =============================================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
-``long``                                           **block**    < the transaction to call < the block used to for the state
+``long``                                           **block**    < the transaction to call < the block used for the state
 ================================================= ============= =============================================================
 ```
 Returns: `Object`: the decoded result. If only one return value is expected, the object will be returned. If not, an array of objects will be the result. 
@@ -1086,7 +1099,7 @@ Arguments:
 ```eval_rst
 ================================================= ============= =============================================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
-``long``                                           **block**    < the transaction to call < the block used to for the state
+``long``                                           **block**    < the transaction to call < the block used for the state
 ================================================= ============= =============================================================
 ```
 Returns: `long`: the gas required to call the function.
@@ -1106,7 +1119,7 @@ Arguments:
 ```
 ##### getCode
 
-Returns code at a given address. 
+Returns code at a given address.
 
  > public `String` getCode([`String`](#class-string) address, [`long`](#class-long) block);
 
@@ -1372,11 +1385,11 @@ Arguments:
 ``String``  **data**  
 ========== ========== 
 ```
-Returns: `String`: transactionHash. 
+Returns: `String`: transaction hash. 
 
 ##### sendTransaction
 
-Sends a transaction as described by the TransactionRequest.
+Sends a transaction as described by the transaction request.
 
 This will require a signer to be set to sign the transaction.
 
@@ -1388,6 +1401,7 @@ Arguments:
 `TransactionRequest <#class-transactionrequest>`_  **tx**  
 ================================================= ======== 
 ```
+
 ##### call
 
 The current gas price.
@@ -1422,7 +1436,7 @@ Type: static `long`
 
 ##### getTotalDifficulty
 
-Returns the total difficulty as a sum of all difficulties starting from genesis.
+Returns the total difficulty as a sum of all difficulties, starting from genesis.
 
  > public `BigInteger` getTotalDifficulty();
 
@@ -1512,7 +1526,7 @@ The blockhash of the header.
 
 ##### getLogsBloom
 
-The bloom filter of the block.
+The Bloom filter of the block.
 
  > public `String` getLogsBloom();
 
@@ -1540,13 +1554,13 @@ The blockNumber.
 
 ##### getParentHash
 
-The hash of the parent block. 
+The hash of the parent block.
 
  > public `String` getParentHash();
 
 ##### getUncles
 
-Returns the blockhashes of all uncles blocks.
+Returns the blockhashes of all uncle blocks.
 
  > public `String []` getUncles();
 
@@ -1570,9 +1584,9 @@ Null when it's a pending log.
 
  > public `int` getLogIndex();
 
-##### gettTansactionIndex
+##### getTransactionIndex
 
-Integer of the transactions index position the log was created from.
+Integer of the transaction index position the log was created from.
 
 Null when it's a pending log.
 
@@ -1598,7 +1612,7 @@ Null when it's a pending log.
 
 The blockNumber where this log was in.
 
-Null when it's a pending log. 
+Null when it's a pending log.
 
  > public `long` getBlockNumber();
 
@@ -1778,7 +1792,7 @@ The address of the recipient or contract.
 
 ##### getSignature
 
-The signature of the sender, an array of the [ r, s, v].
+The signature of the sender, an array of the [r, s, v].
 
  > public `String []` getSignature();
 
@@ -1793,7 +1807,6 @@ The gas price provided by the sender.
 The gas provided by the sender.
 
  > public `long` getGas();
-
 
 #### class TransactionReceipt
 
@@ -1857,7 +1870,7 @@ Array of log objects that this transaction generated.
 
 ##### getLogsBloom
 
-256 bytes, a bloom filter of logs/events generated by contracts during transaction execution.
+256 bytes, a Bloom filter of logs/events generated by contracts during transaction execution.
 
 Used to efficiently rule out transactions without expected logs.
 
