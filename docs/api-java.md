@@ -1534,7 +1534,7 @@ The Bloom filter of the block.
 
 The mix hash of the block.
 
-(only valid of proof of work) 
+(Only valid for proof of work.) 
 
  > public `String` getMixHash();
 
@@ -1542,7 +1542,7 @@ The mix hash of the block.
 
 The mix hash of the block.
 
-(only valid for proof of work) 
+(Only valid for proof of work.) 
 
  > public `String` getNonce();
 
