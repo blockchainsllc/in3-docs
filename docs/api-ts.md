@@ -1361,7 +1361,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 
 * **[address](https://github.com/slockit/in3/blob/master/src/types/types.ts#L294)** :`string` - The address of the node, which is the public address it is signing with.
-    example: 0x6C1a01C2aB554930A937B0a2E8105fB47946c679
+    Example: 0x6C1a01C2aB554930A937B0a2E8105fB47946c679
 
 * **[capacity](https://github.com/slockit/in3/blob/master/src/types/types.ts#L319)** :`number` *(optional)*  - The capacity of the node.
     Example: 100
