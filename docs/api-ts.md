@@ -1457,7 +1457,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
     * **[type](https://github.com/slockit/in3/blob/master/src/types/types.ts#L443)** :`string` *(optional)*  - The module of the provider.
 
-* **[port](https://github.com/slockit/in3/blob/master/src/types/types.ts#L375)** :`number` *(optional)*  - The listeneing port for the server.
+* **[port](https://github.com/slockit/in3/blob/master/src/types/types.ts#L375)** :`number` *(optional)*  - The listening port for the server.
 
 * **[profile](https://github.com/slockit/in3/blob/master/src/types/types.ts#L398)** *(optional)* 
 
