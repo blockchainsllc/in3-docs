@@ -1561,7 +1561,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[useFullProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L591)** :`boolean` *(optional)*  - If true, all data in the response will be proven, which leads to a higher payload.
 
-* **[useRef](https://github.com/slockit/in3/blob/master/src/types/types.ts#L583)** :`boolean` *(optional)*  - If true, binary-data (starting with a 0x) will be refered if occuring again.
+* **[useRef](https://github.com/slockit/in3/blob/master/src/types/types.ts#L583)** :`boolean` *(optional)*  - If true, binary-data (starting with a 0x) will be refered if occurring again.
 
 * **[verification](https://github.com/slockit/in3/blob/master/src/types/types.ts#L600)** :`'never'`|`'proof'`|`'proofWithSignature'` *(optional)*  - Defines the kind of proof the client is asking for.
     Example: proof
@@ -1621,9 +1621,9 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
 * **[logProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L721)** :[`LogProof`](#type-logproof) *(optional)*  - The log proof in case of a log request.
 
-* **[merkleProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L709)** :`string`[] *(optional)*  - The serialized merle-nodes beginning with the root-node.
+* **[merkleProof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L709)** :`string`[] *(optional)*  - The serialized merkle-nodes beginning with the root-node.
 
-* **[merkleProofPrev](https://github.com/slockit/in3/blob/master/src/types/types.ts#L713)** :`string`[] *(optional)*  - The serialized merkle-noodes beginning with the root-node of the previous entry (only for full proof of receipts).
+* **[merkleProofPrev](https://github.com/slockit/in3/blob/master/src/types/types.ts#L713)** :`string`[] *(optional)*  - The serialized merkle-nodes beginning with the root-node of the previous entry (only for full proof of receipts).
 
 * **[signatures](https://github.com/slockit/in3/blob/master/src/types/types.ts#L736)** :[`Signature`](#type-signature)[] *(optional)*  - Requested signatures.
 
