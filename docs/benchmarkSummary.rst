@@ -16,24 +16,24 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 
  Install JMeter on Mac OS With HomeBrew
 
-    1. Open a Mac Terminal, where we will be running all the commands.
+    1. Open a Mac Terminal where we will be running all the commands
 
     2. First, check to see if HomeBrew is installed on your Mac by executing this command. You can either run brew help or brew -v
 
-    3. If HomeBrew is not installed, run the following command to install HomeBrew on Mac
+    3. If HomeBrew is not installed, run the following command to install HomeBrew on Mac:
 
        .. code-block:: sh
 
           ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
           Once HomeBrew is installed, we can continue to install JMeter.
 
-    4. To install JMeter without the extra plugins, run the following command
+    4. To install JMeter without the extra plugins, run the following command:
 
       .. code-block:: sh
 
         brew install jmeter
     
-    5. To install JMeter with all the extra plugins, run the following command
+    5. To install JMeter with all the extra plugins, run the following command:
 
        .. code-block:: sh
 
@@ -85,7 +85,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
          sudo unzip JMeterPlugins-Extras-1.2.0.zip -d /usr/share/jmeter/
          sudo unzip JMeterPlugins-ExtrasLibs-1.2.0.zip -d /usr/share/jmeter/
        
-    10. Copy the jml file to the EC2 instance using:
+    10. Copy the JML file to the EC2 instance using:
        (On host computer)
 
        .. code-block:: sh
@@ -123,7 +123,7 @@ Considerations
 Results/Baseline
 ################
 
- - The baseline test was done with our existing server running multiple docker containers. It is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
+ - The baseline test was done with our existing server running multiple docker containers. It is not indicative of a perfect server setup, but it can be used to benchmark upgrades to our codebase. 
  - The baseline for our current system is given below. This system has multithreading enabled and has been tested with ethCalls included in the test plan. 
  
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
@@ -147,7 +147,7 @@ Results/Baseline
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
 | 160/500s       | 33000              | 65  | 1949                | 1615                  | 6269                    | 7604                       | 1900        | 930                 | In3 -> 400ms, rpc -> 2081ms                                                                                          |
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
-| 200/500s       | 34000              | 70  | 1270                | 1031                  | 12500                   | 14349                      | 1251        | 716                 | At higher loads, the rpc delay adds up. It is the bottlenecking factor. Able to handle 200 users on sustained loads. |
+| 200/500s       | 34000              | 70  | 1270                | 1031                  | 12500                   | 14349                      | 1251        | 716                 | At higher loads, the RPC delay adds up. It is the bottlenecking factor. Able to handle 200 users on sustained loads. |
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
  
  - More benchmarks and their results can be found in the in3-tests repo
