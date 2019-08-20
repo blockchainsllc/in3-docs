@@ -1498,7 +1498,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 
     * **[url](https://github.com/slockit/in3/blob/master/src/types/types.ts#L532)** :`string` - The public URL to reach this node.
 
-* **[clientKeys](https://github.com/slockit/in3/blob/master/src/types/types.ts#L483)** :`string` *(optional)*  - A comma sepearted list of client keys to use for simulating clients for the watchdog.
+* **[clientKeys](https://github.com/slockit/in3/blob/master/src/types/types.ts#L483)** :`string` *(optional)*  - A comma separated list of client keys to use for simulating clients for the watchdog.
 
 * **[freeScore](https://github.com/slockit/in3/blob/master/src/types/types.ts#L491)** :`number` *(optional)*  - The score for requests without a valid signature.
 
