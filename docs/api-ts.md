@@ -1409,7 +1409,7 @@ Source: [types/types.ts](https://github.com/slockit/in3/blob/master/src/types/ty
 * **[responseCount](https://github.com/slockit/in3/blob/master/src/types/types.ts#L339)** :`number` *(optional)*  - Number of uses.
     Example: 147
 
-* **[weight](https://github.com/slockit/in3/blob/master/src/types/types.ts#L334)** :`number` *(optional)*  - Factor the weight this noe (default 1.0).
+* **[weight](https://github.com/slockit/in3/blob/master/src/types/types.ts#L334)** :`number` *(optional)*  - Factor the weight this node (default 1.0).
     Example: 0.5
 
 
