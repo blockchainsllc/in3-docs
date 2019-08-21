@@ -311,18 +311,18 @@ There is another reason why the BlockHash is so important. This is the only valu
 
 Depending on the method, different proofs are needed, which are described in this document.
 
-- **[Block Proof](#blockproof)** - Verifies the content of the BlockHeader
-- **[Transaction Proof](#transaction-proof)** - Verifies the input data of a transaction
-- **[Receipt Proof](#receipt-proof)** - Verifies the outcome of a transaction
-- **[Log Proof](#log-proof)** - Verifies the response of `eth_getPastLogs`
-- **[Account Proof](#account-proof)** - Verifies the state of an account
-- **[Call Proof](#call-proof)** - Verifies the result of an `eth_call` - response
+- **[Block Proof](#blockproof)** - Verifies the content of the BlockHeader.
+- **[Transaction Proof](#transaction-proof)** - Verifies the input data of a transaction.
+- **[Receipt Proof](#receipt-proof)** - Verifies the outcome of a transaction.
+- **[Log Proof](#log-proof)** - Verifies the response of `eth_getPastLogs`.
+- **[Account Proof](#account-proof)** - Verifies the state of an account.
+- **[Call Proof](#call-proof)** - Verifies the result of an `eth_call`-response.
 
 Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
 
-*  **type** `string` (required)  - The type of the proof   
+*  **type** `string` (required)  - The type of the proof.   
  Must be one of the these values : `'transactionProof`', `'receiptProof`', `'blockProof`', `'accountProof`', `'callProof`', `'logProof`'
-*  **block** `string` - The serialized blockheader as hex, required in most proofs 
+*  **block** `string` - The serialized blockheader as hex, required in most proofs. 
 *  **finalityBlocks** `array` - The serialized following blockheaders as hex, required in case of finality asked (only relevant for PoA-chains). The server must deliver enough blockheaders to cover more then 50% of the validators. In order to verify them, they must be linkable (with the parentHash).    
 *  **transactions** `array` - The list of raw transactions of the block if needed to create a merkle trie for the transactions. 
 *  **uncles** `array` - The list of uncle-headers of the block. This will only be set if full verification is required in order to create a merkle tree for the uncles and so prove the uncle_hash.   
