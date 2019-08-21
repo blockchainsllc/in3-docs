@@ -33,6 +33,8 @@ Usage
 -b, -block     the blocknumber to use when making calls. could be either ``latest`` (default),``earliest`` or a hexnumbner
 -pk            the private key as raw as keystorefile
 -pwd           password to unlock the key
+-st, sigtype   the type of the signature data : ``eth_sign`` (use the prefix and hash it), ``raw`` (hash the raw data), ``hash`` (use the already hashed data). Default: raw \n\
+-
 -to            the target address of the call
 -d, -data      the data for a transaction. 
 
@@ -139,6 +141,8 @@ As method, the following can be used:
            # send a tx to a function
            in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
+     sign <data>
+        signs the data and returns the signature (65byte as hex). Use the -sigtype to specify the creation of the hash.
      call <signature> ...args
         uses ``eth_call`` to call a function. Following the ``call`` argument the function-signature and its arguments must follow. 
      in3_nodeList

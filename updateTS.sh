@@ -10,7 +10,15 @@ then
 fi
 echo "updating TS - API"
 node_modules/.bin/typedoc  --exclude test --excludePrivate  --readme none --ignoreCompilerErrors --target ES6  --mode 'modules' --json doc.json src/index.ts
-
-
 cat  doc.json | node_modules/.bin/slockit-docu index slockit/in3/blob/master/src "$PRE_DOC $IN3_EXAMPLES $PRE_DOC2" >  ../../doc/docs/api-ts.md
+
+cd "../in3-common"
+if [ ! -e node_modules/.bin/slockit-doxygen ]
+then
+   npm install slockit-generator
+fi
+echo "updating TS-common - API"
+node_modules/.bin/typedoc  --exclude test --excludePrivate  --readme none --ignoreCompilerErrors --target ES6  --mode 'modules' --json doc.json src/index.ts
+
+cat  doc.json | node_modules/.bin/slockit-docu index slockit/in3-common/blob/master/src $'## Common Module\n\nThe common module (in3-common) contains all the typedefs used in the node and server.\n\n' >>  ../../doc/docs/api-ts.md
 rm doc.json
