@@ -33,8 +33,7 @@ Usage
 -b, -block     the blocknumber to use when making calls. could be either ``latest`` (default),``earliest`` or a hexnumbner
 -pk            the private key as raw as keystorefile
 -pwd           password to unlock the key
--st, sigtype   the type of the signature data : ``eth_sign`` (use the prefix and hash it), ``raw`` (hash the raw data), ``hash`` (use the already hashed data). Default: raw \n\
--
+-st, -sigtype  the type of the signature data : ``eth_sign`` (use the prefix and hash it), ``raw`` (hash the raw data), ``hash`` (use the already hashed data). Default: raw
 -to            the target address of the call
 -d, -data      the data for a transaction. 
 
@@ -73,6 +72,7 @@ or just use this one-liner:
 
    curl https://in3.readthedocs.io/en/develop/_downloads/install.sh -sSf | sudo sh
 
+
 From Sources
 ************
 
@@ -96,7 +96,7 @@ From Docker
 
 Incubed can be run as docker container. For this pull the container:
 
---- code-block:: sh
+.. code-block:: sh
 
    # run a simple statement
    docker run slockit/in3:latest eth_blockNumber
