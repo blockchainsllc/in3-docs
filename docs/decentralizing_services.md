@@ -91,7 +91,7 @@ function minRequests():number
 function verify(request:RPCRequest[], responses:RPCResponse[])
 ```
 
-A minimal version could simply ensure that two requests were running and then compare them. If different, the Wasm could check with the home server and "convict" nodes.
+A minimal version could simply ensure that two requests were running and then compare them. If different, the Wasm could check with the home server and "convict" the nodes.
 
 ### Convicting
 
