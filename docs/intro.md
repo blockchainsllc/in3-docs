@@ -35,7 +35,7 @@ There are several classes of IoT devices, for which running a full or light clie
 
 - **Devices with insufficient calculation power or memory space**
 
-    Today, the majority of IoT devices have compute units not capable of running a full client or a light client. To run such a client, the computer needs to be able to synchronize the blockchain and calculate the state (or at least the needed part thereof).
+    Today, the majority of IoT devices do not have processors capable of running a full client or a light client. To run such a client, the computer needs to be able to synchronize the blockchain and calculate the state (or at least the needed part thereof).
 
 - **Devices with insufficient power supply**
 
