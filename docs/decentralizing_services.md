@@ -2,7 +2,7 @@
 
 *Important: This concept is still in early development, meaning it has not been implemented yet.*
 
-Many dApps still require some off-chain services, such as search functions running on a server, which, of course, can be seen as a single point of failure. To decentralize these dApp-specific services, they must fulfill the following criteria:
+Many dApps still require some off-chain services, such as search services running on a server, which, of course, can be seen as a single point of failure. To decentralize these dApp-specific services, they must fulfill the following criteria:
 
 1. **Stateless**: Since requests may be sent to different servers, they cannot hold a user's state, which would only be available on one node.
 2. **Deterministic**: All servers need to produce the exact same result.
