@@ -2,36 +2,34 @@
 API Reference Docker
 ********************
 
-In order to start the incubed-client as a standalone client (allowing others application to connect to it), you can start the container as
+To start the Incubed client as a standalone client (allowing other applications to connect to it), you must start the container as:
 
 .. code-block:: sh
 
    docker run -d -p 8545:8545  slockit/in3:latest --chainId=mainnet
 
+The application will then accept the following arguments:
 
-The application would then accept the following arguments:
-
---nodeLimit             the limit of nodes to store in the client.
---keepIn3               if true, the in3-section of thr response will be kept. Otherwise it will be removed 
-                        after validating the data. This is useful for debugging or if the proof should be 
-                        used afterwards.
---format                the format for sending the data to the client. Default is json, but using cbor means
+--nodeLimit             The limit of nodes to store in the client.
+--keepIn3               If true, the IN3-section of the response will be kept. Otherwise, it will be removed 
+                        after validating the data. This is useful for debugging or if the proof will be 
+                        used afterward.
+--format                The format for sending the data to the client. Default is JSON, but using CBOR means
                         using only 30-40% of the payload since it is using binary encoding.
---autoConfig            if true the config will be adjusted depending on the request
---retryWithoutProof     if true the request may be handled without proof in case of an error. (use with care!)
---includeCode           if true, the request should include the codes of all accounts. otherwise only the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards
---maxCodeCache          number of max bytes used to cache the code in memory
---maxBlockCache         number of number of blocks cached  in memory
---proof                 'none' for no verification, 'standard' for verifying all important fields, 'full'  veryfying all fields even if this means a high payload.
---signatureCount        number of signatures requested
---finality              percenage of validators signed blockheaders - this is used for PoA (aura)
---minDeposit            min stake of the server. Only nodes owning at least this amount will be chosen.
---replaceLatestBlock    if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
---requestCount          the number of request send when getting a first answer
---timeout               specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection.
---chainId               servers to filter for the given chain. The chain-id based on EIP-155.
---chainRegistry         main chain-registry contract
---mainChain             main chain-id, where the chain registry is running.
---autoUpdateList        if true the nodelist will be automaticly updated if the lastBlock is newer
---loggerUrl             a url of RES-Endpoint, the client will log all errors to. The client will post to this endpoint JSON like { id?, level, message, meta? }
-
+--autoConfig            If true, the configuration will be adjusted depending on the request.
+--retryWithoutProof     If true, the request may be handled without proof in case of an error. (Use with care!)
+--includeCode           If true, the request should include the codes of all accounts. Otherwise, only the codeHash is returned. In this case, the client may ask by calling eth_getCode() afterward.
+--maxCodeCache          Max number of bytes used to cache the code in memory.
+--maxBlockCache         Number of blocks cached in memory.
+--proof                 'None' for no verification, 'standard' for verifying all important fields, and 'full' for verifying all fields even if this means a high payload.
+--signatureCount        Number of signatures requested.
+--finality              Percentage of validator-signed blockheaders; this is used for PoA (Aura).
+--minDeposit            Minimum stake of the server. Only nodes owning at least this amount will be chosen.
+--replaceLatestBlock    If specified, the block number *latest* will be replaced by blockNumber-(specific value).
+--requestCount          The number of requests sent when receiving a first answer.
+--timeout               Specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
+--chainId               Servers to filter for the given chain. The chain ID is based on EIP 155.
+--chainRegistry         Mainchain registry contract.
+--mainChain             Mainchain ID where the chain registry is running.
+--autoUpdateList        If true, the NodeList will be automatically updated if the last block is newer.
+--loggerUrl             A URL the RES-endpoint client will log all errors to. The client will post to this endpoint JSON-like (ID?, level, message, meta?).
