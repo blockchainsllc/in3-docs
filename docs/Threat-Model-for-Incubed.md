@@ -39,7 +39,7 @@ Solutions:
     *Desicion* : 
     
     Will be implemented in the first release, since it does not create new Riscs.    
-    
+
 
 2. **Unregister Key**
 
@@ -215,7 +215,7 @@ Depending on how many malicious nodes have registered themselves and are working
 
 
 
-![Alt text](./image1.png)
+![50% bad](./image1.png)
 
 
 
@@ -223,7 +223,7 @@ In case of an attacker controlling 50% of all nodes, it looks a bit different. H
 
 
 
-![Alt text](./image2.png)
+![10% bad](./image2.png)
 
 
 
