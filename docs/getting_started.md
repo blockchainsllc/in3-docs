@@ -4,23 +4,23 @@ Incubed can be used in different ways:
 
 ```eval_rst
 
-Table
-
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 | Stack                 | Size                 | Code Base                           | Use Case                                                                                    |
 +=======================+======================+=====================================+=============================================================================================+
-| TS/JS                 | 2.7 MB (browserified) | TypeScript                          | Web application (client in the browser) or mobile application                               |
+| TS/JS                 | 2.7 MB (browserified)| TypeScript                          | Web application (client in the browser) or mobile application                               |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| C/C++                 | 200 KB                | C                                   | IoT devices can be integrated nicely on many micro controllers                             |
-|                       |                      |                                     | (like Zephyr-supported boards (https://docs.zephyrproject.org/latest/boards/index.html)) |
-|                       |                      |                                     | or any other C/C++ application                                                            |
+| TS/JS/WASM            | 470 kB               | C - (WASM)                          | Web application (client in the browser) or mobile application                               |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Java                  | 205 KB                | C                                   | Java implementation of a native wrapper                                                     |
+| C/C++                 | 200 KB               | C                                   | IoT devices can be integrated nicely on many micro controllers                              |
+|                       |                      |                                     | (like Zephyr-supported boards (https://docs.zephyrproject.org/latest/boards/index.html))    |
+|                       |                      |                                     | or any other C/C++ application                                                              |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Docker                | 74 MB                 | TypeScript                          | For replacing existing clients with this docker and connecting to Incubed via localhost:8545   |
-|                       |                      |                                     | without needing to change the architecture                                                 |
+| Java                  | 705 KB               | C                                   | Java implementation of a native wrapper                                                     |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Bash                  | 200 KB                | C                                   | The command-line utilities can be used directly as executable within Bash script or on the shell |
+| Docker                | 2.6 MB               | C                                   | For replacing existing clients with this docker and connecting to Incubed via localhost:8545|
+|                       |                      |                                     | without needing to change the architecture                                                  |
++-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
+| Bash                  | 400 KB               | C                                   | The command-line utilities can be used directly as executable within Bash script or on the shell |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 ```
 
@@ -97,111 +97,54 @@ const receipt = await in3.eth.sendTransaction({
 To start Incubed as a standalone client (allowing other non-JS applications to connect to it), you can start the container as the following:
 
 ```
-docker run -d -p 8545:8545  slockit/in3:latest --chainId=mainnet
+docker run -d -p 8545:8545  slockit/in3:latest -port 8545
 ```
 
-The application would then accept the following arguments:
-
-```eval_rst
-
-.. glossary::
-    --nodeLimit
-        the limit of nodes to store in the client.
-
-    --keepIn3
-        if true, the in3-section of the response will be kept. Otherwise, it will be removed after validating the data. This is useful for debugging or if the proof is used afterward.
-
-    --format
-        the format for sending the data to the client. Default is JSON, but using CBOR means using only 30-40% of the payload since it uses binary encoding.
-
-    --autoConfig
-        if true, the configuration will be adjusted depending on the request.
-    
-    --retryWithoutProof
-        if true, the request may be handled without proof in case of an error. (Use with care!)
-
-    --includeCode
-        if true, the request should include the codes of all accounts. Otherwise, only the codehash is returned. In this case, the client may ask by calling eth_getCode() afterward.
-
-    --maxCodeCache
-        max number of bytes used to cache the code in memory.
-
-    --maxBlockCache
-        max number of blocks cached in memory.
-
-    --proof
-        'none' for no verification, 'standard' for verifying all important fields, and 'full' for verifying all fields even if this means a high payload.
-
-    --signatureCount
-        number of signatures requested.
-
-    --finality
-        percenage of validator-signed blockheaders; this is used for PoA (Aura).
-
-    --minDeposit
-        minimum stake of the server. Only nodes owning at least this amount will be chosen.
-
-    --replaceLatestBlock
-        if specified, the blockNumber 'latest' will be replaced by blockNumber-(specified value).
-
-    --requestCount
-        the number of requests sent.
-
-    --timeout
-        specifies the number of milliseconds before the request times out. Increasing may be helpful if the device uses a slow connection.
-
-    --chainId
-        servers to filter for the given chain. The chainId based on EIP-155.
-
-    --chainRegistry
-        main chain registry contract.
-
-    --mainChain
-        main chain ID where the chain registry is running.
-
-    --autoUpdateList
-        if true, the NodeList will be automatically updated if the last block is newer.
-
-    --loggerUrl
-        a URL of RES endpoint. The client will post all errors to this endpoint JSON-like (ID?, level, message, meta?).
-
-```
 
 ## C Implementation
 
 *The C implementation will be released soon!*
 
 ```c
+#include <in3/client.h>    // the core client
+#include <in3/eth_api.h>   // wrapper for easier use
+#include <in3/eth_basic.h> // use the basic module
+#include <in3/in3_curl.h>  // transport implementation
+
+#include <inttypes.h>
 #include <stdio.h>
-#include <in3/client.h>  // the core client
-#include <eth_full.h>    // the full Ethereum verifier containing the EVM
-#include <in3/eth_api.h> // wrapper for easier use
-#include <in3_curl.h>    // transport implementation
 
 int main(int argc, char* argv[]) {
 
-  // register a chain-verifier for full Ethereum-Support
-  in3_register_eth_full();
+  // register a chain-verifier for basic Ethereum-Support, which is enough to verify blocks
+  // this needs to be called only once
+  in3_register_eth_basic();
+
+  // use curl as the default for sending out requests
+  // this needs to be called only once.
+  in3_register_curl();
 
   // create new incubed client
-  in3_t* c        = in3_new();
+  in3_t* in3 = in3_new();
 
-  // set your config
-  c->transport    = send_curl; // use curl to handle the requests
-  c->requestCount = 1;         // number of requests to send
-  c->chainId      = 0x1;       // use main chain
+  // the b lock we want to get
+  uint64_t block_number = 8432424;
 
-  // use an ethereum-api instead of pure JSON-RPC requests
-  eth_block_t* block = eth_getBlockByNumber(c, atoi(argv[1]), true);
+  // get the latest block without the transaction details
+  eth_block_t* block = eth_getBlockByNumber(in3, block_number, false);
+
+  // if the result is null there was an error an we can get the latest error message from eth_lat_error()
   if (!block)
-    printf("Could not find the Block: %s", eth_last_error());
+    printf("error getting the block : %s\n", eth_last_error());
   else {
-    printf("Number of verified transactions in block: %i", block->tx_count);
+    printf("Number of transactions in Block #%llu: %d\n", block->number, block->tx_count);
     free(block);
   }
 
-  ...
+  // cleanup client after usage
+  in3_free(in3);
 }
+
 
 ```
 
@@ -212,21 +155,41 @@ More details coming soon...
 The Java implementation uses a wrapper of the C implemenation. This is why you need to make sure the libin3.so, in3.dll, or libin3.dylib can be found in the java.library.path. For example:
 
 ```
-java -Djava.library.path="path_to_in3;${env_var:PATH}" HelloIN3.class
+java -cp in3.jar:. HelloIN3.class
 ```
 
 ```java
-import org.json.*;
-import in3.IN3;
+import java.util.*;
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
 
-public class HelloIN3 {  
-   // 
-   public static void main(String[] args) {
-       String blockNumber = args[0]; 
-       IN3 in3 = new IN3();
-       JSONObject result = new JSONObject(in3.sendRPC("eth_getBlockByNumber",{ blockNumberm ,true})));
-       ....
-   }
+public class HelloIN3 {
+  //
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = new IN3();
+
+    // configure
+    in3.setChainId(0x1); // set it to mainnet (which is also dthe default)
+
+    // read the latest Block including all Transactions.
+    Block latestBlock = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
+
+    // Use the getters to retrieve all containing data
+    System.out.println("current BlockNumber : " + latestBlock.getNumber());
+    System.out.println("minded at : " + new Date(latestBlock.getTimeStamp()) + " by " + latestBlock.getAuthor());
+
+    // get all Transaction of the Block
+    Transaction[] transactions = latestBlock.getTransactions();
+
+    BigInteger sum = BigInteger.valueOf(0);
+    for (int i = 0; i < transactions.length; i++)
+      sum = sum.add(transactions[i].getValue());
+
+    System.out.println("total Value transfered in all Transactions : " + sum + " wei");
+  }
+
 }
 ```
 
@@ -239,7 +202,9 @@ CURRENT_BLOCK = `in3 -c kovan eth_blockNumber`
 
 #or to send a transaction
 
-IN3_PK=`cat mysecret_key.txt` in3 eth_sendTransaction '{"from":"0x5338d77B5905CdEEa7c55a1F3A88d03559c36D73", "to":"0xb5049E77a70c4ea06355E3bcbfcF8fDADa912481", "value":"0x10000"}'
+in3 -pk my_key_file.json send -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 0.2eth
+
+in3 -pk my_key_file.json send -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -gas 1000000  "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
 ```
 
