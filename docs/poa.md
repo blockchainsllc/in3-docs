@@ -153,7 +153,7 @@ The data we want to verify are mainly Blocks and Transactions. Usually, if we wa
 
     ```js
     // we take each Transactiondata, hash them and put the transactionhashes into a merkle tree
-    const merkleRoot = createMerkleRoot ( readTransactions(blockData).map(hash).map(_=>_.reverse()) )
+    const merkleRoot = createMerkleRoot ( readTransactions(blockData).map(_=>hash(_).reverse()) )
 
     // compare the root with merkleRoot of the header starting at offset 36
     if (!merkleRoot.equals(blockData.slice(36,68).reverse()))
@@ -170,33 +170,46 @@ Verifying means we start by hashing the transaction and then keep on hashing thi
 
 Just as the Incubed Client can ask for signed blockhashes in Ethereum, he can do this in Bitcoin as well. The signed payload from the node will have to contain these data:
 
-```java
+```js
 bytes32 blockhash;
 uint256 timestamp;
 bytes32 registryId;
 ```
 
-1. Client requires a Signed Blockhash and the Data Provider Node will ask the chosen node to sign.
+**Client requires a Signed Blockhash**
 
-2. The Data Provider Node (or Watchdog) will then check the signature. If the signed blockhash is wrong it will start the conviting process:
+ and the Data Provider Node will ask the chosen node to sign.
 
-3. In order to convict the Node needs to provide proof, which is the correct blockheader. But since the BlockHeader does not contain the BlockNumber, we have to use the timestamp. So the correct block as proof must have either the same timestamp or a the last block before the timestamp. Additionally the Node may provide FinalityBlockHeaders. As many as possible, but at least one in order to prove, that the timestamp of the correct block is the closest one.
+**The Data Provider Node (or Watchdog) will then check the signature**
 
-4. The Registry Contract will then verify:
+If the signed blockhash is wrong it will start the conviting process:
 
-   - the Signature of the convited Node.
-   - the BlockHeaders gives as Proof
+**Convict with BlockHeaders**
 
-   The Verification of the BlockHeader can be done directly in Solitidy, because the EVM offers a precompiled Contract at address `0x2` : sha256, which is needed to calculate the Blockhash. With this in mind we can follow the steps 1-3 as described in [Block Proof](#block-proof) implemented in Solidity.
+In order to convict, the Node needs to provide proof, which is the correct blockheader.
+
+But since the BlockHeader does not contain the BlockNumber, we have to use the timestamp. So the correct block as proof must have either the same timestamp or a the last block before the timestamp. Additionally the Node may provide FinalityBlockHeaders. As many as possible, but at least one in order to prove, that the timestamp of the correct block is the closest one.
+
+**The Registry Contract will then verify**    
+
+- the Signature of the convited Node.
+- the BlockHeaders gives as Proof
 
 
-   While doing so we need to add the difficulties of each block and store the last blockHash and the totalDifficulty for later.
+The Verification of the BlockHeader can be done directly in Solitidy, because the EVM offers a precompiled Contract at address `0x2` : sha256, which is needed to calculate the Blockhash. With this in mind we can follow the steps 1-3 as described in [Block Proof](#block-proof) implemented in Solidity.
 
-5. Now the convited Server has the chance to also deliver blockheaders to proof that he has signed the correct one.
+
+While doing so we need to add the difficulties of each block and store the last blockHash and the `totalDifficulty` for later.
+
+**Challenge the longest chain**
+
+Now the convited Server has the chance to also deliver blockheaders to proof that he has signed the correct one.
     
-    The simple rule is: If the other node (convited or convitor) is not able to add enough verified BlockHeaders with a higher totalDifficulty within 1 hour, the other party can get the deposit and kick the malicious node out.
+The simple rule is: 
 
-    Even though this game could go for a while, if the convicted Node signed a hash, which is not part of the longest chain, it will not be possible to create enough mining power to continue mining enough blocks to keep up with the longest chain in the mainnet. Therefore he will most likely give up right after the first transaction.
+> If the other node (convited or convitor) is not able to add enough verified BlockHeaders with a higher `totalDifficulty` within 1 hour, the other party can get the deposit and kick the malicious node out.
+
+Even though this game could go for a while, if the convicted Node signed a hash, which is not part of the longest chain, it will not be possible to create enough mining power to continue mining enough blocks to keep up with the longest chain in the mainnet. Therefore he will most likely give up right after the first transaction.
 
 
-  
+
