@@ -38,7 +38,8 @@ Solutions:
 
     *Desicion* : 
     
-    Will be implemented in the first release, since it does not create new Riscs.
+    Will be implemented in the first release, since it does not create new Riscs.    
+    
 
 2. **Unregister Key**
 
@@ -46,7 +47,7 @@ Solutions:
 
     *Desicion* : 
     
-    Will be implemented in the first release, at least as a workaround limited  to one year.
+    Will be implemented in the first release, at least as a workaround limited  to one year.    
 
 
 3. **Dynamic Min Deposit**
@@ -60,7 +61,8 @@ Solutions:
 
     *Desicion* : 
     
-    This dynamic deposit creates new Threads, because an attacker can stop other nodes from registering honest nodes by adding a lot of nodes and so increasing the min deposit. That's why this will not be implemented right now.
+    This dynamic deposit creates new Threads, because an attacker can stop other nodes from registering honest nodes by adding a lot of nodes and so increasing the min deposit. That's why this will not be implemented right now.    
+
 
 4. **Voting** 
 
@@ -76,7 +78,7 @@ Solutions:
 
     *Desicion*: 
     
-    Voting will also create the risc of also Voting against honest nodes. Any node can act honest for a long time and then become a malicious node using their voting power to vote against the remaining honest nodes and so end up kicking all other nodes out. That's why voting will be removed for the first release.
+    Voting will also create the risc of also Voting against honest nodes. Any node can act honest for a long time and then become a malicious node using their voting power to vote against the remaining honest nodes and so end up kicking all other nodes out. That's why voting will be removed for the first release.    
 
 
 
@@ -121,7 +123,8 @@ Solutions:
 
     *Decision*:
 
-    Not implemented yet. Maybe later.
+    Not implemented yet. Maybe later.    
+
 
 2. **Reject responses when 50% are blacklisted**
 
@@ -155,7 +158,7 @@ A DataProvider should always check the signatures of the blockhash they received
 
 1. The DataProvider receives the signature but does not check it.
 
-    In this case, at least the verification inside the client will fail since the provided blockheader does not match.
+    In this case, at least the verification inside the client will fail since the provided blockheader does not match.    
 
 2. The DataProvider works together with the signer.
 
@@ -175,11 +178,11 @@ For the scoring model, we are using private keys. The perfect security model wou
 
 Solution:
 
-1. Limit the power of such a key so that the worst thing that can happen is a leaked key that can be used by another client, which would then be able to use the score of the server the key is assigned to.
+1. Limit the power of such a key so that the worst thing that can happen is a leaked key that can be used by another client, which would then be able to use the score of the server the key is assigned to.    
 
-2. Keep the private key secret and manage the connection to the server only off chain.
+2. Keep the private key secret and manage the connection to the server only off chain.    
 
-3. Instead of using a private key as API-Key, we keep the private key private and only get a signature from the node of the ecosystem confirming this relationship. This may happen completly offchain and scales much better.
+3. Instead of using a private key as API-Key, we keep the private key private and only get a signature from the node of the ecosystem confirming this relationship. This may happen completly offchain and scales much better.    
 
 *Desicion*: clients will not share private keys, but work with a signed approval from the node.
 

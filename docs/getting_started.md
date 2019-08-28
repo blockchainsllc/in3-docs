@@ -20,7 +20,7 @@ Incubed can be used in different ways:
 | Docker                | 2.6 MB               | C                                   | For replacing existing clients with this docker and connecting to Incubed via localhost:8545|
 |                       |                      |                                     | without needing to change the architecture                                                  |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Bash                  | 400 KB               | C                                   | The command-line utilities can be used directly as executable within Bash script or on the shell |
+| Bash                  | 400 KB               | C                                   | The command-line tool can be used directly as executable within Bash script or on the shell |
 +-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
 ```
 
