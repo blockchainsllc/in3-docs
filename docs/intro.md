@@ -5,7 +5,7 @@ The same applies to other blockchains, whether based on Ethereum or not.
 While current notebooks or desktop computers with a broadband Internet connection are able to run a full node without any problems, smaller devices such as
 tablets and smartphones with less powerful hardware or more restricted Internet connection are capable of running a light node. However, many IoT
 devices are severely limited in terms of computing capacity, connectivity and often also power supply. Connecting an IoT device to a remote node
-enables even low-performance devices to be connected to blockchain. By using distinct remote nodes, the advantages of a decentralized network are underminded without being
+enables even low-performance devices to be connected to blockchain. By using distinct remote nodes, the advantages of a decentralized network are undermined without being
 forced to trust single players or there is a risk of malfunction or attack because there is a single point of failure.
 
 With the presented Trustless Incentivized Remote Node Network, in short INCUBED, it will be possible to establish a decentralized and secure network of remote nodes, which enables trustworthy and fast access to blockchain for a large number of low-performance IoT devices.
@@ -35,7 +35,7 @@ There are several classes of IoT devices, for which running a full or light clie
 
 - **Devices with insufficient calculation power or memory space**
 
-    Today, the majority of IoT devices have compute units not capable of running a full client or a light client. To run such a client, the computer needs to be able to synchronize the blockchain and calculate the state (or at least the needed part thereof).
+    Today, the majority of IoT devices do not have processors capable of running a full client or a light client. To run such a client, the computer needs to be able to synchronize the blockchain and calculate the state (or at least the needed part thereof).
 
 - **Devices with insufficient power supply**
 
@@ -74,7 +74,7 @@ Using a netservice-client connected to the INCUBED can be realized using the exi
 
 #### Description
 
-An smart bike lock which enables sharing is installed on an e-bike. It is able to connect to the Internet to check if renting is allowed and the current user is authorized to open the lock.
+A smart bike lock which enables sharing is installed on an e-bike. It is able to connect to the Internet to check if renting is allowed and the current user is authorized to open the lock.
 
 The computational power of the control unit is restricted to the control of the lock. Because the energy is provided by the e-bike's battery, the controller runs only when needed in order to save energy. For this reason, it is also not possible to maintain a permanent Internet connection. 
 

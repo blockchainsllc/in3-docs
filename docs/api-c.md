@@ -3,46 +3,46 @@
 
 ## Overview
 
-The C Implementation of the incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules which should be combined. This allowes us to only generate the code needed and so reduce the requirements for flash and memory.
+The C implementation of the Incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules that should be combined. This allows us to only generate the code needed and reduce requirements for flash and memory.
 
-This is why the incubed is combind of different modules. While the core-module is always required additional functions will be prepared by differen modules:
+This is why Incubed consists of different modules. While the core module is always required, additional functions will be prepared by different modules:
 
 ### Verifier
 
-Incubed is a minimal verifaction client, which means, each response needs to be verifable. Depending on the expected requests and responses you need to carefully choose which verifier you may need to register. For ethereum we have developed 3 Modules:
+Incubed is a minimal verification client, which means that each response needs to be verifiable. Depending on the expected requests and responses, you need to carefully choose which verifier you may need to register. For Ethereum, we have developed three modules:
 
-- [nano](#module-eth-nano) : a Minimal module only able to verify transaction receipts ( `eth_getTransactionReceipt`)
-- [basic](#module-eth-basic) : module able to verify almost all other standard rpc-function. (except `eth_call`)
-- [full](#module-eth-full) : module able to verify standard rpc-function. It also implements a full EVM in order to handle `eth_call`
+1. [nano](#module-eth-nano): a minimal module only able to verify transaction receipts (`eth_getTransactionReceipt`).
+2. [basic](#module-eth-basic): module able to verify almost all other standard RPC functions (except `eth_call`).
+3. [full](#module-eth-full): module able to verify standard RPC functions. It also implements a full EVM to handle `eth_call`.
 
-Depending on the module you need to register the verifier before using it. This is done by calling the `in3_register...` function like [in3_register_eth_full()](#in3-register-eth-full).
+Depending on the module, you need to register the verifier before using it. This is done by calling the `in3_register...` function like [in3_register_eth_full()](#in3-register-eth-full).
 
 ### Transport
 
-In order to verify responses, you need to able to send requests. The way to handle them depend heavily on your hardware capabilities. For example, if your device only supports bluetooth, you may use this connection to deliver the request to a device with a existing internet connection and get the response in the same way, but if your device is able to use a direct internet connection, you may use a curl-library to execxute them. That's why the core client only defines a function pointer [in3_transport_send](#in3-transport-send) which must handle the requests.
+To verify responses, you need to be able to send requests. The way to handle them depends heavily on your hardware capabilities. For example, if your device only supports Bluetooth, you may use this connection to deliver the request to a device with an existing internet connection and get the response in the same way, but if your device is able to use a direct internet connection, you may use a curl-library to execute them. This is why the core client only defines function pointer [in3_transport_send](#in3-transport-send), which must handle the requests.
 
-At the moment we offer these modules, other implementation by supported inside different hardware-modules.
+At the moment we offer these modules; other implementations are supported by different hardware modules.
 
-- [curl](#module-transport-curl) : module with a dependency to curl which executes these requests with curl, also supporting HTTPS. This modules is supposed to run an standard os with curl installed.
+1. [curl](#module-transport-curl): module with a dependency on curl, which executes these requests and supports HTTPS. This module runs a standard OS with curl installed.
 
 ### API
 
-While incubed operates on JSON-RPC-Level, as a developer you might want to use a better structed API preparing these requests for you. These APIs are optional but make life easier:
+While Incubed operates on JSON-RPC level, as a developer, you might want to use a better-structured API to prepare these requests for you. These APIs are optional but make life easier:
 
-- [**eth**](#module-eth-api) : This module offers all standard RPC-Functions as descriped in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition it allows you to sign and encode/decode calls and transactions.
-- [**usn**](#module-usn-api) : This module offers basic USN-function like renting or event-handling and message-verifaction.
+1. [**eth**](#module-eth-api): This module offers all standard RPC functions as described in the [Ethereum JSON-RPC Specification](https://github.com/ethereum/wiki/wiki/JSON-RPC). In addition, it allows you to sign and encode/decode calls and transactions.
+2. [**usn**](#module-usn-api): This module offers basic USN functions like renting, event handling, and message verification.
 
 
 
 
 ## Building
 
-While we provide binaries (TODO put link to releases), you can also build from source:
+While we provide binaries, you can also build from source:
 
 ### requirements
 
 - cmake
-- curl : curl is used as transport for the comandline-tools
+- curl : curl is used as transport for command-line tools.
 - optional: libsycrypt, which would be used for unlocking keystore files using `scrypt` as kdf method. if it does not exist you can still build, but not decrypt such keys. 
 
 
@@ -69,12 +69,6 @@ if true the gas costs are verified when validating a eth_call. This is a optimiz
 
 Type: `BOOL` , Default-Value: `ON`
 
-#### EXAMPLES
-
-build the examples.
-
-Type: `BOOL` , Default-Value: `ON`
-
 #### FAST_MATH
 
 Math optimizations used in the EVM. This will also increase the filesize.
@@ -93,9 +87,21 @@ support proxy server
 
 Type: `BOOL` , Default-Value: `OFF`
 
+#### IN3_STAGING
+
+if true, the client will use the staging-network instead of the live ones
+
+Type: `BOOL` , Default-Value: `ON`
+
 #### JAVA
 
 build the java-binding (shared-lib and jar-file)
+
+Type: `BOOL` , Default-Value: `OFF`
+
+#### TAG_VERSION
+
+the tagged version, which should be used
 
 Type: `BOOL` , Default-Value: `OFF`
 
@@ -128,7 +134,9 @@ Type: `BOOL` , Default-Value: `OFF`
 
 ## Examples
 
-### creating a incubed instance
+The full list of examples can be found here: [https://git.slock.it/in3/c/in3-core/tree/develop/examples/c](https://git.slock.it/in3/c/in3-core/tree/develop/examples/c)
+
+### Creating an Incubed Instance
 
 creating always follow these steps:
 
@@ -138,27 +146,19 @@ creating always follow these steps:
 #include <in3_curl.h>      // transport implementation
 
 // register verifiers, in this case a full verifier allowing eth_call
+// this needs to be called only once.
 in3_register_eth_full();
+
+// use curl as the default for sending out requests
+// this needs to be called only once.
+in3_register_curl();
 
 // create new client
 in3_t* client = in3_new();
 
-// configure storage by using storage-functions from in3_curl, which store the cache in /home/<USER>/.in3
-in3_storage_handler_t storage_handler;
-storage_handler.get_item = storage_get_item;
-storage_handler.set_item = storage_set_item;
-
-client->cacheStorage = &storage_handler;
-
-// configure transport by using curl
-client->transport    = send_curl;
-
-// init cache by reading the nodelist from the cache >(if exists)
-in3_cache_init(client);
-
 // ready to use ...
 ```
-### calling a function
+### Calling a Function
 
 ```c
 // define a address (20byte)
@@ -179,7 +179,7 @@ if (!response) {
 // convert the result to a integer
 int number_of_servers = d_int(response->result);
 
-// don't forget the free the response!
+// don't forget to free the response!
 free_json(response);
 
 // out put result
@@ -229,7 +229,7 @@ Location: src/api/eth1/eth_api.h
 
 #### eth_tx_t
 
-a transaction 
+A transaction. 
 
 
 The stuct contains following fields:
@@ -255,7 +255,7 @@ The stuct contains following fields:
 
 #### eth_block_t
 
-a Ethereum Block 
+An Ethereum Block. 
 
 
 The stuct contains following fields:
@@ -286,7 +286,7 @@ The stuct contains following fields:
 
 #### eth_log_t
 
-a linked list of Ethereum Logs 
+A linked list of Ethereum Logs. 
 
 
 The stuct contains following fields:
@@ -1610,6 +1610,73 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
+
+#### in3_configure
+
+```c
+in3_ret_t in3_configure(in3_t *c, char *config);
+```
+
+configures the clent based on a json-config. 
+
+For details about the structure of ther config see [https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config](https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config) 
+
+arguments:
+```eval_rst
+=================== ============ 
+`in3_t * <#in3-t>`_  **c**       
+``char *``           **config**  
+=================== ============ 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_set_default_transport
+
+```c
+void in3_set_default_transport(in3_transport_send transport);
+```
+
+defines a default transport which is used when creating a new client. 
+
+arguments:
+```eval_rst
+=========================================== =============== 
+`in3_transport_send <#in3-transport-send>`_  **transport**  
+=========================================== =============== 
+```
+
+#### in3_set_default_storage
+
+```c
+void in3_set_default_storage(in3_storage_handler_t *cacheStorage);
+```
+
+defines a default storage handler which is used when creating a new client. 
+
+arguments:
+```eval_rst
+=================================================== ================== 
+`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**  
+=================================================== ================== 
+```
+
+#### in3_set_default_signer
+
+```c
+void in3_set_default_signer(in3_signer_t *signer);
+```
+
+defines a default signer which is used when creating a new client. 
+
+arguments:
+```eval_rst
+================================= ============ 
+`in3_signer_t * <#in3-signer-t>`_  **signer**  
+================================= ============ 
+```
 
 ### context.h
 
@@ -4442,6 +4509,23 @@ arguments:
 returns: `int`
 
 
+#### hex2long
+
+```c
+uint64_t hex2long(char *buf);
+```
+
+convert hex to long 
+
+arguments:
+```eval_rst
+========== ========= 
+``char *``  **buf**  
+========== ========= 
+```
+returns: `uint64_t`
+
+
 #### hex2byte_new_bytes
 
 ```c
@@ -4633,6 +4717,8 @@ Location: src/transport/curl/in3_curl.h
 in3_ret_t send_curl(char **urls, int urls_len, char *payload, in3_response_t *result);
 ```
 
+the transport function using curl. 
+
 arguments:
 ```eval_rst
 ===================================== ============== 
@@ -4645,6 +4731,15 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_register_curl
+
+```c
+void in3_register_curl();
+```
+
+registers curl as a default transport. 
 
 
 ## Module transport/http 

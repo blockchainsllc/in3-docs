@@ -246,19 +246,6 @@ public class Example {
 
 ## Package in3
 
-#### class Example
-
-##### main
-
- > public static `void` main([`String[]`](#class-string[]) args);
-
-arguments:
-```eval_rst
-============= ========== 
-``String []``  **args**  
-============= ========== 
-```
-
 #### class IN3
 
 This is the main class creating the incubed client. 

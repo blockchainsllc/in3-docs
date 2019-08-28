@@ -2,38 +2,38 @@
 Benchmarks
 **********
 
-These benchmarktests aim to test the in3 version for stability and performance on the server. As a result we can give estimate thewe resources needed in order to serve many clients.
+These benchmarks aim to test the Incubed version for stability and performance on the server. As a result, we can gauge the resources needed to serve many clients.
 
 
 Setup and Tools
 ###############
 
-- Jmeter is used to send request parallelly to the server
-- Custom python scripts to generate list of transactions to use as well as randomize them - used to create test plan
-- Link for making Jmeter tests online without setting up the server: https://www.blazemeter.com/
+- JMeter is used to send requests parallel to the server
+- Custom Python scripts is used to generate lists of transactions as well as randomize them (used to create test plan)
+- Link for making JMeter tests online without setting up the server: https://www.blazemeter.com/
 
 JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 
  Install JMeter on Mac OS With HomeBrew
 
-    1. Open a Mac Terminal, where we will be running all the commands.
+    1. Open a Mac Terminal where we will be running all the commands
 
     2. First, check to see if HomeBrew is installed on your Mac by executing this command. You can either run brew help or brew -v
 
-    3. If HomeBrew is not installed, run the following command to install HomeBrew on Mac
+    3. If HomeBrew is not installed, run the following command to install HomeBrew on Mac:
 
        .. code-block:: sh
 
           ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
           Once HomeBrew is installed, we can continue to install JMeter.
 
-    4. To install JMeter without the extra plugins, run the following command
+    4. To install JMeter without the extra plugins, run the following command:
 
       .. code-block:: sh
 
         brew install jmeter
     
-    5. To install JMeter with all the extra plugins, run the following command
+    5. To install JMeter with all the extra plugins, run the following command:
 
        .. code-block:: sh
 
@@ -41,7 +41,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
     
     6. Finally, verify the installation by executing jmeter -v
     
-    7. Run JMeter using 'jmeter' which should load the JMeter GUI.
+    7. Run JMeter using 'jmeter' which should load the JMeter GUI
     
  JMeter on EC2 instance CLI only (testing pending):
 
@@ -85,7 +85,7 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
          sudo unzip JMeterPlugins-Extras-1.2.0.zip -d /usr/share/jmeter/
          sudo unzip JMeterPlugins-ExtrasLibs-1.2.0.zip -d /usr/share/jmeter/
        
-    10. Copy the jml file to the EC2 instance using:
+    10. Copy the JML file to the EC2 instance using:
        (On host computer)
 
        .. code-block:: sh
@@ -103,28 +103,28 @@ JMeter can be downloaded from: https://jmeter.apache.org/download_jmeter.cgi
 
 Python script to create test plan:
 
-    1. Navigate to the txGenerator folder in the in3-tests repo
-    2. Run the main.py file with mentioning the start block (-s), end block (-e) and number of blocks to choose in this range (-n). The script will randomly choose 3 transactions per block. 
-    3. The transactions chosen are sent through a tumble function, resulting in a randomized list of transactions from random blocks. This should be a relistic scenario to test with, and prevents too many concurrent cache hits. 
-    4. Import the generated CSV file into the loaded test plan on JMeter
-    5. Refer to existing test plans for information on how to read transactions from CSV files and to see how it can be integrated into the requests
+    1. Navigate to the txGenerator folder in the in3-tests repo.
+    2. Run the main.py file while referencing the start block (-s), end block (-e) and number of blocks to choose in this range (-n). The script will randomly choose three transactions per block.
+    3. The transactions chosen are sent through a tumble function, resulting in a randomized list of transactions from random blocks. This should be a realistic scenario to test with, and prevents too many concurrent cache hits.
+    4. Import the generated CSV file into the loaded test plan on JMeter.
+    5. Refer to existing test plans for information on how to read transactions from CSV files and to see how it can be integrated into the requests.
     
 
 Considerations
 ##############
 
- - When the in3 benchmark is run on a new server, create a baseline before applying any changes
- - Run the same benchmark test with the new codebase, test for performance gains
- - The tests can be modified to include number of users and duration of the test. For a stress test, choose 200 users and a test duration of 500 seconds or more. 
- - When running in an EC2 instance, up to 500 users can be simulated without issues. Running in GUI mode reduces this number. 
- - A beneficial method for running the test is to slowly ramp up the user count, start with a test of 10 users for 120 seconds in order to test basic stability. Work your way up to 200 users and longer durations. 
- - Parity might often be the bottleneck, you can confirm this by using the get_avg_stddev_in3_response.sh script in the scripts directory of the in3-test repo. This would help show what optimizations are needed
+ - When the Incubed benchmark is run on a new server, create a baseline before applying any changes.
+ - Run the same benchmark test with the new codebase, test for performance gains.
+ - The tests can be modified to include the number of users and duration of the test. For a stress test, choose 200 users and a test duration of 500 seconds or more. 
+ - When running in an EC2 instance, up to 500 users can be simulated without issues. Running in GUI mode reduces this number.
+ - A beneficial method for running the test is to slowly ramp up the user count. Start with a test of 10 users for 120 seconds in order to test basic stability. Work your way up to 200 users and longer durations. 
+ - Parity might often be the bottleneck; you can confirm this by using the get_avg_stddev_in3_response.sh script in the scripts directory of the in3-test repo. This would help show what optimizations are needed.
 
 Results/Baseline
 ################
 
- - The baseline test was done with our existing server running multiple docker containers, it is not indicative of a perfect server setup. But it can be used to benchmark upgrades to our codebase. 
- - The baseline for our current system is given below, this system has multithreading enabled and has been tested with ethCalls included in the test plan. 
+ - The baseline test was done with our existing server running multiple docker containers. It is not indicative of a perfect server setup, but it can be used to benchmark upgrades to our codebase. 
+ - The baseline for our current system is given below. This system has multithreading enabled and has been tested with ethCalls included in the test plan. 
  
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
 | Users/duration | Number of requests | tps | getBlockByHash (ms) | getBlockByNumber (ms) | getTransactionHash (ms) | getTransactionReceipt (ms) | EthCall(ms) | eth_getStorage (ms) | Notes                                                                                                                |
@@ -147,7 +147,7 @@ Results/Baseline
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
 | 160/500s       | 33000              | 65  | 1949                | 1615                  | 6269                    | 7604                       | 1900        | 930                 | In3 -> 400ms, rpc -> 2081ms                                                                                          |
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
-| 200/500s       | 34000              | 70  | 1270                | 1031                  | 12500                   | 14349                      | 1251        | 716                 | At higher loads, the rpc delay adds up. It is the bottlenecking factor. Able to handle 200 users on sustained loads. |
+| 200/500s       | 34000              | 70  | 1270                | 1031                  | 12500                   | 14349                      | 1251        | 716                 | At higher loads, the RPC delay adds up. It is the bottlenecking factor. Able to handle 200 users on sustained loads. |
 +----------------+--------------------+-----+---------------------+-----------------------+-------------------------+----------------------------+-------------+---------------------+----------------------------------------------------------------------------------------------------------------------+
  
  - More benchmarks and their results can be found in the in3-tests repo
