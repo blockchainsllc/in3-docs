@@ -9,7 +9,7 @@ Usage
 
 .. code-block:: sh
 
-   IN3 [options] method [arguments]
+   in3 [options] method [arguments]
 
 -c, -chain     The chain to use currently: 
 
@@ -17,6 +17,7 @@ Usage
                  :kovan: Kovan testnet
                  :tobalaba: EWF testchain
                  :goerli: Goerli testchain using Clique
+                 :btc: Bitcoin (still experimental)
                  :local: Use the local client on http://localhost:8545
                  :RPCURL: If any other RPC-URL is passed as chain name, this is used but without verification
                  
@@ -32,9 +33,11 @@ Usage
 -pk            The private key as raw keystore file.
 -pwd           Password to unlock the key.
 -to            The target address of the call.
+-st, -sigtype  the type of the signature data : ``eth_sign`` (use the prefix and hash it), ``raw`` (hash the raw data), ``hash`` (use the already hashed data). Default: raw
+-port          specifies the port to run incubed as a server. Opening port 8545 may replace a local parity or geth client.
 -d, -data      The data for a transaction. 
 
-This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input. If a method signature is given with the data, they will be combined and used as constructor arguments when deploying.
+               This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input. If a method signature is given with the data, they will be combined and used as constructor arguments when deploying.
                
 -gas           The gas limit to use when sending transactions (default: 100000).
 -value         The value to send when conducting a transaction. Can be a hex value or a float/integer with the suffix ``eth`` or ``wei`` like ``1.8eth`` (default: 0).
