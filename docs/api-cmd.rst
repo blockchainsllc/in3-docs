@@ -124,7 +124,7 @@ Incubed can be run as docker container. For this pull the container:
    docker run -v $(pwd)/cache:/root/.in3 -p 8545:8545 slockit/in3:latest -port 8545
 
 Environment Variables
-####################
+#####################
 
 The following environment variables may be used to define defaults:
 
