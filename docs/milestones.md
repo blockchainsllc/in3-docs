@@ -2,7 +2,10 @@
 
 Incubed implements two versions: 
  - **TypeScript / JavaScript**: optimized for dApps, web apps, or mobile apps.
- - **Embedded C**: optimized for microcontrollers and all other use cases.
+ - **C**: optimized for microcontrollers and all other use cases.
+
+
+ 
 
 ## V1.2 Stable: Q3 2019
 
@@ -21,35 +24,44 @@ This was the first stable release, which was published after Devcon. It contains
 - **Proof Levels**: Incubed supports different proof levels: `none` for no verification, `standard` for verifying only relevant properties, and  `full` for complete verification, including uncle blocks or previous transactions (higher payload).
 - **Security Levels**: Configurable number of signatures (for PoW) and minimal deposit stored.
 - **PoW Support**: For PoW, blocks are verified based on blockhashes signed by Incubed nodes storing a deposit, which they lose if this blockhash is not correct.
-- **PoA Support**: For PoA chains (using Aura), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura algorithm to determine the signer from the validatorlist (with static validatorlist or contract-based validators).
+- **PoA Support**: (experimental) For PoA chains (using Aura and clique), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura algorithm to determine the signer from the validatorlist (with static validatorlist or contract-based validators).
 - **Finality Support**: For PoA chains, the client can require a configurable number of signatures (in percent) to accept them as final.
 - **Flexible Transport Layer**: The communication layer between clients and nodes can be overridden, but the layer already supports different transport formats (JSON/CBOR/Incubed).
 - **Replace Latest Blocks**: Since most applications per default always ask for the latest block, which cannot be considered final in a PoW chain, a configuration allows applications to automatically use a certain block height to run the request (like six blocks).
 - **Light Ethereum API**: Incubed comes with a simple type-safe API, which covers all standard JSON-RPC requests (`in3.eth.getBalance('0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5')`). This API also includes support for signing and sending transactions, as well as calling methods in smart contracts without a complete ABI by simply passing the signature of the method as an argument.
 - **TypeScript Support**: Because Incubed is written 100% in TypeScript, you get all the advantages of a type-safe toolchain.
-- **Integrations**: Incubed has been successfully tested in all major browsers, Node.js, and even React Native.
+- **java**: java version of the Incubed client based on the C sources (using JNI) 
 
-## V1.2 Incentivization: Q3 2019
+## V1.2 Incentivization: Q4 2019
 
 This release will introduce the incentivization layer, which should help provide more nodes to create the decentralized network.
 
 - **PoA Clique**: Supports Clique PoA to verify blockheaders.
 - **Signed Requests**: Incubed supports the incentivization layer, which requires signed requests to assign client requests to certain nodes.
 - **Network Balancing**: Nodes will balance the network based on load and reputation.
+- **python-bindings**: integration in python 
 
-## V1.3 eWasm: Q1 2020
+## V1.3 Bitcoin: Q1 2020
+
+M>ultichain Support for BTC
+
+- **Bitcoin**: Supports Verfification for Bitcoin blocks and Transactions
+- **WASM**: Typescript client based on a the C-Sources compiled to wasm.
+
+## V1.4 WASM: Q3 2020
 
 For `eth_call` verification, the client and server must be able to execute the code. This release adds the ability to support eWasm contracts.
 
+- **eth 2.0**: Basic Support for Eth 2.0
 - **eWasm**: Supports eWasm contracts in eth_call.
 
-## V1.4 Substrate: Q3 2020
+## V1.5 Substrate: Q1 2021
 
 Supports Polkadot or any substrate-based chains.
 
 - **Substrate**: Framework support.
 - **Runtime Optimization**: Using precompiled runtimes.
 
-## V1.5 Services: Q1 2021
+## V1.6 Services: Q3 2021
 
 Generic interface enables any deterministic service (such as docker-container) to be decentralized and verified.
