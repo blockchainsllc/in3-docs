@@ -4,8 +4,7 @@ Incubed implements two versions:
  - **TypeScript / JavaScript**: optimized for dApps, web apps, or mobile apps.
  - **C**: optimized for microcontrollers and all other use cases.
 
-
- 
+In the future we will focus on one codebase, which is C. This will be ported to many platforms (like WASM).
 
 ## V1.2 Stable: Q3 2019
 
