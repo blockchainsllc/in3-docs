@@ -42,7 +42,7 @@ This release will introduce the incentivization layer, which should help provide
 
 ## V1.3 Bitcoin: Q1 2020
 
-M>ultichain Support for BTC
+Multichain Support for BTC
 
 - **Bitcoin**: Supports Verfification for Bitcoin blocks and Transactions
 - **WASM**: Typescript client based on a the C-Sources compiled to wasm.
