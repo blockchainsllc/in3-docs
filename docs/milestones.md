@@ -6,7 +6,7 @@ Incubed implements two versions:
 
 In the future we will focus on one codebase, which is C. This will be ported to many platforms (like WASM).
 
-## V1.2 Stable: Q3 2019
+## V2.0 Stable: Q3 2019
 
 This was the first stable release, which was published after Devcon. It contains full verification of all relevant Ethereum RPC calls (except eth_call for eWasm contracts), but there is no payment or incentivization included yet.
 
@@ -31,7 +31,7 @@ This was the first stable release, which was published after Devcon. It contains
 - **TypeScript Support**: Because Incubed is written 100% in TypeScript, you get all the advantages of a type-safe toolchain.
 - **java**: java version of the Incubed client based on the C sources (using JNI) 
 
-## V1.2 Incentivization: Q4 2019
+## V2.1 Incentivization: Q4 2019
 
 This release will introduce the incentivization layer, which should help provide more nodes to create the decentralized network.
 
@@ -39,28 +39,29 @@ This release will introduce the incentivization layer, which should help provide
 - **Signed Requests**: Incubed supports the incentivization layer, which requires signed requests to assign client requests to certain nodes.
 - **Network Balancing**: Nodes will balance the network based on load and reputation.
 - **python-bindings**: integration in python 
+- **go-bindings**: bindings for go
 
-## V1.3 Bitcoin: Q1 2020
+## V2.2 Bitcoin: Q1 2020
 
 Multichain Support for BTC
 
 - **Bitcoin**: Supports Verfification for Bitcoin blocks and Transactions
 - **WASM**: Typescript client based on a the C-Sources compiled to wasm.
 
-## V1.4 WASM: Q3 2020
+## V2.3 WASM: Q3 2020
 
 For `eth_call` verification, the client and server must be able to execute the code. This release adds the ability to support eWasm contracts.
 
 - **eth 2.0**: Basic Support for Eth 2.0
 - **eWasm**: Supports eWasm contracts in eth_call.
 
-## V1.5 Substrate: Q1 2021
+## V2.4 Substrate: Q1 2021
 
 Supports Polkadot or any substrate-based chains.
 
 - **Substrate**: Framework support.
 - **Runtime Optimization**: Using precompiled runtimes.
 
-## V1.6 Services: Q3 2021
+## V2.5 Services: Q3 2021
 
 Generic interface enables any deterministic service (such as docker-container) to be decentralized and verified.
