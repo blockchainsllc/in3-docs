@@ -1,15 +1,6 @@
 Welcome to Incubed's documentation!
 ===================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Concept
-   :numbered:
-
-   intro
-   poa
-   incentivization
-   decentralizing_services
 
 .. toctree::
    :maxdepth: 2
@@ -26,5 +17,14 @@ Welcome to Incubed's documentation!
    api-cmd
    api-node
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Concept
+   :numbered:
+
+   intro
+   poa
+   incentivization
+   decentralizing_services
  
 * :ref:`genindex`
