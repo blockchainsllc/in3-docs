@@ -170,9 +170,277 @@ The following functions are offered within the registry:
 
 ### NodeRegistry functions
 
-//TODO add interface for new contract.
+#### constructor
+*constructor*
 
-### BlockHashRegistry Functions
+**Development notice:**
+*cannot be deployed in a genesis block*
+
+**Parameters:**
+* _blockRegistry `BlockhashRegistry`: *address of a BlockhashRegistry-contract*
+
+#### convict
+*must be called before revealConvict*
+*commits a blocknumber and a hash*
+
+**Development notice:**
+*The v,r,s paramaters are from the signature of the wrong blockhash that the node provided*
+
+**Parameters:**
+* _blockNumber `uint`: *the blocknumber of the wrong blockhash*
+* _hash `bytes32`: *keccak256(wrong blockhash, msg.sender, v, r, s); used to prevent frontrunning.*
+
+#### registerNode
+*register a new node with the sender as owner*
+
+**Development notice:**
+*will call the registerNodeInteral function*
+
+**Parameters:**
+* _url `string`: *the url of the node, has to be unique*
+* _props `uint64`: *properties of the node*
+* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
+* _weight `uint64`: *how many requests per second the node is able to handle*
+
+#### registerNodeFor
+*register a new node as a owner using a different signer address*
+
+**Development notice:**
+*will revert when a wrong signature has been provided*
+
+*which is calculated by the hash of the url, properties, timeout, weight and the owner*
+
+*in order to prove that the owner has control over the signer-address he has to sign a message*
+
+*will call the registerNodeInteral function*
+
+
+**Parameters:**
+* _url `string`: *the url of the node, has to be unique*
+* _props `uint64`: *properties of the node*
+* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
+* _signer `address`: *the signer of the in3-node*
+* _weight `uint64`: *how many requests per second the node is able to handle*
+* _v `uint8`: *v of the signed message*
+* _r `bytes32`: *r of the signed message*
+* _s `bytes32`: *s of the signed message*
+
+#### removeNodeFromRegistry
+*removes an in3-server from the registry*
+
+**Development notice:**
+*only callable in the 1st year after deployment*
+
+*only callable by the unregisterKey-account*
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node*
+
+#### returnDeposit
+*only callable after the timeout of the deposit is over*
+*returns the deposit after a node has been removed*
+
+**Development notice:**
+*reverts if the deposit is still locked*
+
+*reverts when there is nothing to transfer*
+
+*reverts when not the owner of the former in3-node*
+
+
+**Parameters:**
+* _signer `address`: *the signer-address of a former in3-node*
+
+#### revealConvict
+*reveals the wrongly provided blockhash, so that the node-owner will lose its deposit*
+
+**Development notice:**
+*reverts when the wrong convict hash (see convict-function) is used*
+
+*reverts when the _signer did not sign the block*
+
+*reverts when trying to reveal immediately after calling convict*
+
+*reverts when trying to convict someone with a correct blockhash*
+
+*reverts if a block with that number cannot be found in either the latest 256 blocks or the blockhash registry*
+
+
+**Parameters:**
+* _signer `address`: *the address that signed the wrong blockhash*
+* _blockhash `bytes32`: *the wrongly provided blockhash*
+* _blockNumber `uint`: *number of the wrongly provided blockhash*
+* _v `uint8`: *v of the signature*
+* _r `bytes32`: *r of the signature*
+* _s `bytes32`: *s of the signature*
+
+#### transferOwnership
+*changes the ownership of an in3-node*
+
+**Development notice:**
+
+*reverts when the sender is not the current owner*
+
+*reverts when trying to pass ownership to 0x0*
+
+*reverts when trying to change ownership of an inactive node*
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node, used as an identifier*
+* _newOwner `address`: *the new owner*
+
+#### unregisteringNode
+*doing so will also lock his deposit for the timeout of the node*
+*a node owner can unregister a node, removing it from the nodeList*
+
+**Development notice:**
+*reverts when not called by the owner of the node*
+
+*reverts when the provided address is not an in3-signer*
+
+
+**Parameters:**
+* _signer `address`: *the signer of the in3-node*
+
+#### updateNode
+*updates a node by adding the msg.value to the deposit and setting the props or timeout*
+
+**Development notice:**
+*reverts when trying to change the url to an already existing one*
+
+*reverts when trying to increase the timeout above 10 years*
+
+*reverts when the signer does not own a node*
+
+*reverts when the sender is not the owner of the node*
+
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node, used as an identifier*
+* _url `string`: *the url, will be changed if different from the current one*
+* _props `uint64`: *the new properties, will be changed if different from the current onec*
+* _timeout `uint64`: *the new timeout of the node, cannot be decreased. Has to be at least 1h*
+* _weight `uint64`: *the amount of requests per second the node is able to handle*
+
+#### totalNodes
+*length of the nodelist*
+**Return Parameters:**
+* `uint` the number of currently active nodes
+
+#### calcProofHash
+*calculates the sha3 hash of the most important properties in order to make the proof faster*
+
+**Parameters:**
+* _node `In3Node`: *the in3 node to calculate the hash from*
+
+**Return Parameters:**
+* `bytes32` the hash of the properties to prove with in3
+
+#### checkNodeProperties
+*function to check whether the allowed amount of ether as deposit per server has been reached*
+
+**Development notice:**
+*will fail when the provided timeout is greater then 1 year*
+
+*will fail when the deposit is greater then 50 ether in the 1st year*
+
+
+**Parameters:**
+* _deposit `uint256`: *the new amount of deposit a server has*
+* _timeout `uint64`: *the timeout until a server can receive his deposit after unregister*
+
+#### registerNodeInternal
+*registers a node*
+
+**Development notice:**
+*reverts when either the owner or the url is already in use*
+
+*reverts when trying to register a node with more then 50 ether in the 1st year after deployment*
+
+*reverts when provided not enough deposit*
+
+*reverts when time timeout exceed the MAXDEPOSITTIMEOUT*
+
+**Parameters:**
+* _url `string`: *the url of a node*
+* _props `uint64`: *properties of a node*
+* _timeout `uint64`: *the time before the owner can access the deposit after unregister a node*
+* _signer `address`: *the address that signs the answers of the node*
+* _owner `address`: *the owner address of the node*
+* _deposit `uint`: *the deposit of a node*
+* _weight `uint64`: *the amount of requests per second a node is able to handle*
+
+#### unregisterNodeInternal
+*handles the setting of the unregister values for a node internally*
+
+**Parameters:**
+* _si `SignerInformation`: *information of the signer*
+* _n `In3Node`: *information of the in3-node*
+
+#### removeNode
+*removes a node from the node-array*
+
+### BlockHashRegistry functions
+
+#### constructor
+*constructor*
+
+#### searchForAvailableBlock
+*searches for an already existing snapshot*
+
+**Parameters:**
+* _startNumber `uint`: *the blocknumber to start searching*
+* _numBlocks `uint`: *the number of blocks to search for*
+
+**Return Parameters:**
+* `uint` returns a blocknumber when a snapshot had been found. It will return 0 if no blocknumber was found. 
+
+#### recreateBlockheaders
+*if successfull the last blockhash of the header will be added to the smart contract*
+*it will be checked whether the provided chain is correct by using the reCalculateBlockheaders function*
+*only usable when the given blocknumber is already in the smart contract*
+*starts with a given blocknumber and its header and tries to recreate a (reverse) chain of blocks*
+
+**Development notice:**
+*function is public due to the usage of a dynamic bytes array (not yet supported for external functions)*
+
+*reverts when the chain of headers is incorrect*
+
+*reverts when there is not parent block already stored in the contract*
+
+**Parameters:**
+* _blockNumber `uint`: *the block number to start recreation from*
+* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order (youngest -> oldest) => (e.g. 100, 99, 98)*
+
+#### saveBlockNumber
+*stores a certain blockhash to the state*
+
+**Development notice:**
+*reverts if the block can't be found inside the evm*
+
+**Parameters:**
+* _blockNumber `uint`: *the blocknumber to be stored*
+
+#### snapshot
+*stores the currentBlock-1 in the smart contract*
+
+#### getParentAndBlockhash
+*returns the blockhash and the parent blockhash from the provided blockheader*
+
+**Parameters:**
+* _blockheader `bytes`: *a serialized (rlp-encoded) blockheader*
+
+**Return Parameters:**
+* parentHash `bytes32`
+* bhash `bytes32`
+
+#### reCalculateBlockheaders
+*the array of the blockheaders have to be in reverse order (e.g. [100,99,98,97])*
+*starts with a given blockhash and its header and tries to recreate a (reverse) chain of blocks*
+
+**Parameters:**
+* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order, i.e. from youngest to oldest*
+* _bHash `bytes32`: *blockhash of the 1st element of the _blockheaders-array*
 
 ## Binary Format
 
