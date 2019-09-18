@@ -81,6 +81,14 @@ Solutions:
     Voting will also create the risc of also Voting against honest nodes. Any node can act honest for a long time and then become a malicious node using their voting power to vote against the remaining honest nodes and so end up kicking all other nodes out. That's why voting will be removed for the first release.    
 
 
+### DDOS Attack to un controlled urls
+Status: not implemented yet
+
+As a owner I can register any url even a server which I don't own. By doing this I can also add a high weight, which increases the chances to get request. This way I can get  potentially a lot of clients to send many requests to a node, which is not expecting it. Even though clients may blacklist this node, it would be to easy to create a DDOS-Atack.
+
+Solution:
+
+Whenever there is a new node the client has never communicated to, we should send a option-request and expect a specific header-value (like the proofHash). This way the client can trust the node, knoowing that this node is owned by the signer.
 
 ### Self-Convict Attack
 Status: solved
