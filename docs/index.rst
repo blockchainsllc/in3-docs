@@ -7,6 +7,7 @@ Welcome to Incubed's documentation!
    :caption: Reference
 
    getting_started
+   download
    milestones
    Threat-Model-for-Incubed
    benchmarkSummary
