@@ -81,6 +81,12 @@ build the USN-API which offer better interfaces and additional functions on top 
 
 Type: `BOOL` , Default-Value: `ON`
 
+#### IN3_LIB
+
+if true a shared anmd static library with all in3-modules will be build.
+
+Type: `BOOL` , Default-Value: `ON`
+
 #### IN3_SERVER
 
 support proxy server
@@ -96,6 +102,12 @@ Type: `BOOL` , Default-Value: `ON`
 #### JAVA
 
 build the java-binding (shared-lib and jar-file)
+
+Type: `BOOL` , Default-Value: `OFF`
+
+#### SEGGER_RTT
+
+Use the segger real time transfer terminal as the logging mechanism
 
 Type: `BOOL` , Default-Value: `OFF`
 
@@ -122,6 +134,12 @@ Type: `BOOL` , Default-Value: `ON`
 if true
 
 Type: `BOOL` , Default-Value: `ON`
+
+#### USE_SCRYPT
+
+if scrypt is installed, it will link dynamicly to the shared scrypt lib.
+
+Type: `BOOL` , Default-Value: `OFF`
 
 #### WASM
 
@@ -968,9 +986,7 @@ arguments:
 ## Module core 
 
 
-main incubed module defining the interfaces for transport, verifier and storage.
 
-This module does not have any dependencies and cannot be used without additional modules providing verification and transport.
 
 ### cache.h
 
@@ -4703,7 +4719,7 @@ arguments:
 ## Module transport/curl 
 
 
-add a option
+
 
 ### in3_curl.h
 
@@ -4745,8 +4761,7 @@ registers curl as a default transport.
 ## Module transport/http 
 
 
-for detecting Windows compilers
-target_link_libraries(transport_curl ws2_32 wsock32 pthread )
+
 
 ### in3_http.h
 
@@ -4777,7 +4792,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 ## Module verifier/eth1/basic 
 
 
-static lib
+
 
 ### eth_basic.h
 
@@ -5129,9 +5144,7 @@ arguments:
 ## Module verifier/eth1/evm 
 
 
-add gas-calculation
-ADD_DEFINITIONS(-DEVM_GAS)
-add dependency
+
 
 ### big.h
 
@@ -6070,14 +6083,15 @@ returns: `int`
 #### evm_run
 
 ```c
-int evm_run(evm_t *evm);
+int evm_run(evm_t *evm, address_t code_address);
 ```
 
 arguments:
 ```eval_rst
-=================== ========= 
-`evm_t * <#evm-t>`_  **evm**  
-=================== ========= 
+========================= ================== 
+`evm_t * <#evm-t>`_        **evm**           
+`address_t <#address-t>`_  **code_address**  
+========================= ================== 
 ```
 returns: `int`
 
@@ -6846,9 +6860,7 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 ## Module verifier/eth1/full 
 
 
-add gas-calculation
-ADD_DEFINITIONS(-DEVM_GAS)
-add dependency
+
 
 ### eth_full.h
 
@@ -6885,7 +6897,7 @@ this function should only be called once and will register the eth-full verifier
 ## Module verifier/eth1/nano 
 
 
-static lib
+
 
 ### chainspec.h
 
@@ -7342,7 +7354,7 @@ returns: [`consensus_transition_t *`](#consensus-transition-t)
 #### chainspec_to_bin
 
 ```c
-int chainspec_to_bin(chainspec_t *spec, bytes_builder_t *bb);
+in3_ret_t chainspec_to_bin(chainspec_t *spec, bytes_builder_t *bb);
 ```
 
 arguments:
@@ -7352,7 +7364,9 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**    
 ======================================= ========== 
 ```
-returns: `int`
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
 #### chainspec_from_bin
