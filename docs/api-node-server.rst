@@ -1,6 +1,8 @@
 ********************
-API Reference Node
+API Reference Node/Server
 ********************
+
+The term in3-server and in3-node are used interchangeably.
 
 Nodes are the backend of Incubed. Each node serves RPC requests to Incubed clients. The node itself runs like a proxy for an Ethereum client (Geth, Parity, etc.), but instead of simply passing the raw response, it will add the required proof needed by the client to verify the response.
 

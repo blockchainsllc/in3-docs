@@ -16,7 +16,7 @@ Welcome to Incubed's documentation!
    api-c
    api-java
    api-cmd
-   api-server
+   api-node-server
 
 .. toctree::
    :maxdepth: 2
