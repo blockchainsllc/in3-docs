@@ -1,18 +1,5 @@
 # Downloading in3
 
-+---------------------------------------+
-|                Results                |
-+---------------------------------------+
-|             |        Contestant       |
-+ Competition +-------------------------+
-|             |  John | Andrea | Robert |
-+-------------+-------+--------+--------+
-| Swimming    |  1:30 |   2:05 |   1:15 |
-+-------------+-------+--------+--------+
-| Running     | 15:30 |  14:10 |  15:45 |
-+-------------+-------+--------+--------+
-
-
 in3 is divided into two distinct components, the in3-node and in3-client. The in3-node is currently written in typescript, whereas the in3-client has a version in typescript as well as a smaller and more feature packed version written in C. 
 
 In order to compile from scratch, please use the sources from our [github page](https://github.com/slockit/in3) or the [public gitlab page](https://public-git.slock.it). Instructions for building from scratch can be found in our documentation.
@@ -28,13 +15,13 @@ The in3-server and in3-client has been published in multiple package managers an
 |                 | Brew                      | [Homebrew]( https://github.com/slockit/homebrew-in3)                   | Easy to install on MacOS or linux/windows subsystems |
 |                 | Release page              | [Github](https://github.com/slockit/in3-c/releases)                    | For directly playing with the binaries/deb/jar/wasm files |
 
-
+```eval_rst
 +----------------+--------------------+-----+---------------------+
 |                | Package manager    | Link | Use case           |                                                                                                             
 +================+====================+=====+=====================+
 | in3-node(ts)   |                    |     |                     |                                                                                                                     
 +----------------+--------------------+-----+---------------------+
-
+```
 
 
 ## in3-node
