@@ -8,8 +8,8 @@ The in3-server and in3-client has been published in multiple package managers an
 
 |         | package manager           | Link  | Use case |
 | ------------- |:-------------:| -----:| :----:|
-| in3-node (ts)      | Docker Hub | [DockerHub]((https://hub.docker.com/r/slockit/in3-node)    | To run the in3-server, which the in3-client can use to connect to the in3 network |
-| in3-client(ts)| npm | [npm](https://www.npmjs.com/package/in3) | To use with js applications
+| in3-node (ts)      | Docker Hub | [DockerHub](https://hub.docker.com/r/slockit/in3-node)    | To run the in3-server, which the in3-client can use to connect to the in3 network |
+| in3-client(ts)| npm | [npm](https://www.npmjs.com/package/in3) | To use with js applications |
 | in3-client(C)      |  Ubuntu Launchpad     |   [ubuntu](https://launchpad.net/~devops-slock-it/+archive/ubuntu/in3) | It can be nicely integrated on IoT devices or any micro controllers |
 | | Docker Hub | [DockerHub](https://hub.docker.com/r/slockit/in3) | Quick and easy way to get in3 client running
 | | Brew      |    [Homebrew]( https://github.com/slockit/homebrew-in3) | Easy to install on MacOS or linux/windows subsystems
