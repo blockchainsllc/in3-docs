@@ -30,8 +30,8 @@ Usage
 -np            Short for ``-p none``.
 -s, -signs     Number of signatures to use when verifying.
 -b, -block     The block number to use when making calls. Could be either ``latest`` (default), ``earliest``, or a hex number.
--pk            The private key as raw keystore file.
--pwd           Password to unlock the key.
+-pk            The path to the private key as keystore file.
+-pwd           Password to unlock the key. (Warning: since the passphrase must be kept private, make sure that this key may not appear in the bash_history)
 -to            The target address of the call.
 -st, -sigtype  the type of the signature data : ``eth_sign`` (use the prefix and hash it), ``raw`` (hash the raw data), ``hash`` (use the already hashed data). Default: raw
 -port          specifies the port to run incubed as a server. Opening port 8545 may replace a local parity or geth client.
@@ -131,7 +131,7 @@ The following environment variables may be used to define defaults:
 .. glossary::
 
    IN3_PK
-      The raw private key used for signing (same as -pk).
+      The raw private key used for signing. This should be used with caution, since all subprocesses have access to it!
    IN3_CHAIN
       The chain to use (default: mainnet) (same as -c). If a URL is passed, this server will be used instead.
 
@@ -227,25 +227,30 @@ While Incubed itself uses an abstract definition for signing, at the moment, the
 There are two ways you can specify the private keys that Incubed should use to sign transactions:
 
 1. Use the environment variable ``IN3_PK``.
-   This makes it easier to hide the key.
+   This makes it easier to run multiple transaction.
+
+   .. warning::
+      Since the key is stored in an envirmoent variable all subpoccess have access to this. That's why this method is potentially unsafe.
 
    .. code-block:: sh
 
       #!/bin/sh
 
-      IN3_PK = `cat my_private_key`
+      # reads the key from the keyfile and asks the user for the passphrase.
+      IN3_PK = `in3 key my_keyfile.json`
 
+      # you can can now use this private keys since it is stored in a enviroment-variable
       in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 3.5eth -wait send
-      in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 -pk 0x... send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
+      in3 -to 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c  -gas 1000000 send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
   
 2. Use the ``-pk`` option
 
+   This option takes the path to the keystore-file and will ask the user to unlock as needed. It will not store the unlocked key anywhere.
+
    .. code-block:: sh
 
-      in3 -pk 27a37a1210df14f7e058393d27a37a1210df14f7e058393d026e2fb53b7cf8c1 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 200eth -wait send
-      in3 -pk `cat my_private_key` -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 200ETH -wait send
+      in3 -pk my_keyfile.json -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 200eth -wait send
 
-Usually, it is a bad idea to heavily privatize keys or to even use them as an option since this would mean they also appear in the Bash history. That's why the first approach is highly recommended. In the future, other signing approaches will be supported.
 
 Autocompletion
 ##############
@@ -356,10 +361,8 @@ Sending a Transaction
 
 .. code-block:: sh
 
-   IN3_PK=`cat my_private_key`
-
-   # Sends a transaction to a register server function and signs it with the private key given (-pk 0x...):
-   in3 -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000  send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
+   # Sends a transaction to a register server function and signs it with the private key given :
+   in3 -pk mykeyfile.json -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1  -gas 1000000  send "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
 Deploying a Contract
 ********************
@@ -367,7 +370,7 @@ Deploying a Contract
 .. code-block:: sh
 
    # Compiling the Solidity code, filtering the binary, and sending it as a transaction returning the txhash:
-   solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk `cat my_private_key.txt` -d - send
+   solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk my_private_key.json -d - send
 
    # If you want the address, you would need to wait until the text is mined before obtaining the receipt:
-   solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk `cat my_private_key.txt` -d - -wait send | jq -r .contractAddress
+   solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk my_private_key.json -d - -wait send | jq -r .contractAddress

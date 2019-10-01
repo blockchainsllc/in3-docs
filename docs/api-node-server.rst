@@ -37,9 +37,12 @@ Command-line Arguments
 --logging-name                           The name of the provider.
 --logging-type                           The module of the provider.
 --maxThreads                             The maximal number of threads running parallel to the processes.
+--maxPointsPerMinute                     The Score for one client able to use within one minute, which is used as DOS-Protection.
+--maxBlocksSigned                        The max number of blocks signed per in3_sign-request
+--maxSignatures                          The max number of signatures to sign per request
 --minBlockHeight                         The minimal block height needed to sign.
 --persistentFile                         The file name of the file keeping track of the last handled blockNumber.
---privateKey                             The private key used to sign blockhashes. This can be either a 0x-prefixed string with the raw private key or the path to a key file.
+--privateKey                             The path to the keystore-file for the signer key used to sign blockhashes.
 --privateKeyPassphrase                   The password used to decrypt the private key.
 --profile-comment                        Comments for the node.
 --profile-icon                           URL to an icon or logo of a company offering this node.
