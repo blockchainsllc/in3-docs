@@ -1,6 +1,6 @@
-********************
+*************************
 API Reference Node/Server
-********************
+*************************
 
 The term in3-server and in3-node are used interchangeably.
 
@@ -9,7 +9,7 @@ Nodes are the backend of Incubed. Each node serves RPC requests to Incubed clien
 To run such a node, you need to have an Ethereum client running where you want to forward the request to. At the moment, the minimum requirement is that this client needs to support ``eth_getProof`` (see http://eips.ethereum.org/EIPS/eip-1186).
 
 Command-line Arguments
-####################
+######################
 
 --autoRegistry-capabilities-multiChain   If true, this node is able to deliver multiple chains.
 --autoRegistry-capabilities-proof        If true, this node is able to deliver proofs.

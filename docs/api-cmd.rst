@@ -55,22 +55,45 @@ Install
 From Binaries
 *************
 
-You can download the binaries here:
+You can download the from the latest release-page:
 
-- :download:`mac os <downloads/osx/in3_osx>`.
-- :download:`win64 <downloads/win/in3.exe>`.
-- :download:`armv7 <downloads/armv7/in3_armv7>`.
-- :download:`armv7hf <downloads/armv7hf/in3_armv7hf>`.
-- :download:`linux_x86 <downloads/x86/in3_x86>`.
-- :download:`linux_x64 <downloads/x64/in3_x64>`.
-- :download:`in3.jar <downloads/in3.jar>`.
-- :download:`installer <downloads/install.sh>`.
+https://github.com/slockit/in3-c/releases
 
-Or simply use this one-liner:
+These release files contain the sources, precompiled libraries and executables, headerfiles and documentation. 
+
+From Package Managers
+*********************
+
+We currently support
+
+Ubuntu Launchpad (Linux)
+########################
+
+Installs libs and binaries on IoT devices or Linux-Systems
 
 .. code-block:: sh
 
-   curl https://in3.readthedocs.io/en/develop/_downloads/install.sh -sSf | sudo sh
+   # Add the slock.it ppa to your system
+   sudo add-apt-repository ppa:devops-slock-it/in3
+
+   # install the commandline tool in3
+   apt-get install in3
+
+   # install shared and static libs and header files
+   apt-get install in3-dev
+
+Brew (MacOS)
+############
+
+This is the easiest way to install it on your mac using brew
+
+.. code-block:: sh
+
+   # Add a brew tap
+   brew tap slockit/in3
+
+   # install all binaries and libraries
+   brew install in3
 
 
 From Sources
@@ -90,22 +113,15 @@ Before building, make sure you have these components installed:
    # create build-folder
    cd in3-core
    mkdir build && cd build
+
+   # configure and build
    cmake -DCMAKE_BUILD_TYPE=Release .. && make in3
 
    # install
-   make install
+   sudo make install
 
-When building from source, CMake accepts the following flags:
-
--DBUILD_DOC     If true, Doxygen is used to build the documentation (default: true).
--DDEBUG         If set, additional DEBUG-outputs are generated (default: false).
--DEVM_GAS       If true, the gas costs are verified when validating an ``eth_call``.
-
-This is an optimization since most calls are only interested in the result. EVM_GAS would be required if the contract used gas-dependent code.
-
--DFAST_MATH     Enable math optimizations during ``eth_call`` (excutable size may increase) (default: false).               
--DTEST          Enable test output and memory leak management, but it slows down and should only be used for tests (default: false).
--DWASM          If Wasm is enabled, only the Wasm module and its dependencies will be built (default: false).
+When building from source, CMake accepts the flags which help to optimize.
+For more details just look at the `CMake-Options <api-c.html#cmake-options>`_ .
 
 
 From Docker
