@@ -30,6 +30,7 @@ Usage
 -np            Short for ``-p none``.
 -s, -signs     Number of signatures to use when verifying.
 -b, -block     The block number to use when making calls. Could be either ``latest`` (default), ``earliest``, or a hex number.
+-l, -latest    replaces ``latest`` with latest BlockNumber - the number of blocks given.
 -pk            The path to the private key as keystore file.
 -pwd           Password to unlock the key. (Warning: since the passphrase must be kept private, make sure that this key may not appear in the bash_history)
 -to            The target address of the call.
@@ -176,6 +177,10 @@ As methods, the following can be used:
         Decodes the data based on the signature.
      pk2address <privatekey>
         Extracts the public address from a private key.
+     pk2public <privatekey>
+        Extracts the public key from a private key.
+     ecrecover <msg> <signature>
+        Extracts the address and public key from a signature.
      createkey
         Generates a random raw private key.
      key <keyfile>
