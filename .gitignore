@@ -1,2 +1,5 @@
 node_modules
 build
+
+docs/.DS_Store
+.idea/*

@@ -1,58 +1,67 @@
 # Roadmap
 
-Incubed implements 2 Versions. 
- - **Typescript / Javascript** , which is optimized for dapps, webapps or mobile apps.
- - **embedded C** optimized for microcontrollers and all other use cases.  
+Incubed implements two versions: 
+ - **TypeScript / JavaScript**: optimized for dApps, web apps, or mobile apps.
+ - **C**: optimized for microcontrollers and all other use cases.
 
-## V1.2 Stable - Q3 2019
+In the future we will focus on one codebase, which is C. This will be ported to many platforms (like WASM).
 
-The first stable release, which was published after devcon. It contains full verification of all relevant ethereum rpc-calls (except eth_call for eWasm-Contracts), but no payment or incentivisation included yet.
+## V2.0 Stable: Q3 2019
 
-- **Failsafe Connection** - The Incubed client will connect to any ethereum-blockchain (providing in3-servers) by randomly selecting nodes within the Incubed-network and automatically retry with different nodes, if the node cannot be reached or delivers verifiable responses.
-- **Reputation Management** - Nodes which are not available will be automatically temporarily blacklisted and loose repuatation. The selection of a node is based on the weight (or performance) of the node and its availability. 
-- **Automatic Nodelist Updates** - All Incubed nodes are registered in smart contracts onchain and will trigger events if the nodelist changes. Each request will always return the blocknumber of the last event, so the client knows when to update its nodelist.
-- **Partial Nodelist** - In order to support small devices, the nodelist can be limited and still be fully verfied by basing the selection of nodes deterministically on a client-generated seed.
-- **MultiChain Support** - Incubed is currently supporting any ethereum-based chain. The client can even run parallel requests to different networks without the need to synchronize first.
-- **Preconfigured Boot Nodes** - While you can configure any registry contract, the standard version contains configuration with boot nodes for `mainnet`, `kovan`, `evan`, `tobalaba` and `ipfs`.
-- **Full Verification of JSON-RPC-Methods** - Incubed is able to fully verify all important JSPN-RPC-Methods. This even includes calling functions in smart contract and verifying their return value (`eth_call`), which means executing each opcode locally in the client in order to confirm the result.  
-- **IPFS-Support** - Incubed is able to write and read IPFS-content and verify the data by hashing and creating the the multihash.
-- **Caching Support** - an optional cache allows to store the result of rpc-requests and automatically use it again within a configurable time span or if the client if offline. This also includes RPC-Requests, blocks, code and nodelists)
-- **Custom Configuration** - The client is highly customizable. For each single request a configuration can be explicitly passed or by adjusting it through events (`client.on('beforeRequest',...)`). This allows  to optimize proof-level or number of requests to be sent depending on the context.
-- **Proof-Levels** Incubed supports different proof-levels: `none` -  for no verifiaction, `standard` - for verifying only relevant properties and  `full` - for complete vertification including uncle blocks or previous Transaction (higher payload) )
-- **Security-Levels** - configurable number of signatures (for PoW) and minimal deposit stored.
-- **PoW-Support** - For PoW blocks are verified based on blockhashes signed by Incubed nodes storing a deposit which they lose if this blockhash is not correct.
-- **PoA-Support** - For PoA-Chains (using Aura) blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the aura-algorithm to determine the signer from the Validatorlist (with static Validatorlist or contract based validators) 
-- **Finality-Support** - For PoA-Chains the client can require a configurable number of signatures (in percent) to accept them as final.
-- **Flexible Transport-layer** - The communication-layer between clients and nodes can be overridden, but already support different transport formats (json/cbor/in3)
-- **Replace Latest-Blocks** - Since most applications per default always ask request for the latest block, which cannot be considered as final in a PoW-Chain, a configuration allows to automatically use a certain blockheight to run the request. (like 6 blocks)
-- **Light Ethereum API** - Incubed comes with a typesafe simple API, which covers all standard JSON-RPC-Requests ( `in3.eth.getBalance('0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5')` ). This API also includes support for signing and sending transactions as well as calling methods in smart contracts without a complete ABI by simply passing the signature of the method as argument.
-- **TypeScript Support** - as Incubed is written 100% in typescript, you get all the advantages of a typesafe tollchain.
-- **Integrations** -  Incubed has been succesfully tested in all major browsers, nodejs and even react-native.
+This was the first stable release, which was published after Devcon. It contains full verification of all relevant Ethereum RPC calls (except eth_call for eWasm contracts), but there is no payment or incentivization included yet.
 
-## V1.2 Incentivisation - Q3 2019
+- **Fail-safe Connection**: The Incubed client will connect to any Ethereum blockchain (providing Incubed servers) by randomly selecting nodes within the Incubed network and, if the node cannot be reached or does not deliver verifiable responses, automatically retrying with different nodes.
+- **Reputation Management**: Nodes that are not available will be temporarily blacklisted and lose reputation. The selection of a node is based on the weight (or performance) of the node and its availability.
+- **Automatic NodeList Updates**: All Incubed nodes are registered in smart contracts on chain and will trigger events if the NodeList changes. Each request will always return the blockNumber of the last event so that the client knows when to update its NodeList.
+- **Partial NodeList**: To support small devices, the NodeList can be limited and still be fully verified by basing the selection of nodes deterministically on a client-generated seed.
+- **Multichain Support**: Incubed is currently supporting any Ethereum-based chain. The client can even run parallel requests to different networks without the need to synchronize first.
+- **Preconfigured Boot Nodes**: While you can configure any registry contract, the standard version contains configuration with boot nodes for `mainnet`, `kovan`, `evan`, `tobalaba`, and `ipfs`.
+- **Full Verification of JSON-RPC Methods**: Incubed is able to fully verify all important JSON-RPC methods. This even includes calling functions in smart contract and verifying their return value (`eth_call`), which means executing each opcode locally in the client to confirm the result.
+- **IPFS Support**: Incubed is able to write and read IPFS content and verify the data by hashing and creating the multihash.
+- **Caching Support**: An optional cache enables storage of the results of RPC requests that can automatically be used again within a configurable time span or if the client is offline. This also includes RPC requests, blocks, code, and NodeLists.
+- **Custom Configuration**: The client is highly customizable. For each request, a configuration can be explicitly passed or adjusted through events (`client.on('beforeRequest',...)`). This allows the proof level or number of requests to be sent to be optimized  depending on the context.
+- **Proof Levels**: Incubed supports different proof levels: `none` for no verification, `standard` for verifying only relevant properties, and  `full` for complete verification, including uncle blocks or previous transactions (higher payload).
+- **Security Levels**: Configurable number of signatures (for PoW) and minimal deposit stored.
+- **PoW Support**: For PoW, blocks are verified based on blockhashes signed by Incubed nodes storing a deposit, which they lose if this blockhash is not correct.
+- **PoA Support**: (experimental) For PoA chains (using Aura and clique), blockhashes are verified by extracting the signature from the sealed fields of the blockheader and by using the Aura algorithm to determine the signer from the validatorlist (with static validatorlist or contract-based validators).
+- **Finality Support**: For PoA chains, the client can require a configurable number of signatures (in percent) to accept them as final.
+- **Flexible Transport Layer**: The communication layer between clients and nodes can be overridden, but the layer already supports different transport formats (JSON/CBOR/Incubed).
+- **Replace Latest Blocks**: Since most applications per default always ask for the latest block, which cannot be considered final in a PoW chain, a configuration allows applications to automatically use a certain block height to run the request (like six blocks).
+- **Light Ethereum API**: Incubed comes with a simple type-safe API, which covers all standard JSON-RPC requests (`in3.eth.getBalance('0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5')`). This API also includes support for signing and sending transactions, as well as calling methods in smart contracts without a complete ABI by simply passing the signature of the method as an argument.
+- **TypeScript Support**: Because Incubed is written 100% in TypeScript, you get all the advantages of a type-safe toolchain.
+- **java**: java version of the Incubed client based on the C sources (using JNI) 
 
-This release will introduce the Incentivisation-Layer, which should help provide more nodes to create the decentralized Network. 
+## V2.1 Incentivization: Q4 2019
 
-- **PoA Clique** - Support Clique PoA to verify Blockheader.
-- **Signed Requests** - Incubed supports the Incentivisation-Layer which requires signed requests in order to assign client requests to certain nodes.
-- **Network-Balancing** - Nodes will balance the Network based on Load and Reputation.
+This release will introduce the incentivization layer, which should help provide more nodes to create the decentralized network.
 
-## V1.3 eWasm - Q1 2020
+- **PoA Clique**: Supports Clique PoA to verify blockheaders.
+- **Signed Requests**: Incubed supports the incentivization layer, which requires signed requests to assign client requests to certain nodes.
+- **Network Balancing**: Nodes will balance the network based on load and reputation.
+- **python-bindings**: integration in python 
+- **go-bindings**: bindings for go
 
-For `eth_call`-Verification the client and server must be able to execute the code. This release adds the ability to also 
+## V2.2 Bitcoin: Q1 2020
 
-- **eWasm** - Support eWasm Contracts in eth_casll.
+Multichain Support for BTC
 
-## V1.4 Substrate - Q3 2020
+- **Bitcoin**: Supports Verfification for Bitcoin blocks and Transactions
+- **WASM**: Typescript client based on a the C-Sources compiled to wasm.
 
-Supporting Polkadot or any Substrate-based chains.
+## V2.3 WASM: Q3 2020
 
-- **Substrate** - Framework support
-- **Runtime-Optimization** - Using pre-compiled Runtimes. 
+For `eth_call` verification, the client and server must be able to execute the code. This release adds the ability to support eWasm contracts.
 
-## V1.5 Services - Q1 2021
+- **eth 2.0**: Basic Support for Eth 2.0
+- **eWasm**: Supports eWasm contracts in eth_call.
 
-Generic Interface for any deterministic Service (as docker-container) to be decentralized and verified.
+## V2.4 Substrate: Q1 2021
 
+Supports Polkadot or any substrate-based chains.
 
+- **Substrate**: Framework support.
+- **Runtime Optimization**: Using precompiled runtimes.
 
+## V2.5 Services: Q3 2021
+
+Generic interface enables any deterministic service (such as docker-container) to be decentralized and verified.

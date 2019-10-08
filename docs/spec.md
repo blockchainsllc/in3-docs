@@ -1,39 +1,38 @@
-# IN3-Specification 
+# IN3-Protocol
 
-This document describes the communication between a incubed client and a incubed node. This communication is based on requests which use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests this means each node also accepts all standard requests as at https://github.com/ethereum/wiki/wiki/JSON-RPC, which also includes handling Bulk-requests. 
+This document describes the communication between a Incubed client and a Incubed node. This communication is based on requests that use extended [JSON-RPC](https://www.jsonrpc.org/specification)-Format. Especially for ethereum-based requests, this means each node also accepts all standard requests as defined at [Ethereum JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC), which also includes handling Bulk-requests. 
 
-Each request may add an optional `in3` property defining the verification behavior for incubed.
+Each request may add an optional `in3` property defining the verification behavior for Incubed.
 
 
 ## Incubed Requests
 
-Requests without a `in3` property will also get a response without `in3`. This allows any incubed node to also act as a raw ethereum json-rpc endpoint. The `in3` property in the request is defined as following:  
+Requests without an `in3` property will also get a response without `in3`. This allows any Incubed node to also act as a raw ethereum JSON-RPC endpoint. The `in3` property in the request is defined as the following:  
 
-*  **chainId** `string<hex>` - the requested [chainId](#chainid). This property is optinal, but should always be specified in case a node may support multiple chains. In this case the default of the node would be used, which may end up in a undefined behavior since the client can not know the default. 
+*  **chainId** `string<hex>` - The requested [chainId](#chainid). This property is optional, but should always be specified in case a node may support multiple chains. In this case, the default of the node would be used, which may end up in an undefined behavior since the client cannot know the default. 
 
-*  **includeCode** `boolean` - applies only for `eth_call`-requests. if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards   
+*  **includeCode** `boolean` - Applies only for `eth_call`-requests. If true, the request should include the codes of all accounts. Otherwise only the the codeHash is returned. In this case, the client may ask by calling eth_getCode() afterwards.   
 
-*  **verifiedHashes** `string<bytes32>[]` - if the client sends a array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This allows to client to skip requiring signed blockhashes for blocks already verified.
+*  **verifiedHashes** `string<bytes32>[]` - If the client sends an array of blockhashes, the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This allows the client to skip requiring signed blockhashes for blocks already verified.
 
-*  **latestBlock** `integer` - if specified, the blocknumber `latest` will be replaced by blockNumber- specified value. This allows the incubed client to define finality for PoW-Chains, which is important, since the `latest`-block can not considered final and therefore it would be unlikely to find nodes willing to sign a blockhash for such a block.    
+*  **latestBlock** `integer` - If specified, the blocknumber `latest` will be replaced by a blockNumber-specified value. This allows the Incubed client to define finality for PoW-Chains, which is important, since the `latest`-block cannot be considered final and therefore it would be unlikely to find nodes willing to sign a blockhash for such a block.    
 
-*  **useRef** `boolean` - if true binary-data (starting with a 0x) will be refered if occuring again. This decreases the payload especially for recurring data such as merkle proofs. If supported the server ( and client) will keep track of each binary value storing them in a temporary array. If the previously used value is used again the server replaces it with `:<index>` the client then resolves such refs by lookups in the temp array.   
+*  **useRef** `boolean` - If true, binary-data (starting with a 0x) will be referred if occurring again. This decreases the payload especially for recurring data such as merkle proofs. If supported, the server (and client) will keep track of each binary value storing them in a temporary array. If the previously used value is used again, the server replaces it with `:<index>`. The client then resolves such refs by lookups in the temporary array.   
 
-*  **useBinary** `boolean` - if true binary-data will be used. This format is optimzed for embedded devices and reduces the payload to about 30%. For details see [the Binary-spec](#binary-format)
+*  **useBinary** `boolean` - If true, binary-data will be used. This format is optimzed for embedded devices and reduces the payload to about 30%. For details see [the Binary-spec](#binary-format).
 
-*  **useFullProof** `boolean` - if true all data in the response will be proven, which leads to a higher payload. The result depends on the method called and will be specified there.
+*  **useFullProof** `boolean` - If true, all data in the response will be proven, which leads to a higher payload. The result depends on the method called and will be specified there.
 
-*  **finality** `number` - For PoA-Chains it will deliver additional proof to reach finaliy.  if given, the server will deliver the blockheaders of the following blocks until at least the number in percent of the validators is reached.   
+*  **finality** `number` - For PoA-Chains, it will deliver additional proof to reach finality.  If given, the server will deliver the blockheaders of the following blocks until at least the number in percent of the validators is reached.   
 
-*  **verification** `string` - defines the kind of proof the client is asking for   
- Must be one of the these values : 
-    - `'never`' : no proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw json-rpc response will be returned 
-    - `'proof`' : The proof will be created including blockheader, but without any signed blockhashes
-    - `'proofWithSignature`' : The returned proof will also includ signed blockhashes as required in `signatures`
+*  **verification** `string` - Defines the kind of proof the client is asking for. Must be one of the these values: 
+    - `'never`' : No proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw JSON-RPC response will be returned. 
+    - `'proof`' : The proof will be created including a blockheader, but without any signed blockhashes.
+    - `'proofWithSignature`' : The returned proof will also include signed blockhashes as required in `signatures`.
 
-*  **signatures** `string<address>[]` - a list of addresses(as 20bytes in hex) requested to sign the blockhash.    
+*  **signatures** `string<address>[]` - A list of addresses (as 20bytes in hex) requested to sign the blockhash.    
 
-A Example of an incubed request may look like this:
+A example of an Incubed request may look like this:
 
 ```json
 {
@@ -52,17 +51,17 @@ A Example of an incubed request may look like this:
 
 ## Incubed Responses
 
-Each incubed node responses is based on JSON-RPC, but also adds then `in3` -property. If the request does not contain a `in3`-property or does not require proof, the response must also omit the `in3` property.
+Each Incubed node response is based on JSON-RPC, but also adds the `in3` property. If the request does not contain a `in3` property or does not require proof, the response must also omit the `in3` property.
 
-If the proof is requested, the `in3`-property is defined with the following properties:
+If the proof is requested, the `in3` property is defined with the following properties:
 
-*  **proof** [Proof](#proofs) - the Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
+*  **proof** [Proof](#proofs) - The Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
 
-*  **lastNodeList** `number` - the blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber he should update the nodeList.  
+*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodeList.  
 
-*  **lastValidatorChange** `number` - only for PoA-chains. the blocknumber of the last change of the validatorList. If the client has a smaller number he needs to update the validatorlist first. For details see [PoA Validations](#poa-validations)   
+*  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
 
-*  **currentBlock** `number` - the current blocknumber. This number may be stored in the client in order to run sanity checks for `latest` blocks or `eth_blockNumber`, since they cannot be verified directly.   
+*  **currentBlock** `number` - The current blocknumber. This number may be stored in the client in order to run sanity checks for `latest` blocks or `eth_blockNumber`, since they cannot be verified directly.   
 
 An example of such a response would look like this:
 
@@ -122,68 +121,344 @@ An example of such a response would look like this:
 
 ## ChainId
 
-Incubed support multiple chains and a client may even run request to different chains in parallel. While in most cases a chain refers to a specific running blockchain, chainIds may also refer to abstract networks such as ipfs. So then definition of a chain in the context of incubed is simply a distributed data domain offering verifieable api-functions implemented in a in3-node.
+Incubed supports multiple chains and a client may even run requests to different chains in parallel. While, in most cases, a chain refers to a specific running blockchain, chainIds may also refer to abstract networks such as ipfs. So, the definition of a chain in the context of Incubed is simply a distributed data domain offering verifiable api-functions implemented in an in3-node.
 
-Each Chain is identified by a `uint64` identifier written as hex-value. (without leading zeros)
-Since incubed started with ethereum, the chainIds for public ethereum-chains are based on the intrinsic chainId of the ethereum-chain. See https://chainid.network .
+Each chain is identified by a `uint64` identifier written as hex-value (without leading zeros). Since incubed started with ethereum, the chainIds for public ethereum-chains are based on the intrinsic chainId of the ethereum-chain. See https://chainid.network.
 
-For each Chain incubed manages a list of nodes as stored in the [server registry](#registry) and a chainspec describing the verification. These chainspecs are hold in the client as they specify the rules how responses may be validated.
+For each chain, Incubed manages a list of nodes as stored in the [server registry](#registry) and a chainspec describing the verification. These chainspecs are held in the client, as they specify the rules about how responses may be validated.
 
 ## Registry
 
-As Incubed aims for a fully decentralized access to the blockchain, the registry is implemented as a ethereum smart contract. 
+As Incubed aims for fully decentralized access to the blockchain, the registry is implemented as an ethereum smart contract. 
 
-This contract serves different purposes. Primary it serves to manage all the incubed nodes, i.e. it manages both the onboarding and also unregistering process. In order to do so, it also has to manage the deposits: reverting when the amount of provided ether is smaller than the current minimum deposit; but also locking and/or sending back deposits after a servers leaves the in3-netwerk.
+This contract serves different purposes. Primarily, it manages all the Incubed nodes, both the onboarding and also unregistering process. In order to do so, it must also manage the deposits: reverting when the amount of provided ether is smaller than the current minimum deposit; but also locking and/or sending back deposits after a server leaves the in3-network.
 
-In addition, the contract is also used to secure the in3-netwerk by providing functions to convict servers that provided a wrongly signed block and also having a function to vote out inactive servers.
+In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
 ### Node structure
 
-Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as 
+Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as: 
 
-*  **url** `string` - the public url of the node, which must accept JSON-RPC Requests.
+*  **url** `string` - The public url of the node, which must accept JSON-RPC requests.
 
-*  **owner** `address` - the owner of the node with the permission to edit or remove the node.  
+*  **owner** `address` - The owner of the node with the permission to edit or remove the node.  
 
-*  **signer** `address` - the address used when signing blockhashes. This address must be unique withitn the nodeList.   
+*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodeList.   
 
-*  **timeout** `uint64` - timeout after which the owner is allowed to receive his stored deposit. This information is also important for the client, since a invalid blockhash-signature can only convicted as long as the server is registered. A long timout may give a higher security since the node can not lie and unregister right away.
+*  **timeout** `uint64` - Timeout after which the owner is allowed to receive its stored deposit. This information is also important for the client, since an invalid blockhash-signature can only "convict" as long as the server is registered. A long timeout may provide higher security since the node can not lie and unregister right away.
 
-*  **deposit** `uint256` - the deposit stored for the node, which the node will lose if it signes a wrong blockhash.
+*  **deposit** `uint256` - The deposit stored for the node, which the node will lose if it signs a wrong blockhash.
 
-*  **props** `uint64` - a bitmask defining the capabilities of the node:
+*  **props** `uint64` - A bitmask defining the capabilities of the node:
 
-    - `0x01` : **proof** :  the node is able to deliver proof, if not set it may only server pure Ethereum JSON/RPC, thus also simple remote nodes may be registered as incubed nodes.
-    - `0x02` : **multichain** : the same rpc endpoint may also accept requests for different chains.
-    - `0x04` : **archive** : if set, the node is able to support archive requests returning older states. If not only a pruned node is running.
-    - `0x08` : **http** : if set the node will also server requests on standardn http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
-    - `0x10` : **binary** : if set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
+    - `0x01` : **proof** :  The node is able to deliver proof. If not set, it may only serve pure ethereum JSON/RPC. Thus, simple remote nodes may also be registered as Incubed nodes.
+    - `0x02` : **multichain** : The same RPC endpoint may also accept requests for different chains.
+    - `0x04` : **archive** : If set, the node is able to support archive requests returning older states. If not, only a pruned node is running.
+    - `0x08` : **http** : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
+    - `0x10` : **binary** : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
 
     More properties will be added in future versions.
 
-*  **unregisterTime** `uint64` - the earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests a unregister. For the client nodes with a `unregisterTime` set have a less trust, since he will not be able to convict after this timestamp.
+*  **unregisterTime** `uint64` - The earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests an unregister. The client nodes with an `unregisterTime` set have less trust, since they will not be able to convict after this timestamp.
 
-*  **registerTime** `uint64` - the timestamp, when the server was registered.
+*  **registerTime** `uint64` - The timestamp, when the server was registered.
 
-*  **weight** `uint64` - the number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used withtin the incentivication layer to calculate the score.
+*  **weight** `uint64` - The number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used within the incentivization layer to calculate the score.
 
 The following functions are offered within the registry:
 
 
 ### NodeRegistry functions
 
-//TODO add interface for new contract.
+#### constructor
+*constructor*
+
+**Development notice:**
+*cannot be deployed in a genesis block*
+
+**Parameters:**
+* _blockRegistry `BlockhashRegistry`: *address of a BlockhashRegistry-contract*
+
+#### convict
+*must be called before revealConvict*
+*commits a blocknumber and a hash*
+
+**Development notice:**
+*The v,r,s paramaters are from the signature of the wrong blockhash that the node provided*
+
+**Parameters:**
+* _blockNumber `uint`: *the blocknumber of the wrong blockhash*
+* _hash `bytes32`: *keccak256(wrong blockhash, msg.sender, v, r, s); used to prevent frontrunning.*
+
+#### registerNode
+*register a new node with the sender as owner*
+
+**Development notice:**
+*will call the registerNodeInteral function*
+
+**Parameters:**
+* _url `string`: *the url of the node, has to be unique*
+* _props `uint64`: *properties of the node*
+* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
+* _weight `uint64`: *how many requests per second the node is able to handle*
+
+#### registerNodeFor
+*register a new node as a owner using a different signer address*
+
+**Development notice:**
+*will revert when a wrong signature has been provided*
+
+*which is calculated by the hash of the url, properties, timeout, weight and the owner*
+
+*in order to prove that the owner has control over the signer-address he has to sign a message*
+
+*will call the registerNodeInteral function*
+
+
+**Parameters:**
+* _url `string`: *the url of the node, has to be unique*
+* _props `uint64`: *properties of the node*
+* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
+* _signer `address`: *the signer of the in3-node*
+* _weight `uint64`: *how many requests per second the node is able to handle*
+* _v `uint8`: *v of the signed message*
+* _r `bytes32`: *r of the signed message*
+* _s `bytes32`: *s of the signed message*
+
+#### removeNodeFromRegistry
+*removes an in3-server from the registry*
+
+**Development notice:**
+*only callable in the 1st year after deployment*
+
+*only callable by the unregisterKey-account*
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node*
+
+#### returnDeposit
+*only callable after the timeout of the deposit is over*
+*returns the deposit after a node has been removed*
+
+**Development notice:**
+*reverts if the deposit is still locked*
+
+*reverts when there is nothing to transfer*
+
+*reverts when not the owner of the former in3-node*
+
+
+**Parameters:**
+* _signer `address`: *the signer-address of a former in3-node*
+
+#### revealConvict
+*reveals the wrongly provided blockhash, so that the node-owner will lose its deposit*
+
+**Development notice:**
+*reverts when the wrong convict hash (see convict-function) is used*
+
+*reverts when the _signer did not sign the block*
+
+*reverts when trying to reveal immediately after calling convict*
+
+*reverts when trying to convict someone with a correct blockhash*
+
+*reverts if a block with that number cannot be found in either the latest 256 blocks or the blockhash registry*
+
+
+**Parameters:**
+* _signer `address`: *the address that signed the wrong blockhash*
+* _blockhash `bytes32`: *the wrongly provided blockhash*
+* _blockNumber `uint`: *number of the wrongly provided blockhash*
+* _v `uint8`: *v of the signature*
+* _r `bytes32`: *r of the signature*
+* _s `bytes32`: *s of the signature*
+
+#### transferOwnership
+*changes the ownership of an in3-node*
+
+**Development notice:**
+
+*reverts when the sender is not the current owner*
+
+*reverts when trying to pass ownership to 0x0*
+
+*reverts when trying to change ownership of an inactive node*
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node, used as an identifier*
+* _newOwner `address`: *the new owner*
+
+#### unregisteringNode
+*doing so will also lock his deposit for the timeout of the node*
+*a node owner can unregister a node, removing it from the nodeList*
+
+**Development notice:**
+*reverts when not called by the owner of the node*
+
+*reverts when the provided address is not an in3-signer*
+
+
+**Parameters:**
+* _signer `address`: *the signer of the in3-node*
+
+#### updateNode
+*updates a node by adding the msg.value to the deposit and setting the props or timeout*
+
+**Development notice:**
+*reverts when trying to change the url to an already existing one*
+
+*reverts when trying to increase the timeout above 10 years*
+
+*reverts when the signer does not own a node*
+
+*reverts when the sender is not the owner of the node*
+
+
+**Parameters:**
+* _signer `address`: *the signer-address of the in3-node, used as an identifier*
+* _url `string`: *the url, will be changed if different from the current one*
+* _props `uint64`: *the new properties, will be changed if different from the current onec*
+* _timeout `uint64`: *the new timeout of the node, cannot be decreased. Has to be at least 1h*
+* _weight `uint64`: *the amount of requests per second the node is able to handle*
+
+#### totalNodes
+*length of the nodelist*
+**Return Parameters:**
+* `uint` the number of currently active nodes
+
+#### calcProofHash
+*calculates the sha3 hash of the most important properties in order to make the proof faster*
+
+**Parameters:**
+* _node `In3Node`: *the in3 node to calculate the hash from*
+
+**Return Parameters:**
+* `bytes32` the hash of the properties to prove with in3
+
+#### checkNodeProperties
+*function to check whether the allowed amount of ether as deposit per server has been reached*
+
+**Development notice:**
+*will fail when the provided timeout is greater then 1 year*
+
+*will fail when the deposit is greater then 50 ether in the 1st year*
+
+
+**Parameters:**
+* _deposit `uint256`: *the new amount of deposit a server has*
+* _timeout `uint64`: *the timeout until a server can receive his deposit after unregister*
+
+#### registerNodeInternal
+*registers a node*
+
+**Development notice:**
+*reverts when either the owner or the url is already in use*
+
+*reverts when trying to register a node with more then 50 ether in the 1st year after deployment*
+
+*reverts when provided not enough deposit*
+
+*reverts when time timeout exceed the MAXDEPOSITTIMEOUT*
+
+**Parameters:**
+* _url `string`: *the url of a node*
+* _props `uint64`: *properties of a node*
+* _timeout `uint64`: *the time before the owner can access the deposit after unregister a node*
+* _signer `address`: *the address that signs the answers of the node*
+* _owner `address`: *the owner address of the node*
+* _deposit `uint`: *the deposit of a node*
+* _weight `uint64`: *the amount of requests per second a node is able to handle*
+
+#### unregisterNodeInternal
+*handles the setting of the unregister values for a node internally*
+
+**Parameters:**
+* _si `SignerInformation`: *information of the signer*
+* _n `In3Node`: *information of the in3-node*
+
+#### removeNode
+*removes a node from the node-array*
 
 ### BlockHashRegistry functions
 
+#### constructor
+*constructor*
+
+#### searchForAvailableBlock
+*searches for an already existing snapshot*
+
+**Parameters:**
+* _startNumber `uint`: *the blocknumber to start searching*
+* _numBlocks `uint`: *the number of blocks to search for*
+
+**Return Parameters:**
+* `uint` returns a blocknumber when a snapshot had been found. It will return 0 if no blocknumber was found. 
+
+#### recreateBlockheaders
+*if successfull the last blockhash of the header will be added to the smart contract*
+*it will be checked whether the provided chain is correct by using the reCalculateBlockheaders function*
+*only usable when the given blocknumber is already in the smart contract*
+*starts with a given blocknumber and its header and tries to recreate a (reverse) chain of blocks*
+
+**Development notice:**
+*function is public due to the usage of a dynamic bytes array (not yet supported for external functions)*
+
+*reverts when the chain of headers is incorrect*
+
+*reverts when there is not parent block already stored in the contract*
+
+**Parameters:**
+* _blockNumber `uint`: *the block number to start recreation from*
+* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order (youngest -> oldest) => (e.g. 100, 99, 98)*
+
+#### saveBlockNumber
+*stores a certain blockhash to the state*
+
+**Development notice:**
+*reverts if the block can't be found inside the evm*
+
+**Parameters:**
+* _blockNumber `uint`: *the blocknumber to be stored*
+
+#### snapshot
+*stores the currentBlock-1 in the smart contract*
+
+#### getParentAndBlockhash
+*returns the blockhash and the parent blockhash from the provided blockheader*
+
+**Parameters:**
+* _blockheader `bytes`: *a serialized (rlp-encoded) blockheader*
+
+**Return Parameters:**
+* parentHash `bytes32`
+* bhash `bytes32`
+
+#### reCalculateBlockheaders
+*the array of the blockheaders have to be in reverse order (e.g. [100,99,98,97])*
+*starts with a given blockhash and its header and tries to recreate a (reverse) chain of blocks*
+
+**Parameters:**
+* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order, i.e. from youngest to oldest*
+* _bHash `bytes32`: *blockhash of the 1st element of the _blockheaders-array*
+
 ## Binary Format
 
-Since Incubed is optimized for embedded devices, server may not only support JSON, but a special binary-format. This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with following optimizations:
+Since Incubed is optimized for embedded devices, a server can not only support JSON, but a special binary-format. 
+You may wonder why we don't want to use any existing binary serialization for JSON like CBOR or others. The reason is simply: because we do not need to support all the features JSON offers. The following features are not supported:
+- no escape sequences (this allows use of the string without copying it)
+- no float support (at least for now)
+- no string literals starting with `0x` since this is always considered as hexcoded bytes
+- no propertyNames within the same object with the same key hash
+
+Since we are able to accept these restrictions, we can keep the JSON-parser simple.
+This binary-format is highly optimized for small devices and will reduce the payload to about 30%. This is achieved with the following optimizations:
 
 * All strings starting with `0x`are interpreted as binary data and stored as such, which reduces the size of the data to 50%.
-* All propertyNames of JSON-Objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount. (depending on the propertyName).    
+* Recurring byte-values will use references to previous data, which reduces the payload, especially for merkle proofs.
+* All propertyNames of JSON-objects are hashed to a 16bit-value, reducing the size of the data to a signifivant amount (depending on the propertyName).
 
-  the hash is calculated very easy like this:
+  The hash is calculated very easily like this:
   ```c
   static d_key_t key(const char* c) {
     uint16_t val = 0, l = strlen(c);
@@ -193,12 +468,35 @@ Since Incubed is optimized for embedded devices, server may not only support JSO
   ````
 
 
-The binary format is based on JSON-structure, but uses a RLP-encoding aproach. Each node or value is represented by a these 4 values:
+```eval_rst
+.. note:: A very important limitation is the fact that property names are stored as 16bit hashes, which decreases the payload, but does not allow for the restoration of the full json without knowing all property names! 
+```
 
+The binary format is based on JSON-structure, but uses a RLP-encoding approach. Each node or value is represented by these four values:
+
+*  **key** `uint16_t` - The key hash of the property. This value will only pass before the property node if the structure is a property of a JSON-object. 
 *  **type** `d_type_t` - 3 bit : defining the type of the element.
-*  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value.
-*  **key** `uint16_t` - the key hash of the property. This value will only passed, if the structure is a property of a JSON-Object.
-*  **value** `bytes_t` - the bytes or value of the node (only for strings or bytes)
+*  **len** `uint32_t` - 5 bit : the length of the data (for bytes/string/array/object). For (boolean or integer) the length will specify the value. 
+*  **data** `bytes_t` - The bytes or value of the node (only for strings or bytes).
+
+
+```eval_rst
+.. graphviz::
+
+    digraph g{
+      rankdir=LR;
+
+      node[fontname="Helvetica",   shape=record, color=lightblue ]
+      propHash[label="key|16 bit", style=dashed]
+      type[label="type|{type (3bit) | len (5bit)}"]
+      len2[label="len ext",  style=dashed]
+      data[label="data",  style=dashed]
+      propHash -> type -> len2 -> data
+    }
+
+
+```
+
 
 The serialization depends on the type, which is defined in the first 3 bits of the first byte of the element:
 
@@ -207,31 +505,540 @@ d_type_t type = *val >> 5;     // first 3 bits define the type
 uint8_t  len  = *val & 0x1F;   // the other 5 bits  (0-31) the length
 ```
 
-the `len` depends on ther size of the data. so the last 5 bit of the first bytes are interpreted as following:
+The `len` depends on the size of the data. So, the last 5 bit of the first bytes are interpreted as follows:
 
-* `0x00` - `0x1c` : the length is taken as is from the 5 bits.
-* `0x1d` - `0x1f` : the length is taken by reading the value of the next `len - 0x1c` bytes.  
+* `0x00` - `0x1c` : The length is taken as is from the 5 bits.
+* `0x1d` - `0x1f` : The length is taken by reading the big-endian value of the next `len - 0x1c` bytes (len ext).  
 
-After the type-byte and optional length bytes the 2 bytes representing the property hash is added, but only if the elemtent is a property of a JSON-object.    
+After the type-byte and optional length bytes, the 2 bytes representing the property hash is added, but only if the element is a property of a JSON-object.    
 
-Depending on these type the length will be used to read the next bytes:
+Depending on these types, the length will be used to read the next bytes:
 
 * `0x0` : **binary data** - This would be a value or property with binary data. The `len` will be used to read the number of bytes as binary data.
-* `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead copying memory in RAM.
-* `0x2` : **array** - represents a array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
-* `0x3` : **object** - a JSON-object with `len` properties comming next. In this case the properties following this element will have a `key` specified.
-* `0x4` : **boolean** - boolean value where len must be either `0x1`= `true` or `0x0` = `false`.
-* `0x5` : **integer** - a integer-value with max 29 bit (since the 3 bits are used for the type). if the value is higher than `0x20000000`, it will be stored as binary data.
-* `0x6` : **null** - represents a null-value. if this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
+* `0x1` : **string data** - This would be a value or property with string data. The `len` will be used to read the number of bytes (+1) as string. The string will always be null-terminated, since it will allow small devices to use the data directly instead of copying memory in RAM.
+* `0x2` : **array** - Represents an array node, where the `len` represents the number of elements in the array. The array elements will be added right after the array-node.
+* `0x3` : **object** - A JSON-object with `len` properties coming next. In this case the properties following this element will have a leading `key` specified.
+* `0x4` : **boolean** - Boolean value where `len` must be either `0x1`= `true` or `0x0` = `false`. If `len > 1` this element is a copy of a previous node and may reference the same data. The index of the source node will then be `len-2`.
+* `0x5` : **integer** - An integer-value with max 29 bit (since the 3 bits are used for the type). If the value is higher than `0x20000000`, it will be stored as binary data.
+* `0x6` : **null** - Represents a null-value. If this value has a `len`> 0 it will indicate the beginning of data, where `len` will be used to specify the number of elements to follow. This is optional, but helps small devices to allocate the right amount of memory.
 
 
 ## Communication
 
+Incubed requests follow a simple request/response schema allowing even devices with a small bandwith to retrieve all the required data with one request. But there are exceptions when additional data need to be fetched.
+
+These are:
+
+1. **Changes in the NodeRegistry**    
+
+    Changes in the NodeRegistry are based on one of the following events: 
+    
+    - `LogNodeRegistered`
+    - `LogNodeRemoved`
+    - `LogNodeChanged`
+
+    The server needs to watch for events from the `NodeRegistry` contract, and update the nodeList when needed.
+    
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
+
+  ```eval_rst
+    .. uml::
+
+      Client -> NodeA: Request
+      NodeA --> Client: Response with lastNodeList
+
+      Client --> Client: check if lastNodeList increased
+
+      Client -> NodeB: Request in3_nodeList
+      NodeB --> Client: verify and update nodeList and lastNodeList
+
+
+  ```
+
+
+2. **Changes in the ValidatorList**    
+
+    This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on the consensus, changes in the validatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. This `lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
+    
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
+
+3. **Failover**    
+
+    It is also good to have a second request in the event that a valid response is not delivered. This could happen if a node does not respond at all or the response cannot be validated. In both cases, the client may blacklist the node for a while and send the same request to another node.
+
+
 ## Proofs
+
+Proofs are a crucial part of the security concept for Incubed. Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
+
+### Ethereum
+
+For ethereum, all proofs are based on the correct block hash. That's why verification differentiates between [Verifying the blockhash](poa.html) (which depends on the user consensus) the actual result data.
+
+There is another reason why the BlockHash is so important. This is the only value you are able to access from within a SmartContract, because the evm supports a OpCode (`BLOCKHASH`), which allows you to read the last 256 blockhashes, which gives us the chance to verify even the blockhash onchain.
+
+Depending on the method, different proofs are needed, which are described in this document.
+
+- **[Block Proof](#blockproof)** - Verifies the content of the BlockHeader.
+- **[Transaction Proof](#transaction-proof)** - Verifies the input data of a transaction.
+- **[Receipt Proof](#receipt-proof)** - Verifies the outcome of a transaction.
+- **[Log Proof](#log-proof)** - Verifies the response of `eth_getPastLogs`.
+- **[Account Proof](#account-proof)** - Verifies the state of an account.
+- **[Call Proof](#call-proof)** - Verifies the result of an `eth_call`-response.
+
+Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+
+*  **type** `string` (required)  - The type of the proof.   
+ Must be one of the these values : `'transactionProof`', `'receiptProof`', `'blockProof`', `'accountProof`', `'callProof`', `'logProof`'
+*  **block** `string` - The serialized blockheader as hex, required in most proofs. 
+*  **finalityBlocks** `array` - The serialized following blockheaders as hex, required in case of finality asked (only relevant for PoA-chains). The server must deliver enough blockheaders to cover more then 50% of the validators. In order to verify them, they must be linkable (with the parentHash).    
+*  **transactions** `array` - The list of raw transactions of the block if needed to create a merkle trie for the transactions. 
+*  **uncles** `array` - The list of uncle-headers of the block. This will only be set if full verification is required in order to create a merkle tree for the uncles and so prove the uncle_hash.   
+*  **merkleProof** `string[]` - The serialized merkle-nodes beginning with the root-node (depending on the content to prove).
+*  **merkleProofPrev** `string[]` - The serialized merkle-nodes beginning with the root-node of the previous entry (only for full proof of receipts).   
+*  **txProof** `string[]` - The serialized merkle-nodes beginning with the root-node in order to proof the transactionIndex (only needed for transaction receipts).
+*  **logProof** [LogProof](#logproof) - The Log Proof in case of a `eth_getLogs`-request.   
+*  **accounts** `object` - A map of addresses and their AccountProof.   
+*  **txIndex** `integer` - The transactionIndex within the block (for transaactions and receipts).   
+*  **signatures** `Signature[]` - Requested signatures.   
+
+
+#### BlockProof
+
+BlockProofs are used whenever you want to read data of a block and verify them. This would be:
+
+- [eth_getBlockTransactionCountByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbyhash)
+- [eth_getBlockTransactionCountByNumber
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbynumber)
+- [eth_getBlockByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbyhash)
+- [eth_getBlockByNumber
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber)
+
+The `eth_getBlockBy...` methods return the Block-Data. In this case, all we need is somebody verifying the blockhash, which is done by requiring somebody who stored a deposit and would otherwise lose it, to sign this blockhash.
+
+The verification is then done by simply creating the blockhash and comparing this to the signed one.
+
+The blockhash is calculated by [serializing the blockdata](https://github.com/slockit/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
+
+```js
+blockHeader = rlp.encode([
+  bytes32( parentHash ),
+  bytes32( sha3Uncles ),
+  address( miner || coinbase ),
+  bytes32( stateRoot ),
+  bytes32( transactionsRoot ),
+  bytes32( receiptsRoot || receiptRoot ),
+  bytes256( logsBloom ),
+  uint( difficulty ),
+  uint( number ),
+  uint( gasLimit ),
+  uint( gasUsed ),
+  uint( timestamp ),
+  bytes( extraData ),
+
+  ... sealFields
+    ? sealFields.map( rlp.decode )
+    : [
+      bytes32( b.mixHash ),
+      bytes8( b.nonce )
+    ]
+])
+```
+
+For POA-chains, the blockheader will use the `sealFields` (instead of mixHash and nonce) which are already RLP-encoded and should be added as raw data when using rlp.encode.
+
+```js
+if (keccak256(blockHeader) !== singedBlockHash) 
+  throw new Error('Invalid Block')
+```
+
+In case of the `eth_getBlockTransactionCountBy...`, the proof contains the full blockHeader already serilalized plus all transactionHashes. This is needed in order to verify them in a merkle tree and compare them with the `transactionRoot`.
+
+
+#### Transaction Proof
+
+TransactionProofs are used for the following transaction-methods:
+
+- [eth_getTransactionByHash
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyhash)
+- [eth_getTransactionByBlockHashAndIndex
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblockhashandindex)
+- [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblocknumberandindex)
+
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph block_header {
+            label="blockheader" style="" color=black
+
+            bheader[ label="parentHash|...|<tr>transactionRoot|receiptRoot|stateRoot"]
+            troot:a -> bheader:tr 
+        }
+
+        subgraph cluster_client_registry {
+            label="Transaction Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="transaction data"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:a 
+            tval:a -> ta:a
+        }
+
+
+      }
+    }
+
+```
+
+In order to prove the transaction data, each transaction of the containing block must be serialized
+
+```js
+transaction = rlp.encode([
+  uint( tx.nonce ),
+  uint( tx.gasPrice ),
+  uint( tx.gas || tx.gasLimit ),
+  address( tx.to ),
+  uint( tx.value ),
+  bytes( tx.input || tx.data ),
+  uint( tx.v ),
+  uint( tx.r ),
+  uint( tx.s )
+])
+``` 
+
+and stored in a merkle tree with `rlp.encode(transactionIndex)` as key or path, since the blockheader only contains the `transactionRoot`, which is the root-hash of the resulting merkle tree. A merkle-proof with the transactionIndex of the target transaction will then be created from this tree.
+
+
+The proof-data will look like these:
+
+```js
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "result": {
+    "blockHash": "0xf1a2fd6a36f27950c78ce559b1dc4e991d46590683cb8cb84804fa672bca395b",
+    "blockNumber": "0xca",
+    "from": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+    "gas": "0x55f0",
+    "gasPrice": "0x0",
+    "hash": "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",
+    "input": "0x00",
+    "value": "0x3e8"
+    ...
+  },
+  "in3": {
+    "proof": {
+      "type": "transactionProof",
+      "block": "0xf901e6a040997a53895b48...", // serialized blockheader
+      "merkleProof": [  /* serialized nodes starting with the root-node */
+        "0xf868822080b863f86136808255f0942b5ad5c4795c026514f8317c7a215e218dc..."
+        "0xcd6cf8203e8001ca0dc967310342af5042bb64c34d3b92799345401b26713b43f..."
+      ],
+      "txIndex": 0,
+      "signatures": [...]
+    }
+  }
+}
+```
+
+
+#### Receipt Proof
+
+Proofs for the transactionReceipt are used for the following method:
+
+- [eth_getTransactionReceipt
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt)
+
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph blockheader {
+            label="blocheader" style="" color=black
+
+            bheader[ label="parentHash|...|transactionRoot|<tr>receiptRoot|stateRoot"]
+            troot:a -> bheader:tr 
+        }
+
+        subgraph cluster_client_registry {
+            label="Receipt Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="transaction receipt"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:a 
+            tval:a -> ta:a
+        }
+
+
+      }
+    }
+
+```
+
+The proof works similiar to the transaction proof.
+
+In order to create the proof we need to serialize all transaction receipts 
+
+```js
+transactionReceipt = rlp.encode([
+  uint( r.status || r.root ),
+  uint( r.cumulativeGasUsed ),
+  bytes256( r.logsBloom ),
+  r.logs.map(l => [
+    address( l.address ),
+    l.topics.map( bytes32 ),
+    bytes( l.data )
+  ])
+].slice(r.status === null && r.root === null ? 1 : 0))
+``` 
+
+and store them in a merkle tree with `elp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle tree. A merkle proof with the transactionIndex of the target transaction receipt will then be created from this tree.
+
+Since the merkle proof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the transaction itself as described in the [Transaction Proof](#transaction-proof).
+
+#### Log Proof
+
+Proofs for logs are only for the one RPC-method:
+
+- [eth_getLogs
+](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs)
+
+Since logs or events are based on the TransactionReceipts, the only way to prove them is by proving the TransactionReceipt each event belongs to.
+
+That's why this proof needs to provide:
+- all blockheaders where these events occured
+- all TransactionReceipts plus their MerkleProof of the logs
+- all MerkleProofs for the transactions in order to prove the transactionIndex
+
+The proof data structure will look like this:
+
+```ts
+  Proof {
+    type: 'logProof',
+    logProof: {
+      [blockNr: string]: {  // the blockNumber in hex as key
+        block : string  // serialized blockheader
+        receipts: {
+          [txHash: string]: {  // the transactionHash as key
+            txIndex: number // transactionIndex within the block
+            txProof: string[] // the merkle Proof-Array for the transaction
+            proof: string[] // the merkle Proof-Array for the receipts
+          }
+        }
+      }
+    }
+  }
+```
+
+
+In order to create the proof, we group all events into their blocks and transactions, so we only need to provide the blockheader once per block. 
+The merkle-proofs for receipts are created as described in the [Receipt Proof](#receipt-proof).
+
+#### Account Proof
+
+Proofing an account-value applies to these functions:
+
+- [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance)
+- [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
+- [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount)
+- [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat)
+
+Each of these values are stored in the account-object:
+
+```js
+account = rlp.encode([
+  uint( nonce),
+  uint( balance),
+  bytes32( storageHash || ethUtil.KECCAK256_RLP),
+  bytes32( codeHash || ethUtil.KECCAK256_NULL)
+])
+```
+
+The proof of an account is created by taking the state merkle tree and creating a MerkleProof. Since all of the above RPC-methods only provide a single value, the proof must contain all four values in order to encode them and verify the value of the MerkleProof. 
+
+For verification, the `stateRoot` of the blockHeader is used and `keccak(accountProof.address)` as the path or key within the merkle tree.
+
+```js
+verifyMerkleProof(
+ block.stateRoot, // expected merkle root
+ keccak(accountProof.address), // path, which is the hashed address
+ accountProof.accountProof), // array of Buffer with the merkle-proof-data
+ isNotExistend(accountProof) ? null : serializeAccount(accountProof), // the expected serialized account
+)
+```
+
+In case the account does not exist yet (which is the case if `none` == `startNonce` and `codeHash` == `'0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'`), the proof may end with one of these nodes:
+    
+- The last node is a branch, where the child of the next step does not exist.
+- The last node is a leaf with a different relative key.
+
+Both would prove that this key does not exist.
+
+For `eth_getStorageAt`, an additional storage proof is required. This is created by using the `storageHash` of the account and creating a MerkleProof using the hash of the storage key (`keccak(key)`) as path.
+
+
+```js
+verifyMerkleProof(
+  bytes32( accountProof.storageHash ),   // the storageRoot of the account
+  keccak(bytes32(s.key)),  // the path, which is the hash of the key
+  s.proof.map(bytes), // array of Buffer with the merkle-proof-data
+  s.value === '0x0' ? null : util.rlp.encode(s.value) // the expected value or none to proof non-existence
+))
+```
+
+
+```eval_rst
+.. graphviz::
+
+    digraph minimal_nonplanar_graphs {
+     
+    fontname="Helvetica"
+      subgraph all {
+
+        node [ fontsize = "12", style="", color=black fontname="Helvetica", shape=record ]
+
+        subgraph cluster_block_header {
+            label="Blockheader" color=white  style=filled
+
+            bheader[ label="parentHash|...|<tr>stateRoot|transactionRoot|receiptRoot|..."]
+        }
+
+        subgraph cluster_state_trie {
+            label="State Trie"  color=lightblue  style=filled
+
+            troot[label="|<a>0x123456|||||<b>0xabcdef"]  
+            ta[label="|0x123456||<a>0xabcdef|||"]  
+            tb[label="|0x98765||<a>0xfcab34|||"]  
+            tval[label="nonce|balance|<sr>storageHash|codeHash"]  
+
+            ta:a -> troot:a
+            tb:a -> troot:b 
+            tval:a -> ta:a
+        }
+
+        subgraph cluster_storage_trie {
+            label="Storage Trie"  color=lightblue  style=filled
+
+            sroot[label="|<a>0x123456|||||<b>0xabcdef"]  
+            sa[label="|0x123456||<a>0xabcdef|||"]  
+            sb[label="|0x98765||<a>0xfcab34|||"]  
+            sval[label="storage value"]  
+
+            sa:a -> sroot:a
+            sb:a -> sroot:b 
+            sval:a -> sa:a
+        }
+
+        sroot:a -> tval:sr
+        troot:a -> bheader:tr 
+
+      }
+    }
+
+```
+
+
+
+
+#### Call Proof
+
+Call proofs are used whenever you are calling a read-only function of a smart contract:
+
+- [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
+
+
+Verifying the result of an `eth_call` is a little bit more complex because the response is a result of executing opcodes in the vm. The only way to do so is to reproduce it and execute the same code. That's why a call proof needs to provide all data used within the call. This means:
+
+- All referred accounts including the code (if it is a contract), storageHash, nonce and balance.
+- All storage keys that are used (this can be found by tracing the transaction and collecting data based on the `SLOAD`-opcode).
+- All blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks). 
+
+For verifying, you need to follow these steps:
+
+1. Serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof))
+
+2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof).
+
+3. Create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
+
+
+```js 
+  // create new state for a vm
+  const state = new Trie()
+  const vm = new VM({ state })
+
+  // fill in values
+  for (const adr of Object.keys(accounts)) {
+    const ac = accounts[adr]
+
+    // create an account-object
+    const account = new Account([ac.nonce, ac.balance, ac.stateRoot, ac.codeHash])
+
+    // if we have a code, we will set the code
+    if (ac.code) account.setCode( state, bytes( ac.code ))
+
+    // set all storage-values
+    for (const s of ac.storageProof)
+      account.setStorage( state, bytes32( s.key ), rlp.encode( bytes32( s.value )))
+
+    // set the account data
+    state.put( address( adr ), account.serialize())
+  }
+
+  // add listener on each step to make sure it uses only values found in the proof
+  vm.on('step', ev => {
+     if (ev.opcode.name === 'SLOAD') {
+        const contract = toHex( ev.address ) // address of the current code
+        const storageKey = bytes32( ev.stack[ev.stack.length - 1] ) // last element on the stack is the key
+        if (!getStorageValue(contract, storageKey))
+          throw new Error(`incomplete data: missing key ${storageKey}`)
+     }
+     /// ... check other opcodes as well
+  })
+
+  // create a transaction
+  const tx = new Transaction(txData)
+
+  // run it
+  const result = await vm.runTx({ tx, block: new Block([block, [], []]) })
+
+  // use the return value
+  return result.vm.return
+```
+
+In the future, we will be using the same approach to verify calls with ewasm.
+
 
 ## RPC-Methods Ethereum 
 
-This section describes the behavior for each standard-rpc-method.
+This section describes the behavior for each standard-RPC-method.
 
 
 ### web3_clientVersion
@@ -239,7 +1046,7 @@ This section describes the behavior for each standard-rpc-method.
 Returns the underlying client version.
 
 See [web3_clientversion](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_clientversion) for spec.
-No Proof or verifiaction possible.
+No proof or verification possible.
 
 
 ### web3_sha3
@@ -247,29 +1054,29 @@ No Proof or verifiaction possible.
 Returns Keccak-256 (not the standardized SHA3-256) of the given data.
 
 See [web3_sha3](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_sha3) for spec.
-No Proof returned, but the client must verify the result by hashing the request data itself.
+No proof returned, but the client must verify the result by hashing the request data itself.
 
 ### net_version
 
-Returns the current network id.
+Returns the current network ID.
 
 See [net_version](https://github.com/ethereum/wiki/wiki/JSON-RPC#net_version) for spec.
-No Proof returned, but the client must verify the result by comparing it to the used chainId.
+No proof returned, but the client must verify the result by comparing it to the used chainId.
 
 ### eth_blockNumber
 
-Returns the number of most recent block.
+Returns the number of the most recent block.
 
 See [eth_blockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blockNumber) for spec.
-No Proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from other. With the `blockTime` from the chainspec including a tolerance the cuurrent blocknumber may be checked if in the proposed range.
+No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
 ### eth_getBalance
 
-Returns the balance of the account of given address.
+Returns the balance of the account of a given address.
 
 See [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBalance) for spec.
 
-A AccountProof, since there is none, but the client should verify the result by comparing it to the current blocks returned from other. With the `blockTime` from the chainspec including a tolerance the cuurrent blocknumber may be checked if in the proposed range.
+An AccountProof, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
 
 

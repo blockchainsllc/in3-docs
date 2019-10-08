@@ -1,23 +1,31 @@
 Welcome to Incubed's documentation!
 ===================================
 
+
 .. toctree::
    :maxdepth: 2
-   :caption: Concept:
+   :caption: Reference
 
-   intro
    getting_started
-   Ethereum-Verification-and-MerkleProof
-   poa
-   incentivization
-   decentralizing_services
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Reference:
-
-   Threat-Model-for-Incubed
+   download
    milestones
+   Threat-Model-for-Incubed
+   benchmarkSummary
    spec
    api-ts
    api-c
+   api-java
+   api-cmd
+   api-node-server
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Concept
+   :numbered:
+
+   intro
+   poa
+   incentivization
+   decentralizing_services
+ 
+* :ref:`genindex`
