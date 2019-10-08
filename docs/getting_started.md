@@ -214,7 +214,9 @@ Currently, Incubed is deployed on the following chains:
 
 ### Mainnet
 
-Registry: [0x2736D225f85740f42D17987100dc8d58e9e16252](https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
+Registry-legacy: [0x2736D225f85740f42D17987100dc8d58e9e16252](https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
+
+Registry: [0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5](https://eth.slock.it/#/main/0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5) 
 
 ChainId: 0x1 (alias `mainnet`)        
 
@@ -224,23 +226,15 @@ NodeList: [https://in3.slock.it/mainnet/nd-3](https://in3.slock.it/mainnet/nd-3/
 
 ### Kovan
 
-Registry: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1](https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
+Registry-legacy: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1](https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
+
+Registry: [0x33f55122c21cc87b539e7003f7ab16229bc3af69](https://eth.slock.it/#/kovan/0x33f55122c21cc87b539e7003f7ab16229bc3af69)    
 
 ChainId: 0x2a (alias `kovan`)    
 
 Status: [https://in3.slock.it?n=kovan](https://in3.slock.it?n=kovan)    
 
 NodeList: [https://in3.slock.it/kovan/nd-3](https://in3.slock.it/kovan/nd-3/api/in3_nodeList) 
-
-### Tobalaba
-
-Registry: [0x845E484b505443814B992Bf0319A5e8F5e407879](https://eth.slock.it/#/tobalaba/0x845E484b505443814B992Bf0319A5e8F5e407879)    
-
-ChainId: 0x44d (alias `tobalaba`)    
-
-Status: [https://in3.slock.it?n=tobalaba](https://in3.slock.it?n=tobalaba)    
-
-NodeList: [https://in3.slock.it/tobalaba/nd-3](https://in3.slock.it/tobalaba/nd-3/api/in3_nodeList) 
 
 
 ### Evan
@@ -255,7 +249,9 @@ NodeList: [https://in3.slock.it/evan/nd-3](https://in3.slock.it/evan/nd-3/api/in
 
 ### Görli
 
-Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
+Registry-legacy: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
+
+Registry: [0xfea298b288d232a256ae0ad5941e5c890b1db691](https://eth.slock.it/#/goerli/0xfea298b288d232a256ae0ad5941e5c890b1db691)    
 
 ChainId: 0x5 (alias `goerli`)    
 
