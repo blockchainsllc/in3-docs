@@ -8,6 +8,8 @@ Nodes are the backend of Incubed. Each node serves RPC requests to Incubed clien
 
 To run such a node, you need to have an Ethereum client running where you want to forward the request to. At the moment, the minimum requirement is that this client needs to support ``eth_getProof`` (see http://eips.ethereum.org/EIPS/eip-1186).
 
+You can create your own docker compose file/docker command using our command line descriptions below. But you can also use our tool in3-server-setup to help you through the process.
+
 Command-line Arguments
 ######################
 
@@ -58,6 +60,28 @@ Command-line Arguments
 --watchInterval                          The number of seconds before a new event.
 --watchdogInterval                       Average time between sending requests to the same node. 0 turns it off (default).
 
+
+in3-server-setup tool
+##########################
+
+The in3-server-setup tool can be found both [online](https://in3-setup.slock.it) and on [DockerHub](https://hub.docker.com/r/slockit/in3-server-setup).
+The DockerHub version can be used to avoid relying on our online service, a full source will be released soon.
+
+The tool can be used to generate the private key as well as the docker-compose file for use on the server.
+
+Note: The below guide is a basic example of how to setup and in3 node, no assurances are made as to the security of the setup. Please take measures to protect your private key and server.
+
+Setting up a server on AWS:
+    1. Create an account on AWS and create a new EC2 instance
+    2. Save the key and SSH into the machine with ```ssh -i "SSH_KEY.pem" user@IP```
+    3. Install docker and docker-compose on the EC2 instance
+    4. Use scp to transfer the docker-compose file and private key, ```scp -i "SSH_KEY" FILE  user@IP:.```
+    5. Run the Ethereum client, for example parity and allow it to sync
+    6. Once the client is synced, run the docker-compose file with ```docker-compose up```
+    7. Test the in3 node by making a request to the address
+    8. Consider using tools such as AWS Shield to protect your server from DOS attacks
+
+
 Registering Your Own Incubed Node
 ##########################
 
@@ -65,25 +89,10 @@ If you want to participate in this network and register a node, you need to send
 
 To run an Incubed node, you simply use docker-compose:
 
+First run partiy, and allow the client to sync
 .. code-block:: yaml
-
         version: '2'
         services:
-        incubed-server:
-            image: slockit/in3-server:latest
-            volumes:
-            - $PWD/keys:/secure                                     # Directory where the private key is stored.
-            ports:
-            - 8500:8500/tcp                                         # Open the port 8500 to be accessed by the public.
-            command:
-            - --privateKey=/secure/myKey.json                       # Internal path to the key.
-            - --privateKeyPassphrase=dummy                          # Passphrase to unlock the key.
-            - --chain=0x1                                           # Chain (Kovan).
-            - --rpcUrl=http://incubed-parity:8545                   # URL of the Kovan client.
-            - --registry=0xFdb0eA8AB08212A1fFfDB35aFacf37C3857083ca # URL of the Incubed registry. 
-            - --autoRegistry-url=http://in3.server:8500             # Check or register this node for this URL.
-            - --autoRegistry-deposit=2                              # Deposit to use when registering.
-
         incubed-parity:
             image: parity:latest                                    # Parity image with the proof function implemented.
             command:
@@ -91,3 +100,22 @@ To run an Incubed node, you simply use docker-compose:
             - --pruning=archive 
             - --pruning-memory=30000                                # Limit storage.
             - --jsonrpc-experimental                                # Currently still needed until EIP 1186 is finalized.
+
+Then run in3 with the below docker-compose file:
+.. code-block:: yaml
+          version: '2'
+                services:
+                incubed-server:
+                    image: slockit/in3-server:latest
+                    volumes:
+                    - $PWD/keys:/secure                                     # Directory where the private key is stored.
+                    ports:
+                    - 8500:8500/tcp                                         # Open the port 8500 to be accessed by the public.
+                    command:
+                    - --privateKey=/secure/myKey.json                       # Internal path to the key.
+                    - --privateKeyPassphrase=dummy                          # Passphrase to unlock the key.
+                    - --chain=0x1                                           # Chain (Kovan).
+                    - --rpcUrl=http://incubed-parity:8545                   # URL of the Kovan client.
+                    - --registry=0xFdb0eA8AB08212A1fFfDB35aFacf37C3857083ca # URL of the Incubed registry.
+                    - --autoRegistry-url=http://in3.server:8500             # Check or register this node for this URL.
+                    - --autoRegistry-deposit=2                              # Deposit to use when registering.
