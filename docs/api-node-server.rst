@@ -90,7 +90,8 @@ If you want to participate in this network and register a node, you need to send
 
 To run an Incubed node, you simply use docker-compose:
 
-First run partiy, and allow the client to sync
+First run partiy, and allow the client to sync:
+
     .. code-block:: yaml
         version: '2'
         services:
@@ -103,6 +104,7 @@ First run partiy, and allow the client to sync
             - --jsonrpc-experimental                                # Currently still needed until EIP 1186 is finalized.
 
 Then run in3 with the below docker-compose file:
+
     .. code-block:: yaml
           version: '2'
                 services:
