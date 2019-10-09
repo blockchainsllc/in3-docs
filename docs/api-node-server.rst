@@ -79,10 +79,13 @@ Setting up a server on AWS:
     5. Run the Ethereum client, for example parity and allow it to sync
     6. Once the client is synced, run the docker-compose file with ```docker-compose up```
     7. Test the in3 node by making a request to the address
-    ```curl -X POST -H 'Content-Type:application/json' \
+.. code::
+
+        curl -X POST -H 'Content-Type:application/json' \
         --data '{"id":1,"jsonrpc":"2.0","method":"in3_nodeList", \
         "params":[],"in3":{"version": "0x2","chainId":"0x1","verification":"proof"}}' \
-            <MY_NODE_URL> ```
+            <MY_NODE_URL>
+
     8. Consider using tools such as AWS Shield to protect your server from DOS attacks
 
 
@@ -95,6 +98,7 @@ To run an Incubed node, you simply use docker-compose:
 
 First run partiy, and allow the client to sync:
     .. code-block:: yaml
+
         version: '2'
         services:
         incubed-parity:
@@ -107,6 +111,7 @@ First run partiy, and allow the client to sync:
 
 Then run in3 with the below docker-compose file:
     .. code-block:: yaml
+
           version: '2'
                 services:
                 incubed-server:
