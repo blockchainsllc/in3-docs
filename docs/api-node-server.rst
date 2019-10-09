@@ -79,12 +79,13 @@ Setting up a server on AWS:
     5. Run the Ethereum client, for example parity and allow it to sync
     6. Once the client is synced, run the docker-compose file with ```docker-compose up```
     7. Test the in3 node by making a request to the address
-.. code::
+        .. code::
 
-        curl -X POST -H 'Content-Type:application/json' \
-        --data '{"id":1,"jsonrpc":"2.0","method":"in3_nodeList", \
-        "params":[],"in3":{"version": "0x2","chainId":"0x1","verification":"proof"}}' \
-            <MY_NODE_URL>
+            curl -X POST -H 'Content-Type:application/json' \
+            --data '{"id":1,"jsonrpc":"2.0","method":"in3_nodeList", \
+            "params":[],"in3":{"version": "0x2","chainId":"0x1","verification":"proof"}}' \
+                <MY_NODE_URL>
+
 
     8. Consider using tools such as AWS Shield to protect your server from DOS attacks
 
