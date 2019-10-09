@@ -74,11 +74,12 @@ Note: The below guide is a basic example of how to setup and in3 node, no assura
 Setting up a server on AWS:
     1. Create an account on AWS and create a new EC2 instance
     2. Save the key and SSH into the machine with ```ssh -i "SSH_KEY.pem" user@IP```
-    3. Install docker and docker-compose on the EC2 instance
+    3. Install docker and docker-compose on the EC2 instance ```apt-get install docker docker-compose```
     4. Use scp to transfer the docker-compose file and private key, ```scp -i "SSH_KEY" FILE  user@IP:.```
     5. Run the Ethereum client, for example parity and allow it to sync
     6. Once the client is synced, run the docker-compose file with ```docker-compose up```
     7. Test the in3 node by making a request to the address
+    ```curl -X POST -H 'Content-Type:application/json' --data '{"id":1,"jsonrpc":"2.0","method":"in3_nodeList","params":[],"in3":{"version": "0x2","chainId":"0x1","verification":"proof"}}' <MY_NODE_URL> ```
     8. Consider using tools such as AWS Shield to protect your server from DOS attacks
 
 
@@ -90,7 +91,7 @@ If you want to participate in this network and register a node, you need to send
 To run an Incubed node, you simply use docker-compose:
 
 First run partiy, and allow the client to sync
-.. code-block:: yaml
+    .. code-block:: yaml
         version: '2'
         services:
         incubed-parity:
@@ -102,7 +103,7 @@ First run partiy, and allow the client to sync
             - --jsonrpc-experimental                                # Currently still needed until EIP 1186 is finalized.
 
 Then run in3 with the below docker-compose file:
-.. code-block:: yaml
+    .. code-block:: yaml
           version: '2'
                 services:
                 incubed-server:
