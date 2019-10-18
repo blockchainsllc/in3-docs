@@ -567,11 +567,15 @@ These are:
     It is also good to have a second request in the event that a valid response is not delivered. This could happen if a node does not respond at all or the response cannot be validated. In both cases, the client may blacklist the node for a while and send the same request to another node.
 
 
-## Proofs
+## RPC Specification
 
-Proofs are a crucial part of the security concept for Incubed. Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
+This section describes the behavior for each RPC-method.
 
-### Ethereum
+### Ethereum 1.x
+
+Standard JSON-RPC calls as described in https://github.com/ethereum/wiki/wiki/JSON-RPC.
+
+PWhenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
 
 For ethereum, all proofs are based on the correct block hash. That's why verification differentiates between [Verifying the blockhash](poa.html) (which depends on the user consensus) the actual result data.
 
@@ -579,14 +583,8 @@ There is another reason why the BlockHash is so important. This is the only valu
 
 Depending on the method, different proofs are needed, which are described in this document.
 
-- **[Block Proof](#blockproof)** - Verifies the content of the BlockHeader.
-- **[Transaction Proof](#transaction-proof)** - Verifies the input data of a transaction.
-- **[Receipt Proof](#receipt-proof)** - Verifies the outcome of a transaction.
-- **[Log Proof](#log-proof)** - Verifies the response of `eth_getPastLogs`.
-- **[Account Proof](#account-proof)** - Verifies the state of an account.
-- **[Call Proof](#call-proof)** - Verifies the result of an `eth_call`-response.
 
-Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
 
 *  **type** `string` (required)  - The type of the proof.   
  Must be one of the these values : `'transactionProof`', `'receiptProof`', `'blockProof`', `'accountProof`', `'callProof`', `'logProof`'
@@ -603,18 +601,48 @@ Each `in3`-section of the response containing proofs has a property with a proof
 *  **signatures** `Signature[]` - Requested signatures.   
 
 
-#### BlockProof
+#### web3_clientVersion
 
-BlockProofs are used whenever you want to read data of a block and verify them. This would be:
+Returns the underlying client version.
 
-- [eth_getBlockTransactionCountByHash
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbyhash)
-- [eth_getBlockTransactionCountByNumber
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblocktransactioncountbynumber)
-- [eth_getBlockByHash
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbyhash)
-- [eth_getBlockByNumber
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbynumber)
+See [web3_clientversion](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_clientversion) for spec.
+
+No proof or verification possible.
+
+
+#### web3_sha3
+
+Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+
+See [web3_sha3](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_sha3) for spec.
+
+No proof returned, but the client must verify the result by hashing the request data itself.
+
+#### net_version
+
+Returns the current network ID.
+
+See [net_version](https://github.com/ethereum/wiki/wiki/JSON-RPC#net_version) for spec.
+
+No proof returned, but the client must verify the result by comparing it to the used chainId.
+
+#### eth_blockNumber
+
+Returns the number of the most recent block.
+
+See [eth_blockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blockNumber) for spec.
+
+No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
+
+#### eth_getBlockByNumber
+#### eth_getBlockByHash
+
+Return the block data.
+
+See JSON-RPC-Spec 
+- [eth_getBlockByNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockByNumber) - find block by number.
+- [eth_getBlockByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockByHash) - find block by hash.
+
 
 The `eth_getBlockBy...` methods return the Block-Data. In this case, all we need is somebody verifying the blockhash, which is done by requiring somebody who stored a deposit and would otherwise lose it, to sign this blockhash.
 
@@ -657,15 +685,110 @@ if (keccak256(blockHeader) !== singedBlockHash)
 In case of the `eth_getBlockTransactionCountBy...`, the proof contains the full blockHeader already serilalized plus all transactionHashes. This is needed in order to verify them in a merkle tree and compare them with the `transactionRoot`.
 
 
-#### Transaction Proof
+Requests requiring proof for blocks will return a proof of type `blockProof`. Depending on the request, the proof will contain the following properties:
 
-TransactionProofs are used for the following transaction-methods:
+- `type` : constant : `blockProof`
+- `signatures` : a array of signatures from the signers (if requested) of the requested block.
+- `transactions`: a array of raw transactions of the block. This is only needed the last parameter of the request (includeTransactions) is `false`,  In this case the result only contains the transactionHashes, but in order to verify we need to be able to build the complete merkle-trie, where the raw transactions are needed. If the complete transactions are included the raw transactions can be build from those values.
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+- `uncles`: only if `fullProof` is requested we add  all blockheaders of the uncles to the proof in order to verify the uncleRoot.
 
-- [eth_getTransactionByHash
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyhash)
-- [eth_getTransactionByBlockHashAndIndex
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblockhashandindex)
-- [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionbyblocknumberandindex)
+Request:
+
+```js
+{
+    "method": "eth_getBlockByNumber",
+    "params": [
+        "0x967a46",
+        false
+    ],
+    "in3": {
+      "verification":"proof"
+    }
+}
+```
+
+Response:
+```js
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "author": "0x00d6cc1ba9cf89bd2e58009741f4f7325badc0ed",
+        "difficulty": "0xfffffffffffffffffffffffffffffffe",
+        "extraData": "0xde830201088f5061726974792d457468657265756d86312e33302e30827769",
+        "gasLimit": "0x7a1200",
+        "gasUsed": "0x1ce0f",
+        "hash": "0xfeb120ae45f1009e6c2289436d5957c58a15915288ec083658bd044101608f26",
+        "logsBloom": "0x0008000...",
+        "miner": "0x00d6cc1ba9cf89bd2e58009741f4f7325badc0ed",
+        "number": "0x967a46",
+        "parentHash": "0xc591335e0cdb6b21dc9af57567a6e075fc6315aff915bd79bf78a2c8815bc657",
+        "receiptsRoot": "0xfa2a0b3c0715e798ae41fd4645b0261ae4bf6d2c56f29da6fcc5fbfb7c6f19f8",
+        "sealFields": [
+            "0x8417098353",
+            "0xb841eb80c1a0be2eb7a1c14fc38759a0f9fe9c33121d72003025160a4b35119d495d34d39a9fd7475d28ba863e35f5103ed43e6f13ce31f026d3d29c0d2b1848fb4300"
+        ],
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "0x44e",
+        "stateRoot": "0xd618159b6dbd0c6213d90abbf01e06513104f0670cd79503cb2563d7ff116864",
+        "timestamp": "0x5c260d4c",
+        "totalDifficulty": "0x94373700000000000000000000000484b6f390",
+        "transactions": [
+            "0x16cfadb6a0a823c623788713cb1eb7d399f89f78d599d416f7b91dca44eeb804",
+            "0x91458145d2c47527eee34e891879ac2915b3f8ba6f31911c5234928ae32cb191"
+        ],
+        "transactionsRoot": "0x4f1249c6378282b1f032cc8c2562712f2450a0bed8ce20bdd2d01b6520feb75a",
+        "uncles": []
+    },
+    "id": 77,
+    "in3": {
+        "proof": {
+            "type": "blockProof",
+            "signatures": [ ...  ],
+            "transactions": [
+                "0xf8ac8201158504a817c8....",
+                "0xf9014c8301a3d4843b9ac....",
+            ]
+        },
+        "currentBlock": 9866910,
+        "lastNodeList": 8057063,
+    }
+}
+```
+
+
+#### eth_getBlockTransactionCountByHash
+#### eth_getBlockTransactionCountByNumber
+#### eth_getUncleCountByBlockHash
+#### eth_getUncleCountByBlockNumber
+
+return the number of transactions or uncles.
+
+See JSON-RPC-Spec 
+- [eth_getBlockTransactionCountByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockTransactionCountByHash) - number of transaction by block hash.
+- [eth_getBlockTransactionCountByNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockTransactionCountByNumber) - number of transaction by block number.
+- [eth_getUncleCountByBlockHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getUncleCountByBlockHash) - number of uncles by block number.
+- [eth_getUncleCountByBlockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getUncleCountByBlockNumber) - number of uncles by block number.
+
+Requests requiring proof for blocks will return a proof of type `blockProof`.  Depending on the request, the proof will contain the following properties:
+
+- `type` : constant : `blockProof`
+- `signatures` : a array of signatures from the signers (if requested) of the requested block.
+- `block` : the serialized blockheader
+- `transactions`: a array of raw transactions of the block. This is only needed if the number of transactions are requested.
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+- `uncles`: a array of blockheaders of the uncles of the block. This is only needed if the number of uncles are requested.
+
+
+#### eth_getTransactionByHash
+
+return the transaction data.
+
+
+See JSON-RPC-Spec 
+- [eth_getTransactionByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByHash) - transaction data by hash.
+- [eth_getTransactionByBlockHashAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockHashAndIndex) - transaction data based on blockhash and index
+- [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockNumberAndIndex) - transaction data based on block number and index
 
 
 
@@ -723,8 +846,29 @@ transaction = rlp.encode([
 
 and stored in a merkle tree with `rlp.encode(transactionIndex)` as key or path, since the blockheader only contains the `transactionRoot`, which is the root-hash of the resulting merkle tree. A merkle-proof with the transactionIndex of the target transaction will then be created from this tree.
 
+If the request requires proof (`verification`: `proof`) the node will provide an Transaction Proof as part of the in3-section of the response. 
+This proof section contains the following properties:
 
-The proof-data will look like these:
+- `type` : constant : `transactionProof`
+- `block` : the serialized blockheader of the requested transaction.
+- `signatures` : a array of signatures from the signers (if requested) of the above block.
+- `txIndex` : The TransactionIndex as used in the MerkleProof
+- `merkleProof`: the serialized nodes of the Transaction trie starting with the root node.
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+
+
+Request:
+```js
+{
+  "method":"eth_getTransactionByHash",
+  "params":["0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b"],
+  "in3":{
+    "verification":"proof"
+  }
+}
+```
+
+Response:
 
 ```js
 {
@@ -756,14 +900,12 @@ The proof-data will look like these:
 }
 ```
 
+#### eth_getTransactionReceipt
 
-#### Receipt Proof
+The Receipt of a Transaction.
 
-Proofs for the transactionReceipt are used for the following method:
-
-- [eth_getTransactionReceipt
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt)
-
+See JSON-RPC-Spec 
+- [eth_getTransactionReceipt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactionreceipt) - returns the receipt.
 
 
 ```eval_rst
@@ -819,16 +961,101 @@ transactionReceipt = rlp.encode([
 ].slice(r.status === null && r.root === null ? 1 : 0))
 ``` 
 
-and store them in a merkle tree with `elp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle tree. A merkle proof with the transactionIndex of the target transaction receipt will then be created from this tree.
+and store them in a merkle tree with `rlp.encode(transactionIndex)` as key or path, since the blockheader only contains the `receiptRoot`, which is the root-hash of the resulting merkle tree. A merkle proof with the transactionIndex of the target transaction receipt will then be created from this tree.
 
-Since the merkle proof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the transaction itself as described in the [Transaction Proof](#transaction-proof).
+Since the merkle proof is only proving the value for the given transactionIndex, we also need to prove that the transactionIndex matches the transactionHash requested. This is done by adding another MerkleProof for the transaction itself as described in the [Transaction Proof](#eth-gettransactionbyhash).
 
-#### Log Proof
 
-Proofs for logs are only for the one RPC-method:
+If the request requires proof (`verification`: `proof`) the node will provide an Transaction Proof as part of the in3-section of the response. 
+This proof section contains the following properties:
 
-- [eth_getLogs
-](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getlogs)
+- `type` : constant : `receiptProof`
+- `block` : the serialized blockheader of the requested transaction.
+- `signatures` : a array of signatures from the signers (if requested) of the above block.
+- `txIndex` : The TransactionIndex as used in the MerkleProof
+- `txProof` : the serialized nodes of the Transaction trie starting with the root node. This is needed in order to proof that the required transactionHash matches the receipt.
+- `merkleProof`: the serialized nodes of the Transaction Receipt trie starting with the root node.
+- `merkleProofPrev`: the serialized nodes of the previous Transaction Receipt (if txInxdex>0) trie starting with the root node. This is only needed if full-verification is requested. With a verified previous Receipt we can proof the `usedGas`.
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+
+
+Request:
+```js
+{
+  "method": "eth_getTransactionReceipt",
+  "params": [
+      "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+  ]
+  "in3":{
+    "verification":"proof"
+  }
+}
+```
+
+Response:
+
+```js
+{
+    "result": {
+        "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+        "blockNumber": "0x8c1e39",
+        "contractAddress": null,
+        "cumulativeGasUsed": "0x2466d",
+        "gasUsed": "0x2466d",
+        "logs": [
+            {
+                "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+                "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+                "blockNumber": "0x8c1e39",
+                "data": "0x00000000000...",
+                "logIndex": "0x0",
+                "removed": false,
+                "topics": [
+                    "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                    "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                    "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                ],
+                "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+                "transactionIndex": "0x0",
+                "transactionLogIndex": "0x0",
+                "type": "mined"
+            }
+        ],
+        "logsBloom": "0x00000000000000000000200000...",
+        "root": null,
+        "status": "0x1",
+        "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+        "transactionIndex": "0x0"
+    },
+    "in3": {
+        "proof": {
+            "type": "receiptProof",
+            "block": "0xf9023fa019e9d929ab...",
+            "txProof": [
+                "0xf851a083c8446ab932130..."
+            ],
+            "merkleProof": [
+                "0xf851a0b0f5b7429a54b10..."
+            ],
+            "txIndex": 0,
+            "signatures": [...],
+            "merkleProofPrev": [
+                "0xf851a0b0f5b7429a54b10..."
+            ]
+        },
+        "currentBlock": 9182894,
+        "lastNodeList": 6194869
+    }
+}
+```
+
+#### eth_getLogs
+
+
+Proofs for logs or events.
+
+See JSON-RPC-Spec 
+- [eth_getLogs](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getLogs) - returns all event matching the filter.
 
 Since logs or events are based on the TransactionReceipts, the only way to prove them is by proving the TransactionReceipt each event belongs to.
 
@@ -859,18 +1086,140 @@ The proof data structure will look like this:
 
 
 In order to create the proof, we group all events into their blocks and transactions, so we only need to provide the blockheader once per block. 
-The merkle-proofs for receipts are created as described in the [Receipt Proof](#receipt-proof).
+The merkle-proofs for receipts are created as described in the [Receipt Proof](#eth-gettransactionreceipt).
 
-#### Account Proof
 
-Proofing an account-value applies to these functions:
 
-- [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance)
-- [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
-- [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount)
-- [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat)
 
-Each of these values are stored in the account-object:
+If the request requires proof (`verification`: `proof`) the node will provide an Transaction Proof as part of the in3-section of the response. 
+This proof section contains the following properties:
+
+- `type` : constant : `logProof`
+- `logProof` : The proof for all the receipts. This structure contains an object with the blockNumbers as keys. In each block we have the blockheader and the receipts.
+- `signatures` : a array of signatures from the signers (if requested) of the above blocks.
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+
+
+Request:
+```js
+{
+  "method": "eth_getLogs",
+  "params": [
+      {
+          "fromBlock": "0x7ae000",
+          "toBlock": "0x7af0e4",
+          "address": "0x27a37a1210df14f7e058393d026e2fb53b7cf8c1"
+      }
+  ],
+  "in3":{
+    "verification":"proof"
+  }
+}
+```
+
+Response:
+
+```js
+{
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "address": "0x27a37a1210df14f7e058393d026e2fb53b7cf8c1",
+            "blockHash": "0x12657acc9dbca74775efcc09bcd55da769e89fff27a0402e02708a6e69caa3bb",
+            "blockNumber": "0x7ae16b",
+            "data": "0x0000000000000...",
+            "logIndex": "0x0",
+            "removed": false,
+            "topics": [
+                "0x690cd1ace756531abc63987913dcfaf18055f3bd6bb27d3def1cc5319ebc1461"
+            ],
+            "transactionHash": "0xddc81454b0df60fb31dbefd0fd4c5e8fe4f3daa541c879964500d876056e2976",
+            "transactionIndex": "0x0",
+            "transactionLogIndex": "0x0",
+            "type": "mined"
+        },
+        {
+            "address": "0x27a37a1210df14f7e058393d026e2fb53b7cf8c1",
+            "blockHash": "0x2410d512d12e18b2451efe195ece85723b7f39c3f5d706ea112bfcc57c0249d2",
+            "blockNumber": "0x7af0e4",
+            "data": "0x000000000000000...",
+            "logIndex": "0x4",
+            "removed": false,
+            "topics": [
+                "0x690cd1ace756531abc63987913dcfaf18055f3bd6bb27d3def1cc5319ebc1461"
+            ],
+            "transactionHash": "0x30fe995d61a5491a49e8f1283b36f4cb7fa5d370927bd8784c33e702546a9daa",
+            "transactionIndex": "0x4",
+            "transactionLogIndex": "0x0",
+            "type": "mined"
+        }
+    ],
+    "id": 144,
+    "in3": {
+        "proof": {
+            "type": "logProof",
+            "logProof": {
+                "0x7ae16b": {
+                    "number": 8053099,
+                    "receipts": {
+                        "0xddc81454b0df60fb31dbefd0fd4c5e8fe4f3daa541c879964500d876056e2976": {
+                            "txHash": "0xddc81454b0df60fb31dbefd0fd4c5e8fe4f3daa541c879964500d876056e2976",
+                            "txIndex": 0,
+                            "proof": [
+                                "0xf9020e822080b90208f..."
+                            ],
+                            "txProof": [
+                                "0xf8f7822080b8f2f8f080..."
+                            ]
+                        }
+                    },
+                    "block": "0xf9023ea002343274..."
+                },
+                "0x7af0e4": {
+                    "number": 8057060,
+                    "receipts": {
+                        "0x30fe995d61a5491a49e8f1283b36f4cb7fa5d370927bd8784c33e702546a9daa": {
+                            "txHash": "0x30fe995d61a5491a49e8f1283b36f4cb7fa5d370927bd8784c33e702546a9daa",
+                            "txIndex": 4,
+                            "proof": [
+                                "0xf851a039faec6276...",
+                                "0xf8b180a0ee82c377...",
+                                "0xf9020c20b90208f9..."
+                            ],
+                            "txProof": [
+                                "0xf851a09250840f6b87...",
+                                "0xf8b180a04e5257328b...",
+                                "0xf8f620b8f3f8f18085..."
+                            ]
+                        }
+                    },
+                    "block": "0xf9023ea03837491e4b3b..."
+                }
+            }
+        },
+        "lastValidatorChange": 0,
+        "lastNodeList": 8057063
+    }
+}
+```
+
+
+
+#### eth_getBalance
+#### eth_getCode
+#### eth_getTransactionCount
+#### eth_getStorageAt
+
+Returns account based values.
+
+See JSON-RPC-Spec 
+- [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBalance) - returns the balance.
+- [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode) - the byte code of the contract.
+- [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount) - the nonce of the account.
+- [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat) - the storage value for the given key of the given account.
+
+
+Each of these account values are stored in the account-object:
 
 ```js
 account = rlp.encode([
@@ -967,224 +1316,6 @@ verifyMerkleProof(
 
 
 
-#### Call Proof
-
-Call proofs are used whenever you are calling a read-only function of a smart contract:
-
-- [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
-
-
-Verifying the result of an `eth_call` is a little bit more complex because the response is a result of executing opcodes in the vm. The only way to do so is to reproduce it and execute the same code. That's why a call proof needs to provide all data used within the call. This means:
-
-- All referred accounts including the code (if it is a contract), storageHash, nonce and balance.
-- All storage keys that are used (this can be found by tracing the transaction and collecting data based on the `SLOAD`-opcode).
-- All blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks). 
-
-For verifying, you need to follow these steps:
-
-1. Serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof))
-
-2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof).
-
-3. Create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
-
-
-```js 
-  // create new state for a vm
-  const state = new Trie()
-  const vm = new VM({ state })
-
-  // fill in values
-  for (const adr of Object.keys(accounts)) {
-    const ac = accounts[adr]
-
-    // create an account-object
-    const account = new Account([ac.nonce, ac.balance, ac.stateRoot, ac.codeHash])
-
-    // if we have a code, we will set the code
-    if (ac.code) account.setCode( state, bytes( ac.code ))
-
-    // set all storage-values
-    for (const s of ac.storageProof)
-      account.setStorage( state, bytes32( s.key ), rlp.encode( bytes32( s.value )))
-
-    // set the account data
-    state.put( address( adr ), account.serialize())
-  }
-
-  // add listener on each step to make sure it uses only values found in the proof
-  vm.on('step', ev => {
-     if (ev.opcode.name === 'SLOAD') {
-        const contract = toHex( ev.address ) // address of the current code
-        const storageKey = bytes32( ev.stack[ev.stack.length - 1] ) // last element on the stack is the key
-        if (!getStorageValue(contract, storageKey))
-          throw new Error(`incomplete data: missing key ${storageKey}`)
-     }
-     /// ... check other opcodes as well
-  })
-
-  // create a transaction
-  const tx = new Transaction(txData)
-
-  // run it
-  const result = await vm.runTx({ tx, block: new Block([block, [], []]) })
-
-  // use the return value
-  return result.vm.return
-```
-
-In the future, we will be using the same approach to verify calls with ewasm.
-
-
-## RPC-Methods Ethereum 
-
-This section describes the behavior for each standard-RPC-method.
-
-
-### web3_clientVersion
-
-Returns the underlying client version.
-
-See [web3_clientversion](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_clientversion) for spec.
-No proof or verification possible.
-
-
-### web3_sha3
-
-Returns Keccak-256 (not the standardized SHA3-256) of the given data.
-
-See [web3_sha3](https://github.com/ethereum/wiki/wiki/JSON-RPC#web3_sha3) for spec.
-No proof returned, but the client must verify the result by hashing the request data itself.
-
-### net_version
-
-Returns the current network ID.
-
-See [net_version](https://github.com/ethereum/wiki/wiki/JSON-RPC#net_version) for spec.
-No proof returned, but the client must verify the result by comparing it to the used chainId.
-
-### eth_blockNumber
-
-Returns the number of the most recent block.
-
-See [eth_blockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blockNumber) for spec.
-No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
-
-### eth_getBlockByNumber
-### eth_getBlockByHash
-
-Return the block data.
-
-See JSON-RPC-Spec 
-- [eth_getBlockByNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockByNumber) - find block by number.
-- [eth_getBlockByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockByHash) - find block by hash.
-
-Requests requiring proof for blocks will return a proof of type `blockProof`. Details on how Blockheaders are serialized will be described in the [BlockProof-Chapter](#blockproof). Depending on the request, the proof will contain the following properties:
-
-- `type` : constant : `blockProof`
-- `signatures` : a array of signatures from the signers (if requested) of the requested block.
-- `transactions`: a array of raw transactions of the block. This is only needed the last parameter of the request (includeTransactions) is `false`,  In this case the result only contains the transactionHashes, but in order to verify we need to be able to build the complete merkle-trie, where the raw transactions are needed. If the complete transactions are included the raw transactions can be build from those values.
-- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
-- `uncles`: only if `fullProof` is requested we add  all blockheaders of the uncles to the proof in order to verify the uncleRoot.
-
-Request:
-
-```js
-{
-    "method": "eth_getBlockByNumber",
-    "params": [
-        "0x967a46",
-        false
-    ],
-    "in3": {
-      "verification":"proof"
-    }
-}
-```
-
-Response:
-```js
-{
-    "jsonrpc": "2.0",
-    "result": {
-        "author": "0x00d6cc1ba9cf89bd2e58009741f4f7325badc0ed",
-        "difficulty": "0xfffffffffffffffffffffffffffffffe",
-        "extraData": "0xde830201088f5061726974792d457468657265756d86312e33302e30827769",
-        "gasLimit": "0x7a1200",
-        "gasUsed": "0x1ce0f",
-        "hash": "0xfeb120ae45f1009e6c2289436d5957c58a15915288ec083658bd044101608f26",
-        "logsBloom": "0x0008000...",
-        "miner": "0x00d6cc1ba9cf89bd2e58009741f4f7325badc0ed",
-        "number": "0x967a46",
-        "parentHash": "0xc591335e0cdb6b21dc9af57567a6e075fc6315aff915bd79bf78a2c8815bc657",
-        "receiptsRoot": "0xfa2a0b3c0715e798ae41fd4645b0261ae4bf6d2c56f29da6fcc5fbfb7c6f19f8",
-        "sealFields": [
-            "0x8417098353",
-            "0xb841eb80c1a0be2eb7a1c14fc38759a0f9fe9c33121d72003025160a4b35119d495d34d39a9fd7475d28ba863e35f5103ed43e6f13ce31f026d3d29c0d2b1848fb4300"
-        ],
-        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-        "size": "0x44e",
-        "stateRoot": "0xd618159b6dbd0c6213d90abbf01e06513104f0670cd79503cb2563d7ff116864",
-        "timestamp": "0x5c260d4c",
-        "totalDifficulty": "0x94373700000000000000000000000484b6f390",
-        "transactions": [
-            "0x16cfadb6a0a823c623788713cb1eb7d399f89f78d599d416f7b91dca44eeb804",
-            "0x91458145d2c47527eee34e891879ac2915b3f8ba6f31911c5234928ae32cb191"
-        ],
-        "transactionsRoot": "0x4f1249c6378282b1f032cc8c2562712f2450a0bed8ce20bdd2d01b6520feb75a",
-        "uncles": []
-    },
-    "id": 77,
-    "in3": {
-        "proof": {
-            "type": "blockProof",
-            "signatures": [ ...  ],
-            "transactions": [
-                "0xf8ac8201158504a817c8....",
-                "0xf9014c8301a3d4843b9ac....",
-            ]
-        },
-        "currentBlock": 9866910,
-        "lastNodeList": 8057063,
-    }
-}
-```
-### eth_getBlockTransactionCountByHash
-### eth_getBlockTransactionCountByNumber
-### eth_getUncleCountByBlockHash
-### eth_getUncleCountByBlockNumber
-
-return the number of transactions or uncles.
-
-See JSON-RPC-Spec 
-- [eth_getBlockTransactionCountByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockTransactionCountByHash) - number of transaction by block hash.
-- [eth_getBlockTransactionCountByNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockTransactionCountByNumber) - number of transaction by block number.
-- [eth_getUncleCountByBlockHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getUncleCountByBlockHash) - number of uncles by block number.
-- [eth_getUncleCountByBlockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getUncleCountByBlockNumber) - number of uncles by block number.
-
-Requests requiring proof for blocks will return a proof of type `blockProof`.  Depending on the request, the proof will contain the following properties:
-
-- `type` : constant : `blockProof`
-- `signatures` : a array of signatures from the signers (if requested) of the requested block.
-- `block` : the serialized blockheader
-- `transactions`: a array of raw transactions of the block. This is only needed if the number of transactions are requested.
-- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
-- `uncles`: a array of blockheaders of the uncles of the block. This is only needed if the number of uncles are requested.
-
-
-### eth_getBalance
-### eth_getCode
-### eth_getTransactionCount
-### eth_getStorageAt
-
-Returns account based values.
-
-See JSON-RPC-Spec 
-- [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBalance) - returns the balance.
-- [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode) - the byte code of the contract.
-- [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount) - the nonce of the account.
-- [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat) - the storage value for the given key of the given account.
-
 If the request requires proof (`verification`: `proof`) the node will provide an Account Proof as part of the in3-section of the response. Details on how Account-PÖroof are created can be found in the [AccountProof-Chapter](#account-proof).
 This proof section contains the following properties:
 
@@ -1256,14 +1387,76 @@ Response:
 }
 ```
 
-### eth_estimateGas
-### eth_call
+#### eth_estimateGas
+#### eth_call
 
 calls a function of a contract (or simply executes the evm opcodes).
 
 See JSON-RPC-Spec 
 - [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call) - executes a function and returns the result.
 - [eth_estimateGas](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_estimateGas) - executes a function and returns the gas used.
+
+
+Verifying the result of an `eth_call` is a little bit more complex because the response is a result of executing opcodes in the vm. The only way to do so is to reproduce it and execute the same code. That's why a call proof needs to provide all data used within the call. This means:
+
+- All referred accounts including the code (if it is a contract), storageHash, nonce and balance.
+- All storage keys that are used (this can be found by tracing the transaction and collecting data based on the `SLOAD`-opcode).
+- All blockdata, which are referred at (besides the current one, also the `BLOCKHASH`-opcodes are referring to former blocks). 
+
+For verifying, you need to follow these steps:
+
+1. Serialize all used blockheaders and compare the blockhash with the signed hashes. (See [BlockProof](#blockproof))
+
+2. Verify all used accounts and their storage as showed in [Account Proof](#account-proof).
+
+3. Create a new [VM](https://github.com/ethereumjs/ethereumjs-vm) with a MerkleTree as state and fill in all used value in the state:
+
+
+```js 
+  // create new state for a vm
+  const state = new Trie()
+  const vm = new VM({ state })
+
+  // fill in values
+  for (const adr of Object.keys(accounts)) {
+    const ac = accounts[adr]
+
+    // create an account-object
+    const account = new Account([ac.nonce, ac.balance, ac.stateRoot, ac.codeHash])
+
+    // if we have a code, we will set the code
+    if (ac.code) account.setCode( state, bytes( ac.code ))
+
+    // set all storage-values
+    for (const s of ac.storageProof)
+      account.setStorage( state, bytes32( s.key ), rlp.encode( bytes32( s.value )))
+
+    // set the account data
+    state.put( address( adr ), account.serialize())
+  }
+
+  // add listener on each step to make sure it uses only values found in the proof
+  vm.on('step', ev => {
+     if (ev.opcode.name === 'SLOAD') {
+        const contract = toHex( ev.address ) // address of the current code
+        const storageKey = bytes32( ev.stack[ev.stack.length - 1] ) // last element on the stack is the key
+        if (!getStorageValue(contract, storageKey))
+          throw new Error(`incomplete data: missing key ${storageKey}`)
+     }
+     /// ... check other opcodes as well
+  })
+
+  // create a transaction
+  const tx = new Transaction(txData)
+
+  // run it
+  const result = await vm.runTx({ tx, block: new Block([block, [], []]) })
+
+  // use the return value
+  return result.vm.return
+```
+
+In the future, we will be using the same approach to verify calls with ewasm.
 
 If the request requires proof (`verification`: `proof`) the node will provide an Call Proof as part of the in3-section of the response. Details on how create the proof can be found in the [CallProof-Chapter](#call-proof).
 This proof section contains the following properties:
@@ -1357,9 +1550,9 @@ Response:
 
 
 
-### eth_accounts
-### eth_sign
-### eth_sendTransaction
+#### eth_accounts
+#### eth_sign
+#### eth_sendTransaction
 
 See JSON-RPC-Spec 
 - [eth_accounts](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_accounts) - returns the unlocked accounts.
@@ -1368,7 +1561,7 @@ See JSON-RPC-Spec
 
 Signing is **not supported** since the nodes are serving a public rpc-enpoint. These methods will return a error. The client may still support those methods, but handle those requests internally.
 
-### eth_sendRawTransaction
+#### eth_sendRawTransaction
 
 See JSON-RPC-Spec 
 - [eth_sendRawTransaction](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendRawTransaction) - sends a prviously signed transaction.
