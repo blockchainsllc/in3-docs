@@ -8,10 +8,10 @@ Welcome to Incubed's documentation!
 
    getting_started
    download
+   spec
    milestones
    Threat-Model-for-Incubed
    benchmarkSummary
-   spec
    api-ts
    api-c
    api-java
