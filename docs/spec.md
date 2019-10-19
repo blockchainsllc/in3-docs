@@ -1784,3 +1784,68 @@ if the client requests a partial nodeList and the given limnit is smaller then t
     }
     ````
 
+#### in3_sign
+
+requests a signed blockhash from the node. In most cases these requests will come from other nodes, because the client simply adds the addresses of the requested signers and the processising nodes will then aquire the signatures with this method from the other nodes.
+
+Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit, per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks!
+
+Parameters:
+
+1. `blocks`: Object[] - requested blocks. Each block-object has these 2 properties:
+
+    1. `blockNumber` : number - the blockNumber to sign.
+    2. `hash` : hex - (optional) the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
+
+
+Returns:
+
+a Object[] with the following properties for each block:
+
+1. `blockHash` : hex - the blockhash signed.
+2. `block` : number - the blockNumber
+3. `r` : hex - r-value of the signature
+3. `s` : hex - s-value of the signature
+3. `v` : number- v-value of the signature
+3. `msgHash` : the msgHash signed. This Hash is created :
+
+    ```js
+    keccak256(
+        abi.encodePacked(
+            _blockhash,
+            _blockNumber,
+            registryId
+        )
+    )
+    ```
+
+
+Request:
+```js
+{
+  "method":"in3_sign",
+  "params":[{"blockNumber":8770580}]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": [
+    {
+      "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
+      "block": 8770580,
+      "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
+      "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
+      "v": 28,
+      "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+    }
+  ],
+  "in3": {
+    "lastNodeList": 8669495,
+    "currentBlock": 8770590
+  }
+}
+```
