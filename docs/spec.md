@@ -571,6 +571,288 @@ These are:
 
 This section describes the behavior for each RPC-method.
 
+
+### Incubed
+
+There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
+
+
+#### in3_nodeList
+
+return the list of all registered nodes.
+
+Parameters:
+
+all parameters are optional, but if given a partial NodeList may be returned.
+
+1. `limit`: number - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
+2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
+3. `addresses`: address[] - a optional array of addresses of signers the nodeList must include. 
+
+Returns:
+
+an object with the following properties:
+
+- `nodes`: Node[] - a array of node-values. Each Object has the following properties:
+
+    - `url` : string - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
+    - `address` : address - the address of the signer
+    - `index`: number - the index within the nodeList of the contract
+    - `deposit`: string - the stored deposit
+    - `props`: string - the bitset of capabilities as described in the [Node Structure](#node-structure)
+    - `timeout`: string - the time in seconds describing how long the deposit would be locked when trying to unregister a node.
+    - `registerTime` : string - unix timestamp in seconds when the node has registered.
+    - `weight` : string - the weight of a node ( not used yet ) describing the amount of request-points it can handle per second.
+    - `proofHash`: hex -  a hash value containing the above values. This hash is explicitly stored in the contract, which enables the client to have only one merkle proof per node instead of verifying each property as its own storage value. The proof hash is build :
+        ```js
+        return keccak256(
+            abi.encodePacked(
+                _node.deposit,
+                _node.timeout,
+                _node.registerTime,
+                _node.props,
+                _node.signer,
+                _node.url
+            )
+        );
+        ```
+
+- `contract` : address - the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
+- `registryId`: hex - the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
+- `lastBlockNumber` : number - the blockNumber of the last change of the list (usually the last event). 
+- `totalServer` : number - the total numbers of nodes.
+
+if proof is requested, the proof will have the type `accountProof`. In the proof-section only the storage-keys of the `proofHash` will be included.
+The required storage keys are calcualted :
+
+- `0x00` - the length of the nodeList or total numbers of nodes.
+- `0x01` - the registryId
+- per node : ` 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563 + index * 5 + 4`
+
+The blockNumber of the proof must be the latest final block (`latest`- minBlockHeight) and always greater or equal to the `lastBlockNumber` 
+
+This proof section contains the following properties:
+
+- `type` : constant : `accountProof`
+- `block` : the serialized blockheader of the latest final block
+- `signatures` : a array of signatures from the signers (if requested) of the above block.
+- `accounts`: a Object with the addresses of the db-contract as key and Proof as value. The DataStructure of the Proof is exactly the same as the result of - [`eth_getProof`](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getproof), nbut it must containi the above described keys
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+
+
+
+
+Request:
+```js
+{
+  "method":"in3_nodeList",
+  "params":[2,"0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",[]],
+  "in3":{
+    "verification":"proof"
+  }
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": {
+    "totalServers": 5,
+    "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
+    "lastBlockNumber": 8669495,
+    "nodes": [
+      {
+        "url": "https://in3-v2.slock.it/mainnet/nd-3",
+        "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
+        "index": 2,
+        "deposit": "10000000000000000",
+        "props": "29",
+        "chainIds": [
+          "0x1"
+        ],
+        "timeout": "3600",
+        "registerTime": "1570109570",
+        "weight": "2000",
+        "proofHash": "27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+      },
+      {
+        "url": "https://in3-v2.slock.it/mainnet/nd-5",
+        "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
+        "index": 4,
+        "deposit": "10000000000000000",
+        "props": "29",
+        "chainIds": [
+          "0x1"
+        ],
+        "timeout": "3600",
+        "registerTime": "1570109690",
+        "weight": "2000",
+        "proofHash": "d0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+      }
+    ],
+    "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+  },
+  "in3": {
+    "proof": {
+      "type": "accountProof",
+      "block": "0xf9021ca01...",
+      "accounts": {
+        "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5": {
+          "accountProof": [
+            "0xf90211a0e822...",
+            "0xf90211a0f6d0...",
+            "0xf90211a04d7b...",
+            "0xf90211a0e749...",
+            "0xf90211a059cb...",
+            "0xf90211a0568f...",
+            "0xf8d1a0ac2433...",
+            "0xf86d9d33b981..."
+          ],
+          "address": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
+          "balance": "0xb1a2bc2ec50000",
+          "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
+          "nonce": "0x1",
+          "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
+          "storageProof": [
+            {
+              "key": "0x0",
+              "proof": [
+                "0xf90211a0ccb6d2d5786...",
+                "0xf871808080808080800...",
+                "0xe2a0200decd9548b62a...05"
+              ],
+              "value": "0x5"
+            },
+            {
+              "key": "0x1",
+              "proof": [
+                "0xf90211a0ccb6d2d5786...",
+                "0xf89180a010806a37911...",
+                "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+              ],
+              "value": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+            },
+            {
+              "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e571",
+              "proof": [
+                "0xf90211a0ccb6d2d...",
+                "0xf871a08b9ff91d8...",
+                "0xf843a0206695c25...27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+              ],
+              "value": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+            },
+            {
+              "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e57b",
+              "proof": [
+                "0xf90211a0ccb6d2d1...",
+                "0xf851a06807310abd...",
+                "0xf843a0204d807394...0d0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+              ],
+              "value": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+
+
+##### Partial NodeLists
+
+if the client requests a partial nodeList and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
+
+1. add all required addresses (if any) to the list.
+2. iterate over the indexes until the limit is reached:
+
+    ```ts
+    function createIndexes(limit: number, limit: number, seed: Buffer): number[] {
+      const result: number[] = []              // the result as a list of indexes
+      let step = seed.readUIntBE(0, 6)         // first 6 bytes define the step size
+      let pos  = seed.readUIntBE(6, 6) % limit // next 6 bytes define the offset
+      while (result.length < limit) {
+        if (result.indexOf(pos) >= 0) {        // if the index is already part of the result
+          seed = keccak256(seed)               // we create a new seed by hashing the seed.
+          step = seed.readUIntBE(0, 6)         // and change the step-size
+        } 
+        else
+          result.push(pos)
+        pos = (pos + step) % limit             // use the modulo operator to calculate the next position.
+      }
+      return result
+    }
+    ````
+
+#### in3_sign
+
+requests a signed blockhash from the node. In most cases these requests will come from other nodes, because the client simply adds the addresses of the requested signers and the processising nodes will then aquire the signatures with this method from the other nodes.
+
+Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit, per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks!
+
+Parameters:
+
+1. `blocks`: Object[] - requested blocks. Each block-object has these 2 properties:
+
+    1. `blockNumber` : number - the blockNumber to sign.
+    2. `hash` : hex - (optional) the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
+
+
+Returns:
+
+a Object[] with the following properties for each block:
+
+1. `blockHash` : hex - the blockhash signed.
+2. `block` : number - the blockNumber
+3. `r` : hex - r-value of the signature
+3. `s` : hex - s-value of the signature
+3. `v` : number- v-value of the signature
+3. `msgHash` : the msgHash signed. This Hash is created :
+
+    ```js
+    keccak256(
+        abi.encodePacked(
+            _blockhash,
+            _blockNumber,
+            registryId
+        )
+    )
+    ```
+
+
+Request:
+```js
+{
+  "method":"in3_sign",
+  "params":[{"blockNumber":8770580}]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": [
+    {
+      "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
+      "block": 8770580,
+      "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
+      "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
+      "v": 28,
+      "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+    }
+  ],
+  "in3": {
+    "lastNodeList": 8669495,
+    "currentBlock": 8770590
+  }
+}
+```
+
 ### Ethereum 1.x
 
 Standard JSON-RPC calls as described in https://github.com/ethereum/wiki/wiki/JSON-RPC.
@@ -1568,284 +1850,3 @@ See JSON-RPC-Spec
 - [eth_sendRawTransaction](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendRawTransaction) - sends a prviously signed transaction.
 
 This Method does not require any proof. (even if requested). Clients must at least verify the returned transactionHash by hashing the rawTransaction data. To know whether the transaction was actually broadcasted and mined, the client needs to run a second request `eth_getTransactionByHash` which should contain the blocknumber as soon as this is mined.
-
-### Incubed
-
-There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
-
-
-#### in3_nodeList
-
-return the list of all registered nodes.
-
-Parameters:
-
-all parameters are optional, but if given a partial NodeList may be returned.
-
-1. `limit`: number - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
-2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
-3. `addresses`: address[] - a optional array of addresses of signers the nodeList must include. 
-
-Returns:
-
-an object with the following properties:
-
-- `nodes`: Node[] - a array of node-values. Each Object has the following properties:
-
-    - `url` : string - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
-    - `address` : address - the address of the signer
-    - `index`: number - the index within the nodeList of the contract
-    - `deposit`: string - the stored deposit
-    - `props`: string - the bitset of capabilities as described in the [Node Structure](#node-structure)
-    - `timeout`: string - the time in seconds describing how long the deposit would be locked when trying to unregister a node.
-    - `registerTime` : string - unix timestamp in seconds when the node has registered.
-    - `weight` : string - the weight of a node ( not used yet ) describing the amount of request-points it can handle per second.
-    - `proofHash`: hex -  a hash value containing the above values. This hash is explicitly stored in the contract, which enables the client to have only one merkle proof per node instead of verifying each property as its own storage value. The proof hash is build :
-        ```js
-        return keccak256(
-            abi.encodePacked(
-                _node.deposit,
-                _node.timeout,
-                _node.registerTime,
-                _node.props,
-                _node.signer,
-                _node.url
-            )
-        );
-        ```
-
-- `contract` : address - the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
-- `registryId`: hex - the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
-- `lastBlockNumber` : number - the blockNumber of the last change of the list (usually the last event). 
-- `totalServer` : number - the total numbers of nodes.
-
-if proof is requested, the proof will have the type `accountProof`. In the proof-section only the storage-keys of the `proofHash` will be included.
-The required storage keys are calcualted :
-
-- `0x00` - the length of the nodeList or total numbers of nodes.
-- `0x01` - the registryId
-- per node : ` 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563 + index * 5 + 4`
-
-The blockNumber of the proof must be the latest final block (`latest`- minBlockHeight) and always greater or equal to the `lastBlockNumber` 
-
-This proof section contains the following properties:
-
-- `type` : constant : `accountProof`
-- `block` : the serialized blockheader of the latest final block
-- `signatures` : a array of signatures from the signers (if requested) of the above block.
-- `accounts`: a Object with the addresses of the db-contract as key and Proof as value. The DataStructure of the Proof is exactly the same as the result of - [`eth_getProof`](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getproof), nbut it must containi the above described keys
-- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
-
-
-
-
-Request:
-```js
-{
-  "method":"in3_nodeList",
-  "params":[2,"0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",[]],
-  "in3":{
-    "verification":"proof"
-  }
-}
-```
-
-Response:
-
-```js
-{
-  "id": 1,
-  "result": {
-    "totalServers": 5,
-    "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
-    "lastBlockNumber": 8669495,
-    "nodes": [
-      {
-        "url": "https://in3-v2.slock.it/mainnet/nd-3",
-        "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
-        "index": 2,
-        "deposit": "10000000000000000",
-        "props": "29",
-        "chainIds": [
-          "0x1"
-        ],
-        "timeout": "3600",
-        "registerTime": "1570109570",
-        "weight": "2000",
-        "proofHash": "27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-      },
-      {
-        "url": "https://in3-v2.slock.it/mainnet/nd-5",
-        "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
-        "index": 4,
-        "deposit": "10000000000000000",
-        "props": "29",
-        "chainIds": [
-          "0x1"
-        ],
-        "timeout": "3600",
-        "registerTime": "1570109690",
-        "weight": "2000",
-        "proofHash": "d0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-      }
-    ],
-    "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-  },
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf9021ca01...",
-      "accounts": {
-        "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5": {
-          "accountProof": [
-            "0xf90211a0e822...",
-            "0xf90211a0f6d0...",
-            "0xf90211a04d7b...",
-            "0xf90211a0e749...",
-            "0xf90211a059cb...",
-            "0xf90211a0568f...",
-            "0xf8d1a0ac2433...",
-            "0xf86d9d33b981..."
-          ],
-          "address": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
-          "balance": "0xb1a2bc2ec50000",
-          "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
-          "nonce": "0x1",
-          "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
-          "storageProof": [
-            {
-              "key": "0x0",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf871808080808080800...",
-                "0xe2a0200decd9548b62a...05"
-              ],
-              "value": "0x5"
-            },
-            {
-              "key": "0x1",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf89180a010806a37911...",
-                "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-              ],
-              "value": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-            },
-            {
-              "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e571",
-              "proof": [
-                "0xf90211a0ccb6d2d...",
-                "0xf871a08b9ff91d8...",
-                "0xf843a0206695c25...27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-              ],
-              "value": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-            },
-            {
-              "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e57b",
-              "proof": [
-                "0xf90211a0ccb6d2d1...",
-                "0xf851a06807310abd...",
-                "0xf843a0204d807394...0d0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-              ],
-              "value": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
-```
-
-
-
-##### Partial NodeLists
-
-if the client requests a partial nodeList and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
-
-1. add all required addresses (if any) to the list.
-2. iterate over the indexes until the limit is reached:
-
-    ```ts
-    function createIndexes(limit: number, limit: number, seed: Buffer): number[] {
-      const result: number[] = []              // the result as a list of indexes
-      let step = seed.readUIntBE(0, 6)         // first 6 bytes define the step size
-      let pos  = seed.readUIntBE(6, 6) % limit // next 6 bytes define the offset
-      while (result.length < limit) {
-        if (result.indexOf(pos) >= 0) {        // if the index is already part of the result
-          seed = keccak256(seed)               // we create a new seed by hashing the seed.
-          step = seed.readUIntBE(0, 6)         // and change the step-size
-        } 
-        else
-          result.push(pos)
-        pos = (pos + step) % limit             // use the modulo operator to calculate the next position.
-      }
-      return result
-    }
-    ````
-
-#### in3_sign
-
-requests a signed blockhash from the node. In most cases these requests will come from other nodes, because the client simply adds the addresses of the requested signers and the processising nodes will then aquire the signatures with this method from the other nodes.
-
-Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit, per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks!
-
-Parameters:
-
-1. `blocks`: Object[] - requested blocks. Each block-object has these 2 properties:
-
-    1. `blockNumber` : number - the blockNumber to sign.
-    2. `hash` : hex - (optional) the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
-
-
-Returns:
-
-a Object[] with the following properties for each block:
-
-1. `blockHash` : hex - the blockhash signed.
-2. `block` : number - the blockNumber
-3. `r` : hex - r-value of the signature
-3. `s` : hex - s-value of the signature
-3. `v` : number- v-value of the signature
-3. `msgHash` : the msgHash signed. This Hash is created :
-
-    ```js
-    keccak256(
-        abi.encodePacked(
-            _blockhash,
-            _blockNumber,
-            registryId
-        )
-    )
-    ```
-
-
-Request:
-```js
-{
-  "method":"in3_sign",
-  "params":[{"blockNumber":8770580}]
-}
-```
-
-Response:
-
-```js
-{
-  "id": 1,
-  "result": [
-    {
-      "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
-      "block": 8770580,
-      "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
-      "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
-      "v": 28,
-      "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
-    }
-  ],
-  "in3": {
-    "lastNodeList": 8669495,
-    "currentBlock": 8770590
-  }
-}
-```
