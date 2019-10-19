@@ -239,11 +239,11 @@ for (int i = 0; i < number_of_servers; i++) {
 
 ### eth_api.h
 
-Ethereum API. 
+Ethereum API.
 
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
-Location: src/api/eth1/eth_api.h
+File: [src/api/eth1/eth_api.h](https://github.com/slockit/in3-c/blob/master/src/api/eth1/eth_api.h)
 
 #### BLKNUM (blk)
 
@@ -348,7 +348,10 @@ The stuct contains following fields:
 
 #### eth_log_t
 
-A linked list of Ethereum Logs. 
+A linked list of Ethereum Logs 
+
+
+ 
 
 
 The stuct contains following fields:
@@ -1182,11 +1185,11 @@ arguments:
 
 ### usn_api.h
 
-USN API. 
+USN API.
 
 This header-file defines easy to use function, which are verifying USN-Messages. 
 
-Location: src/api/usn/usn_api.h
+File: [src/api/usn/usn_api.h](https://github.com/slockit/in3-c/blob/master/src/api/usn/usn_api.h)
 
 #### usn_msg_type_t
 
@@ -1406,7 +1409,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 storage handler storing cache in the home-dir/.in3 
 
-Location: src/cmd/in3/in3_storage.h
+File: [src/cmd/in3/in3_storage.h](https://github.com/slockit/in3-c/blob/master/src/cmd/in3/in3_storage.h)
 
 #### storage_get_item
 
@@ -1446,11 +1449,11 @@ arguments:
 
 ### cache.h
 
-handles caching and storage. 
+handles caching and storage.
 
 storing nodelists and other caches with the storage handler as specified in the client. If no storage handler is specified nothing will be cached. 
 
-Location: src/core/client/cache.h
+File: [src/core/client/cache.h](https://github.com/slockit/in3-c/blob/master/src/core/client/cache.h)
 
 #### in3_cache_update_nodelist
 
@@ -1498,11 +1501,11 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### client.h
 
-incubed main client file. 
+incubed main client file.
 
 This includes the definition of the client and used enum values. 
 
-Location: src/core/client/client.h
+File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/src/core/client/client.h)
 
 #### IN3_PROTO_VER
 
@@ -2208,11 +2211,9 @@ arguments:
 
 ### context.h
 
-Request Context. 
+Request Context. This is used for each request holding request and response-pointers. 
 
-This is used for each request holding request and response-pointers. 
-
-Location: src/core/client/context.h
+File: [src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/src/core/client/context.h)
 
 #### node_weight_t
 
@@ -2391,7 +2392,7 @@ returns: `int`
 
 handles nodelists. 
 
-Location: src/core/client/nodelist.h
+File: [src/core/client/nodelist.h](https://github.com/slockit/in3-c/blob/master/src/core/client/nodelist.h)
 
 #### in3_nodelist_clear
 
@@ -2479,11 +2480,11 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### send.h
 
-handles caching and storage. 
+handles caching and storage.
 
 handles the request. 
 
-Location: src/core/client/send.h
+File: [src/core/client/send.h](https://github.com/slockit/in3-c/blob/master/src/core/client/send.h)
 
 #### in3_send_ctx
 
@@ -2506,11 +2507,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### verifier.h
 
-Verification Context. 
+Verification Context. This context is passed to the verifier. 
 
-This context is passed to the verifier. 
-
-Location: src/core/client/verifier.h
+File: [src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/src/core/client/verifier.h)
 
 #### in3_verify
 
@@ -2604,7 +2603,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 util helper on byte arrays. 
 
-Location: src/core/util/bytes.h
+File: [src/core/util/bytes.h](https://github.com/slockit/in3-c/blob/master/src/core/util/bytes.h)
 
 #### bb_new ()
 
@@ -3295,7 +3294,7 @@ arguments:
 
 ### data.h
 
-json-parser. 
+json-parser.
 
 The parser can read from :
 
@@ -3304,7 +3303,7 @@ The parser can read from :
 
 When reading from json all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as integer. 
 
-Location: src/core/util/data.h
+File: [src/core/util/data.h](https://github.com/slockit/in3-c/blob/master/src/core/util/data.h)
 
 #### DATA_DEPTH_MAX
 
@@ -4519,7 +4518,7 @@ returns: `bool`
 
 logs debug data only if the DEBUG-flag is set. 
 
-Location: src/core/util/debug.h
+File: [src/core/util/debug.h](https://github.com/slockit/in3-c/blob/master/src/core/util/debug.h)
 
 #### dbg_log (msg,...)
 
@@ -4546,7 +4545,7 @@ arguments:
 
 defines the return-values of a function call. 
 
-Location: src/core/util/error.h
+File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/core/util/error.h)
 
 #### OPTIONAL_T (t)
 
@@ -4616,7 +4615,7 @@ The enum type contains the following values:
 
 util helper on byte arrays. 
 
-Location: src/core/util/scache.h
+File: [src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/src/core/util/scache.h)
 
 #### cache_entry_t
 
@@ -4683,7 +4682,7 @@ arguments:
 
 simple string buffer used to dynamicly add content. 
 
-Location: src/core/util/stringbuilder.h
+File: [src/core/util/stringbuilder.h](https://github.com/slockit/in3-c/blob/master/src/core/util/stringbuilder.h)
 
 #### sb_add_hexuint (sb,i)
 
@@ -4842,7 +4841,7 @@ returns: [`sb_t *`](#sb-t)
 sb_t* sb_add_hexuint_l(sb_t *sb, uintmax_t uint, size_t l);
 ```
 
-Other types not supported 
+Other types not supported
 
 arguments:
 ```eval_rst
@@ -4859,7 +4858,7 @@ returns: [`sb_t *`](#sb-t)
 
 utility functions. 
 
-Location: src/core/util/utils.h
+File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/core/util/utils.h)
 
 #### SWAP (a,b)
 
@@ -5327,7 +5326,7 @@ returns: `char *`
 
 transport-handler using libcurl. 
 
-Location: src/transport/curl/in3_curl.h
+File: [src/transport/curl/in3_curl.h](https://github.com/slockit/in3-c/blob/master/src/transport/curl/in3_curl.h)
 
 #### send_curl
 
@@ -5369,7 +5368,7 @@ registers curl as a default transport.
 
 transport-handler using simple http. 
 
-Location: src/transport/http/in3_http.h
+File: [src/transport/http/in3_http.h](https://github.com/slockit/in3-c/blob/master/src/transport/http/in3_http.h)
 
 #### send_http
 
@@ -5400,7 +5399,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 Ethereum Nanon verification. 
 
-Location: src/verifier/eth1/basic/eth_basic.h
+File: [src/verifier/eth1/basic/eth_basic.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/eth_basic.h)
 
 #### in3_verify_eth_basic
 
@@ -5555,7 +5554,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 Ethereum Nano verification. 
 
-Location: src/verifier/eth1/basic/signer.h
+File: [src/verifier/eth1/basic/signer.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/signer.h)
 
 #### eth_set_pk_signer
 
@@ -5579,9 +5578,9 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### trie.h
 
-Patricia Merkle Tree Imnpl. 
+Patricia Merkle Tree Imnpl 
 
-Location: src/verifier/eth1/basic/trie.h
+File: [src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/trie.h)
 
 #### trie_node_type_t
 
@@ -5752,7 +5751,7 @@ arguments:
 
 Ethereum Nanon verification. 
 
-Location: src/verifier/eth1/evm/big.h
+File: [src/verifier/eth1/evm/big.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/big.h)
 
 #### big_is_zero
 
@@ -5993,7 +5992,7 @@ returns: `int`
 
 code cache. 
 
-Location: src/verifier/eth1/evm/code.h
+File: [src/verifier/eth1/evm/code.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/code.h)
 
 #### in3_get_code
 
@@ -6015,7 +6014,7 @@ returns: [`cache_entry_t *`](#cache-entry-t)
 
 main evm-file. 
 
-Location: src/verifier/eth1/evm/evm.h
+File: [src/verifier/eth1/evm/evm.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/evm.h)
 
 #### gas_options
 
@@ -6023,6 +6022,9 @@ Location: src/verifier/eth1/evm/evm.h
 #### EVM_ERROR_EMPTY_STACK
 
 the no more elements on the stack 
+
+
+ 
 
 ```c
 #define EVM_ERROR_EMPTY_STACK -1
@@ -6033,6 +6035,9 @@ the no more elements on the stack
 
 the opcode is not supported 
 
+
+ 
+
 ```c
 #define EVM_ERROR_INVALID_OPCODE -2
 ```
@@ -6041,6 +6046,9 @@ the opcode is not supported
 #### EVM_ERROR_BUFFER_TOO_SMALL
 
 reading data from a position, which is not initialized 
+
+
+ 
 
 ```c
 #define EVM_ERROR_BUFFER_TOO_SMALL -3
@@ -6051,6 +6059,9 @@ reading data from a position, which is not initialized
 
 the memory-offset does not exist 
 
+
+ 
+
 ```c
 #define EVM_ERROR_ILLEGAL_MEMORY_ACCESS -4
 ```
@@ -6059,6 +6070,9 @@ the memory-offset does not exist
 #### EVM_ERROR_INVALID_JUMPDEST
 
 the jump destination is not marked as valid destination 
+
+
+ 
 
 ```c
 #define EVM_ERROR_INVALID_JUMPDEST -5
@@ -6078,6 +6092,9 @@ the push data is empy
 
 error handling the call, usually because static-calls are not allowed to change state 
 
+
+ 
+
 ```c
 #define EVM_ERROR_UNSUPPORTED_CALL_OPCODE -7
 ```
@@ -6086,6 +6103,9 @@ error handling the call, usually because static-calls are not allowed to change 
 #### EVM_ERROR_TIMEOUT
 
 the evm ran into a loop 
+
+
+ 
 
 ```c
 #define EVM_ERROR_TIMEOUT -8
@@ -6096,6 +6116,9 @@ the evm ran into a loop
 
 the enviroment could not deliver the data 
 
+
+ 
+
 ```c
 #define EVM_ERROR_INVALID_ENV -9
 ```
@@ -6104,6 +6127,9 @@ the enviroment could not deliver the data
 #### EVM_ERROR_OUT_OF_GAS
 
 not enough gas to exewcute the opcode 
+
+
+ 
 
 ```c
 #define EVM_ERROR_OUT_OF_GAS -10
@@ -6122,6 +6148,9 @@ not enough funds to transfer the requested value.
 #### EVM_ERROR_STACK_LIMIT
 
 stack limit reached 
+
+
+ 
 
 ```c
 #define EVM_ERROR_STACK_LIMIT -12
@@ -6885,7 +6914,7 @@ returns: `int`
 
 evm gas defines. 
 
-Location: src/verifier/eth1/evm/gas.h
+File: [src/verifier/eth1/evm/gas.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/gas.h)
 
 #### op_exec (m,gas)
 
@@ -7468,7 +7497,7 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 
 Ethereum Nanon verification. 
 
-Location: src/verifier/eth1/full/eth_full.h
+File: [src/verifier/eth1/full/eth_full.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/full/eth_full.h)
 
 #### in3_verify_eth_full
 
@@ -7503,9 +7532,9 @@ this function should only be called once and will register the eth-full verifier
 
 ### chainspec.h
 
-Ethereum chain specification. 
+Ethereum chain specification 
 
-Location: src/verifier/eth1/nano/chainspec.h
+File: [src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/chainspec.h)
 
 #### BLOCK_LATEST
 
@@ -7580,322 +7609,56 @@ defines the flags for the current activated EIPs.
 
 Since it does not make sense to support a evm defined before Homestead, homestead EIP is always turned on! 
 
-< REVERT instruction 
+< REVERT instruction
 
+< Bitwise shifting instructions in EVM
 
+< Gas cost changes for IO-heavy operations
 
+< Simple replay attack protection
 
+< EXP cost increase
 
+< Contract code size limit
 
+< Precompiled contracts for addition and scalar multiplication on the elliptic curve alt_bn128 
 
 
 
 
+< Precompiled contracts for optimal ate pairing check on the elliptic curve alt_bn128 
 
 
 
 
+< Big integer modular exponentiation 
 
 
 
 
+< New opcodes: RETURNDATASIZE and RETURNDATACOPY 
 
 
 
 
+< New opcode STATICCALL 
 
 
 
 
+< Embedding transaction status code in receipts
 
+< Skinny CREATE2 
 
 
 
 
+< EXTCODEHASH opcode
 
+< Net gas metering for SSTORE without dirty maps 
 
 
 
-
-
-
-
-
-
- < Bitwise shifting instructions in EVM 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Gas cost changes for IO-heavy operations 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Simple replay attack protection 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < EXP cost increase 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Contract code size limit 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Precompiled contracts for addition and scalar multiplication on the elliptic curve alt_bn128 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Precompiled contracts for optimal ate pairing check on the elliptic curve alt_bn128 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < Big integer modular exponentiation 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < New opcodes: RETURNDATASIZE and RETURNDATACOPY 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- < New opcode STATICCALL 
-
-
-
-
-
-
-
-
-
-
-
- < Embedding transaction status code in receipts 
-
-
-
-
-
-
-
-
- < Skinny CREATE2 
-
-
-
-
-
- < EXTCODEHASH opcode 
-
-
- < Net gas metering for SSTORE without dirty maps 
 
 arguments:
 ```eval_rst
@@ -8019,7 +7782,7 @@ arguments:
 
 Ethereum Nanon verification. 
 
-Location: src/verifier/eth1/nano/eth_nano.h
+File: [src/verifier/eth1/nano/eth_nano.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/eth_nano.h)
 
 #### in3_verify_eth_nano
 
@@ -8176,7 +7939,7 @@ returns: [`bytes_t *`](#bytes-t)
 
 Merkle Proof Verification. 
 
-Location: src/verifier/eth1/nano/merkle.h
+File: [src/verifier/eth1/nano/merkle.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/merkle.h)
 
 #### MERKLE_DEPTH_MAX
 
@@ -8264,11 +8027,11 @@ arguments:
 
 ### rlp.h
 
-RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ethereum/wiki/wiki/RLP). 
+RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ethereum/wiki/wiki/RLP).
 
 This decoding works without allocating new memory. 
 
-Location: src/verifier/eth1/nano/rlp.h
+File: [src/verifier/eth1/nano/rlp.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/rlp.h)
 
 #### rlp_decode
 
@@ -8489,11 +8252,11 @@ arguments:
 
 ### serialize.h
 
-serialization of ETH-Objects. 
+serialization of ETH-Objects.
 
 This incoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
 
-Location: src/verifier/eth1/nano/serialize.h
+File: [src/verifier/eth1/nano/serialize.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/serialize.h)
 
 #### BLOCKHEADER_PARENT_HASH
 
