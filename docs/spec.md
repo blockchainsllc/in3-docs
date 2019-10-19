@@ -770,10 +770,10 @@ if the client requests a partial nodeList and the given limnit is smaller then t
 2. iterate over the indexes until the limit is reached:
 
     ```ts
-    function createIndexes(limit: number, limit: number, seed: Buffer): number[] {
+    function createIndexes(total: number, limit: number, seed: Buffer): number[] {
       const result: number[] = []              // the result as a list of indexes
       let step = seed.readUIntBE(0, 6)         // first 6 bytes define the step size
-      let pos  = seed.readUIntBE(6, 6) % limit // next 6 bytes define the offset
+      let pos  = seed.readUIntBE(6, 6) % total // next 6 bytes define the offset
       while (result.length < limit) {
         if (result.indexOf(pos) >= 0) {        // if the index is already part of the result
           seed = keccak256(seed)               // we create a new seed by hashing the seed.
@@ -781,7 +781,7 @@ if the client requests a partial nodeList and the given limnit is smaller then t
         } 
         else
           result.push(pos)
-        pos = (pos + step) % limit             // use the modulo operator to calculate the next position.
+        pos = (pos + step) % total             // use the modulo operator to calculate the next position.
       }
       return result
     }
