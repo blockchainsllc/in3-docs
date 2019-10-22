@@ -148,14 +148,18 @@ Each Incubed node must be registered in the ServerRegistry in order to be known 
 
 *  **deposit** `uint256` - The deposit stored for the node, which the node will lose if it signs a wrong blockhash.
 
-*  **props** `uint64` - A bitmask defining the capabilities of the node:
+*  **props** `uint192` - A bitmask defining the capabilities of the node:
 
-    - `0x01` : **proof** :  The node is able to deliver proof. If not set, it may only serve pure ethereum JSON/RPC. Thus, simple remote nodes may also be registered as Incubed nodes.
-    - `0x02` : **multichain** : The same RPC endpoint may also accept requests for different chains. if this is set the `chainId`-prop in the request in required.
-    - `0x04` : **archive** : If set, the node is able to support archive requests returning older states. If not, only a pruned node is running.
-    - `0x08` : **http** : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
-    - `0x10` : **binary** : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
-    - `0x20` : **onion** : If set, the node is reachable through onionrouting and url will be a onion url.
+    - **proof** ( `0x01` )  :  The node is able to deliver proof. If not set, it may only serve pure ethereum JSON/RPC. Thus, simple remote nodes may also be registered as Incubed nodes.
+    - **multichain** ( `0x02` ) : The same RPC endpoint may also accept requests for different chains. if this is set the `chainId`-prop in the request in required.
+    - **archive** ( `0x04` ) : If set, the node is able to support archive requests returning older states. If not, only a pruned node is running.
+    -  **http** ( `0x08` ) : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
+    - **binary** (`0x10` )  : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
+    - **onion** ( `0x20` ) : If set, the node is reachable through onionrouting and url will be a onion url.
+    - **minBlockHeight** ( `0x101` - `0x1FF` ):  : The min number of blocks this node is willing to sign. if this number is low (like <6) the risk of signing unindentially a wrong blockhash because of reorgs is high. The default should be 10)
+       ```js
+       minBlockHeight = props >> 8 & 0xFF
+       ```
 
     More capabilities will be added in future versions.
 
