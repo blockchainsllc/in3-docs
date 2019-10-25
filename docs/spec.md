@@ -435,6 +435,19 @@ The following functions are offered within the registry:
 #### snapshot
 *stores the currentBlock-1 in the smart contract*
 
+#### getRlpUint
+*returns the value from the rlp encoded data*
+
+**Development notice:**
+*This function is limited to only value up to 32 bytes length!*
+
+**Parameters:**
+* _data `bytes`: *the rlp encoded data*
+* _offset `uint`: *the offset*
+
+**Return Parameters:**
+* value `uint` the value
+
 #### getParentAndBlockhash
 *returns the blockhash and the parent blockhash from the provided blockheader*
 
