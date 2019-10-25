@@ -134,9 +134,10 @@ This contract serves different purposes. Primarily, it manages all the Incubed n
 
 In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
-### Node structure
 
-Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as: 
+### Node structure
+ 
+Each Incubed node must be registered in the NodeRegistry in order to be known to the network. A node or server is defined as: 
 
 *  **url** `string` - The public url of the node, which must accept JSON-RPC requests.
 
@@ -172,7 +173,7 @@ Each Incubed node must be registered in the ServerRegistry in order to be known 
 The following functions are offered within the registry:
 
 
-### NodeRegistry functions
+### NodeRegistryLogic functions
 
 #### constructor
 *constructor*
@@ -182,16 +183,50 @@ The following functions are offered within the registry:
 
 **Parameters:**
 * _blockRegistry `BlockhashRegistry`: *address of a BlockhashRegistry-contract*
+* _nodeRegistryData `NodeRegistryData`: *address of a NodeRegistryData-contract*
+* _minDeposit `_minDeposit`: *minimal deposit to register a new server (in ERC20 tokens)*
+
+#### activateNewLogic
+*applies a new update to the logic-contract by setting the pending NodeRegistryLogic-contract as owner to the NodeRegistryData-conract*
+
+**Development notice:**
+*only callable after 47 days have passed since the latest update has been proposed*
+
+#### adminRemoveNodeFromRegistry
+*removes an malicious in3-node from the nodeList*
+
+**Development notice:**
+*only callable by the admin of the smart contract*
+
+*only callable in the 1st year after deployment*
+
+*ony usable on registered in3-nodes*
+
+**Parameters:**
+* _signer `address`: *the malicious signer*
+
+#### adminUpdateLogic
+*Proposes an update to the logic contract which can only be applied after 47 days.*
+
+*This will allow all nodes that don't approve the update to unregister from the registry*
+
+**Development notice:**
+*only callable by the admin of the smart contract*
+
+*does not allow for the 0x0-address to be set as new logic*
+
+**Parameters:**
+* _newLogic `address`: *the malicious signer*
 
 #### convict
 *must be called before revealConvict*
+
 *commits a blocknumber and a hash*
 
 **Development notice:**
 *The v,r,s paramaters are from the signature of the wrong blockhash that the node provided*
 
 **Parameters:**
-* _blockNumber `uint`: *the blocknumber of the wrong blockhash*
 * _hash `bytes32`: *keccak256(wrong blockhash, msg.sender, v, r, s); used to prevent frontrunning.*
 
 #### registerNode
@@ -200,11 +235,13 @@ The following functions are offered within the registry:
 **Development notice:**
 *will call the registerNodeInteral function*
 
+*the amount of `_deposit` token have be approved by the signer in order for them to be transferred by the logic contract*
+
 **Parameters:**
 * _url `string`: *the url of the node, has to be unique*
 * _props `uint64`: *properties of the node*
-* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
 * _weight `uint64`: *how many requests per second the node is able to handle*
+* _deposit `uint`: *amount of supported ERC20 tokens as deposit*
 
 #### registerNodeFor
 *register a new node as a owner using a different signer address*
@@ -218,30 +255,21 @@ The following functions are offered within the registry:
 
 *will call the registerNodeInteral function*
 
+*the amount of `_deposit` token have be approved by the in3-node-owner in order for them to be transferred by the logic contract*
 
 **Parameters:**
 * _url `string`: *the url of the node, has to be unique*
 * _props `uint64`: *properties of the node*
-* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
 * _signer `address`: *the signer of the in3-node*
 * _weight `uint64`: *how many requests per second the node is able to handle*
+* _depositAmount `uint`: *the amount of supported ERC20 tokens as deposit*
 * _v `uint8`: *v of the signed message*
 * _r `bytes32`: *r of the signed message*
 * _s `bytes32`: *s of the signed message*
 
-#### removeNodeFromRegistry
-*removes an in3-server from the registry*
-
-**Development notice:**
-*only callable in the 1st year after deployment*
-
-*only callable by the unregisterKey-account*
-
-**Parameters:**
-* _signer `address`: *the signer-address of the in3-node*
-
 #### returnDeposit
 *only callable after the timeout of the deposit is over*
+
 *returns the deposit after a node has been removed*
 
 **Development notice:**
@@ -250,7 +278,6 @@ The following functions are offered within the registry:
 *reverts when there is nothing to transfer*
 
 *reverts when not the owner of the former in3-node*
-
 
 **Parameters:**
 * _signer `address`: *the signer-address of a former in3-node*
@@ -302,59 +329,50 @@ The following functions are offered within the registry:
 
 *reverts when the provided address is not an in3-signer*
 
+*reverts when node is not active*
 
 **Parameters:**
 * _signer `address`: *the signer of the in3-node*
 
 #### updateNode
-*updates a node by adding the msg.value to the deposit and setting the props or timeout*
+*updates a node by changing its props*
 
 **Development notice:**
-*reverts when trying to change the url to an already existing one*
+*if there is an additional deposit the owner has to approve the tokenTransfer before*
 
-*reverts when trying to increase the timeout above 10 years*
+*reverts when trying to change the url to an already existing one*
 
 *reverts when the signer does not own a node*
 
 *reverts when the sender is not the owner of the node*
 
-
 **Parameters:**
 * _signer `address`: *the signer-address of the in3-node, used as an identifier*
 * _url `string`: *the url, will be changed if different from the current one*
-* _props `uint64`: *the new properties, will be changed if different from the current onec*
-* _timeout `uint64`: *the new timeout of the node, cannot be decreased. Has to be at least 1h*
+* _props `uint64`: *the new properties, will be changed if different from the current one*
 * _weight `uint64`: *the amount of requests per second the node is able to handle*
+* _additionalDeposit `uint`: *additional deposit in supported erc20 tokens*
 
-#### totalNodes
-*length of the nodelist*
-**Return Parameters:**
-* `uint` the number of currently active nodes
-
-#### calcProofHash
-*calculates the sha3 hash of the most important properties in order to make the proof faster*
-
-**Parameters:**
-* _node `In3Node`: *the in3 node to calculate the hash from*
+#### supportedToken
+*returns the current supported ERC20 token*
 
 **Return Parameters:**
-* `bytes32` the hash of the properties to prove with in3
+* `address` the address of the currently supported erc20 token
 
-#### checkNodeProperties
-*function to check whether the allowed amount of ether as deposit per server has been reached*
+#### _checkNodePropertiesInternal
+*function to check whether the allowed amount of deposit per server has been reached or is not enough*
 
 **Development notice:**
-*will fail when the provided timeout is greater then 1 year*
 
-*will fail when the deposit is greater then 50 ether in the 1st year*
+*will fail when the deposit is greater than the maxDepositFirstYear in the 1st year*
 
+*will fail when the deposit is less than the minDeposit*
 
 **Parameters:**
 * _deposit `uint256`: *the new amount of deposit a server has*
-* _timeout `uint64`: *the timeout until a server can receive his deposit after unregister*
 
-#### registerNodeInternal
-*registers a node*
+#### _registerNodeInternal
+*helper function for registering a node*
 
 **Development notice:**
 *reverts when either the owner or the url is already in use*
@@ -363,26 +381,15 @@ The following functions are offered within the registry:
 
 *reverts when provided not enough deposit*
 
-*reverts when time timeout exceed the MAXDEPOSITTIMEOUT*
+*reverts when the erc20 token transfer to the data-contract fails*
 
 **Parameters:**
 * _url `string`: *the url of a node*
 * _props `uint64`: *properties of a node*
-* _timeout `uint64`: *the time before the owner can access the deposit after unregister a node*
 * _signer `address`: *the address that signs the answers of the node*
 * _owner `address`: *the owner address of the node*
 * _deposit `uint`: *the deposit of a node*
 * _weight `uint64`: *the amount of requests per second a node is able to handle*
-
-#### unregisterNodeInternal
-*handles the setting of the unregister values for a node internally*
-
-**Parameters:**
-* _si `SignerInformation`: *information of the signer*
-* _n `In3Node`: *information of the in3-node*
-
-#### removeNode
-*removes a node from the node-array*
 
 ### BlockHashRegistry functions
 
