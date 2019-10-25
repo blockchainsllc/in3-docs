@@ -56,7 +56,7 @@ If the proof is requested, the `in3` property is defined with the following prop
 
 *  **proof** [Proof](#proofs) - The Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
 
-*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodeList.  
+*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodelist.  
 
 *  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
 
@@ -143,7 +143,7 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
 
 *  **owner** `address` - The owner of the node with the permission to edit or remove the node.  
 
-*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodeList.   
+*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodelist.   
 
 *  **timeout** `uint64` - Timeout after which the owner is allowed to receive its stored deposit. This information is also important for the client, since an invalid blockhash-signature can only "convict" as long as the server is registered. A long timeout may provide higher security since the node can not lie and unregister right away.
 
@@ -161,7 +161,6 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
        ```js
        minBlockHeight = props >> 8 & 0xFF
        ```
-
     More capabilities will be added in future versions.
 
 *  **unregisterTime** `uint64` - The earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests an unregister. The client nodes with an `unregisterTime` set have less trust, since they will not be able to convict after this timestamp.
@@ -170,301 +169,486 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
 
 *  **weight** `uint64` - The number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used within the incentivization layer to calculate the score.
 
-The following functions are offered within the registry:
+### NodeRegistryData functions
+#### constructor
+constructor
 
+**Development notice:**
+* sets the timeout before accessing the deposit after unregistering to 40 days
+* creates the registryId
+
+#### adminRemoveNodeFromRegistry
+Removes an in3-node from the nodelist
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _signer `address`: the signer
+
+#### adminSetLogic
+Sets the new Logic-contract as owner of the contract. 
+
+**Development notice:**
+* only callable by the current Logic-contract / owner
+* the `0x00`-address as owner is not supported
+
+**Return Parameters:**
+* true when successful
+
+#### adminSetNodeDeposit
+Sets the deposit of an existing in3-node
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+* used to remove the deposit of a node after he had been convicted
+
+**Parameters:**
+* _signer `address`: the signer of the in3-node
+* _newDeposit `uint`: the new deposit 
+
+**Return Parameters:**
+* true when successful
+
+#### adminSetStage
+Sets the stage of a signer
+
+**Development notice:**
+* only callable by the current Logic-contract / owner
+
+**Parameters:**
+* _signer `address`: the signer of the in3-node
+* _stage_ `uint`: the new stage 
+
+**Return Parameters:**
+* true when successful
+
+#### adminSetSupportedToken
+Sets a new erc20-token as supported token for the in3-nodes.
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _newToken `address`: the address of the new supported token
+
+**Return Parameters:**
+* true when successful
+
+#### adminSetTimeout
+Sets the new timeout until the deposit of a node can be accessed after he was unregistered. 
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _newTimeout `uint`: the new timeout
+
+**Return Parameters:**
+* true when successful
+
+#### adminTransferDeposit
+Transfers a certain amount of ERC20-tokens to the provided address
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+* reverts when the transfer failed
+
+**Parameters:**
+* _to `address`: the address to receive the tokens
+* _amount: `uint`: the amount of tokens to be transferred
+
+**Return Parameters:**
+* true when successful
+
+#### setConvict
+Writes a value to te convictMapping to be used later for revealConvict in the logic contract.
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _hash `bytes32`: the data to be written
+* _caller `address`: the address for that called convict in the logic-contract
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+#### registerNodeFor
+Registers a new node in the nodelist
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _url `string`: the url of the in3-node
+* _props `uint192`: the properties of the in3-node
+* _signer `address`: the signer address
+* _weight `uit64`: the weight
+* _owner `address`: the address of the owner
+* _deposit `uint`: the deposit in erc20 tokens
+* _stage `uint`: the stage the in3-node should have
+
+**Return Parameters:**
+* true when successful
+
+#### transferOwnership
+Transfers the ownership of an active in3-node
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+
+**Parameters:**
+* _signer `address`: the signer of the in3-node
+* _newOwner `address`: the address of the new owner
+
+**Return Parameters:**
+* true when successful
+
+#### unregisteringNode
+Removes a node from the nodelist
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+* calls `_unregisterNodeInternal()`
+
+**Parameters:**
+* _signer `address`: the signer of the in3-node
+
+**Return Parameters:**
+* true when successful
+
+#### updateNode
+Updates an existing in3-node 
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+* reverts when the an updated url already exists
+
+**Parameters:**
+* _signer `address`: the signer of the in3-node
+* _url `string`: the new url
+* _props `uint192` the new properties
+* _weight `uint64` the new weight
+* _deposit `uint` the new deposit
+
+**Return Parameters:**
+* true when successful
+
+#### getIn3NodeInformation
+Returns the In3Node-struct of a certain index
+
+**Parameters:**
+* index `uint`: the index-position in the nodes-array
+
+**Return Parameters:**
+* the In3Node-struct
+
+#### getSignerInformation
+Returns the SignerInformation of a signer
+
+**Parameters:**
+* _signer `address`: the signer 
+
+**Return Parameters:**
+the SignerInformation of a signer
+
+#### totalNodes
+Returns the length of the nodelist
+
+**Return Parameters:**
+The length of the nodelist
+
+#### adminSetSignerInfo
+Sets the SignerInformation-struct for a signer
+
+**Development notice:**
+* only callable by the NodeRegistryLogic-contract
+* gets used for updating the information after returning the deposit
+
+**Parameters:**
+* _signer `address`: the signer 
+* _si: `SignerInformation` the struct to be set
+
+**Return Parameters:**
+* true when successful
+
+#### _calcProofHashInternal
+Calculates the sha3 hash of the most important properties in order to make the proof more efficient
+
+**Parameters:**
+* _node `In3Node`: the in3-node for the properties
+
+**Return Parameters:**
+* The hash of the most important properties
+
+#### _unregisterNodeInternal
+Handles the setting of the unregister values for a node internally
+
+**Parameters:**
+* _si `SignerInformation`: the SignerInformation of the node
+* _n `In3Node`: the in3-node
+
+#### _removeNodeInternal
+Removes a node from the node-array internally
+
+**Parameters:**
+* _nodeIndex `uint`: the index of the node to be removed from the nodelist
 
 ### NodeRegistryLogic functions
 
 #### constructor
-*constructor*
+constructor
 
 **Development notice:**
-*cannot be deployed in a genesis block*
+* cannot be deployed in a genesis block
 
 **Parameters:**
-* _blockRegistry `BlockhashRegistry`: *address of a BlockhashRegistry-contract*
-* _nodeRegistryData `NodeRegistryData`: *address of a NodeRegistryData-contract*
-* _minDeposit `_minDeposit`: *minimal deposit to register a new server (in ERC20 tokens)*
+* _blockRegistry `BlockhashRegistry`: address of a BlockhashRegistry-contract
+* _nodeRegistryData `NodeRegistryData`: address of a NodeRegistryData-contract
+* _minDeposit `_minDeposit`: minimal deposit to register a new server (in ERC20 tokens)
 
 #### activateNewLogic
-*applies a new update to the logic-contract by setting the pending NodeRegistryLogic-contract as owner to the NodeRegistryData-conract*
+Applies a new update to the logic-contract by setting the pending NodeRegistryLogic-contract as owner to the NodeRegistryData-conract
 
 **Development notice:**
-*only callable after 47 days have passed since the latest update has been proposed*
+* Only callable after 47 days have passed since the latest update has been proposed
 
 #### adminRemoveNodeFromRegistry
-*removes an malicious in3-node from the nodeList*
+Removes an malicious in3-node from the nodelist
 
 **Development notice:**
-*only callable by the admin of the smart contract*
-
-*only callable in the 1st year after deployment*
-
-*ony usable on registered in3-nodes*
+* only callable by the admin of the smart contract
+* only callable in the 1st year after deployment
+* ony usable on registered in3-nodes
 
 **Parameters:**
-* _signer `address`: *the malicious signer*
+* _signer `address`: the malicious signer
 
 #### adminUpdateLogic
-*Proposes an update to the logic contract which can only be applied after 47 days.*
-
-*This will allow all nodes that don't approve the update to unregister from the registry*
+Proposes an update to the logic contract which can only be applied after 47 days.
+This will allow all nodes that don't approve the update to unregister from the registry
 
 **Development notice:**
-*only callable by the admin of the smart contract*
-
-*does not allow for the 0x0-address to be set as new logic*
+* only callable by the admin of the smart contract
+* does not allow for the 0x0-address to be set as new logic
 
 **Parameters:**
-* _newLogic `address`: *the malicious signer*
+* _newLogic `address`: the malicious signer
 
 #### convict
-*must be called before revealConvict*
-
-*commits a blocknumber and a hash*
+Must be called before revealConvict and commits a blocknumber and a hash.
 
 **Development notice:**
-*The v,r,s paramaters are from the signature of the wrong blockhash that the node provided*
+* The `v`,`r`,`s` parameters are from the signature of the wrong blockhash that the node provided
 
 **Parameters:**
-* _hash `bytes32`: *keccak256(wrong blockhash, msg.sender, v, r, s); used to prevent frontrunning.*
+* _hash `bytes32`: `keccak256(wrong blockhash, msg.sender, v, r, s)`; used to prevent frontrunning.
 
 #### registerNode
-*register a new node with the sender as owner*
+Registers a new node with the sender as owner
 
 **Development notice:**
-*will call the registerNodeInteral function*
-
-*the amount of `_deposit` token have be approved by the signer in order for them to be transferred by the logic contract*
+* will call the registerNodeInteral function
+* the amount of `_deposit` token have be approved by the signer in order for them to be transferred by the logic contract
 
 **Parameters:**
-* _url `string`: *the url of the node, has to be unique*
-* _props `uint64`: *properties of the node*
-* _weight `uint64`: *how many requests per second the node is able to handle*
-* _deposit `uint`: *amount of supported ERC20 tokens as deposit*
+* _url `string`: the url of the node, has to be unique
+* _props `uint64`: properties of the node
+* _weight `uint64`: how many requests per second the node is able to handle
+* _deposit `uint`: amount of supported ERC20 tokens as deposit
 
 #### registerNodeFor
-*register a new node as a owner using a different signer address*
+Registers a new node as a owner using a different signer address*
 
 **Development notice:**
-*will revert when a wrong signature has been provided*
-
-*which is calculated by the hash of the url, properties, timeout, weight and the owner*
-
-*in order to prove that the owner has control over the signer-address he has to sign a message*
-
-*will call the registerNodeInteral function*
-
-*the amount of `_deposit` token have be approved by the in3-node-owner in order for them to be transferred by the logic contract*
+* will revert when a wrong signature has been provided which is calculated by the hash of the url, properties, weight and the owner in order to prove that the owner has control over the signer-address he has to sign a message
+* will call the registerNodeInteral function
+* the amount of `_deposit` token have be approved by the in3-node-owner in order for them to be transferred by the logic contract
 
 **Parameters:**
-* _url `string`: *the url of the node, has to be unique*
-* _props `uint64`: *properties of the node*
-* _signer `address`: *the signer of the in3-node*
-* _weight `uint64`: *how many requests per second the node is able to handle*
-* _depositAmount `uint`: *the amount of supported ERC20 tokens as deposit*
-* _v `uint8`: *v of the signed message*
-* _r `bytes32`: *r of the signed message*
-* _s `bytes32`: *s of the signed message*
+* _url `string`: the url of the node, has to be unique
+* _props `uint64`: properties of the node
+* _signer `address`: the signer of the in3-node
+* _weight `uint64`: how many requests per second the node is able to handle
+* _depositAmount `uint`: the amount of supported ERC20 tokens as deposit
+* _v `uint8`: v of the signed message
+* _r `bytes32`: r of the signed message
+* _s `bytes32`: s of the signed message
 
 #### returnDeposit
-*only callable after the timeout of the deposit is over*
 
-*returns the deposit after a node has been removed*
+Returns the deposit after a node has been removed and it's timeout is over. 
 
 **Development notice:**
-*reverts if the deposit is still locked*
-
-*reverts when there is nothing to transfer*
-
-*reverts when not the owner of the former in3-node*
+* reverts if the deposit is still locked
+* reverts when there is nothing to transfer
+* reverts when not the owner of the former in3-node
 
 **Parameters:**
-* _signer `address`: *the signer-address of a former in3-node*
+* _signer `address`: the signer-address of a former in3-node
 
 #### revealConvict
-*reveals the wrongly provided blockhash, so that the node-owner will lose its deposit*
+Reveals the wrongly provided blockhash, so that the node-owner will lose its deposit while the sender will get half of the deposit
 
 **Development notice:**
-*reverts when the wrong convict hash (see convict-function) is used*
-
-*reverts when the _signer did not sign the block*
-
-*reverts when trying to reveal immediately after calling convict*
-
-*reverts when trying to convict someone with a correct blockhash*
-
-*reverts if a block with that number cannot be found in either the latest 256 blocks or the blockhash registry*
-
+* reverts when the wrong convict hash (see convict-function) is used
+* reverts when the _signer did not sign the block
+* reverts when trying to reveal immediately after calling convict
+* reverts when trying to convict someone with a correct blockhash
+* reverts if a block with that number cannot be found in either the latest 256 blocks or the blockhash registry
 
 **Parameters:**
-* _signer `address`: *the address that signed the wrong blockhash*
-* _blockhash `bytes32`: *the wrongly provided blockhash*
-* _blockNumber `uint`: *number of the wrongly provided blockhash*
-* _v `uint8`: *v of the signature*
-* _r `bytes32`: *r of the signature*
-* _s `bytes32`: *s of the signature*
+* _signer `address`: the address that signed the wrong blockhash
+* _blockhash `bytes32`: the wrongly provided blockhash
+* _blockNumber `uint`: number of the wrongly provided blockhash
+* _v `uint8`: v of the signature
+* _r `bytes32`: r of the signature
+* _s `bytes32`: s of the signature
 
 #### transferOwnership
-*changes the ownership of an in3-node*
+Changes the ownership of an in3-node.
 
 **Development notice:**
 
-*reverts when the sender is not the current owner*
-
-*reverts when trying to pass ownership to 0x0*
-
-*reverts when trying to change ownership of an inactive node*
+* reverts when the sender is not the current owner
+* reverts when trying to pass ownership to `0x0`
+* reverts when trying to change ownership of an inactive node
 
 **Parameters:**
-* _signer `address`: *the signer-address of the in3-node, used as an identifier*
-* _newOwner `address`: *the new owner*
+* _signer `address`: the signer-address of the in3-node, used as an identifier
+* _newOwner `address`: the new owner
 
 #### unregisteringNode
-*doing so will also lock his deposit for the timeout of the node*
-*a node owner can unregister a node, removing it from the nodeList*
+
+A node owner can unregister a node, removing it from the nodelist. Doing so will also lock his deposit for the timeout of the node.
 
 **Development notice:**
-*reverts when not called by the owner of the node*
-
-*reverts when the provided address is not an in3-signer*
-
-*reverts when node is not active*
+* reverts when not called by the owner of the node
+* reverts when the provided address is not an in3-signer
+* reverts when node is not active
 
 **Parameters:**
-* _signer `address`: *the signer of the in3-node*
+* _signer `address`: the signer of the in3-node
 
 #### updateNode
-*updates a node by changing its props*
+Updates a node by changing its props
 
 **Development notice:**
-*if there is an additional deposit the owner has to approve the tokenTransfer before*
-
-*reverts when trying to change the url to an already existing one*
-
-*reverts when the signer does not own a node*
-
-*reverts when the sender is not the owner of the node*
+* if there is an additional deposit the owner has to approve the tokenTransfer before
+* reverts when trying to change the url to an already existing one
+* reverts when the signer does not own a node
+* reverts when the sender is not the owner of the node
 
 **Parameters:**
-* _signer `address`: *the signer-address of the in3-node, used as an identifier*
-* _url `string`: *the url, will be changed if different from the current one*
-* _props `uint64`: *the new properties, will be changed if different from the current one*
-* _weight `uint64`: *the amount of requests per second the node is able to handle*
-* _additionalDeposit `uint`: *additional deposit in supported erc20 tokens*
+* _signer `address`: the signer-address of the in3-node, used as an identifier
+* _url `string`: the url, will be changed if different from the current one
+* _props `uint64`: the new properties, will be changed if different from the current one
+* _weight `uint64`: the amount of requests per second the node is able to handle
+* _additionalDeposit `uint`: additional deposit in supported erc20 tokens
 
 #### supportedToken
-*returns the current supported ERC20 token*
+Returns the current supported ERC20 token-address
 
 **Return Parameters:**
 * `address` the address of the currently supported erc20 token
 
 #### _checkNodePropertiesInternal
-*function to check whether the allowed amount of deposit per server has been reached or is not enough*
+Function to check whether the allowed amount of deposit per server has been reached or is not enough
 
 **Development notice:**
-
-*will fail when the deposit is greater than the maxDepositFirstYear in the 1st year*
-
-*will fail when the deposit is less than the minDeposit*
+* will fail when the deposit is greater than the maxDepositFirstYear in the 1st year
+* will fail when the deposit is less than the minDeposit
 
 **Parameters:**
-* _deposit `uint256`: *the new amount of deposit a server has*
+* _deposit `uint256`: the new amount of deposit a server has
 
 #### _registerNodeInternal
-*helper function for registering a node*
+Helper function for registering a node
 
 **Development notice:**
-*reverts when either the owner or the url is already in use*
-
-*reverts when trying to register a node with more then 50 ether in the 1st year after deployment*
-
-*reverts when provided not enough deposit*
-
-*reverts when the erc20 token transfer to the data-contract fails*
+* reverts when either the owner or the url is already in use
+* reverts when trying to register a node with more then 50 ether in the 1st year after deployment
+* reverts when provided not enough deposit
+* reverts when the erc20 token transfer to the data-contract fails
 
 **Parameters:**
-* _url `string`: *the url of a node*
-* _props `uint64`: *properties of a node*
-* _signer `address`: *the address that signs the answers of the node*
-* _owner `address`: *the owner address of the node*
-* _deposit `uint`: *the deposit of a node*
-* _weight `uint64`: *the amount of requests per second a node is able to handle*
+* _url `string`: the url of a node
+* _props `uint64`: properties of a node
+* _signer `address`: the address that signs the answers of the node
+* _owner `address`: the owner address of the node
+* _deposit `uint`: the deposit of a node
+* _weight `uint64`: the amount of requests per second a node is able to handle
 
 ### BlockHashRegistry functions
 
 #### constructor
-*constructor*
+constructor
 
 #### searchForAvailableBlock
-*searches for an already existing snapshot*
+Searches for an already existing snapshot
 
 **Parameters:**
-* _startNumber `uint`: *the blocknumber to start searching*
-* _numBlocks `uint`: *the number of blocks to search for*
+* _startNumber `uint`: the blocknumber to start searching
+* _numBlocks `uint`: the number of blocks to search for
 
 **Return Parameters:**
 * `uint` returns a blocknumber when a snapshot had been found. It will return 0 if no blocknumber was found. 
 
 #### recreateBlockheaders
-*if successfull the last blockhash of the header will be added to the smart contract*
-*it will be checked whether the provided chain is correct by using the reCalculateBlockheaders function*
-*only usable when the given blocknumber is already in the smart contract*
-*starts with a given blocknumber and its header and tries to recreate a (reverse) chain of blocks*
+Starts with a given blocknumber and its header and tries to recreate a (reverse) chain of blocks. If this has been successful the last blockhash of the header will be added to the smart. contract. It will be checked whether the provided chain is correct by using the reCalculateBlockheaders function.
 
 **Development notice:**
-*function is public due to the usage of a dynamic bytes array (not yet supported for external functions)*
-
-*reverts when the chain of headers is incorrect*
-
-*reverts when there is not parent block already stored in the contract*
+* only usable when the given blocknumber is already in the smart contract
+* function is public due to the usage of a dynamic bytes array (not yet supported for external functions)
+* reverts when the chain of headers is incorrect
+* reverts when there is not parent block already stored in the contract
 
 **Parameters:**
-* _blockNumber `uint`: *the block number to start recreation from*
-* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order (youngest -> oldest) => (e.g. 100, 99, 98)*
+* _blockNumber `uint`: the block number to start recreation from
+* _blockheaders `bytes[]`: array with serialized blockheaders in reverse order (youngest -> oldest) => (e.g. 100, 99, 98)
 
 #### saveBlockNumber
-*stores a certain blockhash to the state*
+Stores a certain blockhash to the state
 
 **Development notice:**
-*reverts if the block can't be found inside the evm*
+* reverts if the block can't be found inside the evm
 
 **Parameters:**
-* _blockNumber `uint`: *the blocknumber to be stored*
+* _blockNumber `uint`: the blocknumber to be stored
 
 #### snapshot
-*stores the currentBlock-1 in the smart contract*
+Stores the currentBlock-1 in the smart contract
 
 #### getRlpUint
-*returns the value from the rlp encoded data*
+Returns the value from the rlp encoded data
 
 **Development notice:**
-*This function is limited to only value up to 32 bytes length!*
+*This function is limited to only value up to 32 bytes length!
 
 **Parameters:**
-* _data `bytes`: *the rlp encoded data*
-* _offset `uint`: *the offset*
+* _data `bytes`: the rlp encoded data
+* _offset `uint`: the offset
 
 **Return Parameters:**
 * value `uint` the value
 
 #### getParentAndBlockhash
-*returns the blockhash and the parent blockhash from the provided blockheader*
+Returns the blockhash and the parent blockhash from the provided blockheader
 
 **Parameters:**
-* _blockheader `bytes`: *a serialized (rlp-encoded) blockheader*
+* _blockheader `bytes`: a serialized (rlp-encoded) blockheader
 
 **Return Parameters:**
 * parentHash `bytes32`
 * bhash `bytes32`
 
 #### reCalculateBlockheaders
-*the array of the blockheaders have to be in reverse order (e.g. [100,99,98,97])*
-*starts with a given blockhash and its header and tries to recreate a (reverse) chain of blocks*
+Starts with a given blockhash and its header and tries to recreate a (reverse) chain of blocks. The array of the blockheaders have to be in reverse order (e.g. [100,99,98,97]).
 
 **Parameters:**
-* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order, i.e. from youngest to oldest*
-* _bHash `bytes32`: *blockhash of the 1st element of the _blockheaders-array*
+* _blockheaders `bytes[]`: array with serialized blockheaders in reverse order, i.e. from youngest to oldest
+* _bHash `bytes32`: blockhash of the 1st element of the _blockheaders-array
 
 ## Binary Format
 
@@ -561,9 +745,9 @@ These are:
     - `LogNodeRemoved`
     - `LogNodeChanged`
 
-    The server needs to watch for events from the `NodeRegistry` contract, and update the nodeList when needed.
+    The server needs to watch for events from the `NodeRegistry` contract, and update the nodelist when needed.
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodelist` to update its nodelist before sending out the next request. In the event that the node is not able to proof the new nodelist, the client may blacklist such a node.
 
   ```eval_rst
     .. uml::
@@ -573,8 +757,8 @@ These are:
 
       Client --> Client: check if lastNodeList increased
 
-      Client -> NodeB: Request in3_nodeList
-      NodeB --> Client: verify and update nodeList and lastNodeList
+      Client -> NodeB: Request in3_nodelist
+      NodeB --> Client: verify and update nodelist and lastNodeList
 
 
   ```
@@ -584,7 +768,7 @@ These are:
 
     This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on the consensus, changes in the validatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. This `lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodelist, the client may blacklist such a node.
 
 3. **Failover**    
 
@@ -598,10 +782,10 @@ This section describes the behavior for each RPC-method.
 
 ### Incubed
 
-There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
+There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodelists.
 
 
-#### in3_nodeList
+#### in3_nodelist
 
 return the list of all registered nodes.
 
@@ -609,9 +793,9 @@ Parameters:
 
 all parameters are optional, but if given a partial NodeList may be returned.
 
-1. `limit`: number - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
-2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
-3. `addresses`: address[] - a optional array of addresses of signers the nodeList must include. 
+1. `limit`: number - if the number is defined and >0 this method will return a partial nodelist limited to the given number.
+2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodelist. It is expected to be a random value choosen by the client in order to make the result deterministic.
+3. `addresses`: address[] - a optional array of addresses of signers the nodelist must include. 
 
 Returns:
 
@@ -621,7 +805,7 @@ an object with the following properties:
 
     - `url` : string - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
     - `address` : address - the address of the signer
-    - `index`: number - the index within the nodeList of the contract
+    - `index`: number - the index within the nodelist of the contract
     - `deposit`: string - the stored deposit
     - `props`: string - the bitset of capabilities as described in the [Node Structure](#node-structure)
     - `timeout`: string - the time in seconds describing how long the deposit would be locked when trying to unregister a node.
@@ -649,7 +833,7 @@ an object with the following properties:
 if proof is requested, the proof will have the type `accountProof`. In the proof-section only the storage-keys of the `proofHash` will be included.
 The required storage keys are calcualted :
 
-- `0x00` - the length of the nodeList or total numbers of nodes.
+- `0x00` - the length of the nodelist or total numbers of nodes.
 - `0x01` - the registryId
 - per node : ` 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563 + index * 5 + 4`
 
@@ -669,7 +853,7 @@ This proof section contains the following properties:
 Request:
 ```js
 {
-  "method":"in3_nodeList",
+  "method":"in3_nodelist",
   "params":[2,"0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",[]],
   "in3":{
     "verification":"proof"
@@ -788,7 +972,7 @@ Response:
 
 ##### Partial NodeLists
 
-if the client requests a partial nodeList and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
+if the client requests a partial nodelist and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
 
 1. add all required addresses (if any) to the list.
 2. iterate over the indexes until the limit is reached:
