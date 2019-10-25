@@ -134,6 +134,23 @@ This contract serves different purposes. Primarily, it manages all the Incubed n
 
 In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
+### Updates of the NodeRegistry 
+
+In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodelist in each client and device. 
+
+In order to solve this issue, the registry is divided between two different deployed smart contracts: 
+* `NodeRegistryData`: a smart contract to store the nodelist 
+* `NodeRegistryLogic`: a smart contract that has the logic needed to run the registry
+
+There is a special relationship between those two smart contracts: The NodeRegistryLogic "owns" the NodeRegistryData. This means, that only he is allowed to call certain functions of the NodeRegistryData. In our case this means all writing operations, i.e. he is the only entity that is allowed to actually be allowed to store data within the smart contract. We are using this approach to make sure that only the NodeRegistryLogic can call the register, update and remove functions of the NodeRegistryData. In addition, he is the only one allowed to change the ownership to a noew contract. Doing so results in the old NodeRegistryLogic to lose write access. 
+
+In the NodeRegistryLogic are 2 special parameters for the update process: 
+* `updateTimeout`: a timestamp that defines when it's possible to update the registry to the new contract
+* `pendingNewLogic`: the address of the already deployed new NodeRegistryLogic contract for the updated registry
+
+When an update of the Registry is needed, the function `adminUpdateLogic` gets called by the owner of the NodeRegistryLogic. This function will set the address of the new pending contract and also set a timeout of 47 days until the new logic can be applied to the NodeRegistryData contract. After 47 days everyone is allowed to call `activateNewLogic` resulting in an update of the registry. 
+
+The timeout of accessing the deposit of a node after removing it from the nodelist is only 40 days. In case a node owner dislikes the pending registry, he has 7 days to unregister in order to be able to get his deposit back before the new update can be applied. 
 
 ### Node structure
  
