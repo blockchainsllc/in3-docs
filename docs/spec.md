@@ -56,7 +56,7 @@ If the proof is requested, the `in3` property is defined with the following prop
 
 *  **proof** [Proof](#proofs) - The Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
 
-*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodelist.  
+*  **lastNodeList** `number` - The blocknumber for the last block updating the nodeList. This blocknumber should be used to indicate changes in the nodeList. If the client has a smaller blocknumber, it should update the nodeList.  
 
 *  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
 
@@ -136,10 +136,10 @@ In addition, the contract is also used to secure the in3-network by providing fu
 
 ### Updates of the NodeRegistry 
 
-In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodelist in each client and device. 
+In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
 
 In order to solve this issue, the registry is divided between two different deployed smart contracts: 
-* `NodeRegistryData`: a smart contract to store the nodelist 
+* `NodeRegistryData`: a smart contract to store the nodeList 
 * `NodeRegistryLogic`: a smart contract that has the logic needed to run the registry
 
 There is a special relationship between those two smart contracts: The NodeRegistryLogic "owns" the NodeRegistryData. This means, that only he is allowed to call certain functions of the NodeRegistryData. In our case this means all writing operations, i.e. he is the only entity that is allowed to actually be allowed to store data within the smart contract. We are using this approach to make sure that only the NodeRegistryLogic can call the register, update and remove functions of the NodeRegistryData. In addition, he is the only one allowed to change the ownership to a noew contract. Doing so results in the old NodeRegistryLogic to lose write access. 
@@ -150,7 +150,7 @@ In the NodeRegistryLogic are 2 special parameters for the update process:
 
 When an update of the Registry is needed, the function `adminUpdateLogic` gets called by the owner of the NodeRegistryLogic. This function will set the address of the new pending contract and also set a timeout of 47 days until the new logic can be applied to the NodeRegistryData contract. After 47 days everyone is allowed to call `activateNewLogic` resulting in an update of the registry. 
 
-The timeout of accessing the deposit of a node after removing it from the nodelist is only 40 days. In case a node owner dislikes the pending registry, he has 7 days to unregister in order to be able to get his deposit back before the new update can be applied. 
+The timeout of accessing the deposit of a node after removing it from the nodeList is only 40 days. In case a node owner dislikes the pending registry, he has 7 days to unregister in order to be able to get his deposit back before the new update can be applied. 
 
 ### Node structure
  
@@ -160,7 +160,7 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
 
 *  **owner** `address` - The owner of the node with the permission to edit or remove the node.  
 
-*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodelist.   
+*  **signer** `address` - The address used when signing blockhashes. This address must be unique within the nodeList.   
 
 *  **timeout** `uint64` - Timeout after which the owner is allowed to receive its stored deposit. This information is also important for the client, since an invalid blockhash-signature can only "convict" as long as the server is registered. A long timeout may provide higher security since the node can not lie and unregister right away.
 
@@ -195,7 +195,7 @@ constructor
 * creates the registryId
 
 #### adminRemoveNodeFromRegistry
-Removes an in3-node from the nodelist
+Removes an in3-node from the nodeList
 
 **Development notice:**
 * only callable by the NodeRegistryLogic-contract
@@ -292,7 +292,7 @@ Writes a value to te convictMapping to be used later for revealConvict in the lo
 * only callable by the NodeRegistryLogic-contract
 
 #### registerNodeFor
-Registers a new node in the nodelist
+Registers a new node in the nodeList
 
 **Development notice:**
 * only callable by the NodeRegistryLogic-contract
@@ -323,7 +323,7 @@ Transfers the ownership of an active in3-node
 * true when successful
 
 #### unregisteringNode
-Removes a node from the nodelist
+Removes a node from the nodeList
 
 **Development notice:**
 * only callable by the NodeRegistryLogic-contract
@@ -371,10 +371,10 @@ Returns the SignerInformation of a signer
 the SignerInformation of a signer
 
 #### totalNodes
-Returns the length of the nodelist
+Returns the length of the nodeList
 
 **Return Parameters:**
-The length of the nodelist
+The length of the nodeList
 
 #### adminSetSignerInfo
 Sets the SignerInformation-struct for a signer
@@ -410,7 +410,7 @@ Handles the setting of the unregister values for a node internally
 Removes a node from the node-array internally
 
 **Parameters:**
-* _nodeIndex `uint`: the index of the node to be removed from the nodelist
+* _nodeIndex `uint`: the index of the node to be removed from the nodeList
 
 ### NodeRegistryLogic functions
 
@@ -432,7 +432,7 @@ Applies a new update to the logic-contract by setting the pending NodeRegistryLo
 * Only callable after 47 days have passed since the latest update has been proposed
 
 #### adminRemoveNodeFromRegistry
-Removes an malicious in3-node from the nodelist
+Removes an malicious in3-node from the nodeList
 
 **Development notice:**
 * only callable by the admin of the smart contract
@@ -538,7 +538,7 @@ Changes the ownership of an in3-node.
 
 #### unregisteringNode
 
-A node owner can unregister a node, removing it from the nodelist. Doing so will also lock his deposit for the timeout of the node.
+A node owner can unregister a node, removing it from the nodeList. Doing so will also lock his deposit for the timeout of the node.
 
 **Development notice:**
 * reverts when not called by the owner of the node
@@ -762,9 +762,9 @@ These are:
     - `LogNodeRemoved`
     - `LogNodeChanged`
 
-    The server needs to watch for events from the `NodeRegistry` contract, and update the nodelist when needed.
+    The server needs to watch for events from the `NodeRegistry` contract, and update the nodeList when needed.
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodelist` to update its nodelist before sending out the next request. In the event that the node is not able to proof the new nodelist, the client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastNodeList`, a client may detect this change after receiving the data. The client is then expected to call `in3_nodeList` to update its nodeList before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
 
   ```eval_rst
     .. uml::
@@ -774,8 +774,8 @@ These are:
 
       Client --> Client: check if lastNodeList increased
 
-      Client -> NodeB: Request in3_nodelist
-      NodeB --> Client: verify and update nodelist and lastNodeList
+      Client -> NodeB: Request in3_nodeList
+      NodeB --> Client: verify and update nodeList and lastNodeList
 
 
   ```
@@ -785,7 +785,7 @@ These are:
 
     This only applies to PoA-chains where the client needs a defined and verified validatorList. Depending on the consensus, changes in the validatorList must be detected by the node and indicated with the `lastValidatorChange` on each response. This `lastValidatorChange` holds the last blocknumber of a change in the validatorList.  
     
-    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodelist, the client may blacklist such a node.
+    Changes are detected by the client by comparing the blocknumber of the latest change with the last known blocknumber. Since each response will include the `lastValidatorChange` a client may detect this change after receiving the data or in case of an unverifiable response. The client is then expected to call `in3_validatorList` to update its list before sending out the next request. In the event that the node is not able to proof the new nodeList, the client may blacklist such a node.
 
 3. **Failover**    
 
@@ -799,10 +799,10 @@ This section describes the behavior for each RPC-method.
 
 ### Incubed
 
-There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodelists.
+There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
 
 
-#### in3_nodelist
+#### in3_nodeList
 
 return the list of all registered nodes.
 
@@ -810,9 +810,9 @@ Parameters:
 
 all parameters are optional, but if given a partial NodeList may be returned.
 
-1. `limit`: number - if the number is defined and >0 this method will return a partial nodelist limited to the given number.
-2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodelist. It is expected to be a random value choosen by the client in order to make the result deterministic.
-3. `addresses`: address[] - a optional array of addresses of signers the nodelist must include. 
+1. `limit`: number - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
+2. `seed`: hex - This 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
+3. `addresses`: address[] - a optional array of addresses of signers the nodeList must include. 
 
 Returns:
 
@@ -822,7 +822,7 @@ an object with the following properties:
 
     - `url` : string - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
     - `address` : address - the address of the signer
-    - `index`: number - the index within the nodelist of the contract
+    - `index`: number - the index within the nodeList of the contract
     - `deposit`: string - the stored deposit
     - `props`: string - the bitset of capabilities as described in the [Node Structure](#node-structure)
     - `timeout`: string - the time in seconds describing how long the deposit would be locked when trying to unregister a node.
@@ -850,7 +850,7 @@ an object with the following properties:
 if proof is requested, the proof will have the type `accountProof`. In the proof-section only the storage-keys of the `proofHash` will be included.
 The required storage keys are calcualted :
 
-- `0x00` - the length of the nodelist or total numbers of nodes.
+- `0x00` - the length of the nodeList or total numbers of nodes.
 - `0x01` - the registryId
 - per node : ` 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563 + index * 5 + 4`
 
@@ -870,7 +870,7 @@ This proof section contains the following properties:
 Request:
 ```js
 {
-  "method":"in3_nodelist",
+  "method":"in3_nodeList",
   "params":[2,"0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",[]],
   "in3":{
     "verification":"proof"
@@ -989,7 +989,7 @@ Response:
 
 ##### Partial NodeLists
 
-if the client requests a partial nodelist and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
+if the client requests a partial nodeList and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
 
 1. add all required addresses (if any) to the list.
 2. iterate over the indexes until the limit is reached:
