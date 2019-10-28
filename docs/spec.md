@@ -203,6 +203,22 @@ Recreating a chain of blocks is way more expensive, but is provides the possibil
 
 In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
 
+```eval_rst
+.. graphviz::
+
+    digraph G {
+        node [color=lightblue, fontname="Helvetica"];
+
+        logic     [label="NodeRegistryLogic"  ,style=filled];
+        db        [label="NodeRegistryData"  ,style=filled ];
+        blockHash [label="BlockHashRegistry"               ];
+        
+        logic -> db       [ label="owns", fontname="Helvetica" ];
+        logic -> blockHash[ label="uses", fontname="Helvetica" ];
+    }
+
+```
+
 In order to solve this issue, the registry is divided between two different deployed smart contracts: 
 * `NodeRegistryData`: a smart contract to store the nodeList 
 * `NodeRegistryLogic`: a smart contract that has the logic needed to run the registry
@@ -880,7 +896,6 @@ See JSON-RPC-Spec
 - [eth_getTransactionByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByHash) - transaction data by hash.
 - [eth_getTransactionByBlockHashAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockHashAndIndex) - transaction data based on blockhash and index
 - [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockNumberAndIndex) - transaction data based on block number and index
-
 
 
 ```eval_rst
