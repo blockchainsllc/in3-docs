@@ -186,7 +186,20 @@ In addition, there are more requirements for successfully convicting a malicious
 
 If the `revealConvict()`-call passes, the malicious node will be removed immediately from the nodeList. As a reward for finding a malicious node the caller receives 50% of the deposit of the malicious node. The remaining 50% will stay within the nodeRegistry, but nobody will be able to access/transfer them anymore.  
 
-### Updates of the NodeRegistry 
+#### recreating blockheaders
+
+When a malicious node returns a block that is not within the latest 256 blocks, the BlockhashRegistry has to be used. 
+
+There are different functions to store a blockhash and its number in the registry:
+* `snapshot` stores the blockhash and its number of the previous block
+* `saveBlockNumber` stores a blockhash and its number from the latest 256 blocks
+* `recreateBlockheaders` starts from an already stored block and recreates a chain of blocks. Stores the last block at the end. 
+
+In order to reduce the costs of convicting, both `snapshot` and `saveBlockNumber` are the cheapest options, but are limited to the latest 256 blocks. 
+
+Recreating a chain of blocks is way more expensive, but is provides the possibility to recreate way older blocks. It requires the blocknumber of an already stored hash in the smart contract as first parameter. As a second parameter an array of serialized blockheaders have to be provided. This array has to start with the blockheader of the stored block and then the previous blockheaders in reverse order (e.g. `100`,`99`,`98`). The smart contract will try to recreate the chain by comparing both the provided (hashed) headers with the calculated parent and also by comparing the extracted blocknumber with the calculated one. After the smart contracts successfully recreates the provided chain, the blockhash of the last element gets stored within the smart contract. 
+
+### Updating the NodeRegistry 
 
 In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
 
