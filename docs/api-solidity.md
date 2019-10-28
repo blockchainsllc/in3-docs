@@ -342,6 +342,18 @@ Updates a node by changing its props
 * _weight `uint64`: the amount of requests per second the node is able to handle
 * _additionalDeposit `uint`: additional deposit in supported erc20 tokens
 
+#### maxDepositFirstYear
+Returns the current maximum amount of deposit allowed for registering or updating a node
+
+**Return Parameters:**
+* `uint` the maximum amount of tokens
+
+#### minDeposit
+Returns the current minimal amount of deposit required for registering a new node
+
+**Return Parameters:**
+* `uint` the minimal amount of tokens needed for registering a new node
+
 #### supportedToken
 Returns the current supported ERC20 token-address
 

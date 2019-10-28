@@ -138,32 +138,32 @@ In addition, the contract is also used to secure the in3-network by providing fu
 
 #### Register
 
-There are two ways of registering a new node in the registry: either calling `registerNode()`  or by calling `registerNodeFor`. Both functions share some common parameters that have to be provided: 
+There are two ways of registering a new node in the registry: either calling [`registerNode()`][registerNode]  or by calling [`registerNodeFor()`][registerNodeFor]. Both functions share some common parameters that have to be provided: 
 * `url` the url of the to be registered node 
 * `props` the properties of the node 
 * `weight` the amount of requests per second the node is capable of handling
 * `deposit` the deposit of the node in ERC20 tokens. 
 
-Those described parameters are sufficient when calling `registerNode()` and will register a new node in the registry with the sender of the transaction as the owner. However, if the designated signer and the owner should use different keys, `registerNodeFor()` has to be called. In addition to the already described parameters, this function also needs a certain signature (i.e. `v`, `r`, `s`). This signature has to be created by hashing the url, the properties, the weight and the designated owner (i.e. `keccack256(url,properties,weight,owner)`) and signing it with the privateKey of the signer. After this has been done, the owner then can call `registerNodeFor()` and register the node. 
+Those described parameters are sufficient when calling [`registerNode()`][registerNode] and will register a new node in the registry with the sender of the transaction as the owner. However, if the designated signer and the owner should use different keys, [`registerNodeFor()`][registerNodeFor] has to be called. In addition to the already described parameters, this function also needs a certain signature (i.e. `v`, `r`, `s`). This signature has to be created by hashing the url, the properties, the weight and the designated owner (i.e. `keccack256(url,properties,weight,owner)`) and signing it with the privateKey of the signer. After this has been done, the owner then can call [`registerNodeFor()`][registerNodeFor] and register the node. 
 
-However, in order for the register to succeed, at least the correct amount of deposit has to be approved by the designated owner of the node. The supported token can be received by calling `supportedToken()` the registry contract. The same approach also applied to the minimal amount of tokens needed for registering by calling `minDeposit()`. 
+However, in order for the register to succeed, at least the correct amount of deposit has to be approved by the designated owner of the node. The supported token can be received by calling [`supportedToken()`][supportedToken] the registry contract. The same approach also applied to the minimal amount of tokens needed for registering by calling [`minDeposit()`][minDeposit]. 
 
-In addition to that, during the first year after deployment there is also a maximum deposit for each node. This can be received by calling `maxDepositFirstYear`. Providing a deposit greater then this will result in a failure when trying to register. 
+In addition to that, during the first year after deployment there is also a maximum deposit for each node. This can be received by calling [`maxDepositFirstYear()`][maxDepositFirstYear]. Providing a deposit greater then this will result in a failure when trying to register. 
 
 #### Unregister a node 
 
-In order to remove a node from the registry, the function `unregisteringNode()` can be used, but is only callable by the owner the node. 
+In order to remove a node from the registry, the function [`unregisteringNode()`][unregisteringNode] can be used, but is only callable by the owner the node. 
 
-While after a successful call the node will be removed from the nodeList immediately, the deposit of the former node will still be locked for the next 40 days after this function had been called. 
+While after a successful call the node will be removed from the nodeList immediately, the deposit of the former node will still be locked for the next 40 days after this function had been called. After the timeout is over, the function [`returnDeposit()`][returnDeposit] can be called in order to get the deposit back. 
 The reason for that decision is simple: this approach makes sure that there is enough time to convict a malicious node even after he unregistered his node.   
 
 ### Convicting a node
 
-After a malicious node signed a wrong blockhash, he can be convicted resulting in him loosing the whole deposit while the caller receives 50% of the deposit. There are two steps needed for the process to succeed: calling `convict` and `revealConvict`. 
+After a malicious node signed a wrong blockhash, he can be convicted resulting in him loosing the whole deposit while the caller receives 50% of the deposit. There are two steps needed for the process to succeed: calling [`convict()`][convict] and [`revealConvict()`][revealConvict]. 
 
 #### calling convict
 
-The first step for convicting a malicious node is calling the `convict()`-function. This function will store a specific hash within the smart contract. 
+The first step for convicting a malicious node is calling the [`convict()`][convict]-function. This function will store a specific hash within the smart contract. 
 
 The hash needed for convicting requires some parameters:
 * `blockhash` the wrongly blockhash that got signed the by malicious node
@@ -176,7 +176,7 @@ All those values are getting hashed (`keccack256(blockhash,sender,v,r,s`) and ar
 
 #### calling revealConvcit 
 
-This function requires that at least 2 blocks have passed since `convict()` was called. This mechanic reduces the risks of successful frontrunning attacks. 
+This function requires that at least 2 blocks have passed since [`convict()`][convict] was called. This mechanic reduces the risks of successful frontrunning attacks. 
 
 In addition, there are more requirements for successfully convicting a malicious node: 
 * the blocknumber of the wrongly signed block has to be either within the latest 256 blocks or be stored within the BlockhashRegistry. 
@@ -184,18 +184,18 @@ In addition, there are more requirements for successfully convicting a malicious
 * the specific hash of the convict-call can be recreated (i.e. the caller provided the very same parameters again)
 * the malicious node is either currently active or did not withdraw his deposit yet
 
-If the `revealConvict()`-call passes, the malicious node will be removed immediately from the nodeList. As a reward for finding a malicious node the caller receives 50% of the deposit of the malicious node. The remaining 50% will stay within the nodeRegistry, but nobody will be able to access/transfer them anymore.  
+If the [`revealConvict()`][revealConvict]-call passes, the malicious node will be removed immediately from the nodeList. As a reward for finding a malicious node the caller receives 50% of the deposit of the malicious node. The remaining 50% will stay within the nodeRegistry, but nobody will be able to access/transfer them anymore.  
 
 #### recreating blockheaders
 
 When a malicious node returns a block that is not within the latest 256 blocks, the BlockhashRegistry has to be used. 
 
 There are different functions to store a blockhash and its number in the registry:
-* `snapshot` stores the blockhash and its number of the previous block
-* `saveBlockNumber` stores a blockhash and its number from the latest 256 blocks
-* `recreateBlockheaders` starts from an already stored block and recreates a chain of blocks. Stores the last block at the end. 
+* [`snapshot`][snapshot] stores the blockhash and its number of the previous block
+* [`saveBlockNumber`][saveBlockNumber] stores a blockhash and its number from the latest 256 blocks
+* [`recreateBlockheaders`][recreateBlockheaders] starts from an already stored block and recreates a chain of blocks. Stores the last block at the end. 
 
-In order to reduce the costs of convicting, both `snapshot` and `saveBlockNumber` are the cheapest options, but are limited to the latest 256 blocks. 
+In order to reduce the costs of convicting, both [`snapshot`][snapshot] and [`saveBlockNumber`][saveBlockNumber] are the cheapest options, but are limited to the latest 256 blocks. 
 
 Recreating a chain of blocks is way more expensive, but is provides the possibility to recreate way older blocks. It requires the blocknumber of an already stored hash in the smart contract as first parameter. As a second parameter an array of serialized blockheaders have to be provided. This array has to start with the blockheader of the stored block and then the previous blockheaders in reverse order (e.g. `100`,`99`,`98`). The smart contract will try to recreate the chain by comparing both the provided (hashed) headers with the calculated parent and also by comparing the extracted blocknumber with the calculated one. After the smart contracts successfully recreates the provided chain, the blockhash of the last element gets stored within the smart contract. 
 
@@ -1659,3 +1659,16 @@ See JSON-RPC-Spec
 - [eth_sendRawTransaction](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendRawTransaction) - sends a prviously signed transaction.
 
 This Method does not require any proof. (even if requested). Clients must at least verify the returned transactionHash by hashing the rawTransaction data. To know whether the transaction was actually broadcasted and mined, the client needs to run a second request `eth_getTransactionByHash` which should contain the blocknumber as soon as this is mined.
+
+[registerNode]:../html/api-solidity.html#registernode
+[registerNodeFor]:../html/api-solidity.html#id2
+[supportedToken]:../html/api-solidity.html#supportedtoken
+[minDeposit]:../html/api-solidity.html#mindeposit
+[maxDepositFirstYear]:../html/api-solidity.html#maxdepositfirstyear
+[unregisteringNode]:../html/api-solidity.html#id4
+[convict]:../html/api-solidity.html#convict
+[revealConvict]:../html/api-solidity.html#revealconvict
+[returnDeposit]:../html/api-solidity.html#returndeposit
+[snapshot]:../html/api-solidity.html#snapshot
+[saveBlockNumber]:../html/api-solidity.html#saveblocknumber
+[recreateBlockheaders]:../html/api-solidity.html#recreateblockheaders
