@@ -159,6 +159,33 @@ The reason for that decision is simple: this approach makes sure that there is e
 
 ### Convicting a node
 
+After a malicious node signed a wrong blockhash, he can be convicted resulting in him loosing the whole deposit while the caller receives 50% of the deposit. There are two steps needed for the process to succeed: calling `convict` and `revealConvict`. 
+
+#### calling convict
+
+The first step for convicting a malicious node is calling the `convict()`-function. This function will store a specific hash within the smart contract. 
+
+The hash needed for convicting requires some parameters:
+* `blockhash` the wrongly blockhash that got signed the by malicious node
+* `sender` the account that sends this transaction
+* `v` v of the signature of the wrong block
+* `r` r of the signature of the wrong block
+* `s` s of the signature of the wrong block
+
+All those values are getting hashed (`keccack256(blockhash,sender,v,r,s`) and are stored within the smart contract. 
+
+#### calling revealConvcit 
+
+This function requires that at least 2 blocks have passed since `convict()` was called. This mechanic reduces the risks of successful frontrunning attacks. 
+
+In addition, there are more requirements for successfully convicting a malicious node: 
+* the blocknumber of the wrongly signed block has to be either within the latest 256 blocks or be stored within the BlockhashRegistry. 
+* the malicious node provided a signature for the wong block and it was signed by the node
+* the specific hash of the convict-call can be recreated (i.e. the caller provided the very same parameters again)
+* the malicious node is either currently active or did not withdraw his deposit yet
+
+If the `revealConvict()`-call passes, the malicious node will be removed immediately from the nodeList. As a reward for finding a malicious node the caller receives 50% of the deposit of the malicious node. The remaining 50% will stay within the nodeRegistry, but nobody will be able to access/transfer them anymore.  
+
 ### Updates of the NodeRegistry 
 
 In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
