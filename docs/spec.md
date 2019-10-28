@@ -134,6 +134,31 @@ This contract serves different purposes. Primarily, it manages all the Incubed n
 
 In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
+### Register and Unregister of nodes
+
+#### Register
+
+There are two ways of registering a new node in the registry: either calling `registerNode()`  or by calling `registerNodeFor`. Both functions share some common parameters that have to be provided: 
+* `url` the url of the to be registered node 
+* `props` the properties of the node 
+* `weight` the amount of requests per second the node is capable of handling
+* `deposit` the deposit of the node in ERC20 tokens. 
+
+Those described parameters are sufficient when calling `registerNode()` and will register a new node in the registry with the sender of the transaction as the owner. However, if the designated signer and the owner should use different keys, `registerNodeFor()` has to be called. In addition to the already described parameters, this function also needs a certain signature (i.e. `v`, `r`, `s`). This signature has to be created by hashing the url, the properties, the weight and the designated owner (i.e. `keccack256(url,properties,weight,owner)`) and signing it with the privateKey of the signer. After this has been done, the owner then can call `registerNodeFor()` and register the node. 
+
+However, in order for the register to succeed, at least the correct amount of deposit has to be approved by the designated owner of the node. The supported token can be received by calling `supportedToken()` the registry contract. The same approach also applied to the minimal amount of tokens needed for registering by calling `minDeposit()`. 
+
+In addition to that, during the first year after deployment there is also a maximum deposit for each node. This can be received by calling `maxDepositFirstYear`. Providing a deposit greater then this will result in a failure when trying to register. 
+
+#### Unregister a node 
+
+In order to remove a node from the registry, the function `unregisteringNode()` can be used, but is only callable by the owner the node. 
+
+While after a successful call the node will be removed from the nodeList immediately, the deposit of the former node will still be locked for the next 40 days after this function had been called. 
+The reason for that decision is simple: this approach makes sure that there is enough time to convict a malicious node even after he unregistered his node.   
+
+### Convicting a node
+
 ### Updates of the NodeRegistry 
 
 In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
