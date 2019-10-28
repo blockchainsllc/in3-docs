@@ -742,9 +742,12 @@ See [eth_blockNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_blockNu
 No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others. With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
 #### eth_getBlockByNumber
+
+See [block based proof](#eth-getblockbyhash)
+
 #### eth_getBlockByHash
 
-Return the block data.
+Return the block data and proof.
 
 See JSON-RPC-Spec 
 - [eth_getBlockByNumber](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBlockByNumber) - find block by number.
@@ -865,8 +868,17 @@ Response:
 
 
 #### eth_getBlockTransactionCountByHash
+
+See [transaction count proof](#eth-getunclecountbyblocknumber)
+
 #### eth_getBlockTransactionCountByNumber
+
+See [transaction count proof](#eth-getunclecountbyblocknumber)
+
 #### eth_getUncleCountByBlockHash
+
+See [count proof](#eth-getunclecountbyblocknumber)
+
 #### eth_getUncleCountByBlockNumber
 
 return the number of transactions or uncles.
@@ -1313,11 +1325,20 @@ Response:
 
 
 #### eth_getBalance
+
+See [account proof](#eth-getstorageat)
+
 #### eth_getCode
+
+See [account proof](#eth-getstorageat)
+
 #### eth_getTransactionCount
+
+See [account proof](#eth-getstorageat)
+
 #### eth_getStorageAt
 
-Returns account based values.
+Returns account based values and proof.
 
 See JSON-RPC-Spec 
 - [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getBalance) - returns the balance.
@@ -1495,6 +1516,9 @@ Response:
 ```
 
 #### eth_estimateGas
+
+See [call proof](#eth-call)
+
 #### eth_call
 
 calls a function of a contract (or simply executes the evm opcodes).
