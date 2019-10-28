@@ -56,7 +56,7 @@ If the proof is requested, the `in3` property is defined with the following prop
 
 *  **proof** [Proof](#proofs) - The Proof-data, which depends on the requested method. For more details, see the [Proofs](#proofs) section.
 
-*  **lastNodeList** `number` - The blocknumber for the last block updating the nodelist. This blocknumber should be used to indicate changes in the nodelist. If the client has a smaller blocknumber, it should update the nodeList.  
+*  **lastNodeList** `number` - The blocknumber for the last block updating the nodeList. This blocknumber should be used to indicate changes in the nodeList. If the client has a smaller blocknumber, it should update the nodeList.  
 
 *  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
 
@@ -134,9 +134,108 @@ This contract serves different purposes. Primarily, it manages all the Incubed n
 
 In addition, the contract is also used to secure the in3-network by providing functions to "convict" servers that provided a wrongly signed block, and also having a function to vote out inactive servers.
 
-### Node structure
+### Register and Unregister of nodes
 
-Each Incubed node must be registered in the ServerRegistry in order to be known to the network. A node or server is defined as: 
+#### Register
+
+There are two ways of registering a new node in the registry: either calling [`registerNode()`][registerNode]  or by calling [`registerNodeFor()`][registerNodeFor]. Both functions share some common parameters that have to be provided: 
+* `url` the url of the to be registered node 
+* `props` the properties of the node 
+* `weight` the amount of requests per second the node is capable of handling
+* `deposit` the deposit of the node in ERC20 tokens. 
+
+Those described parameters are sufficient when calling [`registerNode()`][registerNode] and will register a new node in the registry with the sender of the transaction as the owner. However, if the designated signer and the owner should use different keys, [`registerNodeFor()`][registerNodeFor] has to be called. In addition to the already described parameters, this function also needs a certain signature (i.e. `v`, `r`, `s`). This signature has to be created by hashing the url, the properties, the weight and the designated owner (i.e. `keccack256(url,properties,weight,owner)`) and signing it with the privateKey of the signer. After this has been done, the owner then can call [`registerNodeFor()`][registerNodeFor] and register the node. 
+
+However, in order for the register to succeed, at least the correct amount of deposit has to be approved by the designated owner of the node. The supported token can be received by calling [`supportedToken()`][supportedToken] the registry contract. The same approach also applied to the minimal amount of tokens needed for registering by calling [`minDeposit()`][minDeposit]. 
+
+In addition to that, during the first year after deployment there is also a maximum deposit for each node. This can be received by calling [`maxDepositFirstYear()`][maxDepositFirstYear]. Providing a deposit greater then this will result in a failure when trying to register. 
+
+#### Unregister a node 
+
+In order to remove a node from the registry, the function [`unregisteringNode()`][unregisteringNode] can be used, but is only callable by the owner the node. 
+
+While after a successful call the node will be removed from the nodeList immediately, the deposit of the former node will still be locked for the next 40 days after this function had been called. After the timeout is over, the function [`returnDeposit()`][returnDeposit] can be called in order to get the deposit back. 
+The reason for that decision is simple: this approach makes sure that there is enough time to convict a malicious node even after he unregistered his node.   
+
+### Convicting a node
+
+After a malicious node signed a wrong blockhash, he can be convicted resulting in him loosing the whole deposit while the caller receives 50% of the deposit. There are two steps needed for the process to succeed: calling [`convict()`][convict] and [`revealConvict()`][revealConvict]. 
+
+#### calling convict
+
+The first step for convicting a malicious node is calling the [`convict()`][convict]-function. This function will store a specific hash within the smart contract. 
+
+The hash needed for convicting requires some parameters:
+* `blockhash` the wrongly blockhash that got signed the by malicious node
+* `sender` the account that sends this transaction
+* `v` v of the signature of the wrong block
+* `r` r of the signature of the wrong block
+* `s` s of the signature of the wrong block
+
+All those values are getting hashed (`keccack256(blockhash,sender,v,r,s`) and are stored within the smart contract. 
+
+#### calling revealConvcit 
+
+This function requires that at least 2 blocks have passed since [`convict()`][convict] was called. This mechanic reduces the risks of successful frontrunning attacks. 
+
+In addition, there are more requirements for successfully convicting a malicious node: 
+* the blocknumber of the wrongly signed block has to be either within the latest 256 blocks or be stored within the BlockhashRegistry. 
+* the malicious node provided a signature for the wong block and it was signed by the node
+* the specific hash of the convict-call can be recreated (i.e. the caller provided the very same parameters again)
+* the malicious node is either currently active or did not withdraw his deposit yet
+
+If the [`revealConvict()`][revealConvict]-call passes, the malicious node will be removed immediately from the nodeList. As a reward for finding a malicious node the caller receives 50% of the deposit of the malicious node. The remaining 50% will stay within the nodeRegistry, but nobody will be able to access/transfer them anymore.  
+
+#### recreating blockheaders
+
+When a malicious node returns a block that is not within the latest 256 blocks, the BlockhashRegistry has to be used. 
+
+There are different functions to store a blockhash and its number in the registry:
+* [`snapshot`][snapshot] stores the blockhash and its number of the previous block
+* [`saveBlockNumber`][saveBlockNumber] stores a blockhash and its number from the latest 256 blocks
+* [`recreateBlockheaders`][recreateBlockheaders] starts from an already stored block and recreates a chain of blocks. Stores the last block at the end. 
+
+In order to reduce the costs of convicting, both [`snapshot`][snapshot] and [`saveBlockNumber`][saveBlockNumber] are the cheapest options, but are limited to the latest 256 blocks. 
+
+Recreating a chain of blocks is way more expensive, but is provides the possibility to recreate way older blocks. It requires the blocknumber of an already stored hash in the smart contract as first parameter. As a second parameter an array of serialized blockheaders have to be provided. This array has to start with the blockheader of the stored block and then the previous blockheaders in reverse order (e.g. `100`,`99`,`98`). The smart contract will try to recreate the chain by comparing both the provided (hashed) headers with the calculated parent and also by comparing the extracted blocknumber with the calculated one. After the smart contracts successfully recreates the provided chain, the blockhash of the last element gets stored within the smart contract. 
+
+### Updating the NodeRegistry 
+
+In ethereum the deployed code of an already existing smart contract cannot be changed. This means, that as soon as the Registry smart contract gets updated, the address would change which would result in changing the address of the smart contract containing the nodeList in each client and device. 
+
+```eval_rst
+.. graphviz::
+
+    digraph G {
+        node [color=lightblue, fontname="Helvetica"];
+
+        logic     [label="NodeRegistryLogic"  ,style=filled];
+        db        [label="NodeRegistryData"  ,style=filled ];
+        blockHash [label="BlockHashRegistry"               ];
+        
+        logic -> db       [ label="owns", fontname="Helvetica" ];
+        logic -> blockHash[ label="uses", fontname="Helvetica" ];
+    }
+
+```
+
+In order to solve this issue, the registry is divided between two different deployed smart contracts: 
+* `NodeRegistryData`: a smart contract to store the nodeList 
+* `NodeRegistryLogic`: a smart contract that has the logic needed to run the registry
+
+There is a special relationship between those two smart contracts: The NodeRegistryLogic "owns" the NodeRegistryData. This means, that only he is allowed to call certain functions of the NodeRegistryData. In our case this means all writing operations, i.e. he is the only entity that is allowed to actually be allowed to store data within the smart contract. We are using this approach to make sure that only the NodeRegistryLogic can call the register, update and remove functions of the NodeRegistryData. In addition, he is the only one allowed to change the ownership to a noew contract. Doing so results in the old NodeRegistryLogic to lose write access. 
+
+In the NodeRegistryLogic are 2 special parameters for the update process: 
+* `updateTimeout`: a timestamp that defines when it's possible to update the registry to the new contract
+* `pendingNewLogic`: the address of the already deployed new NodeRegistryLogic contract for the updated registry
+
+When an update of the Registry is needed, the function `adminUpdateLogic` gets called by the owner of the NodeRegistryLogic. This function will set the address of the new pending contract and also set a timeout of 47 days until the new logic can be applied to the NodeRegistryData contract. After 47 days everyone is allowed to call `activateNewLogic` resulting in an update of the registry. 
+
+The timeout of accessing the deposit of a node after removing it from the nodeList is only 40 days. In case a node owner dislikes the pending registry, he has 7 days to unregister in order to be able to get his deposit back before the new update can be applied. 
+
+### Node structure
+ 
+Each Incubed node must be registered in the NodeRegistry in order to be known to the network. A node or server is defined as: 
 
 *  **url** `string` - The public url of the node, which must accept JSON-RPC requests.
 
@@ -156,11 +255,10 @@ Each Incubed node must be registered in the ServerRegistry in order to be known 
     -  **http** ( `0x08` ) : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
     - **binary** (`0x10` )  : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
     - **onion** ( `0x20` ) : If set, the node is reachable through onionrouting and url will be a onion url.
-    - **minBlockHeight** ( `0x101` - `0x1FF` ):  : The min number of blocks this node is willing to sign. if this number is low (like <6) the risk of signing unindentially a wrong blockhash because of reorgs is high. The default should be 10)
+    - **minBlockHeight** ( `0x0100000000` - `0xFF00000000` ):  : The min number of blocks this node is willing to sign. if this number is low (like <6) the risk of signing unindentially a wrong blockhash because of reorgs is high. The default should be 10)
        ```js
-       minBlockHeight = props >> 8 & 0xFF
+       minBlockHeight = props >> 32 & 0xFF
        ```
-
     More capabilities will be added in future versions.
 
 *  **unregisterTime** `uint64` - The earliest timestamp when the node can unregister itself by calling `confirmUnregisteringServer`.  This will only be set after the node requests an unregister. The client nodes with an `unregisterTime` set have less trust, since they will not be able to convict after this timestamp.
@@ -168,283 +266,6 @@ Each Incubed node must be registered in the ServerRegistry in order to be known 
 *  **registerTime** `uint64` - The timestamp, when the server was registered.
 
 *  **weight** `uint64` - The number of parallel requests this node may accept. A higher number indicates a stronger node, which will be used within the incentivization layer to calculate the score.
-
-The following functions are offered within the registry:
-
-
-### NodeRegistry functions
-
-#### constructor
-*constructor*
-
-**Development notice:**
-*cannot be deployed in a genesis block*
-
-**Parameters:**
-* _blockRegistry `BlockhashRegistry`: *address of a BlockhashRegistry-contract*
-
-#### convict
-*must be called before revealConvict*
-*commits a blocknumber and a hash*
-
-**Development notice:**
-*The v,r,s paramaters are from the signature of the wrong blockhash that the node provided*
-
-**Parameters:**
-* _blockNumber `uint`: *the blocknumber of the wrong blockhash*
-* _hash `bytes32`: *keccak256(wrong blockhash, msg.sender, v, r, s); used to prevent frontrunning.*
-
-#### registerNode
-*register a new node with the sender as owner*
-
-**Development notice:**
-*will call the registerNodeInteral function*
-
-**Parameters:**
-* _url `string`: *the url of the node, has to be unique*
-* _props `uint64`: *properties of the node*
-* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
-* _weight `uint64`: *how many requests per second the node is able to handle*
-
-#### registerNodeFor
-*register a new node as a owner using a different signer address*
-
-**Development notice:**
-*will revert when a wrong signature has been provided*
-
-*which is calculated by the hash of the url, properties, timeout, weight and the owner*
-
-*in order to prove that the owner has control over the signer-address he has to sign a message*
-
-*will call the registerNodeInteral function*
-
-
-**Parameters:**
-* _url `string`: *the url of the node, has to be unique*
-* _props `uint64`: *properties of the node*
-* _timeout `uint64`: *timespan of how long the node of a deposit will be locked. Will be at least for 1h*
-* _signer `address`: *the signer of the in3-node*
-* _weight `uint64`: *how many requests per second the node is able to handle*
-* _v `uint8`: *v of the signed message*
-* _r `bytes32`: *r of the signed message*
-* _s `bytes32`: *s of the signed message*
-
-#### removeNodeFromRegistry
-*removes an in3-server from the registry*
-
-**Development notice:**
-*only callable in the 1st year after deployment*
-
-*only callable by the unregisterKey-account*
-
-**Parameters:**
-* _signer `address`: *the signer-address of the in3-node*
-
-#### returnDeposit
-*only callable after the timeout of the deposit is over*
-*returns the deposit after a node has been removed*
-
-**Development notice:**
-*reverts if the deposit is still locked*
-
-*reverts when there is nothing to transfer*
-
-*reverts when not the owner of the former in3-node*
-
-
-**Parameters:**
-* _signer `address`: *the signer-address of a former in3-node*
-
-#### revealConvict
-*reveals the wrongly provided blockhash, so that the node-owner will lose its deposit*
-
-**Development notice:**
-*reverts when the wrong convict hash (see convict-function) is used*
-
-*reverts when the _signer did not sign the block*
-
-*reverts when trying to reveal immediately after calling convict*
-
-*reverts when trying to convict someone with a correct blockhash*
-
-*reverts if a block with that number cannot be found in either the latest 256 blocks or the blockhash registry*
-
-
-**Parameters:**
-* _signer `address`: *the address that signed the wrong blockhash*
-* _blockhash `bytes32`: *the wrongly provided blockhash*
-* _blockNumber `uint`: *number of the wrongly provided blockhash*
-* _v `uint8`: *v of the signature*
-* _r `bytes32`: *r of the signature*
-* _s `bytes32`: *s of the signature*
-
-#### transferOwnership
-*changes the ownership of an in3-node*
-
-**Development notice:**
-
-*reverts when the sender is not the current owner*
-
-*reverts when trying to pass ownership to 0x0*
-
-*reverts when trying to change ownership of an inactive node*
-
-**Parameters:**
-* _signer `address`: *the signer-address of the in3-node, used as an identifier*
-* _newOwner `address`: *the new owner*
-
-#### unregisteringNode
-*doing so will also lock his deposit for the timeout of the node*
-*a node owner can unregister a node, removing it from the nodeList*
-
-**Development notice:**
-*reverts when not called by the owner of the node*
-
-*reverts when the provided address is not an in3-signer*
-
-
-**Parameters:**
-* _signer `address`: *the signer of the in3-node*
-
-#### updateNode
-*updates a node by adding the msg.value to the deposit and setting the props or timeout*
-
-**Development notice:**
-*reverts when trying to change the url to an already existing one*
-
-*reverts when trying to increase the timeout above 10 years*
-
-*reverts when the signer does not own a node*
-
-*reverts when the sender is not the owner of the node*
-
-
-**Parameters:**
-* _signer `address`: *the signer-address of the in3-node, used as an identifier*
-* _url `string`: *the url, will be changed if different from the current one*
-* _props `uint64`: *the new properties, will be changed if different from the current onec*
-* _timeout `uint64`: *the new timeout of the node, cannot be decreased. Has to be at least 1h*
-* _weight `uint64`: *the amount of requests per second the node is able to handle*
-
-#### totalNodes
-*length of the nodelist*
-**Return Parameters:**
-* `uint` the number of currently active nodes
-
-#### calcProofHash
-*calculates the sha3 hash of the most important properties in order to make the proof faster*
-
-**Parameters:**
-* _node `In3Node`: *the in3 node to calculate the hash from*
-
-**Return Parameters:**
-* `bytes32` the hash of the properties to prove with in3
-
-#### checkNodeProperties
-*function to check whether the allowed amount of ether as deposit per server has been reached*
-
-**Development notice:**
-*will fail when the provided timeout is greater then 1 year*
-
-*will fail when the deposit is greater then 50 ether in the 1st year*
-
-
-**Parameters:**
-* _deposit `uint256`: *the new amount of deposit a server has*
-* _timeout `uint64`: *the timeout until a server can receive his deposit after unregister*
-
-#### registerNodeInternal
-*registers a node*
-
-**Development notice:**
-*reverts when either the owner or the url is already in use*
-
-*reverts when trying to register a node with more then 50 ether in the 1st year after deployment*
-
-*reverts when provided not enough deposit*
-
-*reverts when time timeout exceed the MAXDEPOSITTIMEOUT*
-
-**Parameters:**
-* _url `string`: *the url of a node*
-* _props `uint64`: *properties of a node*
-* _timeout `uint64`: *the time before the owner can access the deposit after unregister a node*
-* _signer `address`: *the address that signs the answers of the node*
-* _owner `address`: *the owner address of the node*
-* _deposit `uint`: *the deposit of a node*
-* _weight `uint64`: *the amount of requests per second a node is able to handle*
-
-#### unregisterNodeInternal
-*handles the setting of the unregister values for a node internally*
-
-**Parameters:**
-* _si `SignerInformation`: *information of the signer*
-* _n `In3Node`: *information of the in3-node*
-
-#### removeNode
-*removes a node from the node-array*
-
-### BlockHashRegistry functions
-
-#### constructor
-*constructor*
-
-#### searchForAvailableBlock
-*searches for an already existing snapshot*
-
-**Parameters:**
-* _startNumber `uint`: *the blocknumber to start searching*
-* _numBlocks `uint`: *the number of blocks to search for*
-
-**Return Parameters:**
-* `uint` returns a blocknumber when a snapshot had been found. It will return 0 if no blocknumber was found. 
-
-#### recreateBlockheaders
-*if successfull the last blockhash of the header will be added to the smart contract*
-*it will be checked whether the provided chain is correct by using the reCalculateBlockheaders function*
-*only usable when the given blocknumber is already in the smart contract*
-*starts with a given blocknumber and its header and tries to recreate a (reverse) chain of blocks*
-
-**Development notice:**
-*function is public due to the usage of a dynamic bytes array (not yet supported for external functions)*
-
-*reverts when the chain of headers is incorrect*
-
-*reverts when there is not parent block already stored in the contract*
-
-**Parameters:**
-* _blockNumber `uint`: *the block number to start recreation from*
-* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order (youngest -> oldest) => (e.g. 100, 99, 98)*
-
-#### saveBlockNumber
-*stores a certain blockhash to the state*
-
-**Development notice:**
-*reverts if the block can't be found inside the evm*
-
-**Parameters:**
-* _blockNumber `uint`: *the blocknumber to be stored*
-
-#### snapshot
-*stores the currentBlock-1 in the smart contract*
-
-#### getParentAndBlockhash
-*returns the blockhash and the parent blockhash from the provided blockheader*
-
-**Parameters:**
-* _blockheader `bytes`: *a serialized (rlp-encoded) blockheader*
-
-**Return Parameters:**
-* parentHash `bytes32`
-* bhash `bytes32`
-
-#### reCalculateBlockheaders
-*the array of the blockheaders have to be in reverse order (e.g. [100,99,98,97])*
-*starts with a given blockhash and its header and tries to recreate a (reverse) chain of blocks*
-
-**Parameters:**
-* _blockheaders `bytes[]`: *array with serialized blockheaders in reverse order, i.e. from youngest to oldest*
-* _bHash `bytes32`: *blockhash of the 1st element of the _blockheaders-array*
 
 ## Binary Format
 
@@ -1075,7 +896,6 @@ See JSON-RPC-Spec
 - [eth_getTransactionByHash](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByHash) - transaction data by hash.
 - [eth_getTransactionByBlockHashAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockHashAndIndex) - transaction data based on blockhash and index
 - [eth_getTransactionByBlockNumberAndIndex](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getTransactionByBlockNumberAndIndex) - transaction data based on block number and index
-
 
 
 ```eval_rst
@@ -1854,3 +1674,16 @@ See JSON-RPC-Spec
 - [eth_sendRawTransaction](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendRawTransaction) - sends a prviously signed transaction.
 
 This Method does not require any proof. (even if requested). Clients must at least verify the returned transactionHash by hashing the rawTransaction data. To know whether the transaction was actually broadcasted and mined, the client needs to run a second request `eth_getTransactionByHash` which should contain the blocknumber as soon as this is mined.
+
+[registerNode]:../html/api-solidity.html#registernode
+[registerNodeFor]:../html/api-solidity.html#id2
+[supportedToken]:../html/api-solidity.html#supportedtoken
+[minDeposit]:../html/api-solidity.html#mindeposit
+[maxDepositFirstYear]:../html/api-solidity.html#maxdepositfirstyear
+[unregisteringNode]:../html/api-solidity.html#id4
+[convict]:../html/api-solidity.html#convict
+[revealConvict]:../html/api-solidity.html#revealconvict
+[returnDeposit]:../html/api-solidity.html#returndeposit
+[snapshot]:../html/api-solidity.html#snapshot
+[saveBlockNumber]:../html/api-solidity.html#saveblocknumber
+[recreateBlockheaders]:../html/api-solidity.html#recreateblockheaders
