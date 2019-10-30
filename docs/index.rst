@@ -10,7 +10,6 @@ Welcome to Incubed's documentation!
    download
    spec
    milestones
-   Threat-Model-for-Incubed
    benchmarkSummary
    api-ts
    api-c
@@ -28,5 +27,6 @@ Welcome to Incubed's documentation!
    poa
    incentivization
    decentralizing_services
+   Threat-Model-for-Incubed
  
 * :ref:`genindex`
