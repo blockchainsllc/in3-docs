@@ -97,11 +97,17 @@ Type: `BOOL` , Default-Value: `OFF`
 
 if true, the client will use the staging-network instead of the live ones
 
-Type: `BOOL` , Default-Value: `ON`
+Type: `BOOL` , Default-Value: `OFF`
 
 #### JAVA
 
 build the java-binding (shared-lib and jar-file)
+
+Type: `BOOL` , Default-Value: `OFF`
+
+#### POA
+
+support POA verification including validatorlist updates
 
 Type: `BOOL` , Default-Value: `OFF`
 
@@ -144,6 +150,24 @@ Type: `BOOL` , Default-Value: `OFF`
 #### WASM
 
 Includes the WASM-Build. In order to build it you need emscripten as toolchain. Usually you also want to turn off other builds in this case.
+
+Type: `BOOL` , Default-Value: `OFF`
+
+#### WASM_EMBED
+
+embedds the wasm as base64-encoded into the js-file
+
+Type: `BOOL` , Default-Value: `ON`
+
+#### WASM_EMMALLOC
+
+use ther smaller EMSCRIPTEN Malloc, which reduces the size about 10k, but may be a bit slower
+
+Type: `BOOL` , Default-Value: `ON`
+
+#### WASM_SYNC
+
+intiaializes the WASM synchronisly, which allows to require and use it the same function, but this will not be supported by chrome (4k limit)
 
 Type: `BOOL` , Default-Value: `OFF` 
 
@@ -1178,6 +1202,29 @@ arguments:
 ========================================= ========= 
 ```
 
+#### to_checksum
+
+```c
+in3_ret_t to_checksum(address_t adr, uint64_t chain_id, char out[43]);
+```
+
+converts the given address to a checksum address. 
+
+If chainId is passed, it will use the EIP1191 to include it as well. 
+
+arguments:
+```eval_rst
+========================= ============== 
+`address_t <#address-t>`_  **adr**       
+``uint64_t``               **chain_id**  
+``char``                   **out**       
+========================= ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 ## Module api/usn 
 
 
@@ -1510,7 +1557,7 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 #### IN3_PROTO_VER
 
 ```c
-#define IN3_PROTO_VER 0x2
+#define IN3_PROTO_VER "2.0.0"
 ```
 
 
@@ -1825,7 +1872,23 @@ signs the given data and write the signature to dst. the return value must be th
 
 
 ```c
-typedef in3_ret_t(* in3_sign) (void *wallet, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
+typedef in3_ret_t(* in3_sign) (void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
+```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_prepare_tx
+
+transform transaction function. 
+
+for multisigs, we need to change the transaction to gro through the ms. if the new_tx is not set within the function, it will use the old_tx. 
+
+
+```c
+typedef in3_ret_t(* in3_prepare_tx) (void *ctx, d_token_t *old_tx, json_ctx_t **new_tx)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -1839,10 +1902,11 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 The stuct contains following fields:
 
 ```eval_rst
-======================= ============ 
-`in3_sign <#in3-sign>`_  **sign**    
-``void *``               **wallet**  
-======================= ============ 
+=================================== ================ 
+`in3_sign <#in3-sign>`_              **sign**        
+`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  
+``void *``                           **wallet**      
+=================================== ================ 
 ```
 
 #### in3_response_t
@@ -2472,6 +2536,26 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_           **ctx**    
 `node_weight_t ** <#node-weight-t>`_  **nodes**  
 ==================================== =========== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### update_nodes
+
+```c
+in3_ret_t update_nodes(in3_t *c, in3_chain_t *chain);
+```
+
+forces the client to update the nodelist 
+
+arguments:
+```eval_rst
+=============================== =========== 
+`in3_t * <#in3-t>`_              **c**      
+`in3_chain_t * <#in3-chain-t>`_  **chain**  
+=============================== =========== 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -3775,23 +3859,6 @@ arguments:
 returns: [`d_token_t *`](#d-token-t)
 
 
-#### d_prev
-
-```c
-d_token_t* d_prev(d_token_t *item);
-```
-
-returns the prev sibling of an array or object 
-
-arguments:
-```eval_rst
-=========================== ========== 
-`d_token_t * <#d-token-t>`_  **item**  
-=========================== ========== 
-```
-returns: [`d_token_t *`](#d-token-t)
-
-
 #### d_serialize_binary
 
 ```c
@@ -4062,59 +4129,6 @@ arguments:
 =========================== ============ 
 ```
 returns: [`d_token_t *`](#d-token-t)
-
-
-#### json_get_int_value
-
-```c
-int json_get_int_value(char *js, char *prop);
-```
-
-parses the json and return the value as int. 
-
-arguments:
-```eval_rst
-========== ========== 
-``char *``  **js**    
-``char *``  **prop**  
-========== ========== 
-```
-returns: `int`
-
-
-#### json_get_str_value
-
-```c
-void json_get_str_value(char *js, char *prop, char *dst);
-```
-
-parses the json and return the value as string. 
-
-arguments:
-```eval_rst
-========== ========== 
-``char *``  **js**    
-``char *``  **prop**  
-``char *``  **dst**   
-========== ========== 
-```
-
-#### json_get_json_value
-
-```c
-char* json_get_json_value(char *js, char *prop);
-```
-
-parses the json and return the value as json-string. 
-
-arguments:
-```eval_rst
-========== ========== 
-``char *``  **js**    
-``char *``  **prop**  
-========== ========== 
-```
-returns: `char *`
 
 
 #### d_get_keystr
@@ -5000,23 +5014,6 @@ arguments:
 returns: `uint64_t`
 
 
-#### size_of_bytes
-
-```c
-int size_of_bytes(int str_len);
-```
-
-the number of bytes used for a conerting a hex into bytes. 
-
-arguments:
-```eval_rst
-======= ============= 
-``int``  **str_len**  
-======= ============= 
-```
-returns: `int`
-
-
 #### strtohex
 
 ```c
@@ -5073,23 +5070,6 @@ arguments:
 ============= ================= 
 ```
 returns: `int`
-
-
-#### hex2long
-
-```c
-uint64_t hex2long(char *buf);
-```
-
-convert hex to long 
-
-arguments:
-```eval_rst
-========== ========= 
-``char *``  **buf**  
-========== ========= 
-```
-returns: `uint64_t`
 
 
 #### hex2byte_new_bytes
@@ -5195,24 +5175,6 @@ arguments:
 ``uint8_t *``  **dst**  
 ============= ========= 
 ```
-
-#### hash_cmp
-
-```c
-int hash_cmp(uint8_t *a, uint8_t *b);
-```
-
-compares 32 bytes and returns 0 if equal 
-
-arguments:
-```eval_rst
-============= ======= 
-``uint8_t *``  **a**  
-``uint8_t *``  **b**  
-============= ======= 
-```
-returns: `int`
-
 
 #### _strdupn
 
@@ -8117,48 +8079,6 @@ arguments:
 returns: `int`
 
 
-#### rlp_decode_item_len
-
-```c
-int rlp_decode_item_len(bytes_t *b, int index);
-```
-
-returns the number of bytes of the element specified by index. 
-
-arguments:
-```eval_rst
-======================= =========== 
-`bytes_t * <#bytes-t>`_  **b**      
-``int``                  **index**  
-======================= =========== 
-```
-returns: `int` : the number of bytes or 0 if not found. 
-
-
-
-
-#### rlp_decode_item_type
-
-```c
-int rlp_decode_item_type(bytes_t *b, int index);
-```
-
-returns the type of the element specified by index. 
-
-arguments:
-```eval_rst
-======================= =========== 
-`bytes_t * <#bytes-t>`_  **b**      
-``int``                  **index**  
-======================= =========== 
-```
-returns: `int` : - 0 : means item out of range
-- 1 : item found
-- 2 : list found ( you can then decode the same bytes again)
-
-
-
-
 #### rlp_encode_item
 
 ```c
@@ -8492,5 +8412,49 @@ arguments:
 returns: `int` : 0 if added -1 if the value could not be handled. 
 
 
+
+
+## Module verifier/eth1/rpc 
+
+
+
+
+### rpc.h
+
+Ethereum Nanon verification. 
+
+File: [src/verifier/eth1/rpc/rpc.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/rpc/rpc.h)
+
+#### verify_res_t
+
+a verification result. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========== =========== =========================================
+``char *``  **src**    points to the source of the json-element.
+``char *``  **msg**    the message
+``bool``    **valid**  true if the data were valid.
+========== =========== =========================================
+```
+
+#### verify_rpc_structure
+
+```c
+verify_res_t verify_rpc_structure(d_token_t *request, d_token_t *response);
+```
+
+verifies a request and responses for a valid data structure. 
+
+arguments:
+```eval_rst
+=========================== ============== 
+`d_token_t * <#d-token-t>`_  **request**   
+`d_token_t * <#d-token-t>`_  **response**  
+=========================== ============== 
+```
+returns: [`verify_res_t`](#verify-res-t)
 
 
