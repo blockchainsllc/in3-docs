@@ -2,19 +2,27 @@
 
 
 ## Hardware Requirements
+### Memory 
 
-...
+
+| Memory type                 | Free size KB |
+| ------------------------ | -------- |
+| **Dynamic memory(DRAM)** | 30 - 50   |
+| **Flash Memory**         | 150 - 200   |
 
 
+### Networking
+In3 client needs to have a reliable internet connection to work properly, so your hardware must support any network interface or module that could give you acccess. i.e  bluetooth, wifi, ethernet, etc.
+        
 ## Incubed with ESP-IDF
 
 
 
-### Example: Airbnb Property access
+### Use case example: Airbnb Property access
 
 A smart door lock which enables accessing the rented flat is installed on the property. It is able to connect to the Internet to check if renting is allowed and the current user is authorized to open the lock.
 
-The computational power of the control unit is restricted to the control of the lock. For this reason, it is also needed to maintain a permanent Internet connection.
+The computational power of the control unit is restricted to the control of the lock. And it is also needed to maintain a permanent Internet connection.
 
 You want to enable this in your application as an example of how in3 can help you, we will guide trough the steps of doing it, from the very basics and the resources you will need 
 
@@ -110,4 +118,5 @@ With the IP address found on step 6.
 ## Incubed with Zephyr
 
 ....
+
 
