@@ -12,7 +12,7 @@
 
 
 ### Networking
-In3 client needs to have a reliable internet connection to work properly, so your hardware must support any network interface or module that could give you acccess. i.e  bluetooth, wifi, ethernet, etc.
+In3 client needs to have a reliable internet connection to work properly, so your hardware must support any network interface or module that could give you acccess to it. i.e  bluetooth, wifi, ethernet, etc.
         
 ## Incubed with ESP-IDF
 
@@ -27,7 +27,9 @@ The computational power of the control unit is restricted to the control of the 
 You want to enable this in your application as an example of how in3 can help you, we will guide trough the steps of doing it, from the very basics and the resources you will need 
 
 **Hardware requirements**
+
 ![from https://docs.espressif.com/projects/esp-idf/en/stable/get-started/](./embedded_esp.png)
+
 
 * [ESP32-DevKitC V4](https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/get-started-devkitc.html) or similar dev board
 * Android phone
@@ -61,8 +63,9 @@ contract Access {
 ```
 
 **How it works**
-![sequence diagram](./embedded_diagram.png)
 
+
+![sequence diagram](./embedded_diagram.png)
 
 
 in3 will support a variety on microcontrollers for this we will use well known esp32 with freertos framework, and a example android app to interact with it via Wifi connection. 
@@ -79,21 +82,33 @@ in3 will support a variety on microcontrollers for this we will use well known e
 
 
 
-3. go to the `in3_main.c` inside main folder and add the password and ssid of your network
+4. To setup the password and ssid of your network, go to kconfig esp menu with: 
+`idf.py menuconfig`
+then select component config
 
-`(L:40) #define EXAMPLE_ESP_WIFI_SSID "YOURSSID"`
-`(L:40) #define EXAMPLE_ESP_WIFI_PASS "YOURPASSWORD"`
+![menuconfig1](./componentconfig.png)
 
-4. Build the code
+
+then in3 at then end of the list:
+
+![menuconfig2](./in3menu.png)
+
+
+then you will will be able to input your credentials and be safe you are not hardcoding them in your code!:
+
+![menuconfig3](./wifi.png)
+
+
+5. Build the code
 `idf.py build`
 
-5. Connect the usb cable to flash and monitor the serial output from the application. 
+6. Connect the usb cable to flash and monitor the serial output from the application. 
 
 `idf.py flash && idf.py monitor`
 
 after the build finishes and the serial monitor is running you will see the configuration and init logs.
 
-6. Configure the ip address of the example, to work with:
+7. Configure the ip address of the example, to work with:
 Take a look at the inital output of the serial output of the `idf.py monitor` command, you will the ip address, as follows 
 
 ```
@@ -102,21 +117,19 @@ I (2647) IN3: got ip:192.168.178.64
 ```
 take note if your ip address which will be used in the android application example. 
 
-7. Clone the android repository, compile the android application and install the in3 demo application in your phone. 
+8. Clone the android repository, compile the android application and install the in3 demo application in your phone. 
 
 `git clone https://github.com/slockit/in3-android-example`
 
 
-8. Modify the android source changing ip address variable inside kotlin source file `MainActivity.kt`
+9. Modify the android source changing ip address variable inside kotlin source file `MainActivity.kt`, with the IP address found on step 6.
 
 `(L:20) private const val ipaddress = "http://192.168.xx.xx"`
-
-With the IP address found on step 6. 
 
 
 
 ## Incubed with Zephyr
 
-....
+....(Comming soon)
 
 
