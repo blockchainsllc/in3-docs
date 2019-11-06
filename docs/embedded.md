@@ -75,7 +75,7 @@ In3 will support a wide range of microcontrollers, in this guide we will use wel
 
 `git clone https://github.com/slockit/in3-devices-esp `
 
-2. Follow [esp-idf](https://) instructions to setup your environment
+2. Follow [esp-idf](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/) instructions to setup your environment
 
 
 3. Deploy the contract with your favorite tool (truffle, etc) or use our previously deployed contract on Goerli testnet, with address `0x36643F8D17FE745a69A2Fd22188921Fade60a98B`
