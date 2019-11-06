@@ -68,7 +68,7 @@ contract Access {
 ![sequence diagram](./embedded_diagram.png)
 
 
-in3 will support a variety on microcontrollers for this we will use well-known esp32 with freertos framework, and an example android app to interact with it via Wifi connection. 
+In3 will support a wide range of microcontrollers, in this guide we will use well-known esp32 with freertos framework, and an example android app to interact with it via Wifi connection. 
 
 **Installation instructions**
 1. Clone the repo
