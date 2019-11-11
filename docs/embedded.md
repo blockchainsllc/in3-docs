@@ -39,9 +39,14 @@ You want to enable this in your application as an example of how in3 can help yo
 **Software requirements** 
 
 *  [In3](https://github.com/slockit/in3-c) C client
-*  Esp-IDF toolchain and SDK, (please follow this [guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/)) 
+*  Esp-idf toolchain and sdk, (please follow this [guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/)) and be sure on the cloning step to use `release/v4.0` branch
+
+`git clone -b release/v4.0 --recursive https://github.com/espressif/esp-idf.git` 
+
 *  [Android Studio](https://developer.android.com/studio)
 * Solidity smart contract:  we will control access to properties using a public smart contract, for this example, we will use the following template
+
+* [Silab](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) USB drivers 
 
 ```
 pragma solidity ^0.5.1;
@@ -70,63 +75,56 @@ contract Access {
 
 In3 will support a wide range of microcontrollers, in this guide we will use well-known esp32 with freertos framework, and an example android app to interact with it via Wifi connection. 
 
-**Installation instructions**
+**Instalation instructions**
 1. Clone the repo
 
-`git clone https://github.com/slockit/in3-devices-esp `
-
-2. Follow [esp-idf](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/) instructions to setup your environment
+`git clone --recursive https://github.com/slockit/in3-devices-esp `
 
 
-3. Deploy the contract with your favorite tool (truffle, etc) or use our previously deployed contract on Goerli testnet, with address `0x36643F8D17FE745a69A2Fd22188921Fade60a98B`
+2. Deploy the contract with your favorite tool (truffle, etc) or use our previusly deployed contract on goerli, with address `0x36643F8D17FE745a69A2Fd22188921Fade60a98B`
 
 
+3. Config your SSID and password inside sdkconfig file `sdkconfig.defaults`
 
-4. To set up the password and SSID of your network, go to kconfig esp menu with: 
-`idf.py menuconfig`
-then select component config
+```
+CONFIG_WIFI_SSID="YOUR SSID"
+CONFIG_WIFI_PASSWORD="YOUR PWD"
+```
 
-![menuconfig1](./componentconfig.png)
-
-
-then in3 at then end of the list:
-
-![menuconfig2](./in3menu.png)
-
-
-then you will be able to input your credentials and be safe you are not hardcoding them in your code!:
-
-![menuconfig3](./wifi.png)
-
-
-5. Build the code
+4. Build the code
 `idf.py build`
 
-6. Connect the USB cable to flash and monitor the serial output from the application. 
+5. Connect the usb cable to flash and monitor the serial output from the application. 
 
 `idf.py flash && idf.py monitor`
 
 after the build finishes and the serial monitor is running you will see the configuration and init logs.
 
-7. Configure the ip address of the example, to work with:
-Take a look at the initial output of the serial console with `idf.py monitor` command, you will see the ESP32 IP address, as follows 
+6. Configure the ip address of the example, to work with:
+Take a look at the inital output of the serial output of the `idf.py monitor` command, you will the ip address, as follows 
 
 ```
 I (2647) tcpip_adapter: sta ip: 192.168.178.64, mask: 255.255.255.0, gw: 192.168.178.1
 I (2647) IN3: got ip:192.168.178.64
 ```
-take note of your IP address which will be used in the android application example. 
+take note if your ip address which will be used in the android application example. 
 
-8. Clone the android repository, compile the android application and install the in3 demo application on your phone. 
+7. Clone the android repository, compile the android application and install the in3 demo application in your phone. 
 
 `git clone https://github.com/slockit/in3-android-example`
 
 
-9. Modify the android source changing ip address variable inside Kotlin source file `MainActivity.kt`, with the IP address found on step 6.
+8. Modify the android source changing ip address variable inside kotlin source file `MainActivity.kt`, with the IP address found on step 6.
 
 `(L:20) private const val ipaddress = "http://192.168.xx.xx"`
 
+9. If you want to test directly without using android you can also do it with the following http curl requests:
 
+* `curl -X GET http://slock.local/api/access`
+
+* `curl -X GET http://slock.local/api/retrieve`
+
+we need 2 requests as the verification process needs to be executed in asynchronous manner, first one will trigger the execution and the result could be retrieved with the second one 
 
 ## Incubed with Zephyr
 
