@@ -1430,48 +1430,6 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-## Module cmd/in3 
-
-
-
-
-### in3_storage.h
-
-storage handler storing cache in the home-dir/.in3 
-
-File: [src/cmd/in3/in3_storage.h](https://github.com/slockit/in3-c/blob/master/src/cmd/in3/in3_storage.h)
-
-#### storage_get_item
-
-```c
-bytes_t* storage_get_item(void *cptr, char *key);
-```
-
-arguments:
-```eval_rst
-========== ========== 
-``void *``  **cptr**  
-``char *``  **key**   
-========== ========== 
-```
-returns: [`bytes_t *`](#bytes-t)
-
-
-#### storage_set_item
-
-```c
-void storage_set_item(void *cptr, char *key, bytes_t *content);
-```
-
-arguments:
-```eval_rst
-======================= ============= 
-``void *``               **cptr**     
-``char *``               **key**      
-`bytes_t * <#bytes-t>`_  **content**  
-======================= ============= 
-```
-
 ## Module core 
 
 
@@ -2688,144 +2646,6 @@ arguments:
 returns: [`in3_ctx_t *`](#in3-ctx-t)
 
 
-### nodelist.h
-
-handles nodelists. 
-
-File: [src/core/client/nodelist.h](https://github.com/slockit/in3-c/blob/master/src/core/client/nodelist.h)
-
-#### in3_nodelist_clear
-
-```c
-void in3_nodelist_clear(in3_chain_t *chain);
-```
-
-removes all nodes and their weights from the nodelist 
-
-arguments:
-```eval_rst
-=============================== =========== 
-`in3_chain_t * <#in3-chain-t>`_  **chain**  
-=============================== =========== 
-```
-
-#### in3_node_list_get
-
-```c
-in3_ret_t in3_node_list_get(in3_ctx_t *ctx, uint64_t chain_id, bool update, in3_node_t **nodeList, int *nodeListLength, in3_node_weight_t **weights);
-```
-
-check if the nodelist is up to date. 
-
-if not it will fetch a new version first (if the needs_update-flag is set). 
-
-arguments:
-```eval_rst
-============================================ ==================== 
-`in3_ctx_t * <#in3-ctx-t>`_                   **ctx**             
-``uint64_t``                                  **chain_id**        
-``bool``                                      **update**          
-`in3_node_t ** <#in3-node-t>`_                **nodeList**        
-``int *``                                     **nodeListLength**  
-`in3_node_weight_t ** <#in3-node-weight-t>`_  **weights**         
-============================================ ==================== 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_node_list_fill_weight
-
-```c
-node_weight_t* in3_node_list_fill_weight(in3_t *c, in3_node_t *all_nodes, in3_node_weight_t *weights, int len, _time_t now, float *total_weight, int *total_found);
-```
-
-filters and fills the weights on a returned linked list. 
-
-arguments:
-```eval_rst
-=========================================== ================== 
-`in3_t * <#in3-t>`_                          **c**             
-`in3_node_t * <#in3-node-t>`_                **all_nodes**     
-`in3_node_weight_t * <#in3-node-weight-t>`_  **weights**       
-``int``                                      **len**           
-``_time_t``                                  **now**           
-``float *``                                  **total_weight**  
-``int *``                                    **total_found**   
-=========================================== ================== 
-```
-returns: [`node_weight_t *`](#node-weight-t)
-
-
-#### in3_node_list_pick_nodes
-
-```c
-in3_ret_t in3_node_list_pick_nodes(in3_ctx_t *ctx, node_weight_t **nodes);
-```
-
-picks (based on the config) a random number of nodes and returns them as weightslist. 
-
-arguments:
-```eval_rst
-==================================== =========== 
-`in3_ctx_t * <#in3-ctx-t>`_           **ctx**    
-`node_weight_t ** <#node-weight-t>`_  **nodes**  
-==================================== =========== 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### update_nodes
-
-```c
-in3_ret_t update_nodes(in3_t *c, in3_chain_t *chain);
-```
-
-forces the client to update the nodelist 
-
-arguments:
-```eval_rst
-=============================== =========== 
-`in3_t * <#in3-t>`_              **c**      
-`in3_chain_t * <#in3-chain-t>`_  **chain**  
-=============================== =========== 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### free_ctx_nodes
-
-```c
-void free_ctx_nodes(node_weight_t *c);
-```
-
-arguments:
-```eval_rst
-=================================== ======= 
-`node_weight_t * <#node-weight-t>`_  **c**  
-=================================== ======= 
-```
-
-#### ctx_nodes_len
-
-```c
-int ctx_nodes_len(node_weight_t *root);
-```
-
-arguments:
-```eval_rst
-=================================== ========== 
-`node_weight_t * <#node-weight-t>`_  **root**  
-=================================== ========== 
-```
-returns: `int`
-
-
 ### verifier.h
 
 Verification Context. This context is passed to the verifier. 
@@ -2848,6 +2668,10 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 
 #### in3_pre_handle
 
+function which is called to fill the response before a request is triggered. 
+
+This can be used to handle requests which don't need a node to response. 
+
 
 ```c
 typedef in3_ret_t(* in3_pre_handle) (in3_ctx_t *ctx, in3_response_t **response)
@@ -2866,7 +2690,7 @@ The stuct contains following fields:
 ```eval_rst
 ======================================= ================ 
 `in3_verify <#in3-verify>`_              **verify**      
-``in3_pre_handle``                       **pre_handle**  
+`in3_pre_handle <#in3-pre-handle>`_      **pre_handle**  
 `in3_chain_type_t <#in3-chain-type-t>`_  **type**        
 `verifierstruct , * <#verifier>`_        **next**        
 ======================================= ================ 
@@ -5482,8 +5306,15 @@ File: [src/transport/curl/in3_curl.h](https://github.com/slockit/in3-c/blob/mast
 in3_ret_t send_curl(in3_request_t *req);
 ```
 
-the transport function using curl. 
+a transport function using curl. 
 
+You can use it by setting the transport-function-pointer in the in3_t->transport to this function:
+
+```c
+#include <in3/in3_curl.h>
+...
+c->transport = send_curl;
+```
 arguments:
 ```eval_rst
 =================================== ========= 
@@ -5521,6 +5352,17 @@ File: [src/transport/http/in3_http.h](https://github.com/slockit/in3-c/blob/mast
 in3_ret_t send_http(in3_request_t *req);
 ```
 
+a very simple transport function, which allows to send http-requests without a dependency to curl. 
+
+Here each request will be transformed to http instead of https.
+
+You can use it by setting the transport-function-pointer in the in3_t->transport to this function:
+
+```c
+#include <in3/in3_http.h>
+...
+c->transport = send_http;
+```
 arguments:
 ```eval_rst
 =================================== ========= 
@@ -8559,49 +8401,5 @@ arguments:
 returns: `int` : 0 if added -1 if the value could not be handled. 
 
 
-
-
-## Module verifier/eth1/rpc 
-
-
-
-
-### rpc.h
-
-Ethereum Nanon verification. 
-
-File: [src/verifier/eth1/rpc/rpc.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/rpc/rpc.h)
-
-#### verify_res_t
-
-a verification result. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-========== =========== =========================================
-``char *``  **src**    points to the source of the json-element.
-``char *``  **msg**    the message
-``bool``    **valid**  true if the data were valid.
-========== =========== =========================================
-```
-
-#### verify_rpc_structure
-
-```c
-verify_res_t verify_rpc_structure(d_token_t *request, d_token_t *response);
-```
-
-verifies a request and responses for a valid data structure. 
-
-arguments:
-```eval_rst
-=========================== ============== 
-`d_token_t * <#d-token-t>`_  **request**   
-`d_token_t * <#d-token-t>`_  **response**  
-=========================== ============== 
-```
-returns: [`verify_res_t`](#verify-res-t)
 
 
