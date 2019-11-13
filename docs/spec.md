@@ -255,6 +255,8 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
     -  **http** ( `0x08` ) : If set, the node will also serve requests on standard http even if the url specifies https. This is relevant for small embedded devices trying to save resources by not having to run the TLS.
     - **binary** (`0x10` )  : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
     - **onion** ( `0x20` ) : If set, the node is reachable through onionrouting and url will be a onion url.
+    - **signer** ( `0x40` ) : If set, the node will sign blockhashes.
+    - **proofer** ( `0x80` ) : If set, the node will provide rpc and proofs.
     - **minBlockHeight** ( `0x0100000000` - `0xFF00000000` ):  : The min number of blocks this node is willing to sign. if this number is low (like <6) the risk of signing unindentially a wrong blockhash because of reorgs is high. The default should be 10)
        ```js
        minBlockHeight = props >> 32 & 0xFF
