@@ -313,20 +313,6 @@ Initializer macros for eth_blknum_t.
 ```
 
 
-#### eth_blknum_def_t
-
-Abstract type for holding a block number. 
-
-The enum type contains the following values:
-
-```eval_rst
-================== = 
- **BLK_LATEST**    0 
- **BLK_EARLIEST**  1 
- **BLK_PENDING**   2 
-================== = 
-```
-
 #### eth_tx_t
 
 A transaction. 
@@ -1259,30 +1245,6 @@ This header-file defines easy to use function, which are verifying USN-Messages.
 
 File: [src/api/usn/usn_api.h](https://github.com/slockit/in3-c/blob/master/src/api/usn/usn_api.h)
 
-#### usn_msg_type_t
-
-The enum type contains the following values:
-
-```eval_rst
-================== = 
- **USN_ACTION**    0 
- **USN_REQUEST**   1 
- **USN_RESPONSE**  2 
-================== = 
-```
-
-#### usn_event_type_t
-
-The enum type contains the following values:
-
-```eval_rst
-=================== = 
- **BOOKING_NONE**   0 
- **BOOKING_START**  1 
- **BOOKING_STOP**   2 
-=================== = 
-```
-
 #### usn_booking_handler
 
 
@@ -1515,67 +1477,15 @@ arguments:
 
 
 
-### cache.h
-
-handles caching and storage.
-
-storing nodelists and other caches with the storage handler as specified in the client. If no storage handler is specified nothing will be cached. 
-
-File: [src/core/client/cache.h](https://github.com/slockit/in3-c/blob/master/src/core/client/cache.h)
-
-#### in3_cache_update_nodelist
-
-```c
-in3_ret_t in3_cache_update_nodelist(in3_t *c, in3_chain_t *chain);
-```
-
-reads the nodelist from cache. 
-
-This function is usually called internally to fill the weights and nodelist from the the cache. If you call `in3_cache_init` there is no need to call this explicitly. 
-
-arguments:
-```eval_rst
-=============================== =========== ==================
-`in3_t * <#in3-t>`_              **c**      the incubed client
-`in3_chain_t * <#in3-chain-t>`_  **chain**  chain to configure
-=============================== =========== ==================
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_cache_store_nodelist
-
-```c
-in3_ret_t in3_cache_store_nodelist(in3_ctx_t *ctx, in3_chain_t *chain);
-```
-
-stores the nodelist to thes cache. 
-
-It will automaticly called if the nodelist has changed and read from the nodes or the wirght of a node changed. 
-
-arguments:
-```eval_rst
-=============================== =========== ===========================
-`in3_ctx_t * <#in3-ctx-t>`_      **ctx**    the current incubed context
-`in3_chain_t * <#in3-chain-t>`_  **chain**  the chain upating to cache
-=============================== =========== ===========================
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 ### client.h
 
-incubed main client file.
-
-This includes the definition of the client and used enum values. 
+this file defines the incubed configuration struct and it registration. 
 
 File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/src/core/client/client.h)
 
 #### IN3_PROTO_VER
+
+the protocol version used when sending requests from the this client 
 
 ```c
 #define IN3_PROTO_VER "2.0.0"
@@ -1584,12 +1494,16 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 
 #### ETH_CHAIN_ID_MAINNET
 
+chainId for mainnet 
+
 ```c
 #define ETH_CHAIN_ID_MAINNET 0x01L
 ```
 
 
 #### ETH_CHAIN_ID_KOVAN
+
+chainId for kovan 
 
 ```c
 #define ETH_CHAIN_ID_KOVAN 0x2aL
@@ -1598,12 +1512,16 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 
 #### ETH_CHAIN_ID_TOBALABA
 
+chainId for tobalaba 
+
 ```c
 #define ETH_CHAIN_ID_TOBALABA 0x44dL
 ```
 
 
 #### ETH_CHAIN_ID_GOERLI
+
+chainId for goerlii 
 
 ```c
 #define ETH_CHAIN_ID_GOERLI 0x5L
@@ -1612,12 +1530,16 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 
 #### ETH_CHAIN_ID_EVAN
 
+chainId for evan 
+
 ```c
 #define ETH_CHAIN_ID_EVAN 0x4b1L
 ```
 
 
 #### ETH_CHAIN_ID_IPFS
+
+chainId for ipfs 
 
 ```c
 #define ETH_CHAIN_ID_IPFS 0x7d0
@@ -1626,12 +1548,16 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 
 #### ETH_CHAIN_ID_VOLTA
 
+chainId for volta 
+
 ```c
 #define ETH_CHAIN_ID_VOLTA 0x12046
 ```
 
 
 #### ETH_CHAIN_ID_LOCAL
+
+chainId for local chain 
 
 ```c
 #define ETH_CHAIN_ID_LOCAL 0xFFFFL
@@ -1673,82 +1599,6 @@ return value used by the signer for unspecified errors.
 #define IN3_SIGN_ERR_GENERAL_ERROR -4
 ```
 
-
-#### in3_chain_type_t
-
-the type of the chain. 
-
-for incubed a chain can be any distributed network or database with incubed support. Depending on this chain-type the previously registered verifyer will be choosen and used. 
-
-The enum type contains the following values:
-
-```eval_rst
-===================== = =================
- **CHAIN_ETH**        0 Ethereum chain.
- **CHAIN_SUBSTRATE**  1 substrate chain
- **CHAIN_IPFS**       2 ipfs verifiaction
- **CHAIN_BTC**        3 Bitcoin chain.
- **CHAIN_IOTA**       4 IOTA chain.
- **CHAIN_GENERIC**    5 other chains
-===================== = =================
-```
-
-#### in3_proof_t
-
-the type of proof. 
-
-Depending on the proof-type different levels of proof will be requested from the node. 
-
-The enum type contains the following values:
-
-```eval_rst
-==================== = ==================================================
- **PROOF_NONE**      0 No Verification.
- **PROOF_STANDARD**  1 Standard Verification of the important properties.
- **PROOF_FULL**      2 All field will be validated including uncles.
-==================== = ==================================================
-```
-
-#### in3_verification_t
-
-verification as delivered by the server. 
-
-This will be part of the in3-request and will be generated based on the prooftype. 
-
-The enum type contains the following values:
-
-```eval_rst
-======================================= = ===============================
- **VERIFICATION_NEVER**                 0 No Verifacation.
- **VERIFICATION_PROOF**                 1 Includes the proof of the data.
- **VERIFICATION_PROOF_WITH_SIGNATURE**  2 Proof + Signatures.
-======================================= = ===============================
-```
-
-#### d_signature_type_t
-
-type of the requested signature 
-
-The enum type contains the following values:
-
-```eval_rst
-================== = ======================
- **SIGN_EC_RAW**   0 sign the data directly
- **SIGN_EC_HASH**  1 hash and sign the data
-================== = ======================
-```
-
-#### in3_filter_type_t
-
-The enum type contains the following values:
-
-```eval_rst
-==================== = ============================
- **FILTER_EVENT**    0 Event filter.
- **FILTER_BLOCK**    1 Block filter.
- **FILTER_PENDING**  2 Pending filter (Unsupported)
-==================== = ============================
-```
 
 #### in3_request_config_t
 
@@ -1892,14 +1742,33 @@ signing function.
 signs the given data and write the signature to dst. the return value must be the number of bytes written to dst. In case of an error a negativ value must be returned. It should be one of the IN3_SIGN_ERR... values. 
 
 
-```c
-typedef in3_ret_t(* in3_sign) (void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+================== === ==================================================================
 ```
-
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### in3_prepare_tx
 
@@ -1908,14 +1777,33 @@ transform transaction function.
 for multisigs, we need to change the transaction to gro through the ms. if the new_tx is not set within the function, it will use the old_tx. 
 
 
-```c
-typedef in3_ret_t(* in3_prepare_tx) (void *ctx, d_token_t *old_tx, json_ctx_t **new_tx)
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+================== === ==================================================================
 ```
-
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### in3_signer_t
 
@@ -1969,14 +1857,33 @@ The stuct contains following fields:
 the transport function to be implemented by the transport provider. 
 
 
-```c
-typedef in3_ret_t(* in3_transport_send) (in3_request_t *request)
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+================== === ==================================================================
 ```
-
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### in3_filter_t
 
@@ -1995,6 +1902,8 @@ The stuct contains following fields:
 ```
 
 #### in3_filter_handler_t
+
+Handler which is added to client config in order to handle filter. 
 
 
 The stuct contains following fields:
@@ -2234,6 +2143,8 @@ in3_ret_t in3_cache_init(in3_t *c);
 
 inits the cache. 
 
+this will try to read the nodelist from cache. 
+
 arguments:
 ```eval_rst
 =================== ======= ==================
@@ -2253,12 +2164,14 @@ in3_chain_t* find_chain(in3_t *c, uint64_t chain_id);
 
 finds the chain-config for the given chain_id. 
 
+My return NULL if not found. 
+
 arguments:
 ```eval_rst
-=================== ============== 
-`in3_t * <#in3-t>`_  **c**         
-``uint64_t``         **chain_id**  
-=================== ============== 
+=================== ============== ==================
+`in3_t * <#in3-t>`_  **c**         the incubed client
+``uint64_t``         **chain_id**  chainId
+=================== ============== ==================
 ```
 returns: [`in3_chain_t *`](#in3-chain-t)
 
@@ -2275,10 +2188,10 @@ For details about the structure of ther config see [https://in3.readthedocs.io/e
 
 arguments:
 ```eval_rst
-=================== ============ 
-`in3_t * <#in3-t>`_  **c**       
-``char *``           **config**  
-=================== ============ 
+=================== ============ ==========================================
+`in3_t * <#in3-t>`_  **c**       the incubed client
+``char *``           **config**  JSON-string with the configuration to set.
+=================== ============ ==========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -2295,9 +2208,9 @@ defines a default transport which is used when creating a new client.
 
 arguments:
 ```eval_rst
-=========================================== =============== 
-`in3_transport_send <#in3-transport-send>`_  **transport**  
-=========================================== =============== 
+=========================================== =============== ===============================
+`in3_transport_send <#in3-transport-send>`_  **transport**  the default transport-function.
+=========================================== =============== ===============================
 ```
 
 #### in3_set_default_storage
@@ -2336,9 +2249,10 @@ Request Context. This is used for each request holding request and response-poin
 
 File: [src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/src/core/client/context.h)
 
-#### ctx_type
+#### ctx_type_t
 
 type of the request context, 
+
 
 The enum type contains the following values:
 
@@ -2348,31 +2262,6 @@ The enum type contains the following values:
  **CT_SIGN**  1 a sign request
 ============= = ============================================================
 ```
-
-#### state
-
-The current state of the context. 
-
-you can check this state after each execute-call. 
-
-The enum type contains the following values:
-
-```eval_rst
-================================== == ============================================================
- **CTX_SUCCESS**                   0  The ctx has a verified result.
- **CTX_WAITING_FOR_REQUIRED_CTX**  1  there are required contexts, which need to be resolved first
- **CTX_WAITING_FOR_RESPONSE**      2  the response is not set yet
- **CTX_ERROR**                     -1 the request has a error
-================================== == ============================================================
-```
-
-#### ctx_type_t
-
-type of the request context, 
-
-
-The stuct contains following fields:
-
 
 #### node_weight_t
 
@@ -2432,8 +2321,16 @@ The current state of the context.
 you can check this state after each execute-call. 
 
 
-The stuct contains following fields:
+The enum type contains the following values:
 
+```eval_rst
+================================== == ============================================================
+ **CTX_SUCCESS**                   0  The ctx has a verified result.
+ **CTX_WAITING_FOR_REQUIRED_CTX**  1  there are required contexts, which need to be resolved first
+ **CTX_WAITING_FOR_RESPONSE**      2  the response is not set yet
+ **CTX_ERROR**                     -1 the request has a error
+================================== == ============================================================
+```
 
 #### new_ctx
 
@@ -2445,14 +2342,14 @@ creates a new context.
 
 the request data will be parsed and represented in the context. calling this function will only parse the request data, but not send anything yet.
 
-*Important*: the req_data will not be cloned but used during the execution. The caller of the this function is also responsible for freeing this string afterwards. [in] the rpc-request as json string. 
+*Important*: the req_data will not be cloned but used during the execution. The caller of the this function is also responsible for freeing this string afterwards. 
 
 arguments:
 ```eval_rst
-=================== ============== ==================
+=================== ============== ===============================
 `in3_t * <#in3-t>`_  **client**    the client-config.
-``char *``           **req_data**  
-=================== ============== ==================
+``char *``           **req_data**  the rpc-request as json string.
+=================== ============== ===============================
 ```
 returns: [`in3_ctx_t *`](#in3-ctx-t)
 
@@ -2465,13 +2362,13 @@ in3_ret_t in3_send_ctx(in3_ctx_t *ctx);
 
 sends a previously created context to nodes and verifies it. 
 
-The execution happens within the same thread, thich mean it will be blocked until the response ha beedn received and verified. In order to handle calls asynchronously, you need to call the `in3_ctx_execute` function and provide the data as needed. [in] the request context. 
+The execution happens within the same thread, thich mean it will be blocked until the response ha beedn received and verified. In order to handle calls asynchronously, you need to call the `in3_ctx_execute` function and provide the data as needed. 
 
 arguments:
 ```eval_rst
-=========================== ========= 
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  
-=========================== ========= 
+=========================== ========= ====================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
+=========================== ========= ====================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -2997,26 +2894,64 @@ File: [src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/
 function to verify the result. 
 
 
-```c
-typedef in3_ret_t(* in3_verify) (in3_vctx_t *c)
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+================== === ==================================================================
 ```
-
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### in3_pre_handle
 
 
-```c
-typedef in3_ret_t(* in3_pre_handle) (in3_ctx_t *ctx, in3_response_t **response)
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+================== === ==================================================================
 ```
-
-returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
 
 #### in3_verifier_t
 
@@ -3824,24 +3759,6 @@ It will throw an error if reached.
 #define vprintX vprintf
 ```
 
-
-#### d_type_t
-
-type of a token. 
-
-The enum type contains the following values:
-
-```eval_rst
-=============== = =====================================================
- **T_BYTES**    0 content is stored as data ptr.
- **T_STRING**   1 content is stored a c-str
- **T_ARRAY**    2 the node is an array with the length stored in length
- **T_OBJECT**   3 the node is an object with properties
- **T_BOOLEAN**  4 boolean with the value stored in len
- **T_INTEGER**  5 a integer with the value stored
- **T_NULL**     6 a NULL-value
-=============== = =====================================================
-```
 
 #### d_key_t
 
@@ -4989,40 +4906,6 @@ File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/c
 ```
 
 
-#### in3_ret_t
-
-ERROR types used as return values. 
-
-All values (except IN3_OK) indicate an error. 
-
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
-```
-
 ### scache.h
 
 util helper on byte arrays. 
@@ -5936,21 +5819,6 @@ Patricia Merkle Tree Imnpl
 
 File: [src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/trie.h)
 
-#### trie_node_type_t
-
-Node types. 
-
-The enum type contains the following values:
-
-```eval_rst
-================= = ============================
- **NODE_EMPTY**   0 empty node
- **NODE_BRANCH**  1 a Branch
- **NODE_LEAF**    2 a leaf containing the value.
- **NODE_EXT**     3 a extension
-================= = ============================
-```
-
 #### in3_hasher_t
 
 hash-function 
@@ -6796,9 +6664,10 @@ stack limit reached
 ```
 
 
-#### evm_state
+#### evm_state_t
 
 the current state of the evm 
+
 
 The enum type contains the following values:
 
@@ -6810,14 +6679,6 @@ The enum type contains the following values:
  **EVM_STATE_REVERTED**  3 stopped, but results must be reverted
 ======================== = =====================================
 ```
-
-#### evm_state_t
-
-the current state of the evm 
-
-
-The stuct contains following fields:
-
 
 #### evm_get_env
 
@@ -7899,20 +7760,6 @@ File: [src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/blob
 #define BLOCK_LATEST 0xFFFFFFFFFFFFFFFF
 ```
 
-
-#### eth_consensus_type_t
-
-the consensus type. 
-
-The enum type contains the following values:
-
-```eval_rst
-==================== = ================================
- **ETH_POW**         0 Pro of Work (Ethash)
- **ETH_POA_AURA**    1 Proof of Authority using Aura.
- **ETH_POA_CLIQUE**  2 Proof of Authority using clique.
-==================== = ================================
-```
 
 #### eip_transition_t
 
