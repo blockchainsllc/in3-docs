@@ -1742,33 +1742,14 @@ signing function.
 signs the given data and write the signature to dst. the return value must be the number of bytes written to dst. In case of an error a negativ value must be returned. It should be one of the IN3_SIGN_ERR... values. 
 
 
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
+```c
+typedef in3_ret_t(* in3_sign) (void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
 ```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 #### in3_prepare_tx
 
@@ -1777,33 +1758,14 @@ transform transaction function.
 for multisigs, we need to change the transaction to gro through the ms. if the new_tx is not set within the function, it will use the old_tx. 
 
 
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
+```c
+typedef in3_ret_t(* in3_prepare_tx) (void *ctx, d_token_t *old_tx, json_ctx_t **new_tx)
 ```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 #### in3_signer_t
 
@@ -1857,33 +1819,14 @@ The stuct contains following fields:
 the transport function to be implemented by the transport provider. 
 
 
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
+```c
+typedef in3_ret_t(* in3_transport_send) (in3_request_t *request)
 ```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 #### in3_filter_t
 
@@ -2156,10 +2099,10 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### find_chain
+#### in3_find_chain
 
 ```c
-in3_chain_t* find_chain(in3_t *c, uint64_t chain_id);
+in3_chain_t* in3_find_chain(in3_t *c, uint64_t chain_id);
 ```
 
 finds the chain-config for the given chain_id. 
@@ -2223,9 +2166,9 @@ defines a default storage handler which is used when creating a new client.
 
 arguments:
 ```eval_rst
-=================================================== ================== 
-`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**  
-=================================================== ================== 
+=================================================== ================== =============================
+`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**  pointer to the handler-struct
+=================================================== ================== =============================
 ```
 
 #### in3_set_default_signer
@@ -2238,9 +2181,9 @@ defines a default signer which is used when creating a new client.
 
 arguments:
 ```eval_rst
-================================= ============ 
-`in3_signer_t * <#in3-signer-t>`_  **signer**  
-================================= ============ 
+================================= ============ ========================
+`in3_signer_t * <#in3-signer-t>`_  **signer**  default signer-function.
+================================= ============ ========================
 ```
 
 ### context.h
@@ -2894,64 +2837,26 @@ File: [src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/
 function to verify the result. 
 
 
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
+```c
+typedef in3_ret_t(* in3_verify) (in3_vctx_t *c)
 ```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 #### in3_pre_handle
 
 
-The enum type contains the following values:
-
-```eval_rst
-================== === ==================================================================
- **IN3_OK**        0   Success.
- **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**    -2  No memory.
- **IN3_ENOTSUP**   -3  Not supported.
- **IN3_EINVAL**    -4  Invalid value.
- **IN3_EFIND**     -5  Not found.
- **IN3_ECONFIG**   -6  Invalid config.
- **IN3_ELIMIT**    -7  Limit reached.
- **IN3_EVERS**     -8  Version mismatch.
- **IN3_EINVALDT**  -9  Data invalid, eg. 
-                       
-                       invalid/incomplete JSON
- **IN3_EPASS**     -10 Wrong password.
- **IN3_ERPC**      -11 RPC error (i.e. 
-                       
-                       in3_ctx_t::error set)
- **IN3_ERPCNRES**  -12 RPC no response.
- **IN3_EUSNURL**   -13 USN URL parse error.
- **IN3_ETRANS**    -14 Transport error.
- **IN3_ERANGE**    -15 Not in range.
- **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
-================== === ==================================================================
+```c
+typedef in3_ret_t(* in3_pre_handle) (in3_ctx_t *ctx, in3_response_t **response)
 ```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
 
 #### in3_verifier_t
 
