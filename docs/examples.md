@@ -11,7 +11,7 @@ Since incubed works with on a JSON-RPC-Level it can easily be used as Provider f
 ```js
 // import in3-Module
 import In3Client from 'in3'
-import * as web3 from 'web3'
+import * as Web3 from 'web3'
 
 // use the In3Client as Http-Provider
 const web3 = new Web3(new In3Client({
@@ -22,7 +22,7 @@ const web3 = new Web3(new In3Client({
 }).createWeb3Provider())
 
 // use the web3
-const block = await web.eth.getBlockByNumber('latest')
+const block = await web3.eth.getBlockByNumber('latest')
 ...
 
 ```
