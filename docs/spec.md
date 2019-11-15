@@ -223,9 +223,9 @@ In order to solve this issue, the registry is divided between two different depl
 * `NodeRegistryData`: a smart contract to store the nodeList 
 * `NodeRegistryLogic`: a smart contract that has the logic needed to run the registry
 
-There is a special relationship between those two smart contracts: The NodeRegistryLogic "owns" the NodeRegistryData. This means, that only he is allowed to call certain functions of the NodeRegistryData. In our case this means all writing operations, i.e. he is the only entity that is allowed to actually be allowed to store data within the smart contract. We are using this approach to make sure that only the NodeRegistryLogic can call the register, update and remove functions of the NodeRegistryData. In addition, he is the only one allowed to change the ownership to a noew contract. Doing so results in the old NodeRegistryLogic to lose write access. 
+There is a special relationship between those two smart contracts: The NodeRegistryLogic "owns" the NodeRegistryData. This means, that only he is allowed to call certain functions of the NodeRegistryData. In our case this means all writing operations, i.e. he is the only entity that is allowed to actually be allowed to store data within the smart contract. We are using this approach to make sure that only the NodeRegistryLogic can call the register, update and remove functions of the NodeRegistryData. In addition, he is the only one allowed to change the ownership to a new contract. Doing so results in the old NodeRegistryLogic to lose write access. 
 
-In the NodeRegistryLogic are 2 special parameters for the update process: 
+In the NodeRegistryLogic there are 2 special parameters for the update process: 
 * `updateTimeout`: a timestamp that defines when it's possible to update the registry to the new contract
 * `pendingNewLogic`: the address of the already deployed new NodeRegistryLogic contract for the updated registry
 
@@ -463,7 +463,7 @@ This proof section contains the following properties:
 - `type` : constant : `accountProof`
 - `block` : the serialized blockheader of the latest final block
 - `signatures` : a array of signatures from the signers (if requested) of the above block.
-- `accounts`: a Object with the addresses of the db-contract as key and Proof as value. The DataStructure of the Proof is exactly the same as the result of - [`eth_getProof`](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getproof), nbut it must containi the above described keys
+- `accounts`: a Object with the addresses of the db-contract as key and Proof as value. The Data Structure of the Proof is exactly the same as the result of - [`eth_getProof`](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getproof), but it must containi the above described keys
 - `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
 
 
@@ -591,7 +591,7 @@ Response:
 
 ##### Partial NodeLists
 
-if the client requests a partial nodeList and the given limnit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
+if the client requests a partial nodeList and the given limit is smaller then the total amount of nodes, the server needs to pick nodes in a deterministic way. This is done by using the given seed.
 
 1. add all required addresses (if any) to the list.
 2. iterate over the indexes until the limit is reached:
@@ -684,7 +684,7 @@ Response:
 
 Standard JSON-RPC calls as described in https://github.com/ethereum/wiki/wiki/JSON-RPC.
 
-PWhenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
+Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
 
 For ethereum, all proofs are based on the correct block hash. That's why verification differentiates between [Verifying the blockhash](poa.html) (which depends on the user consensus) the actual result data.
 
