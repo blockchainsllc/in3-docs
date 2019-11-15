@@ -11,6 +11,7 @@ Welcome to Incubed's documentation!
    spec
    milestones
    benchmarkSummary
+   embedded
    api-ts
    api-c
    api-java
