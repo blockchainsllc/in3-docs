@@ -5,10 +5,9 @@
 ### Memory 
 
 
-| Memory type                 | Free size KB |
-| ------------------------ | -------- |
-| **Dynamic memory(DRAM)** | 30 - 50   |
-| **Flash Memory**         | 150 - 200   |
+For the memory this example requires:
+- Dynamic memory(DRAM) : 30 - 50kB
+- Flash Memory : 150 - 200kB
 
 
 ### Networking
@@ -48,7 +47,7 @@ You want to enable this in your application as an example of how in3 can help yo
 
 * [Silab](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) USB drivers 
 
-```
+```js
 pragma solidity ^0.5.1;
 
 contract Access {
