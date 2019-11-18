@@ -46,6 +46,7 @@ Usage
 -json          If given, the result will be returned as JSON, which is especially important for ``eth_call``, which results in complex structres.
 -hex           If given, the result will be returned as hex.
 -debug         If given, Incubed will output debug information when executing.
+-q             quiet. no warnings or log to stderr.
 -ri            Reads the response from standard input instead of sending the request, allowing for offline use cases.
 -ro            Writes the raw response from the node to standard output.
 
@@ -207,6 +208,14 @@ As methods, the following can be used:
 
            export IN3_PK=`in3 keystore mykeyfile.json` 
 
+if no method is passed, this tool will read json-rpc-requests from stdin and response on stdout until stdin is closed.
+
+```sh
+echo '{"method":"eth_blockNumber","params":[]}' | in3 -q -c goerli
+```
+
+This can also be used process to communicate with by startiing a in3-process and send rpc-comands through stdin and read the responses from stout.
+if multiple requests are passed in the input stream, they will executed in the same order. The result will be terminated by a newline-character.
 
 Running as Server
 #################

@@ -1160,6 +1160,38 @@ Response:
   "result": ["0x1234567890123456789012345678901234567890","0x05"],
 }
 ```
+### in3_checksumAddress
+
+Will convert an upper or lowercase Ethereum address to a checksum address. (See [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) )
+
+Parameters:
+
+1. `address`: address - the address to convert.
+2. `useChainId`: boolean - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
+
+Returns:
+
+the address-string using the upper/lowercase hex characters.
+
+Request:
+
+```c
+{
+    "method":"in3_checksumAddress",
+    "params":[
+        "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+        false
+    ]
+}
+```
+Response:
+
+```c
+{
+  "id": 1,
+  "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+}
+```
 
 
 
@@ -3901,25 +3933,6 @@ arguments:
 returns: `uint32_t`
 
 
-#### b_read_int_be
-
-```c
-uint32_t b_read_int_be(bytes_t *b, size_t *pos, size_t len);
-```
-
-reads a unsigned integer as bigendian on the current position and updates the pos afterwards. 
-
-arguments:
-```eval_rst
-======================= ========= 
-`bytes_t * <#bytes-t>`_  **b**    
-``size_t *``             **pos**  
-``size_t``               **len**  
-======================= ========= 
-```
-returns: `uint32_t`
-
-
 #### b_read_long
 
 ```c
@@ -3954,24 +3967,6 @@ arguments:
 ======================= ========= 
 ```
 returns: `char *`
-
-
-#### b_new_dyn_bytes
-
-```c
-bytes_t* b_new_dyn_bytes(bytes_t *b, size_t *pos);
-```
-
-reads bytesn (which have the length stored as prefix) on the current position and updates the pos afterwards. 
-
-arguments:
-```eval_rst
-======================= ========= 
-`bytes_t * <#bytes-t>`_  **b**    
-``size_t *``             **pos**  
-======================= ========= 
-```
-returns: [`bytes_t *`](#bytes-t)
 
 
 #### b_new_fixed_bytes
@@ -4152,22 +4147,6 @@ arguments:
 ======================================= ========= 
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**   
 ``uint8_t``                              **val**  
-======================================= ========= 
-```
-
-#### bb_write_short
-
-```c
-void bb_write_short(bytes_builder_t *bb, uint16_t val);
-```
-
-writes a short to the builder. 
-
-arguments:
-```eval_rst
-======================================= ========= 
-`bytes_builder_t * <#bytes-builder-t>`_  **bb**   
-``uint16_t``                             **val**  
 ======================================= ========= 
 ```
 
