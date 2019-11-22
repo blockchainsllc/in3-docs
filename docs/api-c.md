@@ -77,6 +77,24 @@ build the comandline utils
 
 Default-Value: `-DCMD=ON`
 
+#### ETH_BASIC
+
+build basic eth verification.(all rpc-calls except eth_call)
+
+Default-Value: `-DETH_BASIC=ON`
+
+#### ETH_FULL
+
+build full eth verification.(including eth_call)
+
+Default-Value: `-DETH_FULL=ON`
+
+#### ETH_NANO
+
+build minimal eth verification.(eth_getTransactionReceipt)
+
+Default-Value: `-DETH_NANO=ON`
+
 #### EVM_GAS
 
 if true the gas costs are verified when validating a eth_call. This is a optimization since most calls are only interessted in the result. EVM_GAS would be required if the contract uses gas-dependend op-codes.
@@ -1039,6 +1057,7 @@ The config params support the following properties :
 - **[chainId](https://github.com/slockit/in3/blob/master/src/types/types.ts#L240)** :`string` - servers to filter for the given chain. The chain-id based on EIP-155. example: 0x1
 - **[finality](https://github.com/slockit/in3/blob/master/src/types/types.ts#L230)** :`number` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators) example: 50
 - **[includeCode](https://github.com/slockit/in3/blob/master/src/types/types.ts#L187)** :`boolean` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards example: true
+- **[keepIn3](https://github.com/slockit/in3/blob/master/src/types/types.ts#L187)** :`boolean` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did. example: false
 - **[key](https://github.com/slockit/in3/blob/master/src/types/types.ts#L169)** :`any` *(optional)* - the client key to sign requests example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
 - **[maxAttempts](https://github.com/slockit/in3/blob/master/src/types/types.ts#L182)** :`number` *(optional)* - max number of attempts in case a response is rejected example: 10
 - **[maxBlockCache](https://github.com/slockit/in3/blob/master/src/types/types.ts#L197)** :`number` *(optional)* - number of number of blocks cached in memory example: 100
@@ -2779,6 +2798,7 @@ The stuct contains following fields:
 ``uint8_t``                                          **includeCode**         includes the code when sending eth_call-requests
 ``uint8_t``                                          **use_binary**          if true the client will use binary format
 ``uint8_t``                                          **use_http**            if true the client will try to use http instead of https
+``uint8_t``                                          **keep_in3**            if true the in3-section with the proof will also returned
 `in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and nodeList definitions
 ``uint16_t``                                         **chainsCount**         number of configured chains
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**             filter handler
@@ -2850,6 +2870,47 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
+
+#### in3_client_exec_req
+
+```c
+char* in3_client_exec_req(in3_t *c, char *req);
+```
+
+executes a request and returns result as string. 
+
+in case of an error, the error-property of the result will be set. The resulting string must be free by the the caller of this function! 
+
+arguments:
+```eval_rst
+=================== ========= =========================================
+`in3_t * <#in3-t>`_  **c**    the pointer to the incubed client config.
+``char *``           **req**  the request as rpc.
+=================== ========= =========================================
+```
+returns: `char *`
+
+
+#### in3_req_add_response
+
+```c
+void in3_req_add_response(in3_response_t *res, int index, bool is_error, void *data, int data_len);
+```
+
+adds a response for a request-object. 
+
+This function should be used in the transport-function to set the response. 
+
+arguments:
+```eval_rst
+===================================== ============== =====================================================================================
+`in3_response_t * <#in3-response-t>`_  **res**       the response-pointer
+``int``                                **index**     the index of the url, since this request could go out to many urls
+``bool``                               **is_error**  if true this will be reported as error. the message should then be the error-message
+``void *``                             **data**      the data or the the string
+``int``                                **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
+===================================== ============== =====================================================================================
+```
 
 #### in3_client_register_chain
 
@@ -3068,6 +3129,48 @@ arguments:
 `in3_signer_t * <#in3-signer-t>`_  **signer**  default signer-function.
 ================================= ============ ========================
 ```
+
+#### in3_create_signer
+
+```c
+in3_signer_t* in3_create_signer(in3_sign sign, in3_prepare_tx prepare_tx, void *wallet);
+```
+
+create a new signer-object to be set on the client. 
+
+the caller will need to free this pointer after usage. 
+
+arguments:
+```eval_rst
+=================================== ================ ===================================================================================================================================
+`in3_sign <#in3-sign>`_              **sign**        function pointer returning a stored value for the given key.
+`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  function pointer returning capable of manipulating the transaction before signing it. This is needed in order to support multisigs.
+``void *``                           **wallet**      custom object whill will be passed to functions
+=================================== ================ ===================================================================================================================================
+```
+returns: [`in3_signer_t *`](#in3-signer-t)
+
+
+#### in3_create_storeage_handler
+
+```c
+in3_storage_handler_t* in3_create_storeage_handler(in3_storage_get_item get_item, in3_storage_set_item set_item, void *cptr);
+```
+
+create a new storage handler-object to be set on the client. 
+
+the caller will need to free this pointer after usage. 
+
+arguments:
+```eval_rst
+=============================================== ============== ============================================================
+`in3_storage_get_item <#in3-storage-get-item>`_  **get_item**  function pointer returning a stored value for the given key.
+`in3_storage_set_item <#in3-storage-set-item>`_  **set_item**  function pointer setting a stored value for the given key.
+``void *``                                       **cptr**      custom pointer which will will be passed to functions
+=============================================== ============== ============================================================
+```
+returns: [`in3_storage_handler_t *`](#in3-storage-handler-t)
+
 
 ### context.h
 
@@ -3897,24 +4000,6 @@ arguments:
 returns: `uint8_t`
 
 
-#### b_read_short
-
-```c
-uint16_t b_read_short(bytes_t *b, size_t *pos);
-```
-
-reads a short on the current position and updates the pos afterwards. 
-
-arguments:
-```eval_rst
-======================= ========= 
-`bytes_t * <#bytes-t>`_  **b**    
-``size_t *``             **pos**  
-======================= ========= 
-```
-returns: `uint16_t`
-
-
 #### b_read_int
 
 ```c
@@ -4685,7 +4770,7 @@ returns: `bool`
 #### keyn
 
 ```c
-d_key_t keyn(const char *c, const int len);
+d_key_t keyn(const char *c, const size_t len);
 ```
 
 generates the keyhash for the given stringrange as defined by len 
@@ -4694,7 +4779,7 @@ arguments:
 ```eval_rst
 ================ ========= 
 ``const char *``  **c**    
-``const int``     **len**  
+``const size_t``  **len**  
 ================ ========= 
 ```
 returns: `d_key_t`
@@ -5505,6 +5590,23 @@ File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/c
 ```c
 #define OPTIONAL_T_VALUE (t,v) ((OPTIONAL_T(t)){.value = v, .defined = true})
 ```
+
+
+#### in3_errmsg
+
+```c
+char* in3_errmsg(in3_ret_t err);
+```
+
+converts a error code into a string. 
+
+arguments:
+```eval_rst
+========================= ========= ==============
+`in3_ret_t <#in3-ret-t>`_  **err**  the error code
+========================= ========= ==============
+```
+returns: `char *`
 
 
 ### scache.h
@@ -7005,6 +7107,15 @@ stack limit reached
 ```
 
 
+#### EVM_ERROR_SUCCESS_CONSUME_GAS
+
+write success but consume all gas 
+
+```c
+#define EVM_ERROR_SUCCESS_CONSUME_GAS -13
+```
+
+
 #### EVM_PROP_FRONTIER
 
 ```c
@@ -7690,14 +7801,14 @@ arguments:
 #### evm_run_precompiled
 
 ```c
-int evm_run_precompiled(evm_t *evm, uint8_t address[20]);
+int evm_run_precompiled(evm_t *evm, const uint8_t address[20]);
 ```
 
 arguments:
 ```eval_rst
 =================== ============= 
 `evm_t * <#evm-t>`_  **evm**      
-``uint8_t``          **address**  
+``const uint8_t``    **address**  
 =================== ============= 
 ```
 returns: `int`

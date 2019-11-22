@@ -210,9 +210,9 @@ As methods, the following can be used:
 
 if no method is passed, this tool will read json-rpc-requests from stdin and response on stdout until stdin is closed.
 
-```sh
-echo '{"method":"eth_blockNumber","params":[]}' | in3 -q -c goerli
-```
+.. code-block:: sh
+
+   echo '{"method":"eth_blockNumber","params":[]}' | in3 -q -c goerli
 
 This can also be used process to communicate with by startiing a in3-process and send rpc-comands through stdin and read the responses from stout.
 if multiple requests are passed in the input stream, they will executed in the same order. The result will be terminated by a newline-character.
