@@ -31,8 +31,57 @@ Even though we may not be able to use a lot of great features Rust offers by goi
 
 ### Modules:
 
-Incubed consists of different modules. While the core module is always required, additional functions will be prepared by different modules:
+Incubed consists of different modules. While the core module is always required, additional functions will be prepared by different modules.
 
+```eval_rst
+.. graphviz::
+
+    digraph "GG" {
+    node [
+      fontsize = "12"
+      fontname="Helvetica"
+    ];
+                       "node104" [ label="evm" shape="ellipse"];
+                subgraph cluster_verifier {
+                    label="Verifiers"  color=lightblue  style=filled
+                        "node89" [ label="eth_basic" shape="ellipse"];
+                        "node96" [ label="eth_full" shape="ellipse"];
+                        "node79" [ label="eth_nano" shape="ellipse"];
+                        "btc" [ label="btc" shape="ellipse"];
+    
+                }
+    
+                subgraph cluster_transport {
+                    label="Transports"  color=lightblue  style=filled
+                    "node59" [ label="transport_http" shape="ellipse"];
+                    "node51" [ label="transport_curl" shape="ellipse"];
+    
+                }
+                subgraph cluster_api {
+                    label="APIs"  color=lightblue  style=filled
+                    "node123" [ label="eth_api" shape="ellipse"];
+                    "node133" [ label="usn_api" shape="ellipse"];
+    
+                }
+        "node36" [ label="core" shape="ellipse"];
+        "node21" [ label="crypto" shape="ellipse"];
+        "node36" -> "node21" // core -> crypto
+        "node123" -> "node79" // eth_api -> eth_nano
+        "node79" -> "node36" // eth_nano -> core
+        btc -> "node36" // eth_nano -> core
+        "node89" -> "node79" // eth_basic -> eth_nano
+        "node96" -> "node104" // eth_full -> evm
+        "node104" -> "node89" // evm -> eth_basic
+        "node28" [ label="tommath" shape="ellipse"];
+        "node104" -> "node28" // evm -> tommath
+        "node59" -> "node36" // transport_http -> core
+        "node51" -> "node36" // transport_http -> core
+        "node133" -> "node36" // usn_api -> core
+    
+    
+    }
+    
+```
 #### Verifier
 
 Incubed is a minimal verification client, which means that each response needs to be verifiable. Depending on the expected requests and responses, you need to carefully choose which verifier you may need to register. For Ethereum, we have developed three modules:
