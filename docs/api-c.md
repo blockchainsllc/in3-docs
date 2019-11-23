@@ -15,6 +15,8 @@ These are the reasons why:
 
 As of today almost all toolchain used in the embedded world are build for C. Even though Rust may be able to still use some, there are a lot of issues. Quote from [rust-embedded.org](https://docs.rust-embedded.org/book/interoperability/#interoperability-with-rtoss):
 
+*Integrating Rust with an RTOS such as FreeRTOS or ChibiOS is still a work in progress; especially calling RTOS functions from Rust can be tricky.*
+
 This may change in the future, but C is so dominant, that chances of Rust taking over the embedded development completly is low.
 
 #### Portability
