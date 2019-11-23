@@ -29,7 +29,7 @@ Since especially embedded systems are usually written in C/C++, offering a pure 
 
 Even though we may not be able to use a lot of great features Rust offers by going with C, it allows to reach the goal to easily integrate with a lot of projects. For the future we might port the incubed to Rust if we see a demand or chance for the same support as C has today.
 
-### Modules:
+### Modules
 
 Incubed consists of different modules. While the core module is always required, additional functions will be prepared by different modules.
 
