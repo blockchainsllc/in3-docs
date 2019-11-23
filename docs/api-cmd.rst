@@ -68,7 +68,7 @@ From Package Managers
 We currently support
 
 Ubuntu Launchpad (Linux)
-########################
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Installs libs and binaries on IoT devices or Linux-Systems
 
@@ -84,7 +84,7 @@ Installs libs and binaries on IoT devices or Linux-Systems
    apt-get install in3-dev
 
 Brew (MacOS)
-############
+^^^^^^^^^^^^
 
 This is the easiest way to install it on your mac using brew
 
@@ -126,7 +126,7 @@ For more details just look at the `CMake-Options <api-c.html#cmake-options>`_ .
 
 
 From Docker
-************
+***********
 
 Incubed can be run as docker container. For this pull the container:
 
