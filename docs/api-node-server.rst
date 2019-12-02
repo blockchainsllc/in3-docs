@@ -51,6 +51,7 @@ Command-line Arguments
 --profile-name                           Name of the node or company.
 --profile-noStats                        If active, the stats will not be shown (default: false).
 --profile-url                            URL of the website of the company.
+--profile-prometheus                     URL of the prometheus gateway to report stats
 --registry                               The address of the server registry used to update the NodeList.
 --registryRPC                            The URL of the client in case the registry is not on the same chain.
 --rpcUrl                                 The URL of the client.
