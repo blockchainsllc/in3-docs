@@ -256,7 +256,8 @@ Each Incubed node must be registered in the NodeRegistry in order to be known to
     - **binary** (`0x10` )  : If set, the node accepts request with `binary:true`. This reduces the payload to about 30% for embedded devices.
     - **onion** ( `0x20` ) : If set, the node is reachable through onionrouting and url will be a onion url.
     - **signer** ( `0x40` ) : If set, the node will sign blockhashes.
-    - **proofer** ( `0x80` ) : If set, the node will provide rpc and proofs.
+    - **data** ( `0x80` ) : If set, the node will provide rpc responses (at least without proof).
+    - **stats** ( `0x100` ) : If set, the node will provide and endpoint for delivering metrics, which is usually the `/metrics`- endpoint, which can be used by prometheus to fetch statistics.
     - **minBlockHeight** ( `0x0100000000` - `0xFF00000000` ):  : The min number of blocks this node is willing to sign. if this number is low (like <6) the risk of signing unindentially a wrong blockhash because of reorgs is high. The default should be 10)
        ```js
        minBlockHeight = props >> 32 & 0xFF
