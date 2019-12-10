@@ -29,6 +29,8 @@ Requests without an `in3` property will also get a response without `in3`. This 
     - `'never`' : No proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw JSON-RPC response will be returned. 
     - `'proof`' : The proof will be created including a blockheader, but without any signed blockhashes.
 
+*  **whiteList** `address` - If specified, the incubed server will respond with `lastWhiteList`, which will indicate the last block number of whitelist contract event.
+
 *  **signers** `string<address>[]` - A list of addresses (as 20bytes in hex) requested to sign the blockhash.    
 
 A example of an Incubed request may look like this:
@@ -42,6 +44,7 @@ A example of an Incubed request may look like this:
     "in3": {
         "chainId": "0x1",
         "verification": "proof",
+        "whiteList": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
         "signers":["0x784bfa9eb182C3a02DbeB5285e3dBa92d717E07a"]
   }
 }
@@ -59,6 +62,8 @@ If the proof is requested, the `in3` property is defined with the following prop
 *  **lastNodeList** `number` - The blocknumber for the last block updating the nodeList. This blocknumber should be used to indicate changes in the nodeList. If the client has a smaller blocknumber, it should update the nodeList.  
 
 *  **lastValidatorChange** `number` - The blocknumber of the last change of the validatorList (only for PoA-chains). If the client has a smaller number, it needs to update the validatorlist first. For details, see [PoA Validations](#poa-validations)   
+
+* **lastWhiteList** `number` - The blocknumber for the last block updating the whitelist nodes in whitelist contract. This blocknumber could be used to detect if there is any change in whitelist nodes. If the client has a smaller blocknumber, it should update the white list.
 
 *  **currentBlock** `number` - The current blocknumber. This number may be stored in the client in order to run sanity checks for `latest` blocks or `eth_blockNumber`, since they cannot be verified directly.   
 
@@ -113,7 +118,8 @@ An example of such a response would look like this:
     },
     "currentBlock": 7994124,
     "lastValidatorChange": 0,
-    "lastNodeList": 6619795
+    "lastNodeList": 6619795,
+    "lastWhiteList": 1546354
   }
 }
 ```
@@ -678,6 +684,110 @@ Response:
     "lastNodeList": 8669495,
     "currentBlock": 8770590
   }
+}
+```
+
+#### in3_whitelist
+Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired from whitelist contract that user can specify in request params.
+
+Parameters:
+
+1. `address`: address of whitelist contract
+
+Returns:
+
+- `nodes`: address[] - array of whitelisted nodes addresses.
+- `lastWhiteList`: number -  the blockNumber of the last change of the in3 white list event.
+- `contract`: address - whitelist contract address.
+- `totalServer` : number - the total numbers of whitelist nodes.
+- `lastBlockNumber` : number - the blockNumber of the last change of the in3 nodes list (usually the last event). 
+
+If proof requested the proof section contains the following properties:
+
+- `type` : constant : `accountProof`
+- `block` : the serialized blockheader of the latest final block
+- `signatures` : a array of signatures from the signers (if requested) of the above block.
+- `accounts`: a Object with the addresses of the whitelist contract as key and Proof as value. The Data Structure of the Proof is exactly the same as the result of - [`eth_getProof`](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getproof) and this proof is for proofHash of byte array at storage location 0 in whitelist contract. This byte array is of whitelisted nodes addresses. 
+- `finalityBlocks`: a array of blockHeaders which were mined after the requested block. The number of blocks depends on the request-property `finality`. If this is not specified, this property will not be defined.
+
+Request:
+```js 
+{
+    "jsonrpc": "2.0",
+    "method": "in3_whiteList",
+    "params": ["0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"],
+    "id": 2,
+    "in3": {
+        "chainId": "0x5",
+         "verification": "proofWithSignature",
+         "signatures": [
+            "0x45d45e6Ff99E6c34A235d263965910298985fcFe"
+        ]
+    }
+}
+```
+
+Response:
+```js
+{
+    "id": 2,
+    "result": {
+        "totalServers": 2,
+        "contract": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
+        "lastBlockNumber": 1546354,
+        "nodes": [
+            "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+            "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+        ]
+    },
+    "jsonrpc": "2.0",
+    "in3": {
+        "execTime": 285,
+        "lastValidatorChange": 0,
+        "proof": {
+            "type": "accountProof",
+            "block": "0xf9025ca0082a4e766b4af76b7be75818f25310cbc684ccfbd747a4ccb6cacfb4f870d06ba01dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347940000000000000000000000000000000000000000a0e579ebecc50f46483d58934f2895e22306826e9510728b5a9458f765ad52f0c4a0fe2e2139daa2b8b8cda3d76ac0887987ec5237ec2049ba039f2f60d8201dc44aa0cf55fa4bae8be74e2326813aadac34c7f39d9fa67c4b37a0f1c1f08dfa0d4f43b901000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000010000000000400000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000001831b70c6837a120083323e62845defc6a1b861d883010908846765746888676f312e31332e34856c696e7578000000000000007bec8de63523990c3bb1575ab12876b7c0c58d547971aec5ad9f902ae9808ff148d052f6877598dbb5498ba5231b6a98d2a8e9d053ec681eecf800861676b0e300a00000000000000000000000000000000000000000000000000000000000000000880000000000000000",
+            "accounts": {
+                "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b": {
+                    "accountProof": [
+                        "0xf90211a00cb35d3a4253dde597f30682518f94cbac7690d54dc51bb091f67012e606ee1ea065e37ac9eb1773bceb22cc9ec75cf778f6fc9cf50182a0c77be90dc7668976d9a0f99487653c0d8bde493eba5d1a5a3ffdf18b586f3bcbf4effa4ccdf671138df6a0a3e734fdb4718f78635e4627fd4bd8c82f2ab1c4f149f84ac3f4f217e1736e28a0c630e3dfc6b2ce794e7dc656f2d1e4cf99500600ad05ca133d9743a6aefd3572a041d0d563d3442c465d76b59f34bac9f637ccc248eab2da0ff4b3ea2c3c223738a057998484cfe32dc4614bc50b9a7dc84f47a76872e9846bb50b9370c95691c2f1a04d8789dddc9b5e9664d07d09d1deb82299d26bd2f6ba77cc1d94432b9f8ecc89a0dc85869eb80b17566bc54de244cf3be93f52f6a29d8f85786db5518637ce0a69a0bfc183b28f6a678f2ce2b46bddf55b02460b3c64e90d195baaec355adb77345fa00279de24b7e54ec7b5e7a6b870df412a752a80560a40f554b1aa8d89630de07aa0cf288bc9e5ed31382adea2b7d9823636764b1a6b2c1c2acc8e393a658cc794dca024830301aa575af512baf65e2689da32230955180810a8c6f69d7e409a5d7faaa0754b0401fe36129a7eced26d858c5916e4fea71e14833738de2fee6902d055dba0bda3477e9f115402f5bffd6243b49b4587369e96bbe20c7ba02ce7732081f847a0ef91206626dfdf7d557ac7bb90a73902c900b26ff3e56a72980aef66f71f9c3a80",
+                        "0xf90211a0d6cce0c7317d26a22e192288b47a5a34ab7aed0b301c249f27a481f5518e4013a05cc0d414a10bdb4a9f1d6ffe6f1dd47cc2a6daca69d046662de6526cc279b440a05332d40bfe849c158f643a5772e73ddfcf088aec6f5c2ab81387b81b5d645819a0c4431b24d011c913bdba8fd743680e43c2f8062ca53ecc5871cb18728c38aedaa0743af64d8069cbb9eebbb59676ff994c6af2df872b368072898bb3da233ccdf1a0591155bc2be76a1c11f8d6d983d198e0c8f7b14c25c9e842d82c8f731f36f59ba0c855553cb0a3e807eb6a799bdb225dade93c05dda2c140c2745b42fa9aa02023a038a1ce0bc1fb703507391fc069320533c6fb5d148bcd6e5dbf520ebffccf3e70a0ca66205070eaf405b27631ab8456959b561016adf9e827d5f5ae8f5ee5cbc75ba0c441c3242e80977935242d37a7c467fcaa7f4827d047b4cfd6ded84128402881a0d321fca44911f9755f8c7d0889c0495581b17cbfbd2bee4c1bae8d201e3c80b6a0a8f1b2bd675fc38183df2d8ac4c34009a30ff6622b6e19cae828a8ef596309fea0c47655639b08cae9669911d07a3155abfdcb0520316621b44488f3b015a95749a01160d4873873a91a4adb8bdcc70164c108149c6cd532e88dd55bc595d4cb29b4a0b826c160282bc72ad28ec91960224119f692af7f4ab9a12e10cd25cb3f095c48a0b35a48e0175f0443a080031c97993e5c1d8e46e8310db14bfa612b8616e718ad80",
+                        "0xf90211a0432a3bf286f659650359ae590aa340ce2a2a0d1f60fae509ea9d6a8b90215bfea06b2ab1984e6e8d80eac8d394771a31388f9f33e1548f7d284adeb5af98537ccea0529861b2110d23074ad1a4d2e1b8cf9dd2671a5021fc42c24fd29bac1bd198b6a0f355735de5167100f755d9367e9885dbe3519ecdfea6b7e833cfff2366fbce3aa0652dcb78e9f4648f4aaad9584cf1c1defe6ea037822176763bc37aa72e668233a0b859c67a88f919fd44f9c89a8389790fb2b9ae8c724f97068d312ffa019615b7a01d61365effb1ae10bf5a8fa6339fd08ee2dfcf1c408e0ed5c976742949096c29a0411c3f5a2d1a28cc4a1f42db2c17b393c6f4f6eee5d71ffffbe7f20234b2e779a0848f9e1442280f0442980561db8da240a44e7901907e705fa2f80055dd0c9853a0b152eb66b44bfa0270440f993c7edfe84138c9ab464b69070597617ca3c6db6da0fb4dacb897ae63689ac752cda4141c445a7835109e96d2de8f543e233f40a19ea0338d8f77f033fc36a4a8f693e4f731214fe70aaca9f449cf8a8f4f5e3802edfda0b987f3946a5d0407439fad51cad937e7705c48a07e38bba35ef79472dd08fcc5a02486f4e11355119bcfa5a11bb6e80625b1f7b565e29ae88e0445fdc2ea2d9164a043d4fa67268fd6ef0f74403835673b31c725e4467572596ab637b4799da064a3a08e876ea69875d39b76414027c28d497944103599d92cbefaf9dc37c4b8a14c0780",
+                        "0xf8d1a06f998e7193562c27933250e1e72c5a2ff0bf2df556fe478b4436e8b8ac7a7900808080a0de5d6d0bab81e7a0dcc4cfec42503384d17fefff05ba8b6082de08417044aa2b808080a07044d7c1323585aa14ea75c4cfef82b6b3320fa341627b142a9edf7eba6ea42da0223ee97601935bd3d1610a6cbe653d6b7870c1dff46e0b5db3bfdc1d9a53644580a0f7824a944cb1a64517347f54bc73cd5fc9ebd90eecca95e0a68f79d81cc4318a80a061a70db828977db72f5c1ef4808a784a8c51629d6888e5d86ffe583a5fe5f268808080",
+                        "0xf85180808080808080a03dd3d6e0c95682f178213fd20364be0395c9e94086eb373fd4aa13ebe4ab3ee280808080808080a0ec5d4cd2b11aaba34c5569cdae245baccd49b7f503a4e4223130d453c00b2e0080",
+                        "0xf8679e39ce2fd3705a1089a91865fc977c0a778d01f4f3ba9a0fd6378abecef87ab846f8440180a0f5e650b7122ddd254ecc84d87c04ea99117f12badec917985f5f3335b355cb5ea0640aaa823fe1752d44d83bcfd0081ec6a1dc72bb82223940a621b0ea251b52c4"
+                    ],
+                    "address": "0x08e97ef0a92eb502a1d7574913e2a6636bec557b",
+                    "balance": "0x0",
+                    "codeHash": "0x640aaa823fe1752d44d83bcfd0081ec6a1dc72bb82223940a621b0ea251b52c4",
+                    "nonce": "0x1",
+                    "storageHash": "0xf5e650b7122ddd254ecc84d87c04ea99117f12badec917985f5f3335b355cb5e",
+                    "storageProof": [
+                        {
+                            "key": "0x0",
+                            "proof": [
+                                "0xf90111a05541df1966b288bce9c5b6f93d564e736f3f984cb3aa4b067ba88e4398bdc86da06483c09a5b5f8f4206d30706bc9d537e01077fcc583bafea8b0f1987a6e78084a04a245b8b7c143b14a7cb72e436df03e1d029f619a2e986108c4ffdb23565b2cb80a0f2800672a0b38a211231189e7ff7c5d466359c3f7195be1601e0ec2dc1cd5f9e8080a0e38ca3fed40d881e90e889d18e237320604485c7260840b108b03b2309088befa0a3167f2a5984b53340a550067602e9d0fc103f83b1b39108cc0c090d879e2c498080a0435071d8aee5a2d7b7fd0de53bfefc129eef08150882fd4f212b4e664920950980a0c7c0421f87cacaa5c81c39cbd7be150c52780feb2c92a62dc62b25dd6dddcdc4808080",
+                                "0xf851808080808080808080a02b2bb6a045f22c77b07ecf8b1f7655f7ed4ccb826b16681ccf1965d4b72ad6df8080808080a076424cf5a443e7be91436a36c4d1593c5fe7736fe29acb66bbe8be0ccc7ae78280",
+                                "0xf843a0200decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563a1a06aa7bbfbb1778efa33da1ba032cc3a79b9ef57b428441b4de4f1c38c3f258874"
+                            ],
+                            "value": "0x6aa7bbfbb1778efa33da1ba032cc3a79b9ef57b428441b4de4f1c38c3f258874"
+                        }
+                    ]
+                }
+            },
+            "signatures": [
+                {
+                    "blockHash": "0x2d775ab9b1290f487065e612942a84fc2275572e467040eea154fbbae2005c41",
+                    "block": 1798342,
+                    "r": "0xf6036400705455c1dfb431e1c90b91f3e50815516577f1ebca9a494164b12d17",
+                    "s": "0x30e77bc851e02fc79deab63812203b2dfcacd7a83af14a86c8c9d26d95763cc5",
+                    "v": 28,
+                    "msgHash": "0x7953b8a420bfe9d1c902e2090f533c9b3f73f0f825b7cec247d7d94e548bc5d9"
+                }
+            ]
+        },
+        "lastWhiteList": 1546354
+    }
 }
 ```
 
