@@ -10,86 +10,9 @@ like
 ```c
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
-### Downloading
-
-Just download the latest jar-file [here](_downloads/in3.jar).
-
-### Building
-
-For building the shared library you need to enable java by using the `-DJAVA=true` flag:
-
-```c
-git clone git@github.com:slockit/in3-core.git
-mkdir -p in3-core/build
-cd in3-core/build
-cmake -DJAVA=true .. && make
-```
-You will find the `in3.jar` in the build/lib - folder.
-
-### Android
-
-In order to use incubed in android simply follow these steps:
-
-Step 1: Create a top-level CMakeLists.txt in android project inside app folder and link this to gradle. Follow the steps using this [guide](https://developer.android.com/studio/projects/gradle-external-native-builds) on howto link.
-
-The Content of the `CMakeLists.txt` should look like this:
-
-```c
-cmake_minimum_required(VERSION 3.4.1)
-
-# turn off FAST_MATH in the evm.
-ADD_DEFINITIONS(-DIN3_MATH_LITE)
-
-# loop through the required module and cretae the build-folders
-foreach(module 
-  core 
-  verifier/eth1/nano 
-  verifier/eth1/evm 
-  verifier/eth1/basic 
-  verifier/eth1/full 
-  bindings/java
-  third-party/crypto 
-  third-party/tommath 
-  api/eth1)
-        file(MAKE_DIRECTORY in3-core/src/${module}/outputs)
-        add_subdirectory( in3-core/src/${module} in3-core/src/${module}/outputs )
-endforeach()
-```
-Step 2: clone [in3-core](https://git.slock.it/in3/c/in3-core.git) into the `app`-folder or use this script to clone and update incubed:
-
-```c
-#!/usr/bin/env sh
-
-#github-url for in3-core
-IN3_SRC=git@github.com:SlockItEarlyAccess/in3-core.git
-
-cd app
-
-# if it exists we only call git pull
-if [ -d in3-core ]; then
-    cd in3-core
-    git pull
-    cd ..
-else
-# if not we clone it
-    git clone $IN3_SRC
-fi
-
-
-# copy the java-sources to the main java path
-cp -r in3-core/src/bindings/java/in3 src/main/java/
-# but not the native libs, since these will be build
-rm -rf src/main/java/in3/native
-```
-Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
-
-Here is example how to use it:
-
-[https://github.com/SlockItEarlyAccess/in3-android-example](https://github.com/SlockItEarlyAccess/in3-android-example)
-
 ## Examples
 
-### Using Incubed directly
+### Using in3 directly
 
 ```c
 import in3.IN3;
@@ -114,7 +37,7 @@ public class HelloIN3 {
 ```
 ### Using the API
 
-Incubed also offers a API for getting Information directly in a structured way.
+in3 also offers a API for getting Information directly in a structured way.
 
 #### Reading Blocks
 
@@ -241,6 +164,94 @@ public class Example {
     }
 }
 ```
+### Downloading
+
+The jar file can be downloaded from the latest release. [here](https://github.com/slockit/in3-c/releases).
+
+Alternatively, If you wish to download Incubed using the maven package manager, add this to your pom.xml 
+
+```c
+<dependency>
+  <groupId>it.slock</groupId>
+  <artifactId>in3</artifactId>
+  <version>2.21</version>
+</dependency> 
+```
+After which, install in3 with `mvn install`.
+
+### Building
+
+For building the shared library you need to enable java by using the `-DJAVA=true` flag:
+
+```c
+git clone git@github.com:slockit/in3-core.git
+mkdir -p in3-core/build
+cd in3-core/build
+cmake -DJAVA=true .. && make
+```
+You will find the `in3.jar` in the build/lib - folder.
+
+### Android
+
+In order to use Incubed in android simply follow these steps:
+
+Step 1: Create a top-level CMakeLists.txt in android project inside app folder and link this to gradle. Follow the steps using this [guide](https://developer.android.com/studio/projects/gradle-external-native-builds) on howto link.
+
+The Content of the `CMakeLists.txt` should look like this:
+
+```c
+cmake_minimum_required(VERSION 3.4.1)
+
+# turn off FAST_MATH in the evm.
+ADD_DEFINITIONS(-DIN3_MATH_LITE)
+
+# loop through the required module and cretae the build-folders
+foreach(module 
+  core 
+  verifier/eth1/nano 
+  verifier/eth1/evm 
+  verifier/eth1/basic 
+  verifier/eth1/full 
+  bindings/java
+  third-party/crypto 
+  third-party/tommath 
+  api/eth1)
+        file(MAKE_DIRECTORY in3-core/src/${module}/outputs)
+        add_subdirectory( in3-core/src/${module} in3-core/src/${module}/outputs )
+endforeach()
+```
+Step 2: clone [in3-core](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
+
+```c
+#!/usr/bin/env sh
+
+#github-url for in3-core
+IN3_SRC=https://github.com/slockit/in3-c.git
+
+cd app
+
+# if it exists we only call git pull
+if [ -d in3-core ]; then
+    cd in3-core
+    git pull
+    cd ..
+else
+# if not we clone it
+    git clone $IN3_SRC
+fi
+
+
+# copy the java-sources to the main java path
+cp -r in3-core/src/bindings/java/in3 src/main/java/
+# but not the native libs, since these will be build
+rm -rf src/main/java/in3/native
+```
+Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
+
+Here is example how to use it:
+
+[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android)
+
 
 
 
@@ -292,7 +303,7 @@ arguments:
 
 the client key to sign requests 
 
- > public `native byte []` getKey();
+ > public `native byte[]` getKey();
 
 ##### setKey
 
@@ -302,9 +313,9 @@ sets the client key to sign requests
 
 arguments:
 ```eval_rst
-=========== ========= 
-``byte []``  **val**  
-=========== ========= 
+========== ========= 
+``byte[]``  **val**  
+========== ========= 
 ```
 ##### setKey
 
@@ -626,10 +637,10 @@ It will create the raw request from it and return the result.
 
 arguments:
 ```eval_rst
-============= ============ 
-``String``     **method**  
-``Object []``  **params**  
-============= ============ 
+============ ============ 
+``String``    **method**  
+``Object[]``  **params**  
+============ ============ 
 ```
 ##### sendRPCasObject
 
@@ -641,10 +652,10 @@ It will create the raw request from it and return the result.
 
 arguments:
 ```eval_rst
-============= ============ 
-``String``     **method**  
-``Object []``  **params**  
-============= ============ 
+============ ============ 
+``String``    **method**  
+``Object[]``  **params**  
+============ ============ 
 ```
 ##### IN3
 
@@ -660,9 +671,9 @@ creates a new Incubed client.
 
 arguments:
 ```eval_rst
-============= ========== 
-``String []``  **args**  
-============= ========== 
+============ ========== 
+``String[]``  **args**  
+============ ========== 
 ```
 
 #### class JSON
@@ -740,7 +751,7 @@ returns: `BigInteger` : the BigInteger value
 
 returns the property as StringArray 
 
- > public `String []` getStringArray([`String`](#class-string) key);
+ > public `String[]` getStringArray([`String`](#class-string) key);
 
 arguments:
 ```eval_rst
@@ -748,7 +759,7 @@ arguments:
 ``String``  **key**  the propertyName
 ========== ========= ================
 ```
-returns: `String []` : the array or null 
+returns: `String[]` : the array or null 
 
 
 
@@ -770,7 +781,7 @@ returns: `String` : the hexstring
 
 ##### asStringArray
 
- > public `String []` asStringArray([`Object`](#class-object) o);
+ > public `String[]` asStringArray([`Object`](#class-object) o);
 
 arguments:
 ```eval_rst
@@ -852,6 +863,19 @@ arguments:
  > public static `void` loadLibrary();
 
 
+#### class Request
+
+adding a transport function. 
+
+##### argtypes
+
+Type: static ``
+
+##### restype
+
+Type: static ``
+
+
 #### class TempStorageProvider
 
 a simple Storage Provider storing the cache in the temp-folder. 
@@ -860,15 +884,15 @@ a simple Storage Provider storing the cache in the temp-folder.
 
 returns a item from cache () 
 
- > public `byte []` getItem([`String`](#class-string) key);
+ > public `byte[]` getItem([`String`](#class-string) key);
 
 arguments:
 ```eval_rst
-========== ========= 
-``String``  **key**  
-========== ========= 
+========== ========= ====================
+``String``  **key**  the key for the item
+========== ========= ====================
 ```
-returns: `byte []` : the bytes or null if not found. 
+returns: `byte[]` : the bytes or null if not found. 
 
 
 
@@ -880,10 +904,10 @@ stores a item in the cache.
 
 arguments:
 ```eval_rst
-=========== ============= 
-``String``   **key**      
-``byte []``  **content**  
-=========== ============= 
+========== ============= ====================
+``String``  **key**      the key for the item
+``byte[]``  **content**  the value to store
+========== ============= ====================
 ```
 
 #### enum Proof
@@ -955,7 +979,7 @@ These data could be nodelists, contract codes or validator changes.
 
 returns a item from cache () 
 
- > public `byte []` getItem([`String`](#class-string) key);
+ > public `byte[]` getItem([`String`](#class-string) key);
 
 arguments:
 ```eval_rst
@@ -963,7 +987,7 @@ arguments:
 ``String``  **key**  the key for the item
 ========== ========= ====================
 ```
-returns: `byte []` : the bytes or null if not found. 
+returns: `byte[]` : the bytes or null if not found. 
 
 
 
@@ -975,10 +999,10 @@ stores a item in the cache.
 
 arguments:
 ```eval_rst
-=========== ============= ====================
-``String``   **key**      the key for the item
-``byte []``  **content**  the value to store
-=========== ============= ====================
+========== ============= ====================
+``String``  **key**      the key for the item
+``byte[]``  **content**  the value to store
+========== ============= ====================
 ```
 
 ## Package in3.eth1
@@ -1149,7 +1173,7 @@ arguments:
 
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
- > public [`Log []`](#class-log) getFilterChangesFromLogs([`long`](#class-long) id);
+ > public [`Log[]`](#class-log) getFilterChangesFromLogs([`long`](#class-long) id);
 
 arguments:
 ```eval_rst
@@ -1161,7 +1185,7 @@ arguments:
 
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
- > public [`Block []`](#class-block) getFilterChangesFromBlocks([`long`](#class-long) id);
+ > public [`Block[]`](#class-block) getFilterChangesFromBlocks([`long`](#class-long) id);
 
 arguments:
 ```eval_rst
@@ -1173,7 +1197,7 @@ arguments:
 
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
- > public [`Log []`](#class-log) getFilterLogs([`long`](#class-long) id);
+ > public [`Log[]`](#class-log) getFilterLogs([`long`](#class-long) id);
 
 arguments:
 ```eval_rst
@@ -1185,7 +1209,7 @@ arguments:
 
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
- > public [`Log []`](#class-log) getLogs([`LogFilter`](#class-logfilter) filter);
+ > public [`Log[]`](#class-log) getLogs([`LogFilter`](#class-logfilter) filter);
 
 arguments:
 ```eval_rst
@@ -1451,13 +1475,13 @@ the roothash of the merkletree containing the complete state.
 
 the transaction hashes of the transactions in the block. 
 
- > public `String []` getTransactionHashes();
+ > public `String[]` getTransactionHashes();
 
 ##### getTransactions
 
 the transactions of the block. 
 
- > public [`Transaction []`](#class-transaction) getTransactions();
+ > public [`Transaction[]`](#class-transaction) getTransactions();
 
 ##### getTimeStamp
 
@@ -1481,7 +1505,7 @@ the size of the block.
 
 the seal fields used for proof of authority. 
 
- > public `String []` getSealFields();
+ > public `String[]` getSealFields();
 
 ##### getHash
 
@@ -1527,7 +1551,7 @@ the hash of the parent-block.
 
 returns the blockhashes of all uncles-blocks. 
 
- > public `String []` getUncles();
+ > public `String[]` getUncles();
 
 
 #### class Log
@@ -1594,7 +1618,7 @@ Array of 0 to 4 32 Bytes DATA of indexed log arguments.
 
 (In solidity: The first topic is the hash of the signature of the event (e.g. Deposit(address,bytes32,uint256)), except you declared the event with the anonymous specifier.) 
 
- > public `String []` getTopics();
+ > public `String[]` getTopics();
 
 
 #### class LogFilter
@@ -1758,7 +1782,7 @@ the address of the receipient or contract.
 
 the signature of the sender - a array of the [ r, s, v] 
 
- > public `String []` getSignature();
+ > public `String[]` getSignature();
 
 ##### getGasPrice
 
@@ -1831,7 +1855,7 @@ The amount of gas used by this specific transaction alone.
 
 Array of log objects, which this transaction generated. 
 
- > public [`Log []`](#class-log) getLogs();
+ > public [`Log[]`](#class-log) getLogs();
 
 ##### getLogsBloom
 
@@ -1912,7 +1936,7 @@ Type: `String`
 
 the params to use for encoding in the data 
 
-Type: `Object []`
+Type: `Object[]`
 
 ##### getData
 

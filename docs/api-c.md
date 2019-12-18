@@ -203,6 +203,12 @@ Math optimizations used in the EVM. This will also increase the filesize.
 
 Default-Value: `-DFAST_MATH=OFF`
 
+#### FILTER_NODES
+
+if true the nodelist is filtered against config node properties
+
+Default-Value: `-DFILTER_NODES=OFF`
+
 #### IN3API
 
 build the USN-API which offer better interfaces and additional functions on top of the pure verification
@@ -1983,7 +1989,7 @@ returns: `uint64_t`
 #### eth_getUncleByBlockNumberAndIndex
 
 ```c
-eth_block_t* eth_getUncleByBlockNumberAndIndex(in3_t *in3, bytes32_t hash, size_t index);
+eth_block_t* eth_getUncleByBlockNumberAndIndex(in3_t *in3, eth_blknum_t block, size_t index);
 ```
 
 Returns information about a uncle of a block by number and uncle index position. 
@@ -1992,11 +1998,11 @@ If result is null, check eth_last_error()! otherwise make sure to free the resul
 
 arguments:
 ```eval_rst
-========================= =========== 
-`in3_t * <#in3-t>`_        **in3**    
-`bytes32_t <#bytes32-t>`_  **hash**   
-``size_t``                 **index**  
-========================= =========== 
+=============================== =========== 
+`in3_t * <#in3-t>`_              **in3**    
+`eth_blknum_t <#eth-blknum-t>`_  **block**  
+``size_t``                       **index**  
+=============================== =========== 
 ```
 returns: [`eth_block_t *`](#eth-block-t)
 
@@ -2486,7 +2492,7 @@ File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/sr
 the protocol version used when sending requests from the this client 
 
 ```c
-#define IN3_PROTO_VER "2.0.0"
+#define IN3_PROTO_VER "2.1.0"
 ```
 
 
@@ -2562,6 +2568,31 @@ chainId for local chain
 ```
 
 
+#### in3_node_props_init (np)
+
+Initializer for in3_node_props_t. 
+
+```c
+#define in3_node_props_init (np) *(np) = 0
+```
+
+
+#### in3_node_props_get (np,t)
+
+getter macro for interacting with in3_node_props_t. 
+
+```c
+#define in3_node_props_get (np,t) ((t == NODE_PROP_MIN_BLOCK_HEIGHT) ? ((np >> 32U) & 0xFFU) : !!(np & t))
+```
+
+
+#### in3_node_props_matches (np,t)
+
+```c
+#define in3_node_props_matches (np,t) !!(np & t))
+```
+
+
 #### IN3_SIGN_ERR_REJECTED
 
 return value used by the signer if the the signature-request was rejected. 
@@ -2628,6 +2659,15 @@ The stuct contains following fields:
 =========================================== ========================= ====================================================================
 ```
 
+#### in3_node_props_t
+
+Node capabilities. 
+
+
+```c
+typedef uint64_t in3_node_props_t
+```
+
 #### in3_node_t
 
 incubed node-configuration. 
@@ -2638,21 +2678,23 @@ These information are read from the Registry contract and stored in this struct 
 The stuct contains following fields:
 
 ```eval_rst
-======================= ============== ================================================================================================
-``uint32_t``             **index**     index within the nodelist, also used in the contract as key
-`bytes_t * <#bytes-t>`_  **address**   address of the server
-``uint64_t``             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
-``uint32_t``             **capacity**  the maximal capacity able to handle
-``uint64_t``             **props**     a bit set used to identify the cabalilities of the server.
-``char *``               **url**       the url of the node
-======================= ============== ================================================================================================
+======================================= ============== ================================================================================================
+``uint32_t``                             **index**     index within the nodelist, also used in the contract as key
+`bytes_t * <#bytes-t>`_                  **address**   address of the server
+``uint64_t``                             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
+``uint32_t``                             **capacity**  the maximal capacity able to handle
+`in3_node_props_t <#in3-node-props-t>`_  **props**     used to identify the capabilities of the node. 
+                                                       
+                                                       See in3_node_props_type_t in nodelist.h
+``char *``                               **url**       the url of the node
+======================================= ============== ================================================================================================
 ```
 
 #### in3_node_weight_t
 
 Weight or reputation of a node. 
 
-Based on the past performance of the node a weight is calulcated given faster nodes a heigher weight and chance when selecting the next node from the nodelist. These weights will also be stored in the cache (if available) 
+Based on the past performance of the node a weight is calculated given faster nodes a higher weight and chance when selecting the next node from the nodelist. These weights will also be stored in the cache (if available) 
 
 
 The stuct contains following fields:
@@ -2898,7 +2940,25 @@ The stuct contains following fields:
 `in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and nodeList definitions
 ``uint16_t``                                         **chainsCount**         number of configured chains
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**             filter handler
+`in3_node_props_t <#in3-node-props-t>`_              **node_props**          used to identify the capabilities of the node.
 =================================================== ======================== =======================================================================================
+```
+
+#### in3_node_props_set
+
+```c
+void in3_node_props_set(in3_node_props_t *node_props, in3_node_props_type_t type, uint8_t value);
+```
+
+setter method for interacting with in3_node_props_t. 
+
+arguments:
+```eval_rst
+========================================= ================ 
+`in3_node_props_t * <#in3-node-props-t>`_  **node_props**  
+``in3_node_props_type_t``                  **type**        
+``uint8_t``                                **value**       
+========================================= ================ 
 ```
 
 #### in3_new
@@ -3036,7 +3096,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_add_node
 
 ```c
-in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, uint64_t props, address_t address);
+in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, in3_node_props_t props, address_t address);
 ```
 
 adds a node to a chain ore updates a existing node 
@@ -3045,13 +3105,13 @@ adds a node to a chain ore updates a existing node
 
 arguments:
 ```eval_rst
-========================= ============== =========================================
-`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
-``uint64_t``               **chain_id**  the chain id.
-``char *``                 **url**       url of the nodes.
-``uint64_t``               **props**     properties of the node.
-`address_t <#address-t>`_  **address**   
-========================= ============== =========================================
+======================================= ============== =========================================
+`in3_t * <#in3-t>`_                      **client**    the pointer to the incubed client config.
+``uint64_t``                             **chain_id**  the chain id.
+``char *``                               **url**       url of the nodes.
+`in3_node_props_t <#in3-node-props-t>`_  **props**     properties of the node.
+`address_t <#address-t>`_                **address**   
+======================================= ============== =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -4719,7 +4779,7 @@ returns: `char *`
 #### d_int
 
 ```c
-uint32_t d_int(const d_token_t *item);
+int32_t d_int(const d_token_t *item);
 ```
 
 returns the value as integer. 
@@ -4732,13 +4792,13 @@ arguments:
 `d_token_tconst , * <#d-token-t>`_  **item**  
 ================================== ========== 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_intd
 
 ```c
-uint32_t d_intd(const d_token_t *item, const uint32_t def_val);
+int32_t d_intd(const d_token_t *item, const uint32_t def_val);
 ```
 
 returns the value as integer or if NULL the default. 
@@ -4752,7 +4812,7 @@ arguments:
 ``const uint32_t``                  **def_val**  
 ================================== ============= 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_long
@@ -5342,7 +5402,7 @@ returns: `char *`
 #### d_get_intk
 
 ```c
-static uint32_t d_get_intk(d_token_t *r, d_key_t k);
+static int32_t d_get_intk(d_token_t *r, d_key_t k);
 ```
 
 reads token of a property as int. 
@@ -5354,13 +5414,13 @@ arguments:
 ``d_key_t``                  **k**  
 =========================== ======= 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_get_intkd
 
 ```c
-static uint32_t d_get_intkd(d_token_t *r, d_key_t k, uint32_t d);
+static int32_t d_get_intkd(d_token_t *r, d_key_t k, uint32_t d);
 ```
 
 reads token of a property as int. 
@@ -5373,13 +5433,13 @@ arguments:
 ``uint32_t``                 **d**  
 =========================== ======= 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_get_int
 
 ```c
-static uint32_t d_get_int(d_token_t *r, char *k);
+static int32_t d_get_int(d_token_t *r, char *k);
 ```
 
 reads token of a property as int. 
@@ -5391,13 +5451,13 @@ arguments:
 ``char *``                   **k**  
 =========================== ======= 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_get_int_at
 
 ```c
-static uint32_t d_get_int_at(d_token_t *r, uint32_t pos);
+static int32_t d_get_int_at(d_token_t *r, uint32_t pos);
 ```
 
 reads a int at given pos of an array. 
@@ -5409,7 +5469,7 @@ arguments:
 ``uint32_t``                 **pos**  
 =========================== ========= 
 ```
-returns: `uint32_t`
+returns: `int32_t`
 
 
 #### d_get_longk
@@ -6515,6 +6575,27 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### eth_verify_eth_getTransactionByBlock
+
+```c
+in3_ret_t eth_verify_eth_getTransactionByBlock(in3_vctx_t *vc, d_token_t *blk, uint32_t tx_idx);
+```
+
+verifies a transaction by block hash/number and id. 
+
+arguments:
+```eval_rst
+============================= ============ 
+`in3_vctx_t * <#in3-vctx-t>`_  **vc**      
+`d_token_t * <#d-token-t>`_    **blk**     
+``uint32_t``                   **tx_idx**  
+============================= ============ 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### eth_verify_account_proof
 
 ```c
@@ -7240,6 +7321,13 @@ write success but consume all gas
 ```
 
 
+#### EVM_PROP_ISTANBUL
+
+```c
+#define EVM_PROP_ISTANBUL 32
+```
+
+
 #### EVM_PROP_NO_FINALIZE
 
 ```c
@@ -7585,6 +7673,7 @@ The stuct contains following fields:
 ``uint32_t``                           **properties**        
 `evm_get_env <#evm-get-env>`_          **env**               
 ``void *``                             **env_ptr**           
+``uint64_t``                           **chain_id**          the chain_id as returned by the opcode
 ``uint8_t *``                          **address**           the address of the current storage
 ``uint8_t *``                          **account**           the address of the code
 ``uint8_t *``                          **origin**            the address of original sender of the root-transaction
@@ -7844,24 +7933,25 @@ returns: `int`
 #### evm_call
 
 ```c
-int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, bytes_t **result);
+int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, uint64_t chain_id, bytes_t **result);
 ```
 
 run a evm-call 
 
 arguments:
 ```eval_rst
-======================== ============= 
-``void *``                **vc**       
-``uint8_t``               **address**  
-``uint8_t *``             **value**    
-`wlen_t <#wlen-t>`_       **l_value**  
-``uint8_t *``             **data**     
-``uint32_t``              **l_data**   
-``uint8_t``               **caller**   
-``uint64_t``              **gas**      
-`bytes_t ** <#bytes-t>`_  **result**   
-======================== ============= 
+======================== ============== 
+``void *``                **vc**        
+``uint8_t``               **address**   
+``uint8_t *``             **value**     
+`wlen_t <#wlen-t>`_       **l_value**   
+``uint8_t *``             **data**      
+``uint32_t``              **l_data**    
+``uint8_t``               **caller**    
+``uint64_t``              **gas**       
+``uint64_t``              **chain_id**  
+`bytes_t ** <#bytes-t>`_  **result**    
+======================== ============== 
 ```
 returns: `int`
 
@@ -7893,38 +7983,6 @@ arguments:
 `evm_t * <#evm-t>`_  **evm**  
 =================== ========= 
 ```
-
-#### evm_run_precompiled
-
-```c
-int evm_run_precompiled(evm_t *evm, const uint8_t address[20]);
-```
-
-arguments:
-```eval_rst
-=================== ============= 
-`evm_t * <#evm-t>`_  **evm**      
-``const uint8_t``    **address**  
-=================== ============= 
-```
-returns: `int`
-
-
-#### evm_is_precompiled
-
-```c
-uint8_t evm_is_precompiled(evm_t *evm, uint8_t address[20]);
-```
-
-arguments:
-```eval_rst
-=================== ============= 
-`evm_t * <#evm-t>`_  **evm**      
-``uint8_t``          **address**  
-=================== ============= 
-```
-returns: `uint8_t`
-
 
 #### uint256_set
 
