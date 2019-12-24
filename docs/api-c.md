@@ -402,7 +402,7 @@ in3_ret_t call_func_api(in3_t* c, address_t contract) {
   uint32_t number_of_servers = d_int(response->result);
 
   // clean up resources
-  free_json(response);
+  json_free(response);
 
   // output
   printf("Found %u servers registered : \n", number_of_servers);
@@ -423,7 +423,7 @@ in3_ret_t call_func_api(in3_t* c, address_t contract) {
     printf(", deposit = %" PRIu64 "\n", deposit);
 
     // free memory
-    free_json(response);
+    json_free(response);
   }
   return 0;
 }
@@ -688,7 +688,7 @@ void get_logs_api(in3_t* in3) {
     free(l);
   }
   eth_uninstallFilter(in3, fid);
-  free_json(jopt);
+  json_free(jopt);
 }
 ```
 ### get_transaction
@@ -848,7 +848,7 @@ void get_tx_receipt_api(in3_t* in3) {
     printf("error getting the tx : %s\n", eth_last_error());
   else {
     printf("Transaction #%d of block #%llx, gas used = %" PRIu64 ", status = %s\n", txr->transaction_index, txr->block_number, txr->gas_used, txr->status ? "success" : "failed");
-    free_tx_receipt(txr);
+    eth_tx_receipt_free(txr);
   }
 }
 ```
@@ -1061,7 +1061,7 @@ void unlock_key(in3_t* c, char* json_data, char* passwd) {
   }
 
   // free json
-  free_json(key_data);
+  json_free(key_data);
 
   // create a signer with this key
   eth_set_pk_signer(c, pk);
@@ -1867,7 +1867,7 @@ json_ctx_t* eth_call_fn(in3_t *in3, address_t contract, eth_blknum_t block, char
 
 Returns the result of a function_call. 
 
-If result is null, check eth_last_error()! otherwise make sure to free the result after using it with free_json()! 
+If result is null, check eth_last_error()! otherwise make sure to free the result after using it with json_free()! 
 
 arguments:
 ```eval_rst
@@ -1890,7 +1890,7 @@ uint64_t eth_estimate_fn(in3_t *in3, address_t contract, eth_blknum_t block, cha
 
 Returns the result of a function_call. 
 
-If result is null, check eth_last_error()! otherwise make sure to free the result after using it with free_json()! 
+If result is null, check eth_last_error()! otherwise make sure to free the result after using it with json_free()! 
 
 arguments:
 ```eval_rst
@@ -2097,7 +2097,7 @@ eth_tx_receipt_t* eth_getTransactionReceipt(in3_t *in3, bytes32_t tx_hash);
 
 Returns the receipt of a transaction by transaction hash. 
 
-Free result after use with free_tx_receipt() 
+Free result after use with eth_tx_receipt_free() 
 
 arguments:
 ```eval_rst
@@ -2218,10 +2218,10 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### free_log
+#### log_free
 
 ```c
-void free_log(eth_log_t *log);
+void log_free(eth_log_t *log);
 ```
 
 Frees a eth_log_t object. 
@@ -2233,10 +2233,10 @@ arguments:
 =========================== ========= 
 ```
 
-#### free_tx_receipt
+#### eth_tx_receipt_free
 
 ```c
-void free_tx_receipt(eth_tx_receipt_t *txr);
+void eth_tx_receipt_free(eth_tx_receipt_t *txr);
 ```
 
 Frees a eth_tx_receipt_t object. 
@@ -2251,20 +2251,20 @@ arguments:
 #### to_checksum
 
 ```c
-in3_ret_t to_checksum(address_t adr, uint64_t chain_id, char out[43]);
+in3_ret_t to_checksum(address_t adr, chain_id_t chain_id, char out[43]);
 ```
 
 converts the given address to a checksum address. 
 
-If chainId is passed, it will use the EIP1191 to include it as well. 
+If chain_id is passed, it will use the EIP1191 to include it as well. 
 
 arguments:
 ```eval_rst
-========================= ============== 
-`address_t <#address-t>`_  **adr**       
-``uint64_t``               **chain_id**  
-``char``                   **out**       
-========================= ============== 
+=========================== ============== 
+`address_t <#address-t>`_    **adr**       
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+``char``                     **out**       
+=========================== ============== 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -2498,52 +2498,52 @@ the protocol version used when sending requests from the this client
 
 #### ETH_CHAIN_ID_MAINNET
 
-chainId for mainnet 
+chain_id for mainnet 
 
 ```c
-#define ETH_CHAIN_ID_MAINNET 0x01L
+#define ETH_CHAIN_ID_MAINNET 0x01
 ```
 
 
 #### ETH_CHAIN_ID_KOVAN
 
-chainId for kovan 
+chain_id for kovan 
 
 ```c
-#define ETH_CHAIN_ID_KOVAN 0x2aL
+#define ETH_CHAIN_ID_KOVAN 0x2a
 ```
 
 
 #### ETH_CHAIN_ID_TOBALABA
 
-chainId for tobalaba 
+chain_id for tobalaba 
 
 ```c
-#define ETH_CHAIN_ID_TOBALABA 0x44dL
+#define ETH_CHAIN_ID_TOBALABA 0x44d
 ```
 
 
 #### ETH_CHAIN_ID_GOERLI
 
-chainId for goerlii 
+chain_id for goerlii 
 
 ```c
-#define ETH_CHAIN_ID_GOERLI 0x5L
+#define ETH_CHAIN_ID_GOERLI 0x5
 ```
 
 
 #### ETH_CHAIN_ID_EVAN
 
-chainId for evan 
+chain_id for evan 
 
 ```c
-#define ETH_CHAIN_ID_EVAN 0x4b1L
+#define ETH_CHAIN_ID_EVAN 0x4b1
 ```
 
 
 #### ETH_CHAIN_ID_IPFS
 
-chainId for ipfs 
+chain_id for ipfs 
 
 ```c
 #define ETH_CHAIN_ID_IPFS 0x7d0
@@ -2552,7 +2552,7 @@ chainId for ipfs
 
 #### ETH_CHAIN_ID_VOLTA
 
-chainId for volta 
+chain_id for volta 
 
 ```c
 #define ETH_CHAIN_ID_VOLTA 0x12046
@@ -2561,10 +2561,10 @@ chainId for volta
 
 #### ETH_CHAIN_ID_LOCAL
 
-chainId for local chain 
+chain_id for local chain 
 
 ```c
-#define ETH_CHAIN_ID_LOCAL 0xFFFFL
+#define ETH_CHAIN_ID_LOCAL 0xFFFF
 ```
 
 
@@ -2574,22 +2574,6 @@ Initializer for in3_node_props_t.
 
 ```c
 #define in3_node_props_init (np) *(np) = 0
-```
-
-
-#### in3_node_props_get (np,t)
-
-getter macro for interacting with in3_node_props_t. 
-
-```c
-#define in3_node_props_get (np,t) ((t == NODE_PROP_MIN_BLOCK_HEIGHT) ? ((np >> 32U) & 0xFFU) : !!(np & t))
-```
-
-
-#### in3_node_props_matches (np,t)
-
-```c
-#define in3_node_props_matches (np,t) !!(np & t))
 ```
 
 
@@ -2629,6 +2613,15 @@ return value used by the signer for unspecified errors.
 ```
 
 
+#### chain_id_t
+
+type for a chain_id. 
+
+
+```c
+typedef uint32_t chain_id_t
+```
+
 #### in3_request_config_t
 
 the configuration as part of each incubed request. 
@@ -2639,24 +2632,24 @@ This will be generated for each request based on the client-configuration. the v
 The stuct contains following fields:
 
 ```eval_rst
-=========================================== ========================= ====================================================================
-``uint64_t``                                 **chainId**              the chain to be used. 
-                                                                      
-                                                                      this is holding the integer-value of the hexstring.
-``uint8_t``                                  **includeCode**          if true the code needed will always be devlivered.
-``uint8_t``                                  **useFullProof**         this flaqg is set, if the proof is set to "PROOF_FULL"
-``uint8_t``                                  **useBinary**            this flaqg is set, the client should use binary-format
-`bytes_t * <#bytes-t>`_                      **verifiedHashes**       a list of blockhashes already verified. 
-                                                                      
-                                                                      The Server will not send any proof for them again .
-``uint16_t``                                 **verifiedHashesCount**  number of verified blockhashes
-``uint16_t``                                 **latestBlock**          the last blocknumber the nodelistz changed
-``uint16_t``                                 **finality**             number of signatures( in percent) needed in order to reach finality.
-`in3_verification_t <#in3-verification-t>`_  **verification**         Verification-type.
-`bytes_t * <#bytes-t>`_                      **clientSignature**      the signature of the client with the client key
-`bytes_t * <#bytes-t>`_                      **signatures**           the addresses of servers requested to sign the blockhash
-``uint8_t``                                  **signaturesCount**      number or addresses
-=========================================== ========================= ====================================================================
+=========================================== ============================ ====================================================================
+`chain_id_t <#chain-id-t>`_                  **chain_id**                the chain to be used. 
+                                                                         
+                                                                         this is holding the integer-value of the hexstring.
+``uint8_t``                                  **include_code**            if true the code needed will always be devlivered.
+``uint8_t``                                  **use_full_proof**          this flaqg is set, if the proof is set to "PROOF_FULL"
+``uint8_t``                                  **use_binary**              this flaqg is set, the client should use binary-format
+`bytes_t * <#bytes-t>`_                      **verified_hashes**         a list of blockhashes already verified. 
+                                                                         
+                                                                         The Server will not send any proof for them again .
+``uint16_t``                                 **verified_hashes_length**  number of verified blockhashes
+``uint16_t``                                 **latest_block**            the last blocknumber the nodelistz changed
+``uint16_t``                                 **finality**                number of signatures( in percent) needed in order to reach finality.
+`in3_verification_t <#in3-verification-t>`_  **verification**            Verification-type.
+`bytes_t * <#bytes-t>`_                      **client_signature**        the signature of the client with the client key
+`bytes_t * <#bytes-t>`_                      **signers**                 the addresses of servers requested to sign the blockhash
+``uint8_t``                                  **signers_length**          number or addresses
+=========================================== ============================ ====================================================================
 ```
 
 #### in3_node_props_t
@@ -2720,20 +2713,19 @@ for incubed a chain can be any distributed network or database with incubed supp
 The stuct contains following fields:
 
 ```eval_rst
-=========================================== ==================== =================================================================================================================
-``uint64_t``                                 **chainId**         chainId, which could be a free or based on the public ethereum networkId
-`in3_chain_type_t <#in3-chain-type-t>`_      **type**            chaintype
-``uint64_t``                                 **lastBlock**       last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
-``bool``                                     **needsUpdate**     if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
-``int``                                      **nodeListLength**  number of nodes in the nodeList
-`in3_node_t * <#in3-node-t>`_                **nodeList**        array of nodes
-`in3_node_weight_t * <#in3-node-weight-t>`_  **weights**         stats and weights recorded for each node
-`bytes_t ** <#bytes-t>`_                     **initAddresses**   array of addresses of nodes that should always part of the nodeList
-`bytes_t * <#bytes-t>`_                      **contract**        the address of the registry contract
-`bytes32_t <#bytes32-t>`_                    **registry_id**     the identifier of the registry
-``uint8_t``                                  **version**         version of the chain
-`json_ctx_t * <#json-ctx-t>`_                **spec**            optional chain specification, defining the transaitions and forks
-=========================================== ==================== =================================================================================================================
+=========================================== ===================== =================================================================================================================
+`chain_id_t <#chain-id-t>`_                  **chain_id**         chain_id, which could be a free or based on the public ethereum networkId
+`in3_chain_type_t <#in3-chain-type-t>`_      **type**             chaintype
+``uint64_t``                                 **last_block**       last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
+``bool``                                     **needs_update**     if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
+``int``                                      **nodelist_length**  number of nodes in the nodeList
+`in3_node_t * <#in3-node-t>`_                **nodelist**         array of nodes
+`in3_node_weight_t * <#in3-node-weight-t>`_  **weights**          stats and weights recorded for each node
+`bytes_t ** <#bytes-t>`_                     **init_addresses**   array of addresses of nodes that should always part of the nodeList
+`bytes_t * <#bytes-t>`_                      **contract**         the address of the registry contract
+`bytes32_t <#bytes32-t>`_                    **registry_id**      the identifier of the registry
+``uint8_t``                                  **version**          version of the chain
+=========================================== ===================== =================================================================================================================
 ```
 
 #### in3_storage_get_item
@@ -2908,40 +2900,40 @@ This struct holds the configuration and also point to internal resources such as
 The stuct contains following fields:
 
 ```eval_rst
-=================================================== ======================== =======================================================================================
-``uint32_t``                                         **cacheTimeout**        number of seconds requests can be cached.
-``uint16_t``                                         **nodeLimit**           the limit of nodes to store in the client.
-`bytes_t * <#bytes-t>`_                              **key**                 the client key to sign requests
-``uint32_t``                                         **maxCodeCache**        number of max bytes used to cache the code in memory
-``uint32_t``                                         **maxBlockCache**       number of number of blocks cached in memory
-`in3_proof_t <#in3-proof-t>`_                        **proof**               the type of proof used
-``uint8_t``                                          **requestCount**        the number of request send when getting a first answer
-``uint8_t``                                          **signatureCount**      the number of signatures used to proof the blockhash.
-``uint64_t``                                         **minDeposit**          min stake of the server. 
-                                                                             
-                                                                             Only nodes owning at least this amount will be chosen.
-``uint16_t``                                         **replaceLatestBlock**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
-``uint16_t``                                         **finality**            the number of signatures in percent required for the request
-``uint16_t``                                         **max_attempts**        the max number of attempts before giving up
-``uint32_t``                                         **timeout**             specifies the number of milliseconds before the request times out. 
-                                                                             
-                                                                             increasing may be helpful if the device uses a slow connection.
-``uint64_t``                                         **chainId**             servers to filter for the given chain. 
-                                                                             
-                                                                             The chain-id based on EIP-155.
-``uint8_t``                                          **autoUpdateList**      if true the nodelist will be automaticly updated if the lastBlock is newer
-`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cacheStorage**        a cache handler offering 2 functions ( setItem(string,string), getItem(string) )
-`in3_signer_t * <#in3-signer-t>`_                    **signer**              signer-struct managing a wallet
-`in3_transport_send <#in3-transport-send>`_          **transport**           the transporthandler sending requests
-``uint8_t``                                          **includeCode**         includes the code when sending eth_call-requests
-``uint8_t``                                          **use_binary**          if true the client will use binary format
-``uint8_t``                                          **use_http**            if true the client will try to use http instead of https
-``uint8_t``                                          **keep_in3**            if true the in3-section with the proof will also returned
-`in3_chain_t * <#in3-chain-t>`_                      **chains**              chain spec and nodeList definitions
-``uint16_t``                                         **chainsCount**         number of configured chains
-`in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**             filter handler
-`in3_node_props_t <#in3-node-props-t>`_              **node_props**          used to identify the capabilities of the node.
-=================================================== ======================== =======================================================================================
+=================================================== ========================== =======================================================================================
+``uint32_t``                                         **cache_timeout**         number of seconds requests can be cached.
+``uint16_t``                                         **node_limit**            the limit of nodes to store in the client.
+`bytes_t * <#bytes-t>`_                              **key**                   the client key to sign requests
+``uint32_t``                                         **max_code_cache**        number of max bytes used to cache the code in memory
+``uint32_t``                                         **max_block_cache**       number of number of blocks cached in memory
+`in3_proof_t <#in3-proof-t>`_                        **proof**                 the type of proof used
+``uint8_t``                                          **request_count**         the number of request send when getting a first answer
+``uint8_t``                                          **signature_count**       the number of signatures used to proof the blockhash.
+``uint64_t``                                         **min_deposit**           min stake of the server. 
+                                                                               
+                                                                               Only nodes owning at least this amount will be chosen.
+``uint16_t``                                         **replace_latest_block**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
+``uint16_t``                                         **finality**              the number of signatures in percent required for the request
+``uint16_t``                                         **max_attempts**          the max number of attempts before giving up
+``uint32_t``                                         **timeout**               specifies the number of milliseconds before the request times out. 
+                                                                               
+                                                                               increasing may be helpful if the device uses a slow connection.
+`chain_id_t <#chain-id-t>`_                          **chain_id**              servers to filter for the given chain. 
+                                                                               
+                                                                               The chain-id based on EIP-155.
+``uint8_t``                                          **auto_update_list**      if true the nodelist will be automaticly updated if the last_block is newer
+`in3_storage_handler_t * <#in3-storage-handler-t>`_  **cache**                 a cache handler offering 2 functions ( setItem(string,string), getItem(string) )
+`in3_signer_t * <#in3-signer-t>`_                    **signer**                signer-struct managing a wallet
+`in3_transport_send <#in3-transport-send>`_          **transport**             the transporthandler sending requests
+``uint8_t``                                          **include_code**          includes the code when sending eth_call-requests
+``uint8_t``                                          **use_binary**            if true the client will use binary format
+``uint8_t``                                          **use_http**              if true the client will try to use http instead of https
+``uint8_t``                                          **keep_in3**              if true the in3-section with the proof will also returned
+`in3_chain_t * <#in3-chain-t>`_                      **chains**                chain spec and nodeList definitions
+``uint16_t``                                         **chains_length**         number of configured chains
+`in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**               filter handler
+`in3_node_props_t <#in3-node-props-t>`_              **node_props**            used to identify the capabilities of the node.
+=================================================== ========================== =======================================================================================
 ```
 
 #### in3_node_props_set
@@ -2960,6 +2952,46 @@ arguments:
 ``uint8_t``                                **value**       
 ========================================= ================ 
 ```
+
+#### in3_node_props_get
+
+```c
+static uint32_t in3_node_props_get(in3_node_props_t np, in3_node_props_type_t t);
+```
+
+returns the value of the specified propertytype. 
+
+arguments:
+```eval_rst
+======================================= ======== 
+`in3_node_props_t <#in3-node-props-t>`_  **np**  
+``in3_node_props_type_t``                **t**   
+======================================= ======== 
+```
+returns: `uint32_t` : value as a number 
+
+
+
+
+#### in3_node_props_matches
+
+```c
+static bool in3_node_props_matches(in3_node_props_t np, in3_node_props_type_t t);
+```
+
+checkes if the given type is set in the properties 
+
+arguments:
+```eval_rst
+======================================= ======== 
+`in3_node_props_t <#in3-node-props-t>`_  **np**  
+``in3_node_props_type_t``                **t**   
+======================================= ======== 
+```
+returns: `bool` : true if set 
+
+
+
 
 #### in3_new
 
@@ -2991,7 +3023,7 @@ storage_handler.set_item = storage_set_item;
 client->transport    = send_curl;
 
 // configure storage
-client->cacheStorage = &storage_handler;
+client->cache = &storage_handler;
 
 // init cache
 in3_cache_init(client);
@@ -3071,7 +3103,7 @@ arguments:
 #### in3_client_register_chain
 
 ```c
-in3_ret_t in3_client_register_chain(in3_t *client, uint64_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version, json_ctx_t *spec);
+in3_ret_t in3_client_register_chain(in3_t *client, chain_id_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version);
 ```
 
 registers a new chain or replaces a existing (but keeps the nodelist) 
@@ -3080,12 +3112,11 @@ arguments:
 ```eval_rst
 ======================================= ================= =========================================
 `in3_t * <#in3-t>`_                      **client**       the pointer to the incubed client config.
-``uint64_t``                             **chain_id**     the chain id.
+`chain_id_t <#chain-id-t>`_              **chain_id**     the chain id.
 `in3_chain_type_t <#in3-chain-type-t>`_  **type**         the verification type of the chain.
 `address_t <#address-t>`_                **contract**     contract of the registry.
 `bytes32_t <#bytes32-t>`_                **registry_id**  the identifier of the registry.
 ``uint8_t``                              **version**      the chain version.
-`json_ctx_t * <#json-ctx-t>`_            **spec**         chainspec or NULL.
 ======================================= ================= =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -3096,7 +3127,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_add_node
 
 ```c
-in3_ret_t in3_client_add_node(in3_t *client, uint64_t chain_id, char *url, in3_node_props_t props, address_t address);
+in3_ret_t in3_client_add_node(in3_t *client, chain_id_t chain_id, char *url, in3_node_props_t props, address_t address);
 ```
 
 adds a node to a chain ore updates a existing node 
@@ -3107,7 +3138,7 @@ arguments:
 ```eval_rst
 ======================================= ============== =========================================
 `in3_t * <#in3-t>`_                      **client**    the pointer to the incubed client config.
-``uint64_t``                             **chain_id**  the chain id.
+`chain_id_t <#chain-id-t>`_              **chain_id**  the chain id.
 ``char *``                               **url**       url of the nodes.
 `in3_node_props_t <#in3-node-props-t>`_  **props**     properties of the node.
 `address_t <#address-t>`_                **address**   
@@ -3121,7 +3152,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_remove_node
 
 ```c
-in3_ret_t in3_client_remove_node(in3_t *client, uint64_t chain_id, address_t address);
+in3_ret_t in3_client_remove_node(in3_t *client, chain_id_t chain_id, address_t address);
 ```
 
 removes a node from a nodelist 
@@ -3130,11 +3161,11 @@ removes a node from a nodelist
 
 arguments:
 ```eval_rst
-========================= ============== =========================================
-`in3_t * <#in3-t>`_        **client**    the pointer to the incubed client config.
-``uint64_t``               **chain_id**  the chain id.
-`address_t <#address-t>`_  **address**   
-========================= ============== =========================================
+=========================== ============== =========================================
+`in3_t * <#in3-t>`_          **client**    the pointer to the incubed client config.
+`chain_id_t <#chain-id-t>`_  **chain_id**  the chain id.
+`address_t <#address-t>`_    **address**   
+=========================== ============== =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -3144,7 +3175,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_clear_nodes
 
 ```c
-in3_ret_t in3_client_clear_nodes(in3_t *client, uint64_t chain_id);
+in3_ret_t in3_client_clear_nodes(in3_t *client, chain_id_t chain_id);
 ```
 
 removes all nodes from the nodelist 
@@ -3153,10 +3184,10 @@ removes all nodes from the nodelist
 
 arguments:
 ```eval_rst
-=================== ============== =========================================
-`in3_t * <#in3-t>`_  **client**    the pointer to the incubed client config.
-``uint64_t``         **chain_id**  
-=================== ============== =========================================
+=========================== ============== =========================================
+`in3_t * <#in3-t>`_          **client**    the pointer to the incubed client config.
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+=========================== ============== =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -3202,7 +3233,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_find_chain
 
 ```c
-in3_chain_t* in3_find_chain(in3_t *c, uint64_t chain_id);
+in3_chain_t* in3_find_chain(in3_t *c, chain_id_t chain_id);
 ```
 
 finds the chain-config for the given chain_id. 
@@ -3211,10 +3242,10 @@ My return NULL if not found.
 
 arguments:
 ```eval_rst
-=================== ============== ==================
-`in3_t * <#in3-t>`_  **c**         the incubed client
-``uint64_t``         **chain_id**  chainId
-=================== ============== ==================
+=========================== ============== ==================
+`in3_t * <#in3-t>`_          **c**         the incubed client
+`chain_id_t <#chain-id-t>`_  **chain_id**  chain_id
+=========================== ============== ==================
 ```
 returns: [`in3_chain_t *`](#in3-chain-t)
 
@@ -3377,26 +3408,27 @@ This is generated for each request and represents the current state. it holds th
 The stuct contains following fields:
 
 ```eval_rst
-================================================= ====================== =========================================================================================================
-`ctx_type_t <#ctx-type-t>`_                        **type**              the type of the request
-`in3_t * <#in3-t>`_                                **client**            reference to the client
-`json_ctx_t * <#json-ctx-t>`_                      **request_context**   the result of the json-parser for the request.
-`json_ctx_t * <#json-ctx-t>`_                      **response_context**  the result of the json-parser for the response.
-``char *``                                         **error**             in case of an error this will hold the message, if not it points to `NULL`
-``int``                                            **len**               the number of requests
-``int``                                            **attempt**           the number of attempts
-`d_token_t ** <#d-token-t>`_                       **responses**         references to the tokens representring the parsed responses
-`d_token_t ** <#d-token-t>`_                       **requests**          references to the tokens representring the requests
-`in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**  array of configs adjusted for each request.
-`node_weight_t * <#node-weight-t>`_                **nodes**             
-`cache_entry_t * <#cache-entry-t>`_                **cache**             optional cache-entries. 
-                                                                         
-                                                                         These entries will be freed when cleaning up the context.
-`in3_response_t * <#in3-response-t>`_              **raw_response**      the raw response-data, which should be verified.
-`in3_ctxstruct , * <#in3-ctx>`_                    **required**          pointer to the next required context. 
-                                                                         
-                                                                         if not NULL the data from this context need get finished first, before being able to resume this context.
-================================================= ====================== =========================================================================================================
+================================================= ======================== =========================================================================================================
+`ctx_type_t <#ctx-type-t>`_                        **type**                the type of the request
+`in3_t * <#in3-t>`_                                **client**              reference to the client
+`json_ctx_t * <#json-ctx-t>`_                      **request_context**     the result of the json-parser for the request.
+`json_ctx_t * <#json-ctx-t>`_                      **response_context**    the result of the json-parser for the response.
+``char *``                                         **error**               in case of an error this will hold the message, if not it points to `NULL`
+``int``                                            **len**                 the number of requests
+``int``                                            **attempt**             the number of attempts
+`d_token_t ** <#d-token-t>`_                       **responses**           references to the tokens representring the parsed responses
+`d_token_t ** <#d-token-t>`_                       **requests**            references to the tokens representring the requests
+`in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**    array of configs adjusted for each request.
+`node_weight_t * <#node-weight-t>`_                **nodes**               
+`cache_entry_t * <#cache-entry-t>`_                **cache**               optional cache-entries. 
+                                                                           
+                                                                           These entries will be freed when cleaning up the context.
+`in3_response_t * <#in3-response-t>`_              **raw_response**        the raw response-data, which should be verified.
+`in3_ctxstruct , * <#in3-ctx>`_                    **required**            pointer to the next required context. 
+                                                                           
+                                                                           if not NULL the data from this context need get finished first, before being able to resume this context.
+`in3_ret_t <#in3-ret-t>`_                          **verification_state**  state of the verification
+================================================= ======================== =========================================================================================================
 ```
 
 #### in3_ctx_state_t
@@ -3417,10 +3449,10 @@ The enum type contains the following values:
 ================================== == ============================================================
 ```
 
-#### new_ctx
+#### ctx_new
 
 ```c
-in3_ctx_t* new_ctx(in3_t *client, char *req_data);
+in3_ctx_t* ctx_new(in3_t *client, char *req_data);
 ```
 
 creates a new context. 
@@ -3514,7 +3546,7 @@ Here is a example how to use this function:
             ctx->client->transport(request);
 
             // clean up
-            free_request(request, ctx, false);
+            request_free(request, ctx, false);
             break;
         }
 
@@ -3601,10 +3633,10 @@ arguments:
 returns: [`in3_request_t *`](#in3-request-t)
 
 
-#### free_request
+#### request_free
 
 ```c
-void free_request(in3_request_t *req, in3_ctx_t *ctx, bool free_response);
+void request_free(in3_request_t *req, in3_ctx_t *ctx, bool response_free);
 ```
 
 frees a previuosly allocated request. 
@@ -3614,14 +3646,14 @@ arguments:
 =================================== =================== ======================================================================================
 `in3_request_t * <#in3-request-t>`_  **req**            the request.
 `in3_ctx_t * <#in3-ctx-t>`_          **ctx**            the request context.
-``bool``                             **free_response**  if true the responses will freed also, but usually this is done when the ctx is freed.
+``bool``                             **response_free**  if true the responses will freed also, but usually this is done when the ctx is freed.
 =================================== =================== ======================================================================================
 ```
 
-#### free_ctx
+#### ctx_free
 
 ```c
-void free_ctx(in3_ctx_t *ctx);
+void ctx_free(in3_ctx_t *ctx);
 ```
 
 frees all resources allocated during the request. 
@@ -3686,7 +3718,7 @@ in3_ret_t get_from_nodes(in3_ctx_t* parent, char* method, char* params, bytes_t*
   // create it
   sprintf(req, "{\"method\":\"%s\",\"jsonrpc\":\"2.0\",\"id\":1,\"params\":%s}", method, params);
   // and add the request context to the parent.
-  return ctx_add_required(parent, new_ctx(parent->client, req));
+  return ctx_add_required(parent, ctx_new(parent->client, req));
 }
 ```
 arguments:
@@ -3817,7 +3849,7 @@ in3_ctx_t* in3_client_rpc_ctx(in3_t *c, char *method, char *params);
 
 sends a request and returns a context used to access the result or errors. 
 
-This context *MUST* be freed with free_ctx(ctx) after usage to release the resources. 
+This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
 
 arguments:
 ```eval_rst
@@ -5083,10 +5115,10 @@ arguments:
 returns: [`json_ctx_t *`](#json-ctx-t)
 
 
-#### free_json
+#### json_free
 
 ```c
-void free_json(json_ctx_t *parser_ctx);
+void json_free(json_ctx_t *parser_ctx);
 ```
 
 frees the parse-context after usage 
@@ -7154,7 +7186,7 @@ the no more elements on the stack
  
 
 ```c
-#define EVM_ERROR_EMPTY_STACK -1
+#define EVM_ERROR_EMPTY_STACK -20
 ```
 
 
@@ -7166,7 +7198,7 @@ the opcode is not supported
  
 
 ```c
-#define EVM_ERROR_INVALID_OPCODE -2
+#define EVM_ERROR_INVALID_OPCODE -21
 ```
 
 
@@ -7178,7 +7210,7 @@ reading data from a position, which is not initialized
  
 
 ```c
-#define EVM_ERROR_BUFFER_TOO_SMALL -3
+#define EVM_ERROR_BUFFER_TOO_SMALL -22
 ```
 
 
@@ -7190,7 +7222,7 @@ the memory-offset does not exist
  
 
 ```c
-#define EVM_ERROR_ILLEGAL_MEMORY_ACCESS -4
+#define EVM_ERROR_ILLEGAL_MEMORY_ACCESS -23
 ```
 
 
@@ -7202,7 +7234,7 @@ the jump destination is not marked as valid destination
  
 
 ```c
-#define EVM_ERROR_INVALID_JUMPDEST -5
+#define EVM_ERROR_INVALID_JUMPDEST -24
 ```
 
 
@@ -7211,7 +7243,7 @@ the jump destination is not marked as valid destination
 the push data is empy 
 
 ```c
-#define EVM_ERROR_INVALID_PUSH -6
+#define EVM_ERROR_INVALID_PUSH -25
 ```
 
 
@@ -7223,7 +7255,7 @@ error handling the call, usually because static-calls are not allowed to change 
  
 
 ```c
-#define EVM_ERROR_UNSUPPORTED_CALL_OPCODE -7
+#define EVM_ERROR_UNSUPPORTED_CALL_OPCODE -26
 ```
 
 
@@ -7235,7 +7267,7 @@ the evm ran into a loop
  
 
 ```c
-#define EVM_ERROR_TIMEOUT -8
+#define EVM_ERROR_TIMEOUT -27
 ```
 
 
@@ -7247,7 +7279,7 @@ the enviroment could not deliver the data
  
 
 ```c
-#define EVM_ERROR_INVALID_ENV -9
+#define EVM_ERROR_INVALID_ENV -28
 ```
 
 
@@ -7259,7 +7291,7 @@ not enough gas to exewcute the opcode
  
 
 ```c
-#define EVM_ERROR_OUT_OF_GAS -10
+#define EVM_ERROR_OUT_OF_GAS -29
 ```
 
 
@@ -7268,7 +7300,7 @@ not enough gas to exewcute the opcode
 not enough funds to transfer the requested value. 
 
 ```c
-#define EVM_ERROR_BALANCE_TOO_LOW -11
+#define EVM_ERROR_BALANCE_TOO_LOW -30
 ```
 
 
@@ -7280,7 +7312,7 @@ stack limit reached
  
 
 ```c
-#define EVM_ERROR_STACK_LIMIT -12
+#define EVM_ERROR_STACK_LIMIT -31
 ```
 
 
@@ -7289,7 +7321,7 @@ stack limit reached
 write success but consume all gas 
 
 ```c
-#define EVM_ERROR_SUCCESS_CONSUME_GAS -13
+#define EVM_ERROR_SUCCESS_CONSUME_GAS -32
 ```
 
 
@@ -8844,14 +8876,14 @@ returns: [`chainspec_t *`](#chainspec-t)
 #### chainspec_get
 
 ```c
-chainspec_t* chainspec_get(uint64_t chain_id);
+chainspec_t* chainspec_get(chain_id_t chain_id);
 ```
 
 arguments:
 ```eval_rst
-============ ============== 
-``uint64_t``  **chain_id**  
-============ ============== 
+=========================== ============== 
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+=========================== ============== 
 ```
 returns: [`chainspec_t *`](#chainspec-t)
 
@@ -8859,13 +8891,13 @@ returns: [`chainspec_t *`](#chainspec-t)
 #### chainspec_put
 
 ```c
-void chainspec_put(uint64_t chain_id, chainspec_t *spec);
+void chainspec_put(chain_id_t chain_id, chainspec_t *spec);
 ```
 
 arguments:
 ```eval_rst
 =============================== ============== 
-``uint64_t``                     **chain_id**  
+`chain_id_t <#chain-id-t>`_      **chain_id**  
 `chainspec_t * <#chainspec-t>`_  **spec**      
 =============================== ============== 
 ```
