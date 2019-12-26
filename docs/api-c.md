@@ -2055,16 +2055,16 @@ Returns (32 Bytes) - the transaction hash, or the zero hash if the transaction i
 
 arguments:
 ```eval_rst
-====================================== =============== 
-`in3_t * <#in3-t>`_                     **in3**        
-`address_t <#address-t>`_               **from**       
-`address_t <#address-t>`_               **to**         
-``OPTIONAL_T(uint64_t)``                **gas**        
-``OPTIONAL_T(uint64_t)``                **gas_price**  
-`uint256_tOPTIONAL_T(,) <#uint256-t>`_  **value**      
-`bytes_tOPTIONAL_T(,) <#bytes-t>`_      **data**       
-``OPTIONAL_T(uint64_t)``                **nonce**      
-====================================== =============== 
+===================================== =============== 
+`in3_t * <#in3-t>`_                    **in3**        
+`address_t <#address-t>`_              **from**       
+`address_t <#address-t>`_              **to**         
+`OPTIONAL_T(uint64_t) <#optional-t>`_  **gas**        
+`OPTIONAL_T(uint64_t) <#optional-t>`_  **gas_price**  
+``(,)``                                **value**      
+``(,)``                                **data**       
+`OPTIONAL_T(uint64_t) <#optional-t>`_  **nonce**      
+===================================== =============== 
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -2493,6 +2493,15 @@ the protocol version used when sending requests from the this client
 
 ```c
 #define IN3_PROTO_VER "2.1.0"
+```
+
+
+#### ETH_CHAIN_ID_MULTICHAIN
+
+chain_id working with all known chains 
+
+```c
+#define ETH_CHAIN_ID_MULTICHAIN 0x0
 ```
 
 
@@ -2996,7 +3005,7 @@ returns: `bool` : true if set
 #### in3_new
 
 ```c
-in3_t* in3_new();
+DEPRECATED in3_t* in3_new();
 ```
 
 creates a new Incubes configuration and returns the pointer. 
@@ -3005,7 +3014,7 @@ you need to free this instance with `in3_free` after use!
 
 Before using the client you still need to set the tramsport and optional the storage handlers:
 
-- example of initialization: 
+- example of initialization: , ** This Method is depricated. you should use `in3_for_chain` instead.**
 
 ```c
 // register verifiers
@@ -3031,6 +3040,57 @@ in3_cache_init(client);
 // ready to use ...
 ```
 
+returns: ` *` : the incubed instance. 
+
+
+
+
+#### in3_for_chain
+
+```c
+in3_t* in3_for_chain(chain_id_t chain_id);
+```
+
+creates a new Incubes configuration for a specified chain and returns the pointer. 
+
+when creating the client only the one chain will be configured. (saves memory). but if you pass `ETH_CHAIN_ID_MULTICHAIN` as argument all known chains will be configured allowing you to switch between chains within the same client or configuring your own chain.
+
+you need to free this instance with `in3_free` after use!
+
+Before using the client you still need to set the tramsport and optional the storage handlers:
+
+- example of initialization: , ** This Method is depricated. you should use `in3_for_chain` instead.**
+
+```c
+// register verifiers
+in3_register_eth_full();
+
+// create new client
+in3_t* client = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+
+// configure storage...
+in3_storage_handler_t storage_handler;
+storage_handler.get_item = storage_get_item;
+storage_handler.set_item = storage_set_item;
+
+// configure transport
+client->transport    = send_curl;
+
+// configure storage
+client->cache = &storage_handler;
+
+// init cache
+in3_cache_init(client);
+
+// ready to use ...
+```
+
+arguments:
+```eval_rst
+=========================== ============== ==============================================
+`chain_id_t <#chain-id-t>`_  **chain_id**  the chain_id (see ETH_CHAIN_ID_... constants).
+=========================== ============== ==============================================
+```
 returns: [`in3_t *`](#in3-t) : the incubed instance. 
 
 
@@ -3968,6 +4028,8 @@ File: [src/core/util/bytes.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### bb_new ()
 
+creates a new bytes_builder with a initial size of 32 bytes 
+
 ```c
 #define bb_new () bb_newl(32)
 ```
@@ -4267,6 +4329,8 @@ returns: [`bytes_t *`](#bytes-t)
 bytes_builder_t* bb_newl(size_t l);
 ```
 
+creates a new bytes_builder 
+
 arguments:
 ```eval_rst
 ========== ======= 
@@ -4491,26 +4555,13 @@ arguments:
 returns: [`bytes_t *`](#bytes-t)
 
 
-#### bb_push
-
-```c
-void bb_push(bytes_builder_t *bb, uint8_t *data, uint8_t len);
-```
-
-arguments:
-```eval_rst
-======================================= ========== 
-`bytes_builder_t * <#bytes-builder-t>`_  **bb**    
-``uint8_t *``                            **data**  
-``uint8_t``                              **len**   
-======================================= ========== 
-```
-
 #### bb_read_long
 
 ```c
 uint64_t bb_read_long(bytes_builder_t *bb, size_t *i);
 ```
+
+reads a long from the builder 
 
 arguments:
 ```eval_rst
@@ -4528,6 +4579,8 @@ returns: `uint64_t`
 uint32_t bb_read_int(bytes_builder_t *bb, size_t *i);
 ```
 
+reads a int from the builder 
+
 arguments:
 ```eval_rst
 ======================================= ======== 
@@ -4543,6 +4596,8 @@ returns: `uint32_t`
 ```c
 static bytes_t bytes(uint8_t *a, uint32_t len);
 ```
+
+converts the given bytes to a bytes struct 
 
 arguments:
 ```eval_rst
@@ -4560,6 +4615,8 @@ returns: [`bytes_t`](#bytes-t)
 bytes_t cloned_bytes(bytes_t data);
 ```
 
+cloned the passed data 
+
 arguments:
 ```eval_rst
 ===================== ========== 
@@ -4574,6 +4631,8 @@ returns: [`bytes_t`](#bytes-t)
 ```c
 static void b_optimize_len(bytes_t *b);
 ```
+
+< changed the data and len to remove leading 0-bytes
 
 arguments:
 ```eval_rst
@@ -5724,23 +5783,29 @@ File: [src/core/util/debug.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### dbg_log (msg,...)
 
+logs a debug-message including file and linenumber 
+
 
 #### dbg_log_raw (msg,...)
+
+logs a debug-message without the filename 
 
 
 #### msg_dump
 
 ```c
-void msg_dump(const char *s, unsigned char *data, unsigned len);
+void msg_dump(const char *s, const unsigned char *data, unsigned len);
 ```
+
+dumps the given data as hex coded bytes to stdout 
 
 arguments:
 ```eval_rst
-=================== ========== 
-``const char *``     **s**     
-``unsigned char *``  **data**  
-``unsigned``         **len**   
-=================== ========== 
+========================= ========== 
+``const char *``           **s**     
+``const unsigned char *``  **data**  
+``unsigned``               **len**   
+========================= ========== 
 ```
 
 ### error.h
@@ -5749,7 +5814,20 @@ defines the return-values of a function call.
 
 File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/core/util/error.h)
 
+#### DEPRECATED
+
+depreacted-attribute 
+
+```c
+#define DEPRECATED __attribute__((deprecated))
+```
+
+
 #### OPTIONAL_T (t)
+
+Optional type similar to C++ std::optional Optional types must be defined prior to usage (e.g. 
+
+DEFINE_OPTIONAL_T(int)) Use OPTIONAL_T_UNDEFINED(t) & OPTIONAL_T_VALUE(t, v) for easy initialization (rvalues) Note: Defining optional types for pointers is ill-formed by definition. This is because redundant 
 
 ```c
 #define OPTIONAL_T (t) opt_##t
@@ -5757,6 +5835,10 @@ File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 
 #### DEFINE_OPTIONAL_T (t)
+
+Optional types must be defined prior to usage (e.g. 
+
+DEFINE_OPTIONAL_T(int)) Use OPTIONAL_T_UNDEFINED(t) & OPTIONAL_T_VALUE(t, v) for easy initialization (rvalues) 
 
 ```c
 #define DEFINE_OPTIONAL_T (t) typedef struct {           \
@@ -5768,12 +5850,16 @@ File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### OPTIONAL_T_UNDEFINED (t)
 
+marks a used value as undefined. 
+
 ```c
 #define OPTIONAL_T_UNDEFINED (t) ((OPTIONAL_T(t)){.defined = false})
 ```
 
 
 #### OPTIONAL_T_VALUE (t,v)
+
+sets the value of an optional type. 
 
 ```c
 #define OPTIONAL_T_VALUE (t,v) ((OPTIONAL_T(t)){.value = v, .defined = true})
@@ -5787,6 +5873,8 @@ char* in3_errmsg(in3_ret_t err);
 ```
 
 converts a error code into a string. 
+
+These strings are constants and do not need to be freed. 
 
 arguments:
 ```eval_rst
@@ -5805,17 +5893,21 @@ File: [src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/src/
 
 #### cache_entry_t
 
+represents a single cache entry in a linked list. 
+
+These are used within a request context to cache values and automaticly free them. 
+
 
 The stuct contains following fields:
 
 ```eval_rst
-======================================= =============== 
-`bytes_t <#bytes-t>`_                    **key**        
-`bytes_t <#bytes-t>`_                    **value**      
-``uint8_t``                              **must_free**  
-``uint8_t``                              **buffer**     
-`cache_entrystruct , * <#cache-entry>`_  **next**       
-======================================= =============== 
+======================================= =============== ==============================================================================
+`bytes_t <#bytes-t>`_                    **key**        an optional key of the entry
+`bytes_t <#bytes-t>`_                    **value**      the value
+``uint8_t``                              **must_free**  if true, the cache-entry will be freed when the request context is cleaned up.
+``uint8_t``                              **buffer**     the buffer is used to store extra data, which will be cleaned when freed.
+`cache_entrystruct , * <#cache-entry>`_  **next**       pointer to the next entry.
+======================================= =============== ==============================================================================
 ```
 
 #### in3_cache_get_entry
@@ -5824,12 +5916,14 @@ The stuct contains following fields:
 bytes_t* in3_cache_get_entry(cache_entry_t *cache, bytes_t *key);
 ```
 
+get the entry for a given key. 
+
 arguments:
 ```eval_rst
-=================================== =========== 
-`cache_entry_t * <#cache-entry-t>`_  **cache**  
-`bytes_t * <#bytes-t>`_              **key**    
-=================================== =========== 
+=================================== =========== ==================================
+`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+`bytes_t * <#bytes-t>`_              **key**    the key to compare with
+=================================== =========== ==================================
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -5840,13 +5934,15 @@ returns: [`bytes_t *`](#bytes-t)
 cache_entry_t* in3_cache_add_entry(cache_entry_t *cache, bytes_t key, bytes_t value);
 ```
 
+adds an entry to the linked list. 
+
 arguments:
 ```eval_rst
-=================================== =========== 
-`cache_entry_t * <#cache-entry-t>`_  **cache**  
-`bytes_t <#bytes-t>`_                **key**    
-`bytes_t <#bytes-t>`_                **value**  
-=================================== =========== 
+=================================== =========== ==================================
+`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+`bytes_t <#bytes-t>`_                **key**    an optional key
+`bytes_t <#bytes-t>`_                **value**  the value of the entry
+=================================== =========== ==================================
 ```
 returns: [`cache_entry_t *`](#cache-entry-t)
 
@@ -5857,12 +5953,32 @@ returns: [`cache_entry_t *`](#cache-entry-t)
 void in3_cache_free(cache_entry_t *cache);
 ```
 
+clears all entries in the linked list. 
+
 arguments:
 ```eval_rst
-=================================== =========== 
-`cache_entry_t * <#cache-entry-t>`_  **cache**  
-=================================== =========== 
+=================================== =========== ==================================
+`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+=================================== =========== ==================================
 ```
+
+#### in3_cache_add_ptr
+
+```c
+static cache_entry_t* in3_cache_add_ptr(cache_entry_t *cache, void *ptr);
+```
+
+adds a pointer, which should be freed when the context is freed. 
+
+arguments:
+```eval_rst
+=================================== =========== =======================================
+`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+``void *``                           **ptr**    pointer to memory which shold be freed.
+=================================== =========== =======================================
+```
+returns: [`cache_entry_t *`](#cache-entry-t)
+
 
 ### stringbuilder.h
 
@@ -5872,6 +5988,8 @@ File: [src/core/util/stringbuilder.h](https://github.com/slockit/in3-c/blob/mast
 
 #### sb_add_hexuint (sb,i)
 
+shortcut macro for adding a uint to the stringbuilder using sizeof(i) to automaticly determine the size 
+
 ```c
 #define sb_add_hexuint (sb,i) sb_add_hexuint_l(sb, i, sizeof(i))
 ```
@@ -5879,28 +5997,32 @@ File: [src/core/util/stringbuilder.h](https://github.com/slockit/in3-c/blob/mast
 
 #### sb_t
 
+string build struct, which is able to hold and modify a growing string. 
+
 
 The stuct contains following fields:
 
 ```eval_rst
-========== ============== 
-``char *``  **data**      
-``size_t``  **allocted**  
-``size_t``  **len**       
-========== ============== 
+========== ============== ====================================
+``char *``  **data**      the current string (null terminated)
+``size_t``  **allocted**  number of bytes currently allocated
+``size_t``  **len**       the current length of the string
+========== ============== ====================================
 ```
 
 #### sb_new
 
 ```c
-sb_t* sb_new(char *chars);
+sb_t* sb_new(const char *chars);
 ```
+
+creates a new stringbuilder and copies the inital characters into it. 
 
 arguments:
 ```eval_rst
-========== =========== 
-``char *``  **chars**  
-========== =========== 
+================ =========== 
+``const char *``  **chars**  
+================ =========== 
 ```
 returns: [`sb_t *`](#sb-t)
 
@@ -5910,6 +6032,8 @@ returns: [`sb_t *`](#sb-t)
 ```c
 sb_t* sb_init(sb_t *sb);
 ```
+
+initializes a stringbuilder by allocating memory. 
 
 arguments:
 ```eval_rst
@@ -5926,6 +6050,8 @@ returns: [`sb_t *`](#sb-t)
 void sb_free(sb_t *sb);
 ```
 
+frees all resources of the stringbuilder 
+
 arguments:
 ```eval_rst
 ================= ======== 
@@ -5938,6 +6064,8 @@ arguments:
 ```c
 sb_t* sb_add_char(sb_t *sb, char c);
 ```
+
+add a single character 
 
 arguments:
 ```eval_rst
@@ -5952,14 +6080,16 @@ returns: [`sb_t *`](#sb-t)
 #### sb_add_chars
 
 ```c
-sb_t* sb_add_chars(sb_t *sb, char *chars);
+sb_t* sb_add_chars(sb_t *sb, const char *chars);
 ```
+
+adds a string 
 
 arguments:
 ```eval_rst
 ================= =========== 
 `sb_t * <#sb-t>`_  **sb**     
-``char *``         **chars**  
+``const char *``   **chars**  
 ================= =========== 
 ```
 returns: [`sb_t *`](#sb-t)
@@ -5970,6 +6100,8 @@ returns: [`sb_t *`](#sb-t)
 ```c
 sb_t* sb_add_range(sb_t *sb, const char *chars, int start, int len);
 ```
+
+add a string range 
 
 arguments:
 ```eval_rst
@@ -5986,16 +6118,20 @@ returns: [`sb_t *`](#sb-t)
 #### sb_add_key_value
 
 ```c
-sb_t* sb_add_key_value(sb_t *sb, char *key, char *value, int lv, bool as_string);
+sb_t* sb_add_key_value(sb_t *sb, const char *key, const char *value, int value_len, bool as_string);
 ```
+
+adds a value with an optional key. 
+
+if as_string is true the value will be quoted. 
 
 arguments:
 ```eval_rst
 ================= =============== 
 `sb_t * <#sb-t>`_  **sb**         
-``char *``         **key**        
-``char *``         **value**      
-``int``            **lv**         
+``const char *``   **key**        
+``const char *``   **value**      
+``int``            **value_len**  
 ``bool``           **as_string**  
 ================= =============== 
 ```
@@ -6005,18 +6141,23 @@ returns: [`sb_t *`](#sb-t)
 #### sb_add_bytes
 
 ```c
-sb_t* sb_add_bytes(sb_t *sb, char *prefix, bytes_t *bytes, int len, bool as_array);
+sb_t* sb_add_bytes(sb_t *sb, const char *prefix, const bytes_t *bytes, int len, bool as_array);
 ```
+
+add bytes as 0x-prefixed hexcoded string (including an optional prefix), if len>1 is passed bytes maybe an array ( if as_array==true) 
+
+
+ 
 
 arguments:
 ```eval_rst
-======================= ============== 
-`sb_t * <#sb-t>`_        **sb**        
-``char *``               **prefix**    
-`bytes_t * <#bytes-t>`_  **bytes**     
-``int``                  **len**       
-``bool``                 **as_array**  
-======================= ============== 
+============================== ============== 
+`sb_t * <#sb-t>`_               **sb**        
+``const char *``                **prefix**    
+`bytes_tconst , * <#bytes-t>`_  **bytes**     
+``int``                         **len**       
+``bool``                        **as_array**  
+============================== ============== 
 ```
 returns: [`sb_t *`](#sb-t)
 
@@ -6026,6 +6167,8 @@ returns: [`sb_t *`](#sb-t)
 ```c
 sb_t* sb_add_hexuint_l(sb_t *sb, uintmax_t uint, size_t l);
 ```
+
+add a integer value as hexcoded, 0x-prefixed string 
 
 Other types not supported
 
@@ -6048,6 +6191,8 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### SWAP (a,b)
 
+simple swap macro for integral types 
+
 ```c
 #define SWAP (a,b) {                \
     void* p = a;   \
@@ -6059,12 +6204,16 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### min (a,b)
 
+simple min macro for interagl types 
+
 ```c
 #define min (a,b) ((a) < (b) ? (a) : (b))
 ```
 
 
 #### max (a,b)
+
+simple max macro for interagl types 
 
 ```c
 #define max (a,b) ((a) > (b) ? (a) : (b))
@@ -6073,12 +6222,16 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### IS_APPROX (n1,n2,err)
 
+Check if n1 & n2 are at max err apart Expects n1 & n2 to be integral types. 
+
 ```c
 #define IS_APPROX (n1,n2,err) ((n1 > n2) ? ((n1 - n2) <= err) : ((n2 - n1) <= err))
 ```
 
 
 #### optimize_len (a,l)
+
+changes to pointer (a) and it length (l) to remove leading 0 bytes. 
 
 ```c
 #define optimize_len (a,l) while (l > 1 && *a == 0) { \
@@ -6090,6 +6243,10 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### TRY (exp)
 
+executes the expression and expects the return value to be a int indicating the error. 
+
+if the return value is negative it will stop and return this value otherwise continue. 
+
 ```c
 #define TRY (exp) {                        \
     int _r = (exp);        \
@@ -6099,6 +6256,10 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 
 #### TRY_SET (var,exp)
+
+executes the expression and expects the return value to be a int indicating the error. 
+
+the return value will be set to a existing variable (var). if the return value is negative it will stop and return this value otherwise continue. 
 
 ```c
 #define TRY_SET (var,exp) {                          \
@@ -6110,6 +6271,10 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 
 #### TRY_GOTO (exp)
 
+executes the expression and expects the return value to be a int indicating the error. 
+
+if the return value is negative it will stop and jump (goto) to a marked position "clean". it also expects a previously declared variable "in3_ret_t res". 
+
 ```c
 #define TRY_GOTO (exp) {                          \
     res = (exp);             \
@@ -6118,34 +6283,20 @@ File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/c
 ```
 
 
-#### pb_size_t
-
-
-```c
-typedef uint32_t pb_size_t
-```
-
-#### pb_byte_t
-
-
-```c
-typedef uint_least8_t pb_byte_t
-```
-
 #### bytes_to_long
 
 ```c
-uint64_t bytes_to_long(uint8_t *data, int len);
+uint64_t bytes_to_long(const uint8_t *data, int len);
 ```
 
 converts the bytes to a unsigned long (at least the last max len bytes) 
 
 arguments:
 ```eval_rst
-============= ========== 
-``uint8_t *``  **data**  
-``int``        **len**   
-============= ========== 
+=================== ========== 
+``const uint8_t *``  **data**  
+``int``              **len**   
+=================== ========== 
 ```
 returns: `uint64_t`
 
@@ -6153,43 +6304,43 @@ returns: `uint64_t`
 #### bytes_to_int
 
 ```c
-static uint32_t bytes_to_int(uint8_t *data, int len);
+static uint32_t bytes_to_int(const uint8_t *data, int len);
 ```
 
 converts the bytes to a unsigned int (at least the last max len bytes) 
 
 arguments:
 ```eval_rst
-============= ========== 
-``uint8_t *``  **data**  
-``int``        **len**   
-============= ========== 
+=================== ========== 
+``const uint8_t *``  **data**  
+``int``              **len**   
+=================== ========== 
 ```
 returns: `uint32_t`
 
 
-#### c_to_long
+#### char_to_long
 
 ```c
-uint64_t c_to_long(char *a, int l);
+uint64_t char_to_long(const char *a, int l);
 ```
 
 converts a character into a uint64_t 
 
 arguments:
 ```eval_rst
-========== ======= 
-``char *``  **a**  
-``int``     **l**  
-========== ======= 
+================ ======= 
+``const char *``  **a**  
+``int``           **l**  
+================ ======= 
 ```
 returns: `uint64_t`
 
 
-#### strtohex
+#### hexchar_to_int
 
 ```c
-uint8_t strtohex(char c);
+uint8_t hexchar_to_int(char c);
 ```
 
 converts a hexchar to byte (4bit) 
@@ -6203,10 +6354,10 @@ arguments:
 returns: `uint8_t`
 
 
-#### u64tostr
+#### u64_to_str
 
 ```c
-const unsigned char* u64tostr(uint64_t value, char *pBuf, int szBuf);
+const unsigned char* u64_to_str(uint64_t value, char *pBuf, int szBuf);
 ```
 
 converts a uint64_t to string (char*); buffer-size min. 
@@ -6224,40 +6375,40 @@ arguments:
 returns: `const unsigned char *`
 
 
-#### hex2byte_arr
+#### hex_to_bytes
 
 ```c
-int hex2byte_arr(char *buf, int len, uint8_t *out, int outbuf_size);
+int hex_to_bytes(const char *hexdata, int hexlen, uint8_t *out, int outlen);
 ```
 
-convert a c string to a byte array storing it into a existing buffer 
+convert a c hex string to a byte array storing it into an existing buffer. 
 
 arguments:
 ```eval_rst
-============= ================= 
-``char *``     **buf**          
-``int``        **len**          
-``uint8_t *``  **out**          
-``int``        **outbuf_size**  
-============= ================= 
+================ ============= 
+``const char *``  **hexdata**  
+``int``           **hexlen**   
+``uint8_t *``     **out**      
+``int``           **outlen**   
+================ ============= 
 ```
 returns: `int`
 
 
-#### hex2byte_new_bytes
+#### hex_to_new_bytes
 
 ```c
-bytes_t* hex2byte_new_bytes(char *buf, int len);
+bytes_t* hex_to_new_bytes(const char *buf, int len);
 ```
 
 convert a c string to a byte array creating a new buffer 
 
 arguments:
 ```eval_rst
-========== ========= 
-``char *``  **buf**  
-``int``     **len**  
-========== ========= 
+================ ========= 
+``const char *``  **buf**  
+``int``           **len**  
+================ ========= 
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -6265,18 +6416,18 @@ returns: [`bytes_t *`](#bytes-t)
 #### bytes_to_hex
 
 ```c
-int bytes_to_hex(uint8_t *buffer, int len, char *out);
+int bytes_to_hex(const uint8_t *buffer, int len, char *out);
 ```
 
 convefrts a bytes into hex 
 
 arguments:
 ```eval_rst
-============= ============ 
-``uint8_t *``  **buffer**  
-``int``        **len**     
-``char *``     **out**     
-============= ============ 
+=================== ============ 
+``const uint8_t *``  **buffer**  
+``int``              **len**     
+``char *``           **out**     
+=================== ============ 
 ```
 returns: `int`
 
@@ -6386,33 +6537,35 @@ returns: `int`
 #### uint256_set
 
 ```c
-void uint256_set(uint8_t *src, wlen_t src_len, uint8_t dst[32]);
+void uint256_set(const uint8_t *src, wlen_t src_len, bytes32_t dst);
 ```
 
 sets a variable value to 32byte word. 
 
 arguments:
 ```eval_rst
-=================== ============= 
-``uint8_t *``        **src**      
-`wlen_t <#wlen-t>`_  **src_len**  
-``uint8_t``          **dst**      
-=================== ============= 
+========================= ============= 
+``const uint8_t *``        **src**      
+`wlen_t <#wlen-t>`_        **src_len**  
+`bytes32_t <#bytes32-t>`_  **dst**      
+========================= ============= 
 ```
 
 #### str_replace
 
 ```c
-char* str_replace(char *orig, char *rep, char *with);
+char* str_replace(const char *orig, const char *rep, const char *with);
 ```
+
+replaces a string and returns a copy. 
 
 arguments:
 ```eval_rst
-========== ========== 
-``char *``  **orig**  
-``char *``  **rep**   
-``char *``  **with**  
-========== ========== 
+================ ========== 
+``const char *``  **orig**  
+``const char *``  **rep**   
+``const char *``  **with**  
+================ ========== 
 ```
 returns: `char *`
 
@@ -6420,13 +6573,15 @@ returns: `char *`
 #### str_replace_pos
 
 ```c
-char* str_replace_pos(char *orig, size_t pos, size_t len, const char *rep);
+char* str_replace_pos(const char *orig, size_t pos, size_t len, const char *rep);
 ```
+
+replaces a string at the given position. 
 
 arguments:
 ```eval_rst
 ================ ========== 
-``char *``        **orig**  
+``const char *``  **orig**  
 ``size_t``        **pos**   
 ``size_t``        **len**   
 ``const char *``  **rep**   
@@ -6438,13 +6593,15 @@ returns: `char *`
 #### str_find
 
 ```c
-char* str_find(char *haystack, const char *needle);
+char* str_find(const char *haystack, const char *needle);
 ```
+
+lightweight strstr() replacements 
 
 arguments:
 ```eval_rst
 ================ ============== 
-``char *``        **haystack**  
+``const char *``  **haystack**  
 ``const char *``  **needle**    
 ================ ============== 
 ```
@@ -8014,23 +8171,6 @@ arguments:
 =================== ========= 
 `evm_t * <#evm-t>`_  **evm**  
 =================== ========= 
-```
-
-#### uint256_set
-
-```c
-void uint256_set(uint8_t *src, wlen_t src_len, uint8_t dst[32]);
-```
-
-sets a variable value to 32byte word. 
-
-arguments:
-```eval_rst
-=================== ============= 
-``uint8_t *``        **src**      
-`wlen_t <#wlen-t>`_  **src_len**  
-``uint8_t``          **dst**      
-=================== ============= 
 ```
 
 #### evm_execute
