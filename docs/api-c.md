@@ -3010,11 +3010,13 @@ DEPRECATED in3_t* in3_new();
 
 creates a new Incubes configuration and returns the pointer. 
 
+This Method is depricated. you should use `in3_for_chain(ETH_CHAIN_ID_MULTICHAIN)` instead.
+
 you need to free this instance with `in3_free` after use!
 
 Before using the client you still need to set the tramsport and optional the storage handlers:
 
-- example of initialization: , ** This Method is depricated. you should use `in3_for_chain` instead.**
+- example of initialization: 
 
 ```c
 // register verifiers
