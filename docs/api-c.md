@@ -275,6 +275,12 @@ if true the curl transport will be build (with a dependency to libcurl)
 
 Default-Value: `-DUSE_CURL=ON`
 
+#### USE_PRECOMPUTED_EC
+
+if true the secp256k1 curve uses precompiled tables to boost performance. turning this off makes ecrecover slower, but saves about 37kb.
+
+Default-Value: `-DUSE_PRECOMPUTED_EC=ON`
+
 #### USE_SCRYPT
 
 if scrypt is installed, it will link dynamicly to the shared scrypt lib.
@@ -2680,16 +2686,17 @@ These information are read from the Registry contract and stored in this struct 
 The stuct contains following fields:
 
 ```eval_rst
-======================================= ============== ================================================================================================
-``uint32_t``                             **index**     index within the nodelist, also used in the contract as key
-`bytes_t * <#bytes-t>`_                  **address**   address of the server
-``uint64_t``                             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
-``uint32_t``                             **capacity**  the maximal capacity able to handle
-`in3_node_props_t <#in3-node-props-t>`_  **props**     used to identify the capabilities of the node. 
-                                                       
-                                                       See in3_node_props_type_t in nodelist.h
-``char *``                               **url**       the url of the node
-======================================= ============== ================================================================================================
+======================================= ================= ================================================================================================
+`bytes_t * <#bytes-t>`_                  **address**      address of the server
+``uint64_t``                             **deposit**      the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
+``uint32_t``                             **index**        index within the nodelist, also used in the contract as key
+``uint32_t``                             **capacity**     the maximal capacity able to handle
+`in3_node_props_t <#in3-node-props-t>`_  **props**        used to identify the capabilities of the node. 
+                                                          
+                                                          See in3_node_props_type_t in nodelist.h
+``char *``                               **url**          the url of the node
+``bool``                                 **whitelisted**  boolean indicating if node exists in whiteList
+======================================= ================= ================================================================================================
 ```
 
 #### in3_node_weight_t
@@ -2703,13 +2710,31 @@ The stuct contains following fields:
 
 ```eval_rst
 ============ ========================= ========================================
-``float``     **weight**               current weight
 ``uint32_t``  **response_count**       counter for responses
 ``uint32_t``  **total_response_time**  total of all response times
-``uint64_t``  **blacklistedUntil**     if >0 this node is blacklisted until k. 
+``uint64_t``  **blacklisted_until**    if >0 this node is blacklisted until k. 
                                        
                                        k is a unix timestamp
+``float``     **weight**               current weight
 ============ ========================= ========================================
+```
+
+#### in3_whitelist_t
+
+defines a whitelist structure used for the nodelist. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================= ================== =================================================================================================================
+`address_t <#address-t>`_  **contract**      address of whiteList contract. 
+                                             
+                                             If specified, whiteList is always auto-updated and manual whiteList is overridden
+`bytes_t <#bytes-t>`_      **addresses**     serialized list of node addresses that constitute the whiteList
+``uint64_t``               **last_block**    last blocknumber the whiteList was updated, which is used to detect changed in the whitelist
+``bool``                   **needs_update**  if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
+========================= ================== =================================================================================================================
 ```
 
 #### in3_chain_t
@@ -2734,6 +2759,7 @@ The stuct contains following fields:
 `bytes_t * <#bytes-t>`_                      **contract**         the address of the registry contract
 `bytes32_t <#bytes32-t>`_                    **registry_id**      the identifier of the registry
 ``uint8_t``                                  **version**          version of the chain
+`in3_whitelist_t * <#in3-whitelist-t>`_      **whitelist**        if set the whitelist of the addresses.
 =========================================== ===================== =================================================================================================================
 ```
 
@@ -3005,7 +3031,7 @@ returns: `bool` : true if set
 #### in3_new
 
 ```c
-DEPRECATED in3_t* in3_new();
+in3_t* in3_new() __attribute__((deprecated("use in3_for_chain(ETH_CHAIN_ID_MULTICHAIN)")));
 ```
 
 creates a new Incubes configuration and returns the pointer. 
@@ -3042,7 +3068,7 @@ in3_cache_init(client);
 // ready to use ...
 ```
 
-returns: ` *` : the incubed instance. 
+returns: [`in3_t *`](#in3-t) : the incubed instance. 
 
 
 
@@ -3165,7 +3191,7 @@ arguments:
 #### in3_client_register_chain
 
 ```c
-in3_ret_t in3_client_register_chain(in3_t *client, chain_id_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version);
+in3_ret_t in3_client_register_chain(in3_t *client, chain_id_t chain_id, in3_chain_type_t type, address_t contract, bytes32_t registry_id, uint8_t version, address_t wl_contract);
 ```
 
 registers a new chain or replaces a existing (but keeps the nodelist) 
@@ -3179,6 +3205,7 @@ arguments:
 `address_t <#address-t>`_                **contract**     contract of the registry.
 `bytes32_t <#bytes32-t>`_                **registry_id**  the identifier of the registry.
 ``uint8_t``                              **version**      the chain version.
+`address_t <#address-t>`_                **wl_contract**  contract of whiteList.
 ======================================= ================= =========================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -4120,17 +4147,17 @@ The stuct contains following fields:
 #### b_new
 
 ```c
-bytes_t* b_new(char *data, int len);
+bytes_t* b_new(const char *data, int len);
 ```
 
 allocates a new byte array with 0 filled 
 
 arguments:
 ```eval_rst
-========== ========== 
-``char *``  **data**  
-``int``     **len**   
-========== ========== 
+================ ========== 
+``const char *``  **data**  
+``int``           **len**   
+================ ========== 
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -4138,48 +4165,48 @@ returns: [`bytes_t *`](#bytes-t)
 #### b_print
 
 ```c
-void b_print(bytes_t *a);
+void b_print(const bytes_t *a);
 ```
 
 prints a the bytes as hex to stdout 
 
 arguments:
 ```eval_rst
-======================= ======= 
-`bytes_t * <#bytes-t>`_  **a**  
-======================= ======= 
+============================== ======= 
+`bytes_tconst , * <#bytes-t>`_  **a**  
+============================== ======= 
 ```
 
 #### ba_print
 
 ```c
-void ba_print(uint8_t *a, size_t l);
+void ba_print(const uint8_t *a, size_t l);
 ```
 
 prints a the bytes as hex to stdout 
 
 arguments:
 ```eval_rst
-============= ======= 
-``uint8_t *``  **a**  
-``size_t``     **l**  
-============= ======= 
+=================== ======= 
+``const uint8_t *``  **a**  
+``size_t``           **l**  
+=================== ======= 
 ```
 
 #### b_cmp
 
 ```c
-int b_cmp(bytes_t *a, bytes_t *b);
+int b_cmp(const bytes_t *a, const bytes_t *b);
 ```
 
 compares 2 byte arrays and returns 1 for equal and 0 for not equal 
 
 arguments:
 ```eval_rst
-======================= ======= 
-`bytes_t * <#bytes-t>`_  **a**  
-`bytes_t * <#bytes-t>`_  **b**  
-======================= ======= 
+============================== ======= 
+`bytes_tconst , * <#bytes-t>`_  **a**  
+`bytes_tconst , * <#bytes-t>`_  **b**  
+============================== ======= 
 ```
 returns: `int`
 
@@ -4187,17 +4214,17 @@ returns: `int`
 #### bytes_cmp
 
 ```c
-int bytes_cmp(bytes_t a, bytes_t b);
+int bytes_cmp(const bytes_t a, const bytes_t b);
 ```
 
 compares 2 byte arrays and returns 1 for equal and 0 for not equal 
 
 arguments:
 ```eval_rst
-===================== ======= 
-`bytes_t <#bytes-t>`_  **a**  
-`bytes_t <#bytes-t>`_  **b**  
-===================== ======= 
+=========================== ======= 
+`bytes_tconst  <#bytes-t>`_  **a**  
+`bytes_tconst  <#bytes-t>`_  **b**  
+=========================== ======= 
 ```
 returns: `int`
 
@@ -4220,16 +4247,16 @@ arguments:
 #### b_dup
 
 ```c
-bytes_t* b_dup(bytes_t *a);
+bytes_t* b_dup(const bytes_t *a);
 ```
 
 clones a byte array 
 
 arguments:
 ```eval_rst
-======================= ======= 
-`bytes_t * <#bytes-t>`_  **a**  
-======================= ======= 
+============================== ======= 
+`bytes_tconst , * <#bytes-t>`_  **a**  
+============================== ======= 
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -4395,7 +4422,7 @@ arguments:
 #### bb_write_dyn_bytes
 
 ```c
-void bb_write_dyn_bytes(bytes_builder_t *bb, bytes_t *src);
+void bb_write_dyn_bytes(bytes_builder_t *bb, const bytes_t *src);
 ```
 
 writes bytes to the builder with a prefixed length. 
@@ -4404,14 +4431,14 @@ arguments:
 ```eval_rst
 ======================================= ========= 
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**   
-`bytes_t * <#bytes-t>`_                  **src**  
+`bytes_tconst , * <#bytes-t>`_           **src**  
 ======================================= ========= 
 ```
 
 #### bb_write_fixed_bytes
 
 ```c
-void bb_write_fixed_bytes(bytes_builder_t *bb, bytes_t *src);
+void bb_write_fixed_bytes(bytes_builder_t *bb, const bytes_t *src);
 ```
 
 writes fixed bytes to the builder. 
@@ -4420,7 +4447,7 @@ arguments:
 ```eval_rst
 ======================================= ========= 
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**   
-`bytes_t * <#bytes-t>`_                  **src**  
+`bytes_tconst , * <#bytes-t>`_           **src**  
 ======================================= ========= 
 ```
 
@@ -4747,10 +4774,10 @@ The stuct contains following fields:
 `d_token_t * <#d-token-t>`_  **result**     the list of all tokens. 
                                             
                                             the first token is the main-token as returned by the parser.
-``size_t``                   **allocated**  
+``char *``                   **c**          
+``size_t``                   **allocated**  pointer to the src-data
 ``size_t``                   **len**        amount of tokens allocated result
 ``size_t``                   **depth**      number of tokens in result
-``char *``                   **c**          max depth of tokens in result
 =========================== =============== ============================================================
 ```
 
@@ -4770,8 +4797,8 @@ The stuct contains following fields:
 
 ```eval_rst
 =========================== =========== =====================
-``int``                      **left**   number of result left
 `d_token_t * <#d-token-t>`_  **token**  current token
+``int``                      **left**   number of result left
 =========================== =========== =====================
 ```
 
@@ -5127,16 +5154,16 @@ arguments:
 #### parse_binary
 
 ```c
-json_ctx_t* parse_binary(bytes_t *data);
+json_ctx_t* parse_binary(const bytes_t *data);
 ```
 
 parses the data and returns the context with the token, which needs to be freed after usage! 
 
 arguments:
 ```eval_rst
-======================= ========== 
-`bytes_t * <#bytes-t>`_  **data**  
-======================= ========== 
+============================== ========== 
+`bytes_tconst , * <#bytes-t>`_  **data**  
+============================== ========== 
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
@@ -5144,17 +5171,17 @@ returns: [`json_ctx_t *`](#json-ctx-t)
 #### parse_binary_str
 
 ```c
-json_ctx_t* parse_binary_str(char *data, int len);
+json_ctx_t* parse_binary_str(const char *data, int len);
 ```
 
 parses the data and returns the context with the token, which needs to be freed after usage! 
 
 arguments:
 ```eval_rst
-========== ========== 
-``char *``  **data**  
-``int``     **len**   
-========== ========== 
+================ ========== 
+``const char *``  **data**  
+``int``           **len**   
+================ ========== 
 ```
 returns: [`json_ctx_t *`](#json-ctx-t)
 
@@ -5194,7 +5221,7 @@ arguments:
 #### d_to_json
 
 ```c
-str_range_t d_to_json(d_token_t *item);
+str_range_t d_to_json(const d_token_t *item);
 ```
 
 returns the string for a object or array. 
@@ -5203,9 +5230,9 @@ This only works for json as string. For binary it will not work!
 
 arguments:
 ```eval_rst
-=========================== ========== 
-`d_token_t * <#d-token-t>`_  **item**  
-=========================== ========== 
+================================== ========== 
+`d_token_tconst , * <#d-token-t>`_  **item**  
+================================== ========== 
 ```
 returns: [`str_range_t`](#str-range-t)
 
@@ -6437,16 +6464,16 @@ returns: `int`
 #### sha3
 
 ```c
-bytes_t* sha3(bytes_t *data);
+bytes_t* sha3(const bytes_t *data);
 ```
 
 hashes the bytes and creates a new bytes_t 
 
 arguments:
 ```eval_rst
-======================= ========== 
-`bytes_t * <#bytes-t>`_  **data**  
-======================= ========== 
+============================== ========== 
+`bytes_tconst , * <#bytes-t>`_  **data**  
+============================== ========== 
 ```
 returns: [`bytes_t *`](#bytes-t)
 
@@ -6504,17 +6531,17 @@ arguments:
 #### _strdupn
 
 ```c
-char* _strdupn(char *src, int len);
+char* _strdupn(const char *src, int len);
 ```
 
 duplicate the string 
 
 arguments:
 ```eval_rst
-========== ========= 
-``char *``  **src**  
-``int``     **len**  
-========== ========= 
+================ ========= 
+``const char *``  **src**  
+``int``           **len**  
+================ ========= 
 ```
 returns: `char *`
 
@@ -6608,6 +6635,22 @@ arguments:
 ================ ============== 
 ```
 returns: `char *`
+
+
+#### memiszero
+
+```c
+static bool memiszero(uint8_t *ptr, size_t l);
+```
+
+arguments:
+```eval_rst
+============= ========= 
+``uint8_t *``  **ptr**  
+``size_t``     **l**    
+============= ========= 
+```
+returns: `bool`
 
 
 ## Module transport/curl 
@@ -7007,7 +7050,7 @@ The stuct contains following fields:
 ================================= ============ ==============================
 `in3_hasher_t <#in3-hasher-t>`_    **hasher**  hash-function.
 `trie_codec_t * <#trie-codec-t>`_  **codec**   encoding of the nocds.
-``uint8_t``                        **root**    The root-hash.
+`bytes32_t <#bytes32-t>`_          **root**    The root-hash.
 `trie_node_t * <#trie-node-t>`_    **nodes**   linked list of containes nodes
 ================================= ============ ==============================
 ```
@@ -9167,6 +9210,25 @@ arguments:
 `bytes_t * <#bytes-t>`_        **seed**                
 `d_token_t * <#d-token-t>`_    **required_addresses**  
 ============================= ======================== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_verify_in3_whitelist
+
+```c
+in3_ret_t eth_verify_in3_whitelist(in3_vctx_t *vc);
+```
+
+verifies the nodelist. 
+
+arguments:
+```eval_rst
+============================= ======== 
+`in3_vctx_t * <#in3-vctx-t>`_  **vc**  
+============================= ======== 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
