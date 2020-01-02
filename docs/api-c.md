@@ -173,6 +173,12 @@ build the comandline utils
 
 Default-Value: `-DCMD=ON`
 
+#### ERR_MSG
+
+if set human readable error messages will be inculded in th executable, otherwise only the error code is used. (saves about 19kB)
+
+Default-Value: `-DERR_MSG=ON`
+
 #### ETH_BASIC
 
 build basic eth verification.(all rpc-calls except eth_call)
@@ -3451,6 +3457,13 @@ Request Context. This is used for each request holding request and response-poin
 
 File: [src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/src/core/client/context.h)
 
+#### ctx_set_error (c,msg,err)
+
+```c
+#define ctx_set_error (c,msg,err) ctx_set_error_intern(c, NULL, err)
+```
+
+
 #### ctx_type_t
 
 type of the request context, 
@@ -3881,10 +3894,10 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### ctx_set_error
+#### ctx_set_error_intern
 
 ```c
-in3_ret_t ctx_set_error(in3_ctx_t *c, char *msg, in3_ret_t errnumber);
+in3_ret_t ctx_set_error_intern(in3_ctx_t *c, char *msg, in3_ret_t errnumber);
 ```
 
 sets the error message in the context. 
@@ -3953,6 +3966,13 @@ returns: [`in3_ctx_t *`](#in3-ctx-t)
 Verification Context. This context is passed to the verifier. 
 
 File: [src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/src/core/client/verifier.h)
+
+#### vc_err (vc,msg)
+
+```c
+#define vc_err (vc,msg) vc_set_error(vc, NULL)
+```
+
 
 #### in3_verify
 
@@ -4028,10 +4048,10 @@ arguments:
 ===================================== ============== 
 ```
 
-#### vc_err
+#### vc_set_error
 
 ```c
-in3_ret_t vc_err(in3_vctx_t *vc, char *msg);
+in3_ret_t vc_set_error(in3_vctx_t *vc, char *msg);
 ```
 
 arguments:
@@ -5930,8 +5950,8 @@ The stuct contains following fields:
 ======================================= =============== ==============================================================================
 `bytes_t <#bytes-t>`_                    **key**        an optional key of the entry
 `bytes_t <#bytes-t>`_                    **value**      the value
-``uint8_t``                              **must_free**  if true, the cache-entry will be freed when the request context is cleaned up.
 ``uint8_t``                              **buffer**     the buffer is used to store extra data, which will be cleaned when freed.
+``bool``                                 **must_free**  if true, the cache-entry will be freed when the request context is cleaned up.
 `cache_entrystruct , * <#cache-entry>`_  **next**       pointer to the next entry.
 ======================================= =============== ==============================================================================
 ```
@@ -5957,18 +5977,18 @@ returns: [`bytes_t *`](#bytes-t)
 #### in3_cache_add_entry
 
 ```c
-cache_entry_t* in3_cache_add_entry(cache_entry_t *cache, bytes_t key, bytes_t value);
+cache_entry_t* in3_cache_add_entry(cache_entry_t **cache, bytes_t key, bytes_t value);
 ```
 
 adds an entry to the linked list. 
 
 arguments:
 ```eval_rst
-=================================== =========== ==================================
-`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
-`bytes_t <#bytes-t>`_                **key**    an optional key
-`bytes_t <#bytes-t>`_                **value**  the value of the entry
-=================================== =========== ==================================
+==================================== =========== ==================================
+`cache_entry_t ** <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+`bytes_t <#bytes-t>`_                 **key**    an optional key
+`bytes_t <#bytes-t>`_                 **value**  the value of the entry
+==================================== =========== ==================================
 ```
 returns: [`cache_entry_t *`](#cache-entry-t)
 
@@ -5991,17 +6011,17 @@ arguments:
 #### in3_cache_add_ptr
 
 ```c
-static cache_entry_t* in3_cache_add_ptr(cache_entry_t *cache, void *ptr);
+static cache_entry_t* in3_cache_add_ptr(cache_entry_t **cache, void *ptr);
 ```
 
 adds a pointer, which should be freed when the context is freed. 
 
 arguments:
 ```eval_rst
-=================================== =========== =======================================
-`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
-``void *``                           **ptr**    pointer to memory which shold be freed.
-=================================== =========== =======================================
+==================================== =========== =======================================
+`cache_entry_t ** <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+``void *``                            **ptr**    pointer to memory which shold be freed.
+==================================== =========== =======================================
 ```
 returns: [`cache_entry_t *`](#cache-entry-t)
 
@@ -7352,14 +7372,18 @@ File: [src/verifier/eth1/evm/code.h](https://github.com/slockit/in3-c/blob/maste
 #### in3_get_code
 
 ```c
-in3_ret_t in3_get_code(in3_vctx_t *vc, uint8_t *address, cache_entry_t **target);
+in3_ret_t in3_get_code(in3_vctx_t *vc, address_t address, cache_entry_t **target);
 ```
+
+fetches the code and adds it to the context-cache as cache_entry. 
+
+So calling this function a second time will take the result from cache. 
 
 arguments:
 ```eval_rst
 ==================================== ============= 
 `in3_vctx_t * <#in3-vctx-t>`_         **vc**       
-``uint8_t *``                         **address**  
+`address_t <#address-t>`_             **address**  
 `cache_entry_t ** <#cache-entry-t>`_  **target**   
 ==================================== ============= 
 ```
