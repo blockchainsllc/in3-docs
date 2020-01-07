@@ -3735,7 +3735,7 @@ returns: [`in3_request_t *`](#in3-request-t)
 #### request_free
 
 ```c
-void request_free(in3_request_t *req, in3_ctx_t *ctx, bool response_free);
+void request_free(in3_request_t *req, const in3_ctx_t *ctx, bool response_free);
 ```
 
 frees a previuosly allocated request. 
@@ -3744,7 +3744,7 @@ arguments:
 ```eval_rst
 =================================== =================== ======================================================================================
 `in3_request_t * <#in3-request-t>`_  **req**            the request.
-`in3_ctx_t * <#in3-ctx-t>`_          **ctx**            the request context.
+`in3_ctx_tconst , * <#in3-ctx-t>`_   **ctx**            the request context.
 ``bool``                             **response_free**  if true the responses will freed also, but usually this is done when the ctx is freed.
 =================================== =================== ======================================================================================
 ```
@@ -3835,7 +3835,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### ctx_find_required
 
 ```c
-in3_ctx_t* ctx_find_required(in3_ctx_t *parent, char *method);
+in3_ctx_t* ctx_find_required(const in3_ctx_t *parent, const char *method);
 ```
 
 searches within the required request contextes for one with the given method. 
@@ -3844,10 +3844,10 @@ This method is used internaly to find a previously added context.
 
 arguments:
 ```eval_rst
-=========================== ============ ==============================
-`in3_ctx_t * <#in3-ctx-t>`_  **parent**  the current request context.
-``char *``                   **method**  the method of the rpc-request.
-=========================== ============ ==============================
+================================== ============ ==============================
+`in3_ctx_tconst , * <#in3-ctx-t>`_  **parent**  the current request context.
+``const char *``                    **method**  the method of the rpc-request.
+================================== ============ ==============================
 ```
 returns: [`in3_ctx_t *`](#in3-ctx-t)
 
@@ -4156,8 +4156,8 @@ The stuct contains following fields:
 
 ```eval_rst
 ============= ========== =================================
-``uint32_t``   **len**   the length of the array ion bytes
 ``uint8_t *``  **data**  the byte-data
+``uint32_t``   **len**   the length of the array ion bytes
 ============= ========== =================================
 ```
 
@@ -4757,8 +4757,8 @@ The stuct contains following fields:
 
 ```eval_rst
 ============= ========== =====================================================================
-``uint32_t``   **len**   the length of the content (or number of properties) depending + type.
 ``uint8_t *``  **data**  the byte or string-data
+``uint32_t``   **len**   the length of the content (or number of properties) depending + type.
 ``d_key_t``    **key**   the key of the property.
 ============= ========== =====================================================================
 ```
