@@ -12,8 +12,9 @@ Welcome to Incubed's documentation!
    milestones
    benchmarkSummary
    embedded
-   api-ts
    api-c
+   api-ts
+   api-wasm
    api-java
    api-cmd
    api-node-server
