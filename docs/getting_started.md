@@ -41,18 +41,20 @@ The Incubed client also implements the provider interface used in the Web3 libra
 ```js
 // import in3-Module
 import In3Client from 'in3'
-import * as web3 from 'web3'
+import Web3 from 'web3'
 
 // use the In3Client as Http-Provider
 const web3 = new Web3(new In3Client({
     proof         : 'standard',
     signatureCount: 1,
     requestCount  : 2,
-    chainId       : 'mainnet'
+    chainId       : 'mainnet',
+    replaceLatestBlock: 6
 }).createWeb3Provider())
 
+
 // use the web3
-const block = await web.eth.getBlockByNumber('latest')
+const block = await web3.eth.getBlock('latest')
 ...
 
 ```

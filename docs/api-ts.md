@@ -12,18 +12,20 @@ Since incubed works with on a JSON-RPC-Level it can easily be used as Provider f
 ```js
 // import in3-Module
 import In3Client from 'in3'
-import * as web3 from 'web3'
+import Web3 from 'web3'
 
 // use the In3Client as Http-Provider
 const web3 = new Web3(new In3Client({
     proof         : 'standard',
     signatureCount: 1,
     requestCount  : 2,
-    chainId       : 'mainnet'
+    chainId       : 'mainnet',
+    replaceLatestBlock: 6
 }).createWeb3Provider())
 
+
 // use the web3
-const block = await web.eth.getBlockByNumber('latest')
+const block = await web3.eth.getBlock('latest')
 ...
 
 ```
@@ -78,7 +80,8 @@ const in3 = new In3Client({
     proof         : 'standard',
     signatureCount: 1,
     requestCount  : 2,
-    chainId       : 'mainnet'
+    chainId       : 'mainnet',
+    replaceLatestBlock: 6
 })
 
 // use the ABI-String of the smart contract
@@ -88,7 +91,7 @@ abi = [{"anonymous":false,"inputs":[{"indexed":false,"name":"name","type":"strin
 const contract = in3.eth.contractAt(abi, '0xF0AD5cAd05e10572EfcEB849f6Ff0c68f9700455') // ENS contract.
 
 // read all events starting from a specified block until the latest
-const logs = await c.events.NameRegistered.getLogs({fromBlock:8022948})) 
+const logs = await contract.events.NameRegistered.getLogs({fromBlock:8022948}) 
 
 // print out the properties of the event.
 for (const ev of logs) 
