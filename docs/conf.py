@@ -19,6 +19,9 @@
 
 # -- Project information -----------------------------------------------------
 
+from recommonmark.transform import AutoStructify
+from recommonmark.parser import CommonMarkParser
+import recommonmark
 project = u'Incubed'
 copyright = u'2019, Slock.it'
 author = u'Slock.it GmbH'
@@ -44,14 +47,11 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'plantweb.directive'
-#    'sphinxcontrib.mermaid',
-#    'recommonmark',
-#    'sphinxcontrib.inkscapeconverter'
+    #    'sphinxcontrib.mermaid',
+    #    'recommonmark',
+    #    'sphinxcontrib.inkscapeconverter'
 ]
 
-import recommonmark
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
 
 source_parsers = {
     '.md': CommonMarkParser
@@ -60,17 +60,18 @@ source_parsers = {
 source_suffix = ['.rst', '.md']
 
 # app setup hook
+
+
 def setup(app):
     app.add_config_value('recommonmark_config', {
-        #'url_resolver': lambda url: github_doc_root + url,
+        # 'url_resolver': lambda url: github_doc_root + url,
         'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
-        'enable_math' : True,
-        'enable_inline_math' : True
+        'enable_math': True,
+        'enable_inline_math': True
     }, True)
     app.add_transform(AutoStructify)
-
-
+    app.add_stylesheet("css/custom.css")
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -119,7 +120,7 @@ html_theme = "sphinx_rtd_theme"
 # documentation.
 #
 #html_theme_options = {}
-html_logo= 'slockit_logo.svg'
+html_logo = 'slockit_logo.svg'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -134,6 +135,7 @@ html_logo= 'slockit_logo.svg'
 #
 # html_sidebars = {}
 
+html_static_path = ['_static']
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -142,6 +144,7 @@ htmlhelp_basename = 'Incubeddoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
+
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').

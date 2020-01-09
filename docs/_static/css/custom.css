@@ -1,0 +1,5 @@
+@import './theme.css'; 
+
+td { vertical-align: top !important;}
+
+a.external { font-weight: bold;}
