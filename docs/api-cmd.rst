@@ -109,10 +109,10 @@ Before building, make sure you have these components installed:
 .. code-block:: sh
 
    # clone the sources
-   git clone https://github.com/slockit/in3-core.git
+   git clone https://github.com/slockit/in3-c.git
 
    # create build-folder
-   cd in3-core
+   cd in3-c
    mkdir build && cd build
 
    # configure and build
