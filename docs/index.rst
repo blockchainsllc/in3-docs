@@ -8,6 +8,7 @@ Welcome to Incubed's documentation!
 
    getting_started
    download
+   incubed_from_vps
    spec
    milestones
    benchmarkSummary
