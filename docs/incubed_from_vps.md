@@ -1,4 +1,4 @@
-# Running an in3 node on VPS
+# Running an in3 node on a VPS
 
 ![img](cap-america-meme.jpg)
 
