@@ -1,3 +1,5 @@
+# Running an in3 node on VPS
+
 ![img](cap-america-meme.jpg)
 
 Disclaimers: This guide is meant to give you a general idea of the steps needed to run an in3 node on a VPS, please do 
