@@ -245,6 +245,12 @@ build the java-binding (shared-lib and jar-file)
 
 Default-Value: `-DJAVA=OFF`
 
+#### PKG_CONFIG_EXECUTABLE
+
+pkg-config executable
+
+Default-Value: `-DPKG_CONFIG_EXECUTABLE=/usr/local/bin/pkg-config`
+
 #### POA
 
 support POA verification including validatorlist updates
@@ -1320,6 +1326,43 @@ Response:
 {
   "id": 1,
   "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+}
+```
+### in3_ens
+
+resolves a ens-name. the domain names consist of a series of dot-separated labels. Each label must be a valid normalised label as described in [UTS46](https://unicode.org/reports/tr46/) with the options `transitional=false` and `useSTD3AsciiRules=true`. For Javascript implementations, a [library](https://www.npmjs.com/package/idna-uts46) is available that normalises and checks names.
+
+Parameters:
+
+1. `name`: string - the domain name UTS46 compliant string.
+2. `field`: string - the required data, which could be
+
+- `addr` - the address ( default )
+- `resolver` - the address of the resolver
+- `hash` - the namehash
+- `owner` - the owner of the domain
+
+Returns:
+
+the address-string using the upper/lowercase hex characters.
+
+Request:
+
+```c
+{
+    "method":"in3_ens",
+    "params":[
+        "cryptokitties.eth",
+        "addr"
+    ]
+}
+```
+Response:
+
+```c
+{
+  "id": 1,
+  "result": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
 }
 ```
 
@@ -2667,6 +2710,7 @@ The stuct contains following fields:
 `bytes_t * <#bytes-t>`_                      **client_signature**        the signature of the client with the client key
 `bytes_t * <#bytes-t>`_                      **signers**                 the addresses of servers requested to sign the blockhash
 ``uint8_t``                                  **signers_length**          number or addresses
+``uint32_t``                                 **time**                    meassured time in ms for the request
 =========================================== ============================ ====================================================================
 ```
 
@@ -2718,7 +2762,6 @@ The stuct contains following fields:
 ``uint64_t``  **blacklisted_until**    if >0 this node is blacklisted until k. 
                                        
                                        k is a unix timestamp
-``float``     **weight**               current weight
 ============ ========================= ========================================
 ```
 
@@ -2740,6 +2783,20 @@ The stuct contains following fields:
 ========================= ================== =================================================================================================================
 ```
 
+#### in3_verified_hash_t
+
+represents a blockhash which was previously verified 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================= ================== =======================
+``uint64_t``               **block_number**  the number of the block
+`bytes32_t <#bytes32-t>`_  **hash**          the blockhash
+========================= ================== =======================
+```
+
 #### in3_chain_t
 
 Chain definition inside incubed. 
@@ -2750,20 +2807,23 @@ for incubed a chain can be any distributed network or database with incubed supp
 The stuct contains following fields:
 
 ```eval_rst
-=========================================== ===================== =================================================================================================================
-`chain_id_t <#chain-id-t>`_                  **chain_id**         chain_id, which could be a free or based on the public ethereum networkId
-`in3_chain_type_t <#in3-chain-type-t>`_      **type**             chaintype
-``uint64_t``                                 **last_block**       last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
-``bool``                                     **needs_update**     if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
-``int``                                      **nodelist_length**  number of nodes in the nodeList
-`in3_node_t * <#in3-node-t>`_                **nodelist**         array of nodes
-`in3_node_weight_t * <#in3-node-weight-t>`_  **weights**          stats and weights recorded for each node
-`bytes_t ** <#bytes-t>`_                     **init_addresses**   array of addresses of nodes that should always part of the nodeList
-`bytes_t * <#bytes-t>`_                      **contract**         the address of the registry contract
-`bytes32_t <#bytes32-t>`_                    **registry_id**      the identifier of the registry
-``uint8_t``                                  **version**          version of the chain
-`in3_whitelist_t * <#in3-whitelist-t>`_      **whitelist**        if set the whitelist of the addresses.
-=========================================== ===================== =================================================================================================================
+=============================================== ========================== ==========================================================================================
+`chain_id_t <#chain-id-t>`_                      **chain_id**              chain_id, which could be a free or based on the public ethereum networkId
+`in3_chain_type_t <#in3-chain-type-t>`_          **type**                  chaintype
+``uint64_t``                                     **last_block**            last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
+``int``                                          **nodelist_length**       number of nodes in the nodeList
+`in3_node_t * <#in3-node-t>`_                    **nodelist**              array of nodes
+`in3_node_weight_t * <#in3-node-weight-t>`_      **weights**               stats and weights recorded for each node
+`bytes_t ** <#bytes-t>`_                         **init_addresses**        array of addresses of nodes that should always part of the nodeList
+`bytes_t * <#bytes-t>`_                          **contract**              the address of the registry contract
+`bytes32_t <#bytes32-t>`_                        **registry_id**           the identifier of the registry
+``uint8_t``                                      **version**               version of the chain
+`in3_verified_hash_t * <#in3-verified-hash-t>`_  **verified_hashes**       contains the list of already verified blockhashes
+`in3_whitelist_t * <#in3-whitelist-t>`_          **whitelist**             if set the whitelist of the addresses.
+`address_t <#address-t>`_                        **node**                  node that reported the last_block which necessitated a nodeList update
+``uint64_t``                                     **exp_last_block**        the last_block when the nodelist last changed reported by this node
+``struct in3_chain::@2 *``                       **nodelist_upd8_params**  
+=============================================== ========================== ==========================================================================================
 ```
 
 #### in3_storage_get_item
@@ -2790,6 +2850,16 @@ typedef void(* in3_storage_set_item) (void *cptr, char *key, bytes_t *value)
 ```
 
 
+#### in3_storage_clear
+
+storage handler function for clearing the cache. 
+
+
+```c
+typedef void(* in3_storage_clear) (void *cptr)
+```
+
+
 #### in3_storage_handler_t
 
 storage handler to handle cache. 
@@ -2801,7 +2871,8 @@ The stuct contains following fields:
 =============================================== ============== ============================================================
 `in3_storage_get_item <#in3-storage-get-item>`_  **get_item**  function pointer returning a stored value for the given key.
 `in3_storage_set_item <#in3-storage-set-item>`_  **set_item**  function pointer setting a stored value for the given key.
-``void *``                                       **cptr**      custom pointer which will will be passed to functions
+`in3_storage_clear <#in3-storage-clear>`_        **clear**     function pointer clearing all contents of cache.
+``void *``                                       **cptr**      custom pointer which will be passed to functions
 =============================================== ============== ============================================================
 ```
 
@@ -2876,12 +2947,14 @@ represents a RPC-request
 The stuct contains following fields:
 
 ```eval_rst
-===================================== ============== ===================
+===================================== ============== ==================================================================
 ``char *``                             **payload**   the payload to send
 ``char **``                            **urls**      array of urls
 ``int``                                **urls_len**  number of urls
-`in3_response_t * <#in3-response-t>`_  **results**   
-===================================== ============== ===================
+`in3_response_t * <#in3-response-t>`_  **results**   the responses
+``uint32_t``                           **timeout**   the timeout 0= no timeout
+``uint32_t *``                         **times**     measured times (in ms) which will be used for ajusting the weights
+===================================== ============== ==================================================================
 ```
 
 #### in3_transport_send
@@ -2904,14 +2977,15 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 The stuct contains following fields:
 
 ```eval_rst
-========================================= ================ ==========================================================
-`in3_filter_type_t <#in3-filter-type-t>`_  **type**        filter type: (event, block or pending)
-``char *``                                 **options**     associated filter options
-``uint64_t``                               **last_block**  block no. 
-                                                           
-                                                           when filter was created OR eth_getFilterChanges was called
-``void(*``                                 **release**     method to release owned resources
-========================================= ================ ==========================================================
+========================================= ==================== ==========================================================
+`in3_filter_type_t <#in3-filter-type-t>`_  **type**            filter type: (event, block or pending)
+``char *``                                 **options**         associated filter options
+``uint64_t``                               **last_block**      block no. 
+                                                               
+                                                               when filter was created OR eth_getFilterChanges was called
+``bool``                                   **is_first_usage**  if true the filter was not used previously
+``void(*``                                 **release**         method to release owned resources
+========================================= ==================== ==========================================================
 ```
 
 #### in3_filter_handler_t
@@ -2952,7 +3026,8 @@ The stuct contains following fields:
                                                                                Only nodes owning at least this amount will be chosen.
 ``uint16_t``                                         **replace_latest_block**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
 ``uint16_t``                                         **finality**              the number of signatures in percent required for the request
-``uint16_t``                                         **max_attempts**          the max number of attempts before giving up
+``uint_fast16_t``                                    **max_attempts**          the max number of attempts before giving up
+``uint_fast16_t``                                    **max_verified_hashes**   max number of verified hashes to cache
 ``uint32_t``                                         **timeout**               specifies the number of milliseconds before the request times out. 
                                                                                
                                                                                increasing may be helpful if the device uses a slow connection.
@@ -3058,6 +3133,7 @@ in3_t* client = in3_new();
 in3_storage_handler_t storage_handler;
 storage_handler.get_item = storage_get_item;
 storage_handler.set_item = storage_set_item;
+storage_handler.clear = storage_clear;
 
 // configure transport
 client->transport    = send_curl;
@@ -3103,6 +3179,7 @@ in3_t* client = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 in3_storage_handler_t storage_handler;
 storage_handler.get_item = storage_get_item;
 storage_handler.set_item = storage_set_item;
+storage_handler.clear = storage_clear;
 
 // configure transport
 client->transport    = send_curl;
@@ -3345,7 +3422,7 @@ returns: [`in3_chain_t *`](#in3-chain-t)
 #### in3_configure
 
 ```c
-in3_ret_t in3_configure(in3_t *c, char *config);
+char* in3_configure(in3_t *c, const char *config);
 ```
 
 configures the clent based on a json-config. 
@@ -3356,12 +3433,10 @@ arguments:
 ```eval_rst
 =================== ============ ==========================================
 `in3_t * <#in3-t>`_  **c**       the incubed client
-``char *``           **config**  JSON-string with the configuration to set.
+``const char *``     **config**  JSON-string with the configuration to set.
 =================== ============ ==========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
+returns: `char *`
 
 
 #### in3_set_default_transport
@@ -3430,10 +3505,10 @@ arguments:
 returns: [`in3_signer_t *`](#in3-signer-t)
 
 
-#### in3_create_storeage_handler
+#### in3_create_storage_handler
 
 ```c
-in3_storage_handler_t* in3_create_storeage_handler(in3_storage_get_item get_item, in3_storage_set_item set_item, void *cptr);
+in3_storage_handler_t* in3_create_storage_handler(in3_storage_get_item get_item, in3_storage_set_item set_item, in3_storage_clear clear, void *cptr);
 ```
 
 create a new storage handler-object to be set on the client. 
@@ -3445,6 +3520,7 @@ arguments:
 =============================================== ============== ============================================================
 `in3_storage_get_item <#in3-storage-get-item>`_  **get_item**  function pointer returning a stored value for the given key.
 `in3_storage_set_item <#in3-storage-set-item>`_  **set_item**  function pointer setting a stored value for the given key.
+`in3_storage_clear <#in3-storage-clear>`_        **clear**     function pointer clearing all contents of cache.
 ``void *``                                       **cptr**      custom pointer which will will be passed to functions
 =============================================== ============== ============================================================
 ```
@@ -3478,7 +3554,7 @@ The enum type contains the following values:
 ============= = ============================================================
 ```
 
-#### node_weight_t
+#### node_match_t
 
 the weight of a certain node as linked list. 
 
@@ -3514,11 +3590,11 @@ The stuct contains following fields:
 `json_ctx_t * <#json-ctx-t>`_                      **response_context**    the result of the json-parser for the response.
 ``char *``                                         **error**               in case of an error this will hold the message, if not it points to `NULL`
 ``int``                                            **len**                 the number of requests
-``int``                                            **attempt**             the number of attempts
+``unsigned int``                                   **attempt**             the number of attempts
 `d_token_t ** <#d-token-t>`_                       **responses**           references to the tokens representring the parsed responses
 `d_token_t ** <#d-token-t>`_                       **requests**            references to the tokens representring the requests
 `in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**    array of configs adjusted for each request.
-`node_weight_t * <#node-weight-t>`_                **nodes**               
+`node_match_t * <#node-match-t>`_                  **nodes**               
 `cache_entry_t * <#cache-entry-t>`_                **cache**               optional cache-entries. 
                                                                            
                                                                            These entries will be freed when cleaning up the context.
@@ -5827,6 +5903,13 @@ logs debug data only if the DEBUG-flag is set.
 
 File: [src/core/util/debug.h](https://github.com/slockit/in3-c/blob/master/src/core/util/debug.h)
 
+#### IN3_EXPORT_TEST
+
+```c
+#define IN3_EXPORT_TEST static
+```
+
+
 #### dbg_log (msg,...)
 
 logs a debug-message including file and linenumber 
@@ -6652,6 +6735,17 @@ arguments:
 ================ ============== 
 ```
 returns: `char *`
+
+
+#### current_ms
+
+```c
+uint64_t current_ms();
+```
+
+current timestamp in ms. 
+
+returns: `uint64_t`
 
 
 #### memiszero

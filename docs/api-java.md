@@ -184,9 +184,9 @@ After which, install in3 with `mvn install`.
 For building the shared library you need to enable java by using the `-DJAVA=true` flag:
 
 ```c
-git clone git@github.com:slockit/in3-core.git
-mkdir -p in3-core/build
-cd in3-core/build
+git clone git@github.com:slockit/in3-c.git
+mkdir -p in3-c/build
+cd in3-c/build
 cmake -DJAVA=true .. && make
 ```
 You will find the `in3.jar` in the build/lib - folder.
@@ -216,23 +216,23 @@ foreach(module
   third-party/crypto 
   third-party/tommath 
   api/eth1)
-        file(MAKE_DIRECTORY in3-core/src/${module}/outputs)
-        add_subdirectory( in3-core/src/${module} in3-core/src/${module}/outputs )
+        file(MAKE_DIRECTORY in3-c/src/${module}/outputs)
+        add_subdirectory( in3-c/src/${module} in3-c/src/${module}/outputs )
 endforeach()
 ```
-Step 2: clone [in3-core](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
+Step 2: clone [in3-c](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
 
 ```c
 #!/usr/bin/env sh
 
-#github-url for in3-core
+#github-url for in3-c
 IN3_SRC=https://github.com/slockit/in3-c.git
 
 cd app
 
 # if it exists we only call git pull
-if [ -d in3-core ]; then
-    cd in3-core
+if [ -d in3-c ]; then
+    cd in3-c
     git pull
     cd ..
 else
@@ -242,7 +242,7 @@ fi
 
 
 # copy the java-sources to the main java path
-cp -r in3-core/src/bindings/java/in3 src/main/java/
+cp -r in3-c/src/bindings/java/in3 src/main/java/
 # but not the native libs, since these will be build
 rm -rf src/main/java/in3/native
 ```
@@ -256,6 +256,65 @@ Here is example how to use it:
 
 
 ## Package in3
+
+#### class Chain
+
+Constants for Chain-specs. 
+
+##### MULTICHAIN
+
+support for multiple chains, a client can then switch between different chains (but consumes more memory) 
+
+Type: static `final long`
+
+##### MAINNET
+
+use mainnet 
+
+Type: static `final long`
+
+##### KOVAN
+
+use kovan testnet 
+
+Type: static `final long`
+
+##### TOBALABA
+
+use tobalaba testnet 
+
+Type: static `final long`
+
+##### GOERLI
+
+use goerli testnet 
+
+Type: static `final long`
+
+##### EVAN
+
+use evan testnet 
+
+Type: static `final long`
+
+##### IPFS
+
+use ipfs 
+
+Type: static `final long`
+
+##### VOLTA
+
+use volta test net 
+
+Type: static `final long`
+
+##### LOCAL
+
+use local client 
+
+Type: static `final long`
+
 
 #### class IN3
 
@@ -280,6 +339,18 @@ arguments:
 ======= ========= 
 ``int``  **val**  
 ======= ========= 
+```
+##### setConfig
+
+sets config object in the client 
+
+ > public `native void` setConfig([`String`](#class-string) val);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **val**  
+========== ========= 
 ```
 ##### getNodeLimit
 
@@ -659,12 +730,42 @@ arguments:
 ```
 ##### IN3
 
-constrcutor. 
-
-creates a new Incubed client. 
-
  > public  IN3();
 
+##### setTransport
+
+sets The transport interface. 
+
+This allows to fetch the result of the incubed in a different way. 
+
+ > public `void` setTransport([`IN3Transport`](#class-in3transport) newTransport);
+
+arguments:
+```eval_rst
+================ ================== 
+``IN3Transport``  **newTransport**  
+================ ================== 
+```
+##### getTransport
+
+returns the current transport implementation. 
+
+ > public `IN3Transport` getTransport();
+
+##### forChain
+
+create a Incubed client using the chain-config. 
+
+if chainId is Chain.MULTICHAIN, the client can later be switched between different chains, for all other chains, it will be initialized only with the chainspec for this one chain (safes memory) 
+
+ > public static [`IN3`](#class-in3) forChain([`long`](#class-long) chainId);
+
+arguments:
+```eval_rst
+======== ============= 
+``long``  **chainId**  
+======== ============= 
+```
 ##### main
 
  > public static `void` main([`String[]`](#class-string[]) args);
@@ -674,6 +775,20 @@ arguments:
 ============ ========== 
 ``String[]``  **args**  
 ============ ========== 
+```
+
+#### class IN3DefaultTransport
+
+##### handle
+
+ > public `byte[][]` handle([`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload);
+
+arguments:
+```eval_rst
+============ ============= 
+``String[]``  **urls**     
+``byte[]``    **payload**  
+============ ============= 
 ```
 
 #### class JSON
@@ -779,9 +894,29 @@ returns: `String` : the hexstring
 
 
 
+##### toString
+
+ > public `String` toString();
+
+##### hashCode
+
+ > public `int` hashCode();
+
+##### equals
+
+ > public `boolean` equals([`Object`](#class-object) obj);
+
+arguments:
+```eval_rst
+========== ========= 
+``Object``  **obj**  
+========== ========= 
+```
 ##### asStringArray
 
- > public `String[]` asStringArray([`Object`](#class-object) o);
+casts the object to a String[] 
+
+ > public static `String[]` asStringArray([`Object`](#class-object) o);
 
 arguments:
 ```eval_rst
@@ -789,10 +924,6 @@ arguments:
 ``Object``  **o**  
 ========== ======= 
 ```
-##### toString
-
- > public `String` toString();
-
 ##### asBigInteger
 
  > public static `BigInteger` asBigInteger([`Object`](#class-object) o);
@@ -863,19 +994,6 @@ arguments:
  > public static `void` loadLibrary();
 
 
-#### class Request
-
-adding a transport function. 
-
-##### argtypes
-
-Type: static ``
-
-##### restype
-
-Type: static ``
-
-
 #### class TempStorageProvider
 
 a simple Storage Provider storing the cache in the temp-folder. 
@@ -922,6 +1040,20 @@ The enum type contains the following values:
  **standard**  1 Standard Verification of the important properties.
  **full**      2 Full Verification including even uncles wich leads to higher payload.
 ============== = =====================================================================
+```
+
+#### interface IN3Transport
+
+##### handle
+
+ > public `byte[][]` handle([`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload);
+
+arguments:
+```eval_rst
+============ ============= 
+``String[]``  **urls**     
+``byte[]``    **payload**  
+============ ============= 
 ```
 
 #### interface Signer
@@ -1185,7 +1317,7 @@ arguments:
 
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
- > public [`Block[]`](#class-block) getFilterChangesFromBlocks([`long`](#class-long) id);
+ > public `String[]` getFilterChangesFromBlocks([`long`](#class-long) id);
 
 arguments:
 ```eval_rst
@@ -1350,7 +1482,7 @@ arguments:
 
 uninstall filter. 
 
- > public `long` uninstallFilter([`long`](#class-long) filter);
+ > public `boolean` uninstallFilter([`long`](#class-long) filter);
 
 arguments:
 ```eval_rst
@@ -1553,6 +1685,20 @@ returns the blockhashes of all uncles-blocks.
 
  > public `String[]` getUncles();
 
+##### hashCode
+
+ > public `int` hashCode();
+
+##### equals
+
+ > public `boolean` equals([`Object`](#class-object) obj);
+
+arguments:
+```eval_rst
+========== ========= 
+``Object``  **obj**  
+========== ========= 
+```
 
 #### class Log
 
@@ -1625,6 +1771,76 @@ Array of 0 to 4 32 Bytes DATA of indexed log arguments.
 
 Log configuration for search logs. 
 
+##### getFromBlock
+
+ > public `long` getFromBlock();
+
+##### setFromBlock
+
+ > public `void` setFromBlock([`long`](#class-long) fromBlock);
+
+arguments:
+```eval_rst
+======== =============== 
+``long``  **fromBlock**  
+======== =============== 
+```
+##### getToBlock
+
+ > public `long` getToBlock();
+
+##### setToBlock
+
+ > public `void` setToBlock([`long`](#class-long) toBlock);
+
+arguments:
+```eval_rst
+======== ============= 
+``long``  **toBlock**  
+======== ============= 
+```
+##### getAddress
+
+ > public `String` getAddress();
+
+##### setAddress
+
+ > public `void` setAddress([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### getTopics
+
+ > public `Object[]` getTopics();
+
+##### setTopics
+
+ > public `void` setTopics([`Object[]`](#class-object[]) topics);
+
+arguments:
+```eval_rst
+============ ============ 
+``Object[]``  **topics**  
+============ ============ 
+```
+##### getLimit
+
+ > public `int` getLimit();
+
+##### setLimit
+
+ > public `void` setLimit([`int`](#class-int) limit);
+
+arguments:
+```eval_rst
+======= =========== 
+``int``  **limit**  
+======= =========== 
+```
 ##### toString
 
 creates a JSON-String. 
@@ -1884,60 +2100,128 @@ true indicates transaction failure , false indicates transaction success. Set fo
 
 represents a Transaction Request which should be send or called. 
 
-##### from
+##### getFrom
 
-the from address 
+ > public `String` getFrom();
 
-Type: `String`
+##### setFrom
 
-##### to
+ > public `void` setFrom([`String`](#class-string) from);
 
-the recipients address 
+arguments:
+```eval_rst
+========== ========== 
+``String``  **from**  
+========== ========== 
+```
+##### getTo
 
-Type: `String`
+ > public `String` getTo();
 
-##### data
+##### setTo
 
-the data 
+ > public `void` setTo([`String`](#class-string) to);
 
-Type: `String`
+arguments:
+```eval_rst
+========== ======== 
+``String``  **to**  
+========== ======== 
+```
+##### getValue
 
-##### value
+ > public `BigInteger` getValue();
 
-the value of the transaction 
+##### setValue
 
-Type: `BigInteger`
+ > public `void` setValue([`BigInteger`](#class-biginteger) value);
 
-##### nonce
+arguments:
+```eval_rst
+============== =========== 
+``BigInteger``  **value**  
+============== =========== 
+```
+##### getNonce
 
-the nonce (transactionCount of the sender) 
+ > public `long` getNonce();
 
-Type: `long`
+##### setNonce
 
-##### gas
+ > public `void` setNonce([`long`](#class-long) nonce);
 
-the gas to use 
+arguments:
+```eval_rst
+======== =========== 
+``long``  **nonce**  
+======== =========== 
+```
+##### getGas
 
-Type: `long`
+ > public `long` getGas();
 
-##### gasPrice
+##### setGas
 
-the gas price to use 
+ > public `void` setGas([`long`](#class-long) gas);
 
-Type: `long`
+arguments:
+```eval_rst
+======== ========= 
+``long``  **gas**  
+======== ========= 
+```
+##### getGasPrice
 
-##### function
+ > public `long` getGasPrice();
 
-the signature for the function to call 
+##### setGasPrice
 
-Type: `String`
+ > public `void` setGasPrice([`long`](#class-long) gasPrice);
 
-##### params
+arguments:
+```eval_rst
+======== ============== 
+``long``  **gasPrice**  
+======== ============== 
+```
+##### getFunction
 
-the params to use for encoding in the data 
+ > public `String` getFunction();
 
-Type: `Object[]`
+##### setFunction
 
+ > public `void` setFunction([`String`](#class-string) function);
+
+arguments:
+```eval_rst
+========== ============== 
+``String``  **function**  
+========== ============== 
+```
+##### getParams
+
+ > public `Object[]` getParams();
+
+##### setParams
+
+ > public `void` setParams([`Object[]`](#class-object[]) params);
+
+arguments:
+```eval_rst
+============ ============ 
+``Object[]``  **params**  
+============ ============ 
+```
+##### setData
+
+ > public `void` setData([`String`](#class-string) data);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **data**  
+========== ========== 
+```
 ##### getData
 
 creates the data based on the function/params values. 
