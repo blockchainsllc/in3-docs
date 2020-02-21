@@ -271,7 +271,7 @@ Sources: https://github.com/slockit/in3-c
 ```
 
 
-## Package in3.d.ts
+## Package in3
 
 
 ### Type IN3
@@ -294,33 +294,33 @@ Uint8Array for bytes
      * - | `Utils<any> <#type-utils>`_ 
        - | `util <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L439>`_
        - | collection of util-functions. 
-     * - | ``void``
+     * - | static ``void``
        - | `freeAll <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L423>`_ ()
        - | frees all Incubed instances. 
-     * - | `Promise<T> <#type-t>`_ 
+     * - | static `Promise<T> <#type-t>`_ 
        - | `onInit <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L417>`_ (
-         |       fn:)
+         |       fn:() => `T <#type-t>`_ )
        - | registers a function to be called as soon as the wasm is ready.
          | If it is already initialized it will call it right away. 
-     * - | ``any``
+     * - | static ``any``
        - | `setConvertBigInt <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L463>`_ (
-         |       convert:)
+         |       convert:(``any``) => ``any``)
        - | set convert big int 
-     * - | ``any``
+     * - | static ``any``
        - | `setConvertBuffer <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L464>`_ (
-         |       convert:)
+         |       convert:(``any``) => ``any``)
        - | set convert buffer 
-     * - | ``void``
+     * - | static ``void``
        - | `setStorage <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L406>`_ (
          |       handler:)
        - | changes the storage handler, which is called to read and write to the cache. 
-     * - | ``void``
+     * - | static ``void``
        - | `setTransport <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L401>`_ (
-         |       fn:)
+         |       fn:(``string`` , ``string`` , ``number``) => ``Promise<string>``)
        - | changes the transport-function. 
      * - | `IN3 <#type-in3>`_ 
        - | `constructor <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L454>`_ (
-         |       config:`Partial<IN3Config> <#type-partial>`_ )
+         |       config:`Partial<IN3Config> <#type-in3config>`_ )
        - | creates a new client. 
      * - | `IN3Config <#type-in3config>`_ 
        - | `config <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L349>`_
@@ -343,7 +343,7 @@ Uint8Array for bytes
      * - | `Promise<RPCResponse> <#type-rpcresponse>`_ 
        - | `send <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L367>`_ (
          |       request:`RPCRequest <#type-rpcrequest>`_ ,
-         |       callback:)
+         |       callback:(`Error <#type-error>`_  , `RPCResponse <#type-rpcresponse>`_ ) => ``void``)
        - | sends a raw request.
          | if the request is a array the response will be a array as well.
          | If the callback is given it will be called with the response, if not a Promise will be returned.
@@ -355,7 +355,7 @@ Uint8Array for bytes
        - | sends a RPC-Requests specified by name and params. 
      * - | ``void``
        - | `setConfig <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L359>`_ (
-         |       config:`Partial<IN3Config> <#type-partial>`_ )
+         |       config:`Partial<IN3Config> <#type-in3config>`_ )
        - | sets configuration properties. You can pass a partial object specifieing any of defined properties. 
 
 ```
@@ -379,33 +379,33 @@ Source: [in3.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.t
      * - | `Utils<any> <#type-utils>`_ 
        - | `util <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L439>`_
        - | collection of util-functions. 
-     * - | ``void``
+     * - | static ``void``
        - | `freeAll <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L423>`_ ()
        - | frees all Incubed instances. 
-     * - | `Promise<T> <#type-t>`_ 
+     * - | static `Promise<T> <#type-t>`_ 
        - | `onInit <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L417>`_ (
-         |       fn:)
+         |       fn:() => `T <#type-t>`_ )
        - | registers a function to be called as soon as the wasm is ready.
          | If it is already initialized it will call it right away. 
-     * - | ``any``
+     * - | static ``any``
        - | `setConvertBigInt <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L441>`_ (
-         |       convert:)
+         |       convert:(``any``) => ``any``)
        - | set convert big int 
-     * - | ``any``
+     * - | static ``any``
        - | `setConvertBuffer <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L442>`_ (
-         |       convert:)
+         |       convert:(``any``) => ``any``)
        - | set convert buffer 
-     * - | ``void``
+     * - | static ``void``
        - | `setStorage <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L406>`_ (
          |       handler:)
        - | changes the storage handler, which is called to read and write to the cache. 
-     * - | ``void``
+     * - | static ``void``
        - | `setTransport <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L401>`_ (
-         |       fn:)
+         |       fn:(``string`` , ``string`` , ``number``) => ``Promise<string>``)
        - | changes the transport-function. 
      * - | `IN3Generic <#type-in3generic>`_ 
        - | `constructor <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L349>`_ (
-         |       config:`Partial<IN3Config> <#type-partial>`_ )
+         |       config:`Partial<IN3Config> <#type-in3config>`_ )
        - | creates a new client. 
      * - | `IN3Config <#type-in3config>`_ 
        - | `config <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L349>`_
@@ -428,7 +428,7 @@ Source: [in3.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.t
      * - | `Promise<RPCResponse> <#type-rpcresponse>`_ 
        - | `send <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L367>`_ (
          |       request:`RPCRequest <#type-rpcrequest>`_ ,
-         |       callback:)
+         |       callback:(`Error <#type-error>`_  , `RPCResponse <#type-rpcresponse>`_ ) => ``void``)
        - | sends a raw request.
          | if the request is a array the response will be a array as well.
          | If the callback is given it will be called with the response, if not a Promise will be returned.
@@ -440,7 +440,7 @@ Source: [in3.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.t
        - | sends a RPC-Requests specified by name and params. 
      * - | ``void``
        - | `setConfig <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L359>`_ (
-         |       config:`Partial<IN3Config> <#type-partial>`_ )
+         |       config:`Partial<IN3Config> <#type-in3config>`_ )
        - | sets configuration properties. You can pass a partial object specifieing any of defined properties. 
 
 ```
