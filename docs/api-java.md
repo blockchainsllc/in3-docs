@@ -10,160 +10,6 @@ like
 ```c
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
-## Examples
-
-### Using in3 directly
-
-```c
-import in3.IN3;
-
-public class HelloIN3 {  
-   // 
-   public static void main(String[] args) {
-       String blockNumber = args[0]; 
-
-       // create incubed
-       IN3 in3 = new IN3();
-
-       // configure
-       in3.setChainId(0x1);  // set it to mainnet (which is also dthe default)
-
-       // execute the request
-       String jsonResult = in3.sendRPC("eth_getBlockByNumber",new Object[]{ blockNumber ,true});
-
-       ....
-   }
-}
-```
-### Using the API
-
-in3 also offers a API for getting Information directly in a structured way.
-
-#### Reading Blocks
-
-```c
-import java.util.*;
-import in3.*;
-import in3.eth1.*;
-
-public class HelloIN3 {  
-   // 
-    public static void main(String[] args) throws Exception {
-        // create incubed
-        IN3 in3 = new IN3();
-
-        // configure
-        in3.setChainId(0x1); // set it to mainnet (which is also dthe default)
-
-        // read the latest Block including all Transactions.
-        Block latestBlock = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
-
-        // Use the getters to retrieve all containing data
-        System.out.println("current BlockNumber : " + latestBlock.getNumber());
-        System.out.println("minded at : " + new Date(latestBlock.getTimeStamp()) + " by " + latestBlock.getAuthor());
-
-        // get all Transaction of the Block
-        Transaction[] transactions = latestBlock.getTransactions();
-
-        BigInteger sum = BigInteger.valueOf(0);
-        for (int i = 0; i < transactions.length; i++)
-            sum = sum.add(transactions[i].getValue());
-
-        System.out.println("total Value transfered in all Transactions : " + sum + " wei");
-    }
-
-}
-```
-#### Calling Functions of Contracts
-
-This Example shows how to call functions and use the decoded results. Here we get the struct from the registry.
-
-```c
-import in3.*;
-import in3.eth1.*;
-
-public class HelloIN3 {  
-   // 
-   public static void main(String[] args) {
-       // create incubed
-       IN3 in3 = new IN3();
-
-       // configure
-       in3.setChainId(0x1);  // set it to mainnet (which is also dthe default)
-
-       // call a contract, which uses eth_call to get the result. 
-       Object[] result = (Object[]) in3.getEth1API().call(                                   // call a function of a contract
-            "0x2736D225f85740f42D17987100dc8d58e9e16252",                       // address of the contract
-            "servers(uint256):(string,address,uint256,uint256,uint256,address)",// function signature
-            1);                                                                 // first argument, which is the index of the node we are looking for.
-
-        System.out.println("url     : " + result[0]);
-        System.out.println("owner   : " + result[1]);
-        System.out.println("deposit : " + result[2]);
-        System.out.println("props   : " + result[3]);
-
-
-       ....
-   }
-}
-```
-#### Sending Transactions
-
-In order to send, you need a Signer. The SimpleWallet class is a basic implementation which can be used.
-
-```c
-package in3;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import in3.*;
-import in3.eth1.*;
-
-public class Example {
-    //
-    public static void main(String[] args) throws IOException{
-        // create incubed
-        IN3 in3 = new IN3();
-
-        // configure
-        in3.setChainId(0x1); // set it to mainnet (which is also dthe default)
-
-        // create a wallet managing the private keys
-        SimpleWallet wallet = new SimpleWallet();
-
-        // add accounts by adding the private keys
-        String keyFile = "myKey.json";
-        String myPassphrase = "<secrect>";
-
-        // read the keyfile and decoded the private key
-        String account = wallet.addKeyStore(
-                Files.readString(Paths.get(keyFile)),
-                myPassphrase);
-
-        // use the wallet as signer
-        in3.setSigner(wallet);
-
-        String receipient = "0x1234567890123456789012345678901234567890";
-        BigInteger value = BigInteger.valueOf(100000);
-
-        // create a Transaction
-        TransactionRequest tx = new TransactionRequest();
-        tx.from = account;
-        tx.to = "0x1234567890123456789012345678901234567890";
-        tx.function = "transfer(address,uint256)";
-        tx.params = new Object[] { receipient, value };
-
-        String txHash = in3.getEth1API().sendTransaction(tx);
-
-        System.out.println("Transaction sent with hash = " + txHash);
-
-    }
-}
-```
 ### Downloading
 
 The jar file can be downloaded from the latest release. [here](https://github.com/slockit/in3-c/releases).
@@ -207,17 +53,17 @@ ADD_DEFINITIONS(-DIN3_MATH_LITE)
 
 # loop through the required module and cretae the build-folders
 foreach(module 
-  core 
-  verifier/eth1/nano 
-  verifier/eth1/evm 
-  verifier/eth1/basic 
-  verifier/eth1/full 
-  bindings/java
-  third-party/crypto 
-  third-party/tommath 
-  api/eth1)
-        file(MAKE_DIRECTORY in3-c/src/${module}/outputs)
-        add_subdirectory( in3-c/src/${module} in3-c/src/${module}/outputs )
+  c/src/core 
+  c/src/verifier/eth1/nano 
+  c/src/verifier/eth1/evm 
+  c/src/verifier/eth1/basic 
+  c/src/verifier/eth1/full 
+  java/src
+  c/src/third-party/crypto 
+  c/src/third-party/tommath 
+  c/src/api/eth1)
+        file(MAKE_DIRECTORY in3-c/${module}/outputs)
+        add_subdirectory( in3-c/${module} in3-c/${module}/outputs )
 endforeach()
 ```
 Step 2: clone [in3-c](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
@@ -242,16 +88,335 @@ fi
 
 
 # copy the java-sources to the main java path
-cp -r in3-c/src/bindings/java/in3 src/main/java/
-# but not the native libs, since these will be build
-rm -rf src/main/java/in3/native
+cp -r in3-c/java/src/in3 src/main/java/
 ```
 Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
 
 Here is example how to use it:
 
-[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android)
+[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android) 
 
+
+
+
+## Examples
+
+### CallFunction
+
+source : [in3-c/examples/java/CallFunction.java](https://github.com/slockit/in3-c/blob/master/java/examples/CallFunction.java)
+
+Calling Functions of Contracts
+
+```c
+
+// This Example shows how to call functions and use the decoded results. Here we get the struct from the registry.
+
+import in3.*;
+import in3.eth1.*;
+
+public class CallFunction {
+  //
+  public static void main(String[] args) {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
+
+    // call a contract, which uses eth_call to get the result.
+    Object[] result = (Object[]) in3.getEth1API().call(                      // call a function of a contract
+        "0x2736D225f85740f42D17987100dc8d58e9e16252",                        // address of the contract
+        "servers(uint256):(string,address,uint256,uint256,uint256,address)", // function signature
+        1);                                                                  // first argument, which is the index of the node we are looking for.
+
+    System.out.println("url     : " + result[0]);
+    System.out.println("owner   : " + result[1]);
+    System.out.println("deposit : " + result[2]);
+    System.out.println("props   : " + result[3]);
+  }
+}
+```
+### Configure
+
+source : [in3-c/examples/java/Configure.java](https://github.com/slockit/in3-c/blob/master/java/examples/Configure.java)
+
+Changing the default configuration
+
+```c
+
+// In order to change the default configuration, just use the classes inside in3.config package.
+
+package in3;
+
+import in3.*;
+import in3.config.*;
+import in3.eth1.Block;
+
+public class Configure {
+  //
+  public static void main(String[] args) {
+    // create incubed client
+    IN3 in3 = IN3.forChain(Chain.GOERLI); // set it to goerli
+
+    // Setup a Configuration object for the client
+    ClientConfiguration clientConfig = new ClientConfiguration();
+    clientConfig.setReplaceLatestBlock(6); // define that latest will be -6
+    clientConfig.setAutoUpdateList(false); // prevents node automatic update
+    clientConfig.setMaxAttempts(1);        // sets max attempts to 1 before giving up
+    clientConfig.setProof(Proof.none);     // does not require proof (not recommended)
+
+    // Setup the NodeConfiguration object for the nodes on a certain chain
+    NodeConfiguration nodeConfiguration = new NodeConfiguration(Chain.GOERLI, clientConfig);
+    nodeConfiguration.setNeedsUpdate(false);
+    nodeConfiguration.setContract("0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f");
+    nodeConfiguration.setRegistryId("0x23d5345c5c13180a8080bd5ddbe7cde64683755dcce6e734d95b7b573845facb");
+
+    in3.setConfig(clientConfig);
+
+    Block block = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
+    System.out.println(block.getHash());
+  }
+}
+```
+### GetBalance
+
+source : [in3-c/examples/java/GetBalance.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBalance.java)
+
+getting the Balance with or without API
+
+```c
+
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
+import java.util.*;
+
+public class GetBalance {
+
+  static String AC_ADDR = "0xc94770007dda54cF92009BFF0dE90c06F603a09f";
+
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
+
+    System.out.println("Balance API" + GetBalanceAPI(in3).longValue());
+
+    System.out.println("Balance RPC " + GetBalanceRPC(in3));
+  }
+
+  static BigInteger GetBalanceAPI(IN3 in3) {
+    return in3.getEth1API().getBalance(AC_ADDR, Block.LATEST);
+  }
+
+  static String GetBalanceRPC(IN3 in3) {
+    return in3.sendRPC("eth_getBalance", new Object[] {AC_ADDR, "latest"});
+  }
+}
+```
+### GetBlockAPI
+
+source : [in3-c/examples/java/GetBlockAPI.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockAPI.java)
+
+getting a block with API
+
+```c
+
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
+import java.util.*;
+
+public class GetBlockAPI {
+  //
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
+
+    // read the latest Block including all Transactions.
+    Block latestBlock = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
+
+    // Use the getters to retrieve all containing data
+    System.out.println("current BlockNumber : " + latestBlock.getNumber());
+    System.out.println("minded at : " + new Date(latestBlock.getTimeStamp()) + " by " + latestBlock.getAuthor());
+
+    // get all Transaction of the Block
+    Transaction[] transactions = latestBlock.getTransactions();
+
+    BigInteger sum = BigInteger.valueOf(0);
+    for (int i = 0; i < transactions.length; i++)
+      sum = sum.add(transactions[i].getValue());
+
+    System.out.println("total Value transfered in all Transactions : " + sum + " wei");
+  }
+}
+```
+### GetBlockRPC
+
+source : [in3-c/examples/java/GetBlockRPC.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockRPC.java)
+
+getting a block without API
+
+```c
+
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
+import java.util.*;
+
+public class GetBlockRPC {
+  //
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also the default)
+
+    // read the latest Block without the Transactions.
+    String result = in3.sendRPC("eth_getBlockByNumber", new Object[] {"latest", false});
+
+    // print the json-data
+    System.out.println("current Block : " + result);
+  }
+}
+```
+### GetTransaction
+
+source : [in3-c/examples/java/GetTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransaction.java)
+
+getting a Transaction with or without API
+
+```c
+
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
+import java.util.*;
+
+public class GetTransaction {
+
+  static String TXN_HASH = "0xdd80249a0631cf0f1593c7a9c9f9b8545e6c88ab5252287c34bc5d12457eab0e";
+
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
+
+    Transaction txn = GetTransactionAPI(in3);
+    System.out.println("Transaction API #blockNumber: " + txn.getBlockNumber());
+
+    System.out.println("Transaction RPC :" + GetTransactionRPC(in3));
+  }
+
+  static Transaction GetTransactionAPI(IN3 in3) {
+    return in3.getEth1API().getTransactionByHash(TXN_HASH);
+  }
+
+  static String GetTransactionRPC(IN3 in3) {
+    return in3.sendRPC("eth_getTransactionByHash", new Object[] {TXN_HASH});
+  }
+}
+```
+### GetTransactionReceipt
+
+source : [in3-c/examples/java/GetTransactionReceipt.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransactionReceipt.java)
+
+getting a TransactionReceipt with or without API
+
+```c
+
+import in3.*;
+import in3.eth1.*;
+import java.math.BigInteger;
+import java.util.*;
+
+public class GetTransactionReceipt {
+  static String TRANSACTION_HASH = "0xdd80249a0631cf0f1593c7a9c9f9b8545e6c88ab5252287c34bc5d12457eab0e";
+
+  //
+  public static void main(String[] args) throws Exception {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also the default)
+
+    TransactionReceipt txn = GetTransactionReceiptAPI(in3);
+    System.out.println("TransactionRerceipt API : for txIndex " + txn.getTransactionIndex() + " Block num " + txn.getBlockNumber() + " Gas used " + txn.getGasUsed() + " status " + txn.getStatus());
+
+    System.out.println("TransactionReceipt RPC : " + GetTransactionReceiptRPC(in3));
+  }
+
+  static TransactionReceipt GetTransactionReceiptAPI(IN3 in3) {
+    return in3.getEth1API().getTransactionReceipt(TRANSACTION_HASH);
+  }
+
+  static String GetTransactionReceiptRPC(IN3 in3) {
+    return in3.sendRPC("eth_getTransactionReceipt", new Object[] {TRANSACTION_HASH});
+  }
+}
+```
+### SendTransaction
+
+source : [in3-c/examples/java/SendTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/SendTransaction.java)
+
+Sending Transactions
+
+```c
+
+// In order to send, you need a Signer. The SimpleWallet class is a basic implementation which can be used.
+
+package in3;
+
+import in3.*;
+import in3.eth1.*;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class SendTransaction {
+  //
+  public static void main(String[] args) throws IOException {
+    // create incubed
+    IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
+
+    // create a wallet managing the private keys
+    SimpleWallet wallet = new SimpleWallet();
+
+    // add accounts by adding the private keys
+    String keyFile      = "myKey.json";
+    String myPassphrase = "<secrect>";
+
+    // read the keyfile and decoded the private key
+    String account = wallet.addKeyStore(
+        Files.readString(Paths.get(keyFile)),
+        myPassphrase);
+
+    // use the wallet as signer
+    in3.setSigner(wallet);
+
+    String     receipient = "0x1234567890123456789012345678901234567890";
+    BigInteger value      = BigInteger.valueOf(100000);
+
+    // create a Transaction
+    TransactionRequest tx = new TransactionRequest();
+    tx.from               = account;
+    tx.to                 = "0x1234567890123456789012345678901234567890";
+    tx.function           = "transfer(address,uint256)";
+    tx.params             = new Object[] {receipient, value};
+
+    String txHash = in3.getEth1API().sendTransaction(tx);
+
+    System.out.println("Transaction sent with hash = " + txHash);
+  }
+}
+```
+### Building
+
+In order to run those examples, you only need a Java SDK installed.
+
+```c
+./build.sh
+```
+will build all examples in this directory.
+
+In order to run a example use
+
+```c
+java -cp $IN3/build/lib/in3.jar:. GetBlockAPI
+```
 
 
 
@@ -322,54 +487,10 @@ This is the main class creating the incubed client.
 
 The client can then be configured. 
 
-##### getCacheTimeout
+##### IN3
 
-number of seconds requests can be cached. 
+ > public  IN3();
 
- > public `native int` getCacheTimeout();
-
-##### setCacheTimeout
-
-sets number of seconds requests can be cached. 
-
- > public `native void` setCacheTimeout([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### setConfig
-
-sets config object in the client 
-
- > public `native void` setConfig([`String`](#class-string) val);
-
-arguments:
-```eval_rst
-========== ========= 
-``String``  **val**  
-========== ========= 
-```
-##### getNodeLimit
-
-the limit of nodes to store in the client. 
-
- > public `native int` getNodeLimit();
-
-##### setNodeLimit
-
-sets the limit of nodes to store in the client. 
-
- > public `native void` setNodeLimit([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
 ##### getKey
 
 the client key to sign requests 
@@ -388,6 +509,14 @@ arguments:
 ``byte[]``  **val**  
 ========== ========= 
 ```
+##### getConfig
+
+returns the current configuration. 
+
+any changes to the configuration will be applied witth the next request. 
+
+ > public [`ClientConfiguration`](#class-clientconfiguration) getConfig();
+
 ##### setKey
 
 sets the client key as hexstring to sign requests 
@@ -400,171 +529,17 @@ arguments:
 ``String``  **val**  
 ========== ========= 
 ```
-##### getMaxCodeCache
+##### setSigner
 
-number of max bytes used to cache the code in memory 
+sets the signer or wallet. 
 
- > public `native int` getMaxCodeCache();
-
-##### setMaxCodeCache
-
-sets number of max bytes used to cache the code in memory 
-
- > public `native void` setMaxCodeCache([`int`](#class-int) val);
+ > public `void` setSigner([`Signer`](#class-signer) signer);
 
 arguments:
 ```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getMaxBlockCache
-
-number of blocks cached in memory 
-
- > public `native int` getMaxBlockCache();
-
-##### setMaxBlockCache
-
-sets the number of blocks cached in memory 
-
- > public `native void` setMaxBlockCache([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getProof
-
-the type of proof used 
-
- > public [`Proofnative `](#class-proof) getProof();
-
-##### setProof
-
-sets the type of proof used 
-
- > public `native void` setProof([`Proof`](#class-proof) val);
-
-arguments:
-```eval_rst
-======================= ========= 
-`Proof <#class-proof>`_  **val**  
-======================= ========= 
-```
-##### getRequestCount
-
-the number of request send when getting a first answer 
-
- > public `native int` getRequestCount();
-
-##### setRequestCount
-
-sets the number of requests send when getting a first answer 
-
- > public `native void` setRequestCount([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getSignatureCount
-
-the number of signatures used to proof the blockhash. 
-
- > public `native int` getSignatureCount();
-
-##### setSignatureCount
-
-sets the number of signatures used to proof the blockhash. 
-
- > public `native void` setSignatureCount([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getMinDeposit
-
-min stake of the server. 
-
-Only nodes owning at least this amount will be chosen. 
-
- > public `native long` getMinDeposit();
-
-##### setMinDeposit
-
-sets min stake of the server. 
-
-Only nodes owning at least this amount will be chosen. 
-
- > public `native void` setMinDeposit([`long`](#class-long) val);
-
-arguments:
-```eval_rst
-======== ========= 
-``long``  **val**  
-======== ========= 
-```
-##### getReplaceLatestBlock
-
-if specified, the blocknumber *latest* will be replaced by blockNumber- specified value 
-
- > public `native int` getReplaceLatestBlock();
-
-##### setReplaceLatestBlock
-
-replaces the *latest* with blockNumber- specified value 
-
- > public `native void` setReplaceLatestBlock([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getFinality
-
-the number of signatures in percent required for the request 
-
- > public `native int` getFinality();
-
-##### setFinality
-
-sets the number of signatures in percent required for the request 
-
- > public `native void` setFinality([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
-```
-##### getMaxAttempts
-
-the max number of attempts before giving up 
-
- > public `native int` getMaxAttempts();
-
-##### setMaxAttempts
-
-sets the max number of attempts before giving up 
-
- > public `native void` setMaxAttempts([`int`](#class-int) val);
-
-arguments:
-```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
+========================= ============ 
+`Signer <#class-signer>`_  **signer**  
+========================= ============ 
 ```
 ##### getSigner
 
@@ -578,40 +553,44 @@ gets the ethereum-api
 
  > public [`in3.eth1.API`](#class-in3.eth1.api) getEth1API();
 
-##### setSigner
+##### setStorageProvider
 
-sets the signer or wallet. 
+provides the ability to cache content like nodelists, contract codes and validatorlists 
 
- > public `void` setSigner([`Signer`](#class-signer) signer);
-
-arguments:
-```eval_rst
-========================= ============ 
-`Signer <#class-signer>`_  **signer**  
-========================= ============ 
-```
-##### getTimeout
-
-specifies the number of milliseconds before the request times out. 
-
-increasing may be helpful if the device uses a slow connection. 
-
- > public `native int` getTimeout();
-
-##### setTimeout
-
-specifies the number of milliseconds before the request times out. 
-
-increasing may be helpful if the device uses a slow connection. 
-
- > public `native void` setTimeout([`int`](#class-int) val);
+ > public `void` setStorageProvider([`StorageProvider`](#class-storageprovider) val);
 
 arguments:
 ```eval_rst
-======= ========= 
-``int``  **val**  
-======= ========= 
+=========================================== ========= 
+`StorageProvider <#class-storageprovider>`_  **val**  
+=========================================== ========= 
 ```
+##### getStorageProvider
+
+provides the ability to cache content 
+
+ > public [`StorageProvider`](#class-storageprovider) getStorageProvider();
+
+##### setTransport
+
+sets The transport interface. 
+
+This allows to fetch the result of the incubed in a different way. 
+
+ > public `void` setTransport([`IN3Transport`](#class-in3transport) newTransport);
+
+arguments:
+```eval_rst
+================ ================== 
+``IN3Transport``  **newTransport**  
+================ ================== 
+```
+##### getTransport
+
+returns the current transport implementation. 
+
+ > public `IN3Transport` getTransport();
+
 ##### getChainId
 
 servers to filter for the given chain. 
@@ -633,42 +612,6 @@ arguments:
 ======== ========= 
 ``long``  **val**  
 ======== ========= 
-```
-##### isAutoUpdateList
-
-if true the nodelist will be automaticly updated if the lastBlock is newer 
-
- > public `native boolean` isAutoUpdateList();
-
-##### setAutoUpdateList
-
-activates the auto update.if true the nodelist will be automaticly updated if the lastBlock is newer 
-
- > public `native void` setAutoUpdateList([`boolean`](#class-boolean) val);
-
-arguments:
-```eval_rst
-=========== ========= 
-``boolean``  **val**  
-=========== ========= 
-```
-##### getStorageProvider
-
-provides the ability to cache content 
-
- > public [`StorageProvider`](#class-storageprovider) getStorageProvider();
-
-##### setStorageProvider
-
-provides the ability to cache content like nodelists, contract codes and validatorlists 
-
- > public `void` setStorageProvider([`StorageProvider`](#class-storageprovider) val);
-
-arguments:
-```eval_rst
-=========================================== ========= 
-`StorageProvider <#class-storageprovider>`_  **val**  
-=========================================== ========= 
 ```
 ##### send
 
@@ -728,30 +671,6 @@ arguments:
 ``Object[]``  **params**  
 ============ ============ 
 ```
-##### IN3
-
- > public  IN3();
-
-##### setTransport
-
-sets The transport interface. 
-
-This allows to fetch the result of the incubed in a different way. 
-
- > public `void` setTransport([`IN3Transport`](#class-in3transport) newTransport);
-
-arguments:
-```eval_rst
-================ ================== 
-``IN3Transport``  **newTransport**  
-================ ================== 
-```
-##### getTransport
-
-returns the current transport implementation. 
-
- > public `IN3Transport` getTransport();
-
 ##### forChain
 
 create a Incubed client using the chain-config. 
@@ -994,6 +913,37 @@ arguments:
  > public static `void` loadLibrary();
 
 
+#### class NodeProps
+
+##### NODE_PROP_PROOF
+
+Type: static `final long`
+
+##### NODE_PROP_MULTICHAIN
+
+Type: static `final long`
+
+##### NODE_PROP_ARCHIVE
+
+Type: static `final long`
+
+##### NODE_PROP_HTTP
+
+Type: static `final long`
+
+##### NODE_PROP_BINARY
+
+Type: static `final long`
+
+##### NODE_PROP_ONION
+
+Type: static `final long`
+
+##### NODE_PROP_STATS
+
+Type: static `final long`
+
+
 #### class TempStorageProvider
 
 a simple Storage Provider storing the cache in the temp-folder. 
@@ -1136,6 +1086,509 @@ arguments:
 ``byte[]``  **content**  the value to store
 ========== ============= ====================
 ```
+
+## Package in3.config
+
+#### class ClientConfiguration
+
+Configuration Object for Incubed Client. 
+
+It holds the state for the root of the configuration tree. Should be retrieved from the client instance as IN3::getConfig() 
+
+##### getRequestCount
+
+ > public `Integer` getRequestCount();
+
+##### setRequestCount
+
+sets the number of requests send when getting a first answer 
+
+ > public `void` setRequestCount([`int`](#class-int) requestCount);
+
+arguments:
+```eval_rst
+======= ================== 
+``int``  **requestCount**  
+======= ================== 
+```
+##### isAutoUpdateList
+
+ > public `Boolean` isAutoUpdateList();
+
+##### setAutoUpdateList
+
+activates the auto update.if true the nodelist will be automaticly updated if the lastBlock is newer 
+
+ > public `void` setAutoUpdateList([`boolean`](#class-boolean) autoUpdateList);
+
+arguments:
+```eval_rst
+=========== ==================== 
+``boolean``  **autoUpdateList**  
+=========== ==================== 
+```
+##### getProof
+
+ > public [`Proof`](#class-proof) getProof();
+
+##### setProof
+
+sets the type of proof used 
+
+ > public `void` setProof([`Proof`](#class-proof) proof);
+
+arguments:
+```eval_rst
+======================= =========== 
+`Proof <#class-proof>`_  **proof**  
+======================= =========== 
+```
+##### getMaxAttempts
+
+ > public `Integer` getMaxAttempts();
+
+##### setMaxAttempts
+
+sets the max number of attempts before giving up 
+
+ > public `void` setMaxAttempts([`int`](#class-int) maxAttempts);
+
+arguments:
+```eval_rst
+======= ================= 
+``int``  **maxAttempts**  
+======= ================= 
+```
+##### getSignatureCount
+
+ > public `Integer` getSignatureCount();
+
+##### setSignatureCount
+
+sets the number of signatures used to proof the blockhash. 
+
+ > public `void` setSignatureCount([`int`](#class-int) signatureCount);
+
+arguments:
+```eval_rst
+======= ==================== 
+``int``  **signatureCount**  
+======= ==================== 
+```
+##### getFinality
+
+ > public `Integer` getFinality();
+
+##### setFinality
+
+sets the number of signatures in percent required for the request 
+
+ > public `void` setFinality([`int`](#class-int) finality);
+
+arguments:
+```eval_rst
+======= ============== 
+``int``  **finality**  
+======= ============== 
+```
+##### isIncludeCode
+
+ > public `Boolean` isIncludeCode();
+
+##### setIncludeCode
+
+ > public `void` setIncludeCode([`boolean`](#class-boolean) includeCode);
+
+arguments:
+```eval_rst
+=========== ================= 
+``boolean``  **includeCode**  
+=========== ================= 
+```
+##### isKeepIn3
+
+ > public `Boolean` isKeepIn3();
+
+##### setKeepIn3
+
+ > public `void` setKeepIn3([`boolean`](#class-boolean) keepIn3);
+
+arguments:
+```eval_rst
+=========== ============= 
+``boolean``  **keepIn3**  
+=========== ============= 
+```
+##### isUseBinary
+
+ > public `Boolean` isUseBinary();
+
+##### setUseBinary
+
+ > public `void` setUseBinary([`boolean`](#class-boolean) useBinary);
+
+arguments:
+```eval_rst
+=========== =============== 
+``boolean``  **useBinary**  
+=========== =============== 
+```
+##### isUseHttp
+
+ > public `Boolean` isUseHttp();
+
+##### setUseHttp
+
+ > public `void` setUseHttp([`boolean`](#class-boolean) useHttp);
+
+arguments:
+```eval_rst
+=========== ============= 
+``boolean``  **useHttp**  
+=========== ============= 
+```
+##### getMaxCodeCache
+
+ > public `Long` getMaxCodeCache();
+
+##### setMaxCodeCache
+
+sets number of max bytes used to cache the code in memory 
+
+ > public `void` setMaxCodeCache([`long`](#class-long) maxCodeCache);
+
+arguments:
+```eval_rst
+======== ================== 
+``long``  **maxCodeCache**  
+======== ================== 
+```
+##### getTimeout
+
+ > public `Long` getTimeout();
+
+##### setTimeout
+
+specifies the number of milliseconds before the request times out. 
+
+increasing may be helpful if the device uses a slow connection. 
+
+ > public `void` setTimeout([`long`](#class-long) timeout);
+
+arguments:
+```eval_rst
+======== ============= 
+``long``  **timeout**  
+======== ============= 
+```
+##### getMinDeposit
+
+ > public `Long` getMinDeposit();
+
+##### setMinDeposit
+
+sets min stake of the server. 
+
+Only nodes owning at least this amount will be chosen. 
+
+ > public `void` setMinDeposit([`long`](#class-long) minDeposit);
+
+arguments:
+```eval_rst
+======== ================ 
+``long``  **minDeposit**  
+======== ================ 
+```
+##### getNodeProps
+
+ > public `Long` getNodeProps();
+
+##### setNodeProps
+
+ > public `void` setNodeProps([`long`](#class-long) nodeProps);
+
+arguments:
+```eval_rst
+======== =============== 
+``long``  **nodeProps**  
+======== =============== 
+```
+##### getNodeLimit
+
+ > public `Long` getNodeLimit();
+
+##### setNodeLimit
+
+sets the limit of nodes to store in the client. 
+
+ > public `void` setNodeLimit([`long`](#class-long) nodeLimit);
+
+arguments:
+```eval_rst
+======== =============== 
+``long``  **nodeLimit**  
+======== =============== 
+```
+##### getReplaceLatestBlock
+
+ > public `Integer` getReplaceLatestBlock();
+
+##### setReplaceLatestBlock
+
+replaces the *latest* with blockNumber- specified value 
+
+ > public `void` setReplaceLatestBlock([`int`](#class-int) replaceLatestBlock);
+
+arguments:
+```eval_rst
+======= ======================== 
+``int``  **replaceLatestBlock**  
+======= ======================== 
+```
+##### getRpc
+
+ > public `String` getRpc();
+
+##### setRpc
+
+setup an custom rpc source for requests by setting Chain to local and proof to none 
+
+ > public `void` setRpc([`String`](#class-string) rpc);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **rpc**  
+========== ========= 
+```
+##### getMaxBlockCache
+
+ > public `Long` getMaxBlockCache();
+
+##### setMaxBlockCache
+
+sets the number of blocks cached in memory 
+
+ > public `void` setMaxBlockCache([`long`](#class-long) maxBlockCache);
+
+arguments:
+```eval_rst
+======== =================== 
+``long``  **maxBlockCache**  
+======== =================== 
+```
+##### getNodesConfig
+
+ > public [`NodeConfigurationHashMap< Long, , >`](#class-nodeconfiguration) getNodesConfig();
+
+##### setNodesConfig
+
+ > public `void` setNodesConfig([`HashMap<`](#class-hashmap<) Long, [`NodeConfiguration`](#class-nodeconfiguration) >);
+
+arguments:
+```eval_rst
+================================================================= ================= 
+`NodeConfigurationHashMap< Long, , > <#class-nodeconfiguration>`_  **nodesConfig**  
+================================================================= ================= 
+```
+##### markAsSynced
+
+ > public `void` markAsSynced();
+
+##### isSynced
+
+ > public `boolean` isSynced();
+
+##### toString
+
+ > public `String` toString();
+
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
+
+#### class NodeConfiguration
+
+Part of the configuration hierarchy for IN3 Client. 
+
+Holds the configuration a node group in a particular Chain. 
+
+##### nodeList
+
+Type: [`NodeListConfigurationArrayList< , >`](#class-nodelistconfiguration)
+
+##### NodeConfiguration
+
+ > public  NodeConfiguration([`long`](#class-long) chain, [`ClientConfiguration`](#class-clientconfiguration) config);
+
+arguments:
+```eval_rst
+=================================================== ============ 
+``long``                                             **chain**   
+`ClientConfiguration <#class-clientconfiguration>`_  **config**  
+=================================================== ============ 
+```
+##### getChain
+
+ > public `long` getChain();
+
+##### isNeedsUpdate
+
+ > public `Boolean` isNeedsUpdate();
+
+##### setNeedsUpdate
+
+ > public `void` setNeedsUpdate([`boolean`](#class-boolean) needsUpdate);
+
+arguments:
+```eval_rst
+=========== ================= 
+``boolean``  **needsUpdate**  
+=========== ================= 
+```
+##### getContract
+
+ > public `String` getContract();
+
+##### setContract
+
+ > public `void` setContract([`String`](#class-string) contract);
+
+arguments:
+```eval_rst
+========== ============== 
+``String``  **contract**  
+========== ============== 
+```
+##### getRegistryId
+
+ > public `String` getRegistryId();
+
+##### setRegistryId
+
+ > public `void` setRegistryId([`String`](#class-string) registryId);
+
+arguments:
+```eval_rst
+========== ================ 
+``String``  **registryId**  
+========== ================ 
+```
+##### getWhiteListContract
+
+ > public `String` getWhiteListContract();
+
+##### setWhiteListContract
+
+ > public `void` setWhiteListContract([`String`](#class-string) whiteListContract);
+
+arguments:
+```eval_rst
+========== ======================= 
+``String``  **whiteListContract**  
+========== ======================= 
+```
+##### getWhiteList
+
+ > public `String[]` getWhiteList();
+
+##### setWhiteList
+
+ > public `void` setWhiteList([`String[]`](#class-string[]) whiteList);
+
+arguments:
+```eval_rst
+============ =============== 
+``String[]``  **whiteList**  
+============ =============== 
+```
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
+##### toString
+
+ > public `String` toString();
+
+
+#### class NodeListConfiguration
+
+Configuration Object for Incubed Client. 
+
+It represents the nodes of a nodelist. 
+
+##### NodeListConfiguration
+
+ > public  NodeListConfiguration([`NodeConfiguration`](#class-nodeconfiguration) config);
+
+arguments:
+```eval_rst
+=============================================== ============ 
+`NodeConfiguration <#class-nodeconfiguration>`_  **config**  
+=============================================== ============ 
+```
+##### getUrl
+
+ > public `String` getUrl();
+
+##### setUrl
+
+ > public `void` setUrl([`String`](#class-string) url);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **url**  
+========== ========= 
+```
+##### getProps
+
+ > public `long` getProps();
+
+##### setProps
+
+ > public `void` setProps([`long`](#class-long) props);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **props**  
+======== =========== 
+```
+##### getAddress
+
+ > public `String` getAddress();
+
+##### setAddress
+
+ > public `void` setAddress([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### toString
+
+ > public `String` toString();
+
+
+#### interface Configuration
+
+a INterface class, which is able to generate a JSON-String. 
+
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
 
 ## Package in3.eth1
 
