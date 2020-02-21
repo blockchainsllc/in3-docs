@@ -209,12 +209,6 @@ Math optimizations used in the EVM. This will also increase the filesize.
 
 Default-Value: `-DFAST_MATH=OFF`
 
-#### FILTER_NODES
-
-if true the nodelist is filtered against config node properties
-
-Default-Value: `-DFILTER_NODES=OFF`
-
 #### IN3API
 
 build the USN-API which offer better interfaces and additional functions on top of the pure verification
@@ -1170,24 +1164,43 @@ Parameters:
 
 The config params support the following properties :
 
-- **[autoUpdateList](https://github.com/slockit/in3/blob/master/src/types/types.ts#L255)** :`boolean` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer example: true
-- **[chainId](https://github.com/slockit/in3/blob/master/src/types/types.ts#L240)** :`string` - servers to filter for the given chain. The chain-id based on EIP-155. example: 0x1
-- **[finality](https://github.com/slockit/in3/blob/master/src/types/types.ts#L230)** :`number` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators) example: 50
-- **[includeCode](https://github.com/slockit/in3/blob/master/src/types/types.ts#L187)** :`boolean` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards example: true
-- **[keepIn3](https://github.com/slockit/in3/blob/master/src/types/types.ts#L187)** :`boolean` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did. example: false
-- **[key](https://github.com/slockit/in3/blob/master/src/types/types.ts#L169)** :`any` *(optional)* - the client key to sign requests example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
-- **[maxAttempts](https://github.com/slockit/in3/blob/master/src/types/types.ts#L182)** :`number` *(optional)* - max number of attempts in case a response is rejected example: 10
-- **[maxBlockCache](https://github.com/slockit/in3/blob/master/src/types/types.ts#L197)** :`number` *(optional)* - number of number of blocks cached in memory example: 100
-- **[maxCodeCache](https://github.com/slockit/in3/blob/master/src/types/types.ts#L192)** :`number` *(optional)* - number of max bytes used to cache the code in memory example: 100000
-- **[minDeposit](https://github.com/slockit/in3/blob/master/src/types/types.ts#L215)** :`number` - min stake of the server. Only nodes owning at least this amount will be chosen.
-- **[nodeLimit](https://github.com/slockit/in3/blob/master/src/types/types.ts#L155)** :`number` *(optional)* - the limit of nodes to store in the client. example: 150
-- **[proof](https://github.com/slockit/in3/blob/master/src/types/types.ts#L206)** :,'none,`|`'standard'`|`'full'` *(optional)* - if true the nodes should send a proof of the response example: true
-- **[replaceLatestBlock](https://github.com/slockit/in3/blob/master/src/types/types.ts#L220)** :`number` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value example: 6
-- **[requestCount](https://github.com/slockit/in3/blob/master/src/types/types.ts#L225)** :`number` - the number of request send when getting a first answer example: 3
-- **[rpc](https://github.com/slockit/in3/blob/master/src/types/types.ts#L267)** :`string` *(optional)* - url of one or more rpc-endpoints to use. (list can be comma seperated)
-- **[servers](https://github.com/slockit/in3/blob/master/src/types/types.ts#L271)** *(optional)* - the nodelist per chain
-- **[signatureCount](https://github.com/slockit/in3/blob/master/src/types/types.ts#L211)** :`number` *(optional)* - number of signatures requested example: 2
-- **[verifiedHashes](https://github.com/slockit/in3/blob/master/src/types/types.ts#L201)** :`string`[] *(optional)* - if the client sends a array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
+- **autoUpdateList** :`bool` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. example: true
+- **chainId** :`uint32_t` or `string (mainnet/kovan/goerli)` - servers to filter for the given chain. The chain-id based on EIP-155. example: 0x1
+- **signatureCount** :`uint8_t` *(optional)* - number of signatures requested. example: 2
+- **finality** :`uint16_t` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators). example: 50
+- **includeCode** :`bool` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards. example: true
+- **maxAttempts** :`uint16_t` *(optional)* - max number of attempts in case a response is rejected. example: 10
+- **keepIn3** :`bool` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did. example: false
+- **key** :`bytes32` *(optional)* - the client key to sign requests. example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
+- **useBinary** :`bool` *(optional)* - if true the client will use binary format. example: false
+- **useHttp** :`bool` *(optional)* - if true the client will try to use http instead of https. example: false
+- **maxBlockCache** :`uint32_t` *(optional)* - number of number of blocks cached in memory. example: 100
+- **maxCodeCache** :`uint32_t` *(optional)* - number of max bytes used to cache the code in memory. example: 100000
+- **timeout** :`uint32_t` *(optional)* - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. example: 100000
+- **minDeposit** :`uint64_t` - min stake of the server. Only nodes owning at least this amount will be chosen.
+- **nodeProps** :`uint64_t` bitmask *(optional)* - used to identify the capabilities of the node.
+- **nodeLimit** :`uint16_t` *(optional)* - the limit of nodes to store in the client. example: 150
+- **proof** :`string (none/standard/full)` *(optional)* - if true the nodes should send a proof of the response. example: true
+- **replaceLatestBlock** :`uint8_t` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value. example: 6
+- **requestCount** :`uint8_t` - the number of request send when getting a first answer. example: 3
+- **rpc** :`string` *(optional)* - url of one or more rpc-endpoints to use. (list can be comma seperated)
+- **servers**/**nodes** : `collection of JSON objects with chain Id (hex string) as key` *(optional)* - the value of each JSON object defines the nodelist per chain and may contain the following fields:
+
+- **contract** :`address` - address of the registry contract.
+- **whiteListContract** :`address` *(optional, cannot be combined with whiteList)* - address of the whiteList contract.
+- **whiteList** :`array of addresses` *(optional, cannot be combined with whiteListContract)* - manual whitelist.
+- **registryId** :`bytes32` - identifier of the registry.
+- **needsUpdate** :`bool` *(optional)* - if set, the nodeList will be updated before next request.
+- **avgBlockTime** :`uint16_t` *(optional)* - average block time (seconds) for this chain.
+- **verifiedHashes** :`array of JSON objects` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request. MUST contain the following fields:
+
+- **block** :`uint64_t` - block number.
+- **hash** : `bytes32` - verified hash corresponding to block number.
+- **nodeList** :`array of JSON objects` *(optional)* - manual nodeList, each JSON object may contain the following fields:
+
+- **url** :`string` - URL of the node.
+- **address** :`address` - address of the node.
+- **props** :`uint64_t` bitmask *(optional)* - used to identify the capabilities of the node (defaults to 65535).
 
 Returns:
 
@@ -1199,29 +1212,27 @@ Request:
 
 ```c
 {
-  "method":"in3_config",
-  "params":[{
-      "chainId":"0x5",
-      "maxAttempts":4,
-      "nodeLimit":10
-      "servers":{
-          "0x1": [
-              "nodeList": [
-                  {
-                    "address":"0x1234567890123456789012345678901234567890",
-                    "url":"https://mybootnode-A.com",
-                    "props":"0xFFFF",
-                  },
-                  {
-                    "address":"0x1234567890123456789012345678901234567890",
-                    "url":"https://mybootnode-B.com",
-                    "props":"0xFFFF",
-                  }
-              ]
-          ]
-      }
-
-   }]
+    "method": "in3_config",
+    "params": [{
+        "chainId": "0x5",
+        "maxAttempts": 4,
+        "nodeLimit": 10,
+        "servers": {
+            "0x1": {
+                "nodeList": [{
+                        "address": "0x1234567890123456789012345678901234567890",
+                        "url": "https://mybootnode-A.com",
+                        "props": "0xFFFF"
+                    },
+                    {
+                        "address": "0x1234567890123456789012345678901234567890",
+                        "url": "https://mybootnode-B.com",
+                        "props": "0xFFFF"
+                    }
+                ]
+            }
+        }
+    }]
 }
 ```
 Response:
@@ -1229,7 +1240,7 @@ Response:
 ```c
 {
   "id": 1,
-  "result": true,
+  "result": true
 }
 ```
 ### in3_abiEncode
@@ -1598,7 +1609,7 @@ Ethereum API.
 
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
-File: [src/api/eth1/eth_api.h](https://github.com/slockit/in3-c/blob/master/src/api/eth1/eth_api.h)
+File: [c/src/api/eth1/eth_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/eth1/eth_api.h)
 
 #### BLKNUM (blk)
 
@@ -2489,10 +2500,10 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### log_free
+#### eth_log_free
 
 ```c
-void log_free(eth_log_t *log);
+void eth_log_free(eth_log_t *log);
 ```
 
 Frees a eth_log_t object. 
@@ -2560,7 +2571,7 @@ USN API.
 
 This header-file defines easy to use function, which are verifying USN-Messages. 
 
-File: [src/api/usn/usn_api.h](https://github.com/slockit/in3-c/blob/master/src/api/usn/usn_api.h)
+File: [c/src/api/usn/usn_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/usn/usn_api.h)
 
 #### usn_booking_handler
 
@@ -2747,7 +2758,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-## Module core 
+## Module core/client 
 
 
 
@@ -2756,7 +2767,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 this file defines the incubed configuration struct and it registration. 
 
-File: [src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/src/core/client/client.h)
+File: [c/src/core/client/client.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/client.h)
 
 #### IN3_PROTO_VER
 
@@ -2830,12 +2841,12 @@ chain_id for ipfs
 ```
 
 
-#### ETH_CHAIN_ID_VOLTA
+#### ETH_CHAIN_ID_BTC
 
-chain_id for volta 
+chain_id for btc 
 
 ```c
-#define ETH_CHAIN_ID_VOLTA 0x12046
+#define ETH_CHAIN_ID_BTC 0x99
 ```
 
 
@@ -2845,6 +2856,15 @@ chain_id for local chain
 
 ```c
 #define ETH_CHAIN_ID_LOCAL 0xFFFF
+```
+
+
+#### DEF_REPL_LATEST_BLK
+
+default replace_latest_block 
+
+```c
+#define DEF_REPL_LATEST_BLK 6
 ```
 
 
@@ -2923,7 +2943,7 @@ The stuct contains following fields:
                                                                          
                                                                          The Server will not send any proof for them again .
 ``uint16_t``                                 **verified_hashes_length**  number of verified blockhashes
-``uint16_t``                                 **latest_block**            the last blocknumber the nodelistz changed
+``uint8_t``                                  **latest_block**            the last blocknumber the nodelistz changed
 ``uint16_t``                                 **finality**                number of signatures( in percent) needed in order to reach finality.
 `in3_verification_t <#in3-verification-t>`_  **verification**            Verification-type.
 `bytes_t * <#bytes-t>`_                      **client_signature**        the signature of the client with the client key
@@ -2962,6 +2982,7 @@ The stuct contains following fields:
                                                           See in3_node_props_type_t in nodelist.h
 ``char *``                               **url**          the url of the node
 ``bool``                                 **whitelisted**  boolean indicating if node exists in whiteList
+``bool``                                 **boot_node**    internal - used to avoid filtering manually added nodes before first nodeList update
 ======================================= ================= ================================================================================================
 ```
 
@@ -3026,7 +3047,7 @@ for incubed a chain can be any distributed network or database with incubed supp
 The stuct contains following fields:
 
 ```eval_rst
-=============================================== ========================== ==========================================================================================
+=============================================== ========================== ===========================================================================================
 `chain_id_t <#chain-id-t>`_                      **chain_id**              chain_id, which could be a free or based on the public ethereum networkId
 `in3_chain_type_t <#in3-chain-type-t>`_          **type**                  chaintype
 ``uint64_t``                                     **last_block**            last blocknumber the nodeList was updated, which is used to detect changed in the nodelist
@@ -3039,10 +3060,14 @@ The stuct contains following fields:
 ``uint8_t``                                      **version**               version of the chain
 `in3_verified_hash_t * <#in3-verified-hash-t>`_  **verified_hashes**       contains the list of already verified blockhashes
 `in3_whitelist_t * <#in3-whitelist-t>`_          **whitelist**             if set the whitelist of the addresses.
+``uint16_t``                                     **avg_block_time**        average block time (seconds) for this chain (calculated internally)
 `address_t <#address-t>`_                        **node**                  node that reported the last_block which necessitated a nodeList update
 ``uint64_t``                                     **exp_last_block**        the last_block when the nodelist last changed reported by this node
+``uint64_t``                                     **timestamp**             approx. 
+                                                                           
+                                                                           time when nodelist must be updated (i.e. when reported last_block will be considered final)
 ``struct in3_chain::@2 *``                       **nodelist_upd8_params**  
-=============================================== ========================== ==========================================================================================
+=============================================== ========================== ===========================================================================================
 ```
 
 #### in3_storage_get_item
@@ -3243,7 +3268,7 @@ The stuct contains following fields:
 ``uint64_t``                                         **min_deposit**           min stake of the server. 
                                                                                
                                                                                Only nodes owning at least this amount will be chosen.
-``uint16_t``                                         **replace_latest_block**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
+``uint8_t``                                          **replace_latest_block**  if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
 ``uint16_t``                                         **finality**              the number of signatures in percent required for the request
 ``uint_fast16_t``                                    **max_attempts**          the max number of attempts before giving up
 ``uint_fast16_t``                                    **max_verified_hashes**   max number of verified hashes to cache
@@ -3646,7 +3671,7 @@ char* in3_configure(in3_t *c, const char *config);
 
 configures the clent based on a json-config. 
 
-For details about the structure of ther config see [https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config](https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config) 
+For details about the structure of ther config see [https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config](https://in3.readthedocs.io/en/develop/api-ts.html#type-in3config) Returns NULL on success, and error string on failure (to be freed by caller) - in which case the client state is undefined 
 
 arguments:
 ```eval_rst
@@ -3750,7 +3775,7 @@ returns: [`in3_storage_handler_t *`](#in3-storage-handler-t)
 
 Request Context. This is used for each request holding request and response-pointers but also controls the execution process. 
 
-File: [src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/src/core/client/context.h)
+File: [c/src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/context.h)
 
 #### ctx_set_error (c,msg,err)
 
@@ -4256,11 +4281,32 @@ arguments:
 returns: [`in3_ctx_t *`](#in3-ctx-t)
 
 
+#### ctx_handle_failable
+
+```c
+in3_ret_t ctx_handle_failable(in3_ctx_t *ctx);
+```
+
+handles a failable context 
+
+This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
+
+arguments:
+```eval_rst
+=========================== ========= ============================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current request context.
+=========================== ========= ============================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 ### verifier.h
 
 Verification Context. This context is passed to the verifier. 
 
-File: [src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/src/core/client/verifier.h)
+File: [c/src/core/client/verifier.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/verifier.h)
 
 #### vc_err (vc,msg)
 
@@ -4361,11 +4407,16 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+## Module core/util 
+
+
+
+
 ### bytes.h
 
 util helper on byte arrays. 
 
-File: [src/core/util/bytes.h](https://github.com/slockit/in3-c/blob/master/src/core/util/bytes.h)
+File: [c/src/core/util/bytes.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/bytes.h)
 
 #### bb_new ()
 
@@ -4993,7 +5044,7 @@ The parser can read from :
 
 When reading from json all '0x'... values will be stored as bytes_t. If the value is lower than 0xFFFFFFF, it is converted as integer. 
 
-File: [src/core/util/data.h](https://github.com/slockit/in3-c/blob/master/src/core/util/data.h)
+File: [c/src/core/util/data.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/data.h)
 
 #### DATA_DEPTH_MAX
 
@@ -6120,7 +6171,7 @@ returns: `bool`
 
 logs debug data only if the DEBUG-flag is set. 
 
-File: [src/core/util/debug.h](https://github.com/slockit/in3-c/blob/master/src/core/util/debug.h)
+File: [c/src/core/util/debug.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/debug.h)
 
 #### IN3_EXPORT_TEST
 
@@ -6160,7 +6211,7 @@ arguments:
 
 defines the return-values of a function call. 
 
-File: [src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/src/core/util/error.h)
+File: [c/src/core/util/error.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/error.h)
 
 #### DEPRECATED
 
@@ -6237,7 +6288,7 @@ returns: `char *`
 
 util helper on byte arrays. 
 
-File: [src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/src/core/util/scache.h)
+File: [c/src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/scache.h)
 
 #### cache_entry_t
 
@@ -6332,7 +6383,7 @@ returns: [`cache_entry_t *`](#cache-entry-t)
 
 simple string buffer used to dynamicly add content. 
 
-File: [src/core/util/stringbuilder.h](https://github.com/slockit/in3-c/blob/master/src/core/util/stringbuilder.h)
+File: [c/src/core/util/stringbuilder.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/stringbuilder.h)
 
 #### sb_add_hexuint (sb,i)
 
@@ -6535,7 +6586,14 @@ returns: [`sb_t *`](#sb-t)
 
 utility functions. 
 
-File: [src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/src/core/util/utils.h)
+File: [c/src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/c/src/core/util/utils.h)
+
+#### _strtoull (str,endptr,base)
+
+```c
+#define _strtoull (str,endptr,base) strtoull(str, endptr, base)
+```
+
 
 #### SWAP (a,b)
 
@@ -6574,6 +6632,24 @@ Check if n1 & n2 are at max err apart Expects n1 & n2 to be integral types.
 
 ```c
 #define IS_APPROX (n1,n2,err) ((n1 > n2) ? ((n1 - n2) <= err) : ((n2 - n1) <= err))
+```
+
+
+#### STR_IMPL_ (x)
+
+simple macro to stringify other macro defs eg. 
+
+usage - to concatenate a const with a string at compile time -> define SOME_CONST_UINT 10U printf("Using default value of " STR(SOME_CONST_UINT)); 
+
+```c
+#define STR_IMPL_ (x) #x
+```
+
+
+#### STR (x)
+
+```c
+#define STR (x) STR_IMPL_(x)
 ```
 
 
@@ -6628,6 +6704,46 @@ if the return value is negative it will stop and jump (goto) to a marked positio
     res = (exp);             \
     if (res < 0) goto clean; \
   }
+```
+
+
+#### time_func
+
+Pluggable functions: Mechanism to replace library functions with custom alternatives. 
+
+This is particularly useful for embedded systems which have their own time or rand functions.
+
+eg. // define function with specified signature uint64_t my_time(void* t) { // ... }
+
+// then call in3_set_func_*() int main() { in3_set_func_time(my_time); // Henceforth, all library calls will use my_time() instead of the platform default time function } time function defaults to k_uptime_get() for zeohyr and time(NULL) for other platforms expected to return a u64 value representative of time (from epoch/start) 
+
+
+```c
+typedef uint64_t(* time_func) (void *t)
+```
+
+returns: `uint64_t(*`
+
+
+#### rand_func
+
+rand function defaults to k_uptime_get() for zeohyr and rand() for other platforms expected to return a random number 
+
+
+```c
+typedef int(* rand_func) (void *s)
+```
+
+returns: `int(*`
+
+
+#### srand_func
+
+srand function defaults to NOOP for zephyr and srand() for other platforms expected to set the seed for a new sequence of random numbers to be returned by in3_rand() 
+
+
+```c
+typedef void(* srand_func) (unsigned int s)
 ```
 
 
@@ -6705,7 +6821,7 @@ returns: `uint8_t`
 #### u64_to_str
 
 ```c
-const unsigned char* u64_to_str(uint64_t value, char *pBuf, int szBuf);
+const char* u64_to_str(uint64_t value, char *pBuf, int szBuf);
 ```
 
 converts a uint64_t to string (char*); buffer-size min. 
@@ -6720,7 +6836,7 @@ arguments:
 ``int``       **szBuf**  
 ============ =========== 
 ```
-returns: `const unsigned char *`
+returns: `const char *`
 
 
 #### hex_to_bytes
@@ -6902,7 +7018,7 @@ arguments:
 #### str_replace
 
 ```c
-char* str_replace(const char *orig, const char *rep, const char *with);
+char* str_replace(char *orig, const char *rep, const char *with);
 ```
 
 replaces a string and returns a copy. 
@@ -6910,7 +7026,7 @@ replaces a string and returns a copy.
 arguments:
 ```eval_rst
 ================ ========== 
-``const char *``  **orig**  
+``char *``        **orig**  
 ``const char *``  **rep**   
 ``const char *``  **with**  
 ================ ========== 
@@ -6921,7 +7037,7 @@ returns: `char *`
 #### str_replace_pos
 
 ```c
-char* str_replace_pos(const char *orig, size_t pos, size_t len, const char *rep);
+char* str_replace_pos(char *orig, size_t pos, size_t len, const char *rep);
 ```
 
 replaces a string at the given position. 
@@ -6929,7 +7045,7 @@ replaces a string at the given position.
 arguments:
 ```eval_rst
 ================ ========== 
-``const char *``  **orig**  
+``char *``        **orig**  
 ``size_t``        **pos**   
 ``size_t``        **len**   
 ``const char *``  **rep**   
@@ -6941,7 +7057,7 @@ returns: `char *`
 #### str_find
 
 ```c
-char* str_find(const char *haystack, const char *needle);
+char* str_find(char *haystack, const char *needle);
 ```
 
 lightweight strstr() replacements 
@@ -6949,7 +7065,7 @@ lightweight strstr() replacements
 arguments:
 ```eval_rst
 ================ ============== 
-``const char *``  **haystack**  
+``char *``        **haystack**  
 ``const char *``  **needle**    
 ================ ============== 
 ```
@@ -6983,6 +7099,88 @@ arguments:
 returns: `bool`
 
 
+#### in3_set_func_time
+
+```c
+void in3_set_func_time(time_func fn);
+```
+
+arguments:
+```eval_rst
+========================= ======== 
+`time_func <#time-func>`_  **fn**  
+========================= ======== 
+```
+
+#### in3_time
+
+```c
+uint64_t in3_time(void *t);
+```
+
+arguments:
+```eval_rst
+========== ======= 
+``void *``  **t**  
+========== ======= 
+```
+returns: `uint64_t`
+
+
+#### in3_set_func_rand
+
+```c
+void in3_set_func_rand(rand_func fn);
+```
+
+arguments:
+```eval_rst
+========================= ======== 
+`rand_func <#rand-func>`_  **fn**  
+========================= ======== 
+```
+
+#### in3_rand
+
+```c
+int in3_rand(void *s);
+```
+
+arguments:
+```eval_rst
+========== ======= 
+``void *``  **s**  
+========== ======= 
+```
+returns: `int`
+
+
+#### in3_set_func_srand
+
+```c
+void in3_set_func_srand(srand_func fn);
+```
+
+arguments:
+```eval_rst
+=========================== ======== 
+`srand_func <#srand-func>`_  **fn**  
+=========================== ======== 
+```
+
+#### in3_srand
+
+```c
+void in3_srand(unsigned int s);
+```
+
+arguments:
+```eval_rst
+================ ======= 
+``unsigned int``  **s**  
+================ ======= 
+```
+
 ## Module transport/curl 
 
 
@@ -6992,7 +7190,7 @@ returns: `bool`
 
 transport-handler using libcurl. 
 
-File: [src/transport/curl/in3_curl.h](https://github.com/slockit/in3-c/blob/master/src/transport/curl/in3_curl.h)
+File: [c/src/transport/curl/in3_curl.h](https://github.com/slockit/in3-c/blob/master/c/src/transport/curl/in3_curl.h)
 
 #### send_curl
 
@@ -7038,7 +7236,7 @@ registers curl as a default transport.
 
 transport-handler using simple http. 
 
-File: [src/transport/http/in3_http.h](https://github.com/slockit/in3-c/blob/master/src/transport/http/in3_http.h)
+File: [c/src/transport/http/in3_http.h](https://github.com/slockit/in3-c/blob/master/c/src/transport/http/in3_http.h)
 
 #### send_http
 
@@ -7068,6 +7266,45 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+## Module verifier/btc 
+
+
+
+
+### btc.h
+
+Bitcoin verification. 
+
+File: [c/src/verifier/btc/btc.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/btc/btc.h)
+
+#### in3_verify_btc
+
+```c
+in3_ret_t in3_verify_btc(in3_vctx_t *v);
+```
+
+entry-function to execute the verification context. 
+
+arguments:
+```eval_rst
+============================= ======= 
+`in3_vctx_t * <#in3-vctx-t>`_  **v**  
+============================= ======= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_register_btc
+
+```c
+void in3_register_btc();
+```
+
+this function should only be called once and will register the bitcoin verifier. 
+
+
 ## Module verifier/eth1/basic 
 
 
@@ -7077,7 +7314,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 Ethereum Nanon verification. 
 
-File: [src/verifier/eth1/basic/eth_basic.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/eth_basic.h)
+File: [c/src/verifier/eth1/basic/eth_basic.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/eth_basic.h)
 
 #### in3_verify_eth_basic
 
@@ -7253,7 +7490,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 Ethereum Nano verification. 
 
-File: [src/verifier/eth1/basic/signer.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/signer.h)
+File: [c/src/verifier/eth1/basic/signer.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/signer.h)
 
 #### eth_set_pk_signer
 
@@ -7283,7 +7520,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 Patricia Merkle Tree Imnpl 
 
-File: [src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/basic/trie.h)
+File: [c/src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/trie.h)
 
 #### in3_hasher_t
 
@@ -7439,7 +7676,7 @@ arguments:
 
 Ethereum Nanon verification. 
 
-File: [src/verifier/eth1/evm/big.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/big.h)
+File: [c/src/verifier/eth1/evm/big.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/evm/big.h)
 
 #### big_is_zero
 
@@ -7680,7 +7917,7 @@ returns: `int`
 
 code cache. 
 
-File: [src/verifier/eth1/evm/code.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/code.h)
+File: [c/src/verifier/eth1/evm/code.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/evm/code.h)
 
 #### in3_get_code
 
@@ -7709,7 +7946,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 main evm-file. 
 
-File: [src/verifier/eth1/evm/evm.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/evm.h)
+File: [c/src/verifier/eth1/evm/evm.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/evm/evm.h)
 
 #### gas_options
 
@@ -8101,7 +8338,7 @@ write success but consume all gas
 #### OP_ACCOUNT_GAS (...)
 
 ```c
-#define OP_ACCOUNT_GAS (...) 0
+#define OP_ACCOUNT_GAS (...) exit_zero()
 ```
 
 
@@ -8253,6 +8490,21 @@ The stuct contains following fields:
 ````                                   **gas_options**       
 ===================================== ====================== ======================================================
 ```
+
+#### exit_zero
+
+```c
+int exit_zero(void);
+```
+
+arguments:
+```eval_rst
+========  
+``void``  
+========  
+```
+returns: `int`
+
 
 #### evm_stack_push
 
@@ -8571,7 +8823,7 @@ returns: `int`
 
 evm gas defines. 
 
-File: [src/verifier/eth1/evm/gas.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/evm/gas.h)
+File: [c/src/verifier/eth1/evm/gas.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/evm/gas.h)
 
 #### op_exec (m,gas)
 
@@ -9147,7 +9399,7 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 
 Ethereum Nanon verification. 
 
-File: [src/verifier/eth1/full/eth_full.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/full/eth_full.h)
+File: [c/src/verifier/eth1/full/eth_full.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/full/eth_full.h)
 
 #### in3_verify_eth_full
 
@@ -9184,7 +9436,7 @@ this function should only be called once and will register the eth-full verifier
 
 Ethereum chain specification 
 
-File: [src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/chainspec.h)
+File: [c/src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/chainspec.h)
 
 #### BLOCK_LATEST
 
@@ -9418,7 +9670,7 @@ arguments:
 
 Ethereum Nanon verification. 
 
-File: [src/verifier/eth1/nano/eth_nano.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/eth_nano.h)
+File: [c/src/verifier/eth1/nano/eth_nano.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/eth_nano.h)
 
 #### in3_verify_eth_nano
 
@@ -9594,7 +9846,7 @@ returns: [`bytes_t *`](#bytes-t)
 
 Merkle Proof Verification. 
 
-File: [src/verifier/eth1/nano/merkle.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/merkle.h)
+File: [c/src/verifier/eth1/nano/merkle.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/merkle.h)
 
 #### MERKLE_DEPTH_MAX
 
@@ -9686,7 +9938,7 @@ RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ether
 
 This decoding works without allocating new memory. 
 
-File: [src/verifier/eth1/nano/rlp.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/rlp.h)
+File: [c/src/verifier/eth1/nano/rlp.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/rlp.h)
 
 #### rlp_decode
 
@@ -9869,7 +10121,7 @@ serialization of ETH-Objects.
 
 This incoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
 
-File: [src/verifier/eth1/nano/serialize.h](https://github.com/slockit/in3-c/blob/master/src/verifier/eth1/nano/serialize.h)
+File: [c/src/verifier/eth1/nano/serialize.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/serialize.h)
 
 #### BLOCKHEADER_PARENT_HASH
 
@@ -10105,5 +10357,67 @@ arguments:
 returns: `int` : 0 if added -1 if the value could not be handled. 
 
 
+
+
+## Module verifier/ipfs 
+
+
+
+
+### ipfs.h
+
+IPFS verification. 
+
+File: [c/src/verifier/ipfs/ipfs.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/ipfs/ipfs.h)
+
+#### ipfs_verify_hash
+
+```c
+in3_ret_t ipfs_verify_hash(const char *content, const char *encoding, const char *requsted_hash);
+```
+
+verifies an IPFS hash. 
+
+Supported encoding schemes - hex, utf8 and base64 
+
+arguments:
+```eval_rst
+================ =================== 
+``const char *``  **content**        
+``const char *``  **encoding**       
+``const char *``  **requsted_hash**  
+================ =================== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_verify_ipfs
+
+```c
+in3_ret_t in3_verify_ipfs(in3_vctx_t *vc);
+```
+
+entry-function to execute the verification context. 
+
+arguments:
+```eval_rst
+============================= ======== 
+`in3_vctx_t * <#in3-vctx-t>`_  **vc**  
+============================= ======== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_register_ipfs
+
+```c
+void in3_register_ipfs();
+```
+
+this function should only be called once and will register the IPFS verifier. 
 
 
