@@ -103,7 +103,7 @@ Here is example how to use it:
 
 ### CallFunction
 
-source : [in3-c/examples/java/CallFunction.java](https://github.com/slockit/in3-c/blob/master/java/examples/CallFunction.java)
+source : [in3-c/java/examples/CallFunction.java](https://github.com/slockit/in3-c/blob/master/java/examples/CallFunction.java)
 
 Calling Functions of Contracts
 
@@ -135,7 +135,7 @@ public class CallFunction {
 ```
 ### Configure
 
-source : [in3-c/examples/java/Configure.java](https://github.com/slockit/in3-c/blob/master/java/examples/Configure.java)
+source : [in3-c/java/examples/Configure.java](https://github.com/slockit/in3-c/blob/master/java/examples/Configure.java)
 
 Changing the default configuration
 
@@ -156,7 +156,7 @@ public class Configure {
     IN3 in3 = IN3.forChain(Chain.GOERLI); // set it to goerli
 
     // Setup a Configuration object for the client
-    ClientConfiguration clientConfig = new ClientConfiguration();
+    ClientConfiguration clientConfig = in3.getConfig();
     clientConfig.setReplaceLatestBlock(6); // define that latest will be -6
     clientConfig.setAutoUpdateList(false); // prevents node automatic update
     clientConfig.setMaxAttempts(1);        // sets max attempts to 1 before giving up
@@ -177,7 +177,7 @@ public class Configure {
 ```
 ### GetBalance
 
-source : [in3-c/examples/java/GetBalance.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBalance.java)
+source : [in3-c/java/examples/GetBalance.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBalance.java)
 
 getting the Balance with or without API
 
@@ -212,7 +212,7 @@ public class GetBalance {
 ```
 ### GetBlockAPI
 
-source : [in3-c/examples/java/GetBlockAPI.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockAPI.java)
+source : [in3-c/java/examples/GetBlockAPI.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockAPI.java)
 
 getting a block with API
 
@@ -249,7 +249,7 @@ public class GetBlockAPI {
 ```
 ### GetBlockRPC
 
-source : [in3-c/examples/java/GetBlockRPC.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockRPC.java)
+source : [in3-c/java/examples/GetBlockRPC.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockRPC.java)
 
 getting a block without API
 
@@ -276,7 +276,7 @@ public class GetBlockRPC {
 ```
 ### GetTransaction
 
-source : [in3-c/examples/java/GetTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransaction.java)
+source : [in3-c/java/examples/GetTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransaction.java)
 
 getting a Transaction with or without API
 
@@ -312,7 +312,7 @@ public class GetTransaction {
 ```
 ### GetTransactionReceipt
 
-source : [in3-c/examples/java/GetTransactionReceipt.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransactionReceipt.java)
+source : [in3-c/java/examples/GetTransactionReceipt.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransactionReceipt.java)
 
 getting a TransactionReceipt with or without API
 
@@ -348,7 +348,7 @@ public class GetTransactionReceipt {
 ```
 ### SendTransaction
 
-source : [in3-c/examples/java/SendTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/SendTransaction.java)
+source : [in3-c/java/examples/SendTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/SendTransaction.java)
 
 Sending Transactions
 
@@ -392,10 +392,10 @@ public class SendTransaction {
 
     // create a Transaction
     TransactionRequest tx = new TransactionRequest();
-    tx.from               = account;
-    tx.to                 = "0x1234567890123456789012345678901234567890";
-    tx.function           = "transfer(address,uint256)";
-    tx.params             = new Object[] {receipient, value};
+    tx.setFrom(account);
+    tx.setTo("0x1234567890123456789012345678901234567890");
+    tx.setFunction("transfer(address,uint256)");
+    tx.setParams(new Object[] {receipient, value});
 
     String txHash = in3.getEth1API().sendTransaction(tx);
 
