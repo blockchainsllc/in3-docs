@@ -3,7 +3,6 @@
 IN3_PATH="../c/in3-core/wasm/src"
 PRE_DOC=`cat $IN3_PATH/../docs/*.md`
 cd "$IN3_PATH"
-ls -ltr
 if [ ! -e node_modules/.bin/slockit-doxygen ]
 then
    npm install --no-save slockit-generator typedoc
