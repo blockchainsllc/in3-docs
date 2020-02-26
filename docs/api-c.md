@@ -1690,6 +1690,20 @@ Initializer macros for eth_blknum_t.
 ```
 
 
+#### eth_blknum_def_t
+
+Abstract type for holding a block number. 
+
+The enum type contains the following values:
+
+```eval_rst
+================== = 
+ **BLK_LATEST**    0 
+ **BLK_EARLIEST**  1 
+ **BLK_PENDING**   2 
+================== = 
+```
+
 #### eth_tx_t
 
 A transaction. 
@@ -2622,6 +2636,30 @@ This header-file defines easy to use function, which are verifying USN-Messages.
 
 File: [c/src/api/usn/usn_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/usn/usn_api.h)
 
+#### usn_msg_type_t
+
+The enum type contains the following values:
+
+```eval_rst
+================== = 
+ **USN_ACTION**    0 
+ **USN_REQUEST**   1 
+ **USN_RESPONSE**  2 
+================== = 
+```
+
+#### usn_event_type_t
+
+The enum type contains the following values:
+
+```eval_rst
+=================== = 
+ **BOOKING_NONE**   0 
+ **BOOKING_START**  1 
+ **BOOKING_STOP**   2 
+=================== = 
+```
+
 #### usn_booking_handler
 
 
@@ -2961,6 +2999,120 @@ return value used by the signer for unspecified errors.
 #define IN3_SIGN_ERR_GENERAL_ERROR -4
 ```
 
+
+#### in3_chain_type_t
+
+the type of the chain. 
+
+for incubed a chain can be any distributed network or database with incubed support. Depending on this chain-type the previously registered verifyer will be choosen and used. 
+
+The enum type contains the following values:
+
+```eval_rst
+===================== = =================
+ **CHAIN_ETH**        0 Ethereum chain.
+ **CHAIN_SUBSTRATE**  1 substrate chain
+ **CHAIN_IPFS**       2 ipfs verifiaction
+ **CHAIN_BTC**        3 Bitcoin chain.
+ **CHAIN_EOS**        4 EOS chain.
+ **CHAIN_IOTA**       5 IOTA chain.
+ **CHAIN_GENERIC**    6 other chains
+===================== = =================
+```
+
+#### in3_proof_t
+
+the type of proof. 
+
+Depending on the proof-type different levels of proof will be requested from the node. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ==================================================
+ **PROOF_NONE**      0 No Verification.
+ **PROOF_STANDARD**  1 Standard Verification of the important properties.
+ **PROOF_FULL**      2 All field will be validated including uncles.
+==================== = ==================================================
+```
+
+#### in3_verification_t
+
+verification as delivered by the server. 
+
+This will be part of the in3-request and will be generated based on the prooftype. 
+
+The enum type contains the following values:
+
+```eval_rst
+======================== = ===============================
+ **VERIFICATION_NEVER**  0 No Verifacation.
+ **VERIFICATION_PROOF**  1 Includes the proof of the data.
+======================== = ===============================
+```
+
+#### in3_node_props_type_t
+
+The enum type contains the following values:
+
+```eval_rst
+================================ ===== 
+ **NODE_PROP_PROOF**             0x1   
+ **NODE_PROP_MULTICHAIN**        0x2   
+ **NODE_PROP_ARCHIVE**           0x4   
+ **NODE_PROP_HTTP**              0x8   
+ **NODE_PROP_BINARY**            0x10  
+ **NODE_PROP_ONION**             0x20  
+ **NODE_PROP_SIGNER**            0x40  
+ **NODE_PROP_DATA**              0x80  
+ **NODE_PROP_STATS**             0x100 
+ **NODE_PROP_MIN_BLOCK_HEIGHT**  0x400 
+================================ ===== 
+```
+
+#### in3_flags_type_t
+
+a list of flags definiing the behavior of the incubed client. 
+
+The enum type contains the following values:
+
+```eval_rst
+============================ ==== 
+ **FLAGS_KEEP_IN3**          0x1  
+ **FLAGS_AUTO_UPDATE_LIST**  0x2  
+ **FLAGS_INCLUDE_CODE**      0x4  
+ **FLAGS_BINARY**            0x8  
+ **FLAGS_HTTP**              0x16 
+ **FLAGS_STATS**             0x32 
+============================ ==== 
+```
+
+#### d_signature_type_t
+
+type of the requested signature 
+
+The enum type contains the following values:
+
+```eval_rst
+================== = ======================
+ **SIGN_EC_RAW**   0 sign the data directly
+ **SIGN_EC_HASH**  1 hash and sign the data
+================== = ======================
+```
+
+#### in3_filter_type_t
+
+Filter type used internally when managing filters. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ============================
+ **FILTER_EVENT**    0 Event filter.
+ **FILTER_BLOCK**    1 Block filter.
+ **FILTER_PENDING**  2 Pending filter (Unsupported)
+==================== = ============================
+```
 
 #### chain_id_t
 
@@ -3327,14 +3479,17 @@ The stuct contains following fields:
 `chain_id_t <#chain-id-t>`_                          **chain_id**              servers to filter for the given chain. 
                                                                                
                                                                                The chain-id based on EIP-155.
-``uint8_t``                                          **auto_update_list**      if true the nodelist will be automaticly updated if the last_block is newer
 `in3_storage_handler_t * <#in3-storage-handler-t>`_  **cache**                 a cache handler offering 2 functions ( setItem(string,string), getItem(string) )
 `in3_signer_t * <#in3-signer-t>`_                    **signer**                signer-struct managing a wallet
 `in3_transport_send <#in3-transport-send>`_          **transport**             the transporthandler sending requests
+``uint8_t``                                          **auto_update_list**      if true the nodelist will be automaticly updated if the last_block is newer
 ``uint8_t``                                          **include_code**          includes the code when sending eth_call-requests
 ``uint8_t``                                          **use_binary**            if true the client will use binary format
 ``uint8_t``                                          **use_http**              if true the client will try to use http instead of https
 ``uint8_t``                                          **keep_in3**              if true the in3-section with the proof will also returned
+``uint_fast8_t``                                     **flags**                 a bit mask with flags defining the behavior of the incubed client. 
+                                                                               
+                                                                               See the FLAG...-defines
 `in3_chain_t * <#in3-chain-t>`_                      **chains**                chain spec and nodeList definitions
 ``uint16_t``                                         **chains_length**         number of configured chains
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**               filter handler
@@ -3832,6 +3987,36 @@ File: [c/src/core/client/context.h](https://github.com/slockit/in3-c/blob/master
 #define ctx_set_error (c,msg,err) ctx_set_error_intern(c, NULL, err)
 ```
 
+
+#### ctx_type
+
+type of the request context, 
+
+The enum type contains the following values:
+
+```eval_rst
+============= = ============================================================
+ **CT_RPC**   0 a json-rpc request, which needs to be send to a incubed node
+ **CT_SIGN**  1 a sign request
+============= = ============================================================
+```
+
+#### state
+
+The current state of the context. 
+
+you can check this state after each execute-call. 
+
+The enum type contains the following values:
+
+```eval_rst
+================================== == ============================================================
+ **CTX_SUCCESS**                   0  The ctx has a verified result.
+ **CTX_WAITING_FOR_REQUIRED_CTX**  1  there are required contexts, which need to be resolved first
+ **CTX_WAITING_FOR_RESPONSE**      2  the response is not set yet
+ **CTX_ERROR**                     -1 the request has a error
+================================== == ============================================================
+```
 
 #### ctx_type_t
 
@@ -5134,6 +5319,24 @@ It will throw an error if reached.
 ```
 
 
+#### d_type_t
+
+type of a token. 
+
+The enum type contains the following values:
+
+```eval_rst
+=============== = =====================================================
+ **T_BYTES**    0 content is stored as data ptr.
+ **T_STRING**   1 content is stored a c-str
+ **T_ARRAY**    2 the node is an array with the length stored in length
+ **T_OBJECT**   3 the node is an object with properties
+ **T_BOOLEAN**  4 boolean with the value stored in len
+ **T_INTEGER**  5 a integer with the value stored
+ **T_NULL**     6 a NULL-value
+=============== = =====================================================
+```
+
 #### d_key_t
 
 
@@ -6314,6 +6517,41 @@ sets the value of an optional type.
 ```
 
 
+#### in3_ret_t
+
+ERROR types used as return values. 
+
+All values (except IN3_OK) indicate an error. IN3_WAITING may be treated like an error, since we have stop executing until the response has arrived, but it is a valid return value. 
+
+The enum type contains the following values:
+
+```eval_rst
+================== === ==================================================================
+ **IN3_OK**        0   Success.
+ **IN3_EUNKNOWN**  -1  Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**    -2  No memory.
+ **IN3_ENOTSUP**   -3  Not supported.
+ **IN3_EINVAL**    -4  Invalid value.
+ **IN3_EFIND**     -5  Not found.
+ **IN3_ECONFIG**   -6  Invalid config.
+ **IN3_ELIMIT**    -7  Limit reached.
+ **IN3_EVERS**     -8  Version mismatch.
+ **IN3_EINVALDT**  -9  Data invalid, eg. 
+                       
+                       invalid/incomplete JSON
+ **IN3_EPASS**     -10 Wrong password.
+ **IN3_ERPC**      -11 RPC error (i.e. 
+                       
+                       in3_ctx_t::error set)
+ **IN3_ERPCNRES**  -12 RPC no response.
+ **IN3_EUSNURL**   -13 USN URL parse error.
+ **IN3_ETRANS**    -14 Transport error.
+ **IN3_ERANGE**    -15 Not in range.
+ **IN3_WAITING**   -16 the process can not be finished since we are waiting for responses
+ **IN3_EIGNORE**   -17 Ignorable error.
+================== === ==================================================================
+```
+
 #### in3_errmsg
 
 ```c
@@ -7121,6 +7359,23 @@ arguments:
 returns: `char *`
 
 
+#### str_remove_html
+
+```c
+char* str_remove_html(char *data);
+```
+
+remove all html-tags in the text. 
+
+arguments:
+```eval_rst
+========== ========== 
+``char *``  **data**  
+========== ========== 
+```
+returns: `char *`
+
+
 #### current_ms
 
 ```c
@@ -7570,6 +7825,21 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 Patricia Merkle Tree Imnpl 
 
 File: [c/src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/trie.h)
+
+#### trie_node_type_t
+
+Node types. 
+
+The enum type contains the following values:
+
+```eval_rst
+================= = ============================
+ **NODE_EMPTY**   0 empty node
+ **NODE_BRANCH**  1 a Branch
+ **NODE_LEAF**    2 a leaf containing the value.
+ **NODE_EXT**     3 a extension
+================= = ============================
+```
 
 #### in3_hasher_t
 
@@ -8435,6 +8705,21 @@ write success but consume all gas
 #define EVM_CALL_MODE_CALL 4
 ```
 
+
+#### evm_state
+
+the current state of the evm 
+
+The enum type contains the following values:
+
+```eval_rst
+======================== = =====================================
+ **EVM_STATE_INIT**      0 just initialised, but not yet started
+ **EVM_STATE_RUNNING**   1 started and still running
+ **EVM_STATE_STOPPED**   2 successfully stopped
+ **EVM_STATE_REVERTED**  3 stopped, but results must be reverted
+======================== = =====================================
+```
 
 #### evm_state_t
 
@@ -9493,6 +9778,20 @@ File: [c/src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/bl
 #define BLOCK_LATEST 0xFFFFFFFFFFFFFFFF
 ```
 
+
+#### eth_consensus_type_t
+
+the consensus type. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ================================
+ **ETH_POW**         0 Pro of Work (Ethash)
+ **ETH_POA_AURA**    1 Proof of Authority using Aura.
+ **ETH_POA_CLIQUE**  2 Proof of Authority using clique.
+==================== = ================================
+```
 
 #### eip_transition_t
 
