@@ -3056,35 +3056,37 @@ The enum type contains the following values:
 The enum type contains the following values:
 
 ```eval_rst
-================================ ===== 
- **NODE_PROP_PROOF**             0x1   
- **NODE_PROP_MULTICHAIN**        0x2   
- **NODE_PROP_ARCHIVE**           0x4   
- **NODE_PROP_HTTP**              0x8   
- **NODE_PROP_BINARY**            0x10  
- **NODE_PROP_ONION**             0x20  
- **NODE_PROP_SIGNER**            0x40  
- **NODE_PROP_DATA**              0x80  
- **NODE_PROP_STATS**             0x100 
- **NODE_PROP_MIN_BLOCK_HEIGHT**  0x400 
-================================ ===== 
+================================ ===== ========================================================================================================================
+ **NODE_PROP_PROOF**             0x1   filter out nodes which are providing no proof
+ **NODE_PROP_MULTICHAIN**        0x2   filter out nodes other then which have capability of the same RPC endpoint may also accept requests for different chains
+ **NODE_PROP_ARCHIVE**           0x4   filter out non-archive supporting nodes
+ **NODE_PROP_HTTP**              0x8   filter out non-http nodes
+ **NODE_PROP_BINARY**            0x10  filter out nodes that don't support binary encoding
+ **NODE_PROP_ONION**             0x20  filter out non-onion nodes
+ **NODE_PROP_SIGNER**            0x40  filter out non-signer nodes
+ **NODE_PROP_DATA**              0x80  filter out non-data provider nodes
+ **NODE_PROP_STATS**             0x100 filter out nodes that do not provide stats
+ **NODE_PROP_MIN_BLOCK_HEIGHT**  0x400 filter out nodes that will sign blocks with lower min block height than specified
+================================ ===== ========================================================================================================================
 ```
 
 #### in3_flags_type_t
 
 a list of flags definiing the behavior of the incubed client. 
 
+They should be used as bitmask for the flags-property. 
+
 The enum type contains the following values:
 
 ```eval_rst
-============================ ==== 
- **FLAGS_KEEP_IN3**          0x1  
- **FLAGS_AUTO_UPDATE_LIST**  0x2  
- **FLAGS_INCLUDE_CODE**      0x4  
- **FLAGS_BINARY**            0x8  
- **FLAGS_HTTP**              0x16 
- **FLAGS_STATS**             0x32 
-============================ ==== 
+============================ ==== ===================================================================
+ **FLAGS_KEEP_IN3**          0x1  the in3-section with the proof will also returned
+ **FLAGS_AUTO_UPDATE_LIST**  0x2  the nodelist will be automaticly updated if the last_block is newer
+ **FLAGS_INCLUDE_CODE**      0x4  the code is included when sending eth_call-requests
+ **FLAGS_BINARY**            0x8  the client will use binary format
+ **FLAGS_HTTP**              0x10 the client will try to use http instead of https
+ **FLAGS_STATS**             0x20 nodes will keep track of the stats (default=true)
+============================ ==== ===================================================================
 ```
 
 #### d_signature_type_t
@@ -3137,9 +3139,8 @@ The stuct contains following fields:
 `chain_id_t <#chain-id-t>`_                  **chain_id**                the chain to be used. 
                                                                          
                                                                          this is holding the integer-value of the hexstring.
-``uint8_t``                                  **include_code**            if true the code needed will always be devlivered.
+``uint_fast8_t``                             **flags**                   the current flags from the client.
 ``uint8_t``                                  **use_full_proof**          this flaqg is set, if the proof is set to "PROOF_FULL"
-``uint8_t``                                  **use_binary**              this flaqg is set, the client should use binary-format
 `bytes_t * <#bytes-t>`_                      **verified_hashes**         a list of blockhashes already verified. 
                                                                          
                                                                          The Server will not send any proof for them again .
@@ -3482,11 +3483,6 @@ The stuct contains following fields:
 `in3_storage_handler_t * <#in3-storage-handler-t>`_  **cache**                 a cache handler offering 2 functions ( setItem(string,string), getItem(string) )
 `in3_signer_t * <#in3-signer-t>`_                    **signer**                signer-struct managing a wallet
 `in3_transport_send <#in3-transport-send>`_          **transport**             the transporthandler sending requests
-``uint8_t``                                          **auto_update_list**      if true the nodelist will be automaticly updated if the last_block is newer
-``uint8_t``                                          **include_code**          includes the code when sending eth_call-requests
-``uint8_t``                                          **use_binary**            if true the client will use binary format
-``uint8_t``                                          **use_http**              if true the client will try to use http instead of https
-``uint8_t``                                          **keep_in3**              if true the in3-section with the proof will also returned
 ``uint_fast8_t``                                     **flags**                 a bit mask with flags defining the behavior of the incubed client. 
                                                                                
                                                                                See the FLAG...-defines
@@ -3507,11 +3503,11 @@ setter method for interacting with in3_node_props_t.
 
 arguments:
 ```eval_rst
-========================================= ================ 
-`in3_node_props_t * <#in3-node-props-t>`_  **node_props**  
-``in3_node_props_type_t``                  **type**        
-``uint8_t``                                **value**       
-========================================= ================ 
+================================================= ================ 
+`in3_node_props_t * <#in3-node-props-t>`_          **node_props**  
+`in3_node_props_type_t <#in3-node-props-type-t>`_  **type**        
+``uint8_t``                                        **value**       
+================================================= ================ 
 ```
 
 #### in3_node_props_get
@@ -3524,10 +3520,10 @@ returns the value of the specified propertytype.
 
 arguments:
 ```eval_rst
-======================================= ======== 
-`in3_node_props_t <#in3-node-props-t>`_  **np**  
-``in3_node_props_type_t``                **t**   
-======================================= ======== 
+================================================= ======== 
+`in3_node_props_t <#in3-node-props-t>`_            **np**  
+`in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
+================================================= ======== 
 ```
 returns: `uint32_t` : value as a number 
 
@@ -3544,10 +3540,10 @@ checkes if the given type is set in the properties
 
 arguments:
 ```eval_rst
-======================================= ======== 
-`in3_node_props_t <#in3-node-props-t>`_  **np**  
-``in3_node_props_type_t``                **t**   
-======================================= ======== 
+================================================= ======== 
+`in3_node_props_t <#in3-node-props-t>`_            **np**  
+`in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
+================================================= ======== 
 ```
 returns: `bool` : true if set 
 
