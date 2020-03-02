@@ -685,6 +685,10 @@ arguments:
 ``long``  **chainId**  
 ======== ============= 
 ```
+##### getVersion
+
+ > public static `native String` getVersion();
+
 ##### main
 
  > public static `void` main([`String[]`](#class-string[]) args);

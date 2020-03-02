@@ -1685,8 +1685,17 @@ Initializer macros for eth_blknum_t.
 
 #### BLKNUM_PENDING ()
 
+The current error or null if all is ok. 
+
 ```c
 #define BLKNUM_PENDING () ((eth_blknum_t){.def = BLK_PENDING, .is_u64 = false})
+```
+
+
+#### eth_last_error ()
+
+```c
+#define eth_last_error () api_last_error()
 ```
 
 
@@ -2472,17 +2481,6 @@ arguments:
 returns: `char *`
 
 
-#### eth_last_error
-
-```c
-char* eth_last_error();
-```
-
-The current error or null if all is ok. 
-
-returns: `char *`
-
-
 #### as_double
 
 ```c
@@ -2621,6 +2619,59 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 ```c
 void in3_register_eth_api();
 ```
+
+
+## Module api/ipfs 
+
+
+
+
+### ipfs_api.h
+
+IPFS API.
+
+This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
+
+File: [c/src/api/ipfs/ipfs_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/ipfs/ipfs_api.h)
+
+#### ipfs_put
+
+```c
+char* ipfs_put(in3_t *in3, const bytes_t *content);
+```
+
+Returns the IPFS multihash of stored content on success OR NULL on error (check api_last_error()). 
+
+Result must be freed by caller. 
+
+arguments:
+```eval_rst
+============================== ============= 
+`in3_t * <#in3-t>`_             **in3**      
+`bytes_tconst , * <#bytes-t>`_  **content**  
+============================== ============= 
+```
+returns: `char *`
+
+
+#### ipfs_get
+
+```c
+bytes_t* ipfs_get(in3_t *in3, const char *multihash);
+```
+
+Returns the content associated with specified multihash on success OR NULL on error (check api_last_error()). 
+
+Result must be freed by caller. 
+
+arguments:
+```eval_rst
+=================== =============== 
+`in3_t * <#in3-t>`_  **in3**        
+``const char *``     **multihash**  
+=================== =============== 
+```
+returns: [`bytes_t *`](#bytes-t)
 
 
 ## Module api/usn 
@@ -2843,6 +2894,82 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+## Module api/utils 
+
+
+
+
+### api_utils.h
+
+Ethereum API utils.
+
+This header-file helper utils for use with API modules. 
+
+File: [c/src/api/utils/api_utils.h](https://github.com/slockit/in3-c/blob/master/c/src/api/utils/api_utils.h)
+
+#### set_error_fn
+
+function to set error. 
+
+Will only be called internally. default implementation is NOT MT safe! 
+
+
+```c
+typedef void(* set_error_fn) (int err, const char *msg)
+```
+
+
+#### get_error_fn
+
+function to get last error message. 
+
+default implementation is NOT MT safe! 
+
+
+```c
+typedef char*(* get_error_fn) (void)
+```
+
+returns: `char *(*`
+
+
+#### api_set_error_fn
+
+```c
+void api_set_error_fn(set_error_fn fn);
+```
+
+arguments:
+```eval_rst
+=============================== ======== 
+`set_error_fn <#set-error-fn>`_  **fn**  
+=============================== ======== 
+```
+
+#### api_get_error_fn
+
+```c
+void api_get_error_fn(get_error_fn fn);
+```
+
+arguments:
+```eval_rst
+=============================== ======== 
+`get_error_fn <#get-error-fn>`_  **fn**  
+=============================== ======== 
+```
+
+#### api_last_error
+
+```c
+char* api_last_error();
+```
+
+returns current error or null if all is ok 
+
+returns: `char *`
 
 
 ## Module core/client 
@@ -3148,7 +3275,6 @@ The stuct contains following fields:
 ``uint8_t``                                  **latest_block**            the last blocknumber the nodelistz changed
 ``uint16_t``                                 **finality**                number of signatures( in percent) needed in order to reach finality.
 `in3_verification_t <#in3-verification-t>`_  **verification**            Verification-type.
-`bytes_t * <#bytes-t>`_                      **client_signature**        the signature of the client with the client key
 `bytes_t * <#bytes-t>`_                      **signers**                 the addresses of servers requested to sign the blockhash
 ``uint8_t``                                  **signers_length**          number or addresses
 ``uint32_t``                                 **time**                    meassured time in ms for the request
@@ -3461,7 +3587,7 @@ The stuct contains following fields:
 =================================================== ========================== =======================================================================================
 ``uint32_t``                                         **cache_timeout**         number of seconds requests can be cached.
 ``uint16_t``                                         **node_limit**            the limit of nodes to store in the client.
-`bytes_t * <#bytes-t>`_                              **key**                   the client key to sign requests
+``void *``                                           **key**                   the client key to sign requests (pointer to 32bytes private key seed)
 ``uint32_t``                                         **max_code_cache**        number of max bytes used to cache the code in memory
 ``uint32_t``                                         **max_block_cache**       number of number of blocks cached in memory
 `in3_proof_t <#in3-proof-t>`_                        **proof**                 the type of proof used
