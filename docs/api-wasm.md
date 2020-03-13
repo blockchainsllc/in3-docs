@@ -1173,14 +1173,14 @@ Returns:
 
 
 
-#### hasAccount()
+#### canSign()
 
 
 returns true if the account is supported (or unlocked) 
 
 ```eval_rst
-``Promise<boolean>`` `hasAccount <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L998>`_ (
-      account:`Address <#type-address>`_ )
+``Promise<boolean>`` `canSign <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L998>`_ (
+      address:`Address <#type-address>`_ )
 ```
 
 Parameters: 
@@ -1188,7 +1188,7 @@ Parameters:
   .. list-table::
      :widths: auto
 
-     * - | account
+     * - | address
        - | `Address <#type-address>`_ 
        - | a 20 byte Address encoded as Hex (starting with 0x)
 
@@ -2735,14 +2735,14 @@ Returns:
 
 
 
-#### hasAccount()
+#### canSign()
 
 
 returns true if the account is supported (or unlocked) 
 
 ```eval_rst
-``Promise<boolean>`` `hasAccount <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L765>`_ (
-      account:`Address <#type-address>`_ )
+``Promise<boolean>`` `canSign <https://github.com/slockit/in3-c/blob/master/wasm/src/in3.d.ts#L765>`_ (
+      address:`Address <#type-address>`_ )
 ```
 
 Parameters: 
@@ -2750,7 +2750,7 @@ Parameters:
   .. list-table::
      :widths: auto
 
-     * - | account
+     * - | address
        - | `Address <#type-address>`_ 
        - | a 20 byte Address encoded as Hex (starting with 0x)
 
