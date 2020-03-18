@@ -161,6 +161,12 @@ compiles the code as asm.js.
 
 Default-Value: `-DASMJS=OFF`
 
+#### BTC
+
+if true, the bitcoin verifiers will be build
+
+Default-Value: `-DBTC=OFF`
+
 #### BUILD_DOC
 
 generates the documenation with doxygen.
@@ -172,6 +178,18 @@ Default-Value: `-DBUILD_DOC=OFF`
 build the comandline utils
 
 Default-Value: `-DCMD=ON`
+
+#### CODE_COVERAGE
+
+Builds targets with code coverage instrumentation. (Requires GCC or Clang)
+
+Default-Value: `-DCODE_COVERAGE=OFF`
+
+#### COLOR
+
+Enable color codes for debug
+
+Default-Value: `-DCOLOR=ON`
 
 #### ERR_MSG
 
@@ -233,6 +251,12 @@ if true, the client will use the staging-network instead of the live ones
 
 Default-Value: `-DIN3_STAGING=OFF`
 
+#### IPFS
+
+build IPFS verification
+
+Default-Value: `-DIPFS=ON`
+
 #### JAVA
 
 build the java-binding (shared-lib and jar-file)
@@ -277,7 +301,7 @@ Default-Value: `-DTRANSPORTS=ON`
 
 #### USE_CURL
 
-if true the curl transport will be build (with a dependency to libcurl)
+if true the curl transport will be built (with a dependency to libcurl)
 
 Default-Value: `-DUSE_CURL=ON`
 
@@ -289,9 +313,9 @@ Default-Value: `-DUSE_PRECOMPUTED_EC=ON`
 
 #### USE_SCRYPT
 
-if scrypt is installed, it will link dynamicly to the shared scrypt lib.
+integrate scrypt into the build in order to allow decrypt_key for scrypt encoded keys.
 
-Default-Value: `-DUSE_SCRYPT=OFF`
+Default-Value: `-DUSE_SCRYPT=ON`
 
 #### WASM
 
@@ -331,10 +355,9 @@ This example shows how to call functions on a smart contract eiither directly or
 ```c
 
 #include <in3/client.h>   // the core client
-#include <in3/eth_api.h>  // wrapper for easier use
-#include <in3/eth_full.h> // the full ethereum verifier containing the EVM
-#include <in3/in3_curl.h> // transport implementation
-#include <in3/log.h>
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -343,14 +366,6 @@ static in3_ret_t call_func_api(in3_t* c, address_t contract);
 
 int main() {
   in3_ret_t ret = IN3_OK;
-
-  // register a chain-verifier for full Ethereum-Support in order to verify eth_call
-  // this needs to be called only once.
-  in3_register_eth_full();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
 
   // Remove log prefix for readability
   in3_log_set_prefix("");
@@ -448,26 +463,17 @@ get the Balance with the API and also as direct RPC-call
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
-
+#include <in3/client.h>   // the core client
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
+#include <in3/utils.h>
 #include <stdio.h>
 
 static void get_balance_rpc(in3_t* in3);
 static void get_balance_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify accounts
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -523,10 +529,10 @@ using the basic-module to get and verify a Block with the API and also as direct
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
+#include <in3/client.h>   // the core client
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -535,15 +541,6 @@ static void get_block_rpc(in3_t* in3);
 static void get_block_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify blocks
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -600,11 +597,10 @@ fetching events and verify them with eth_getLogs
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
-
+#include <in3/client.h>   // the core client
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -612,15 +608,6 @@ static void get_logs_rpc(in3_t* in3);
 static void get_logs_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify logs
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3    = in3_for_chain(ETH_CHAIN_ID_MAINNET);
   in3->chain_id = ETH_CHAIN_ID_KOVAN;
@@ -711,26 +698,17 @@ checking the transaction data
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
-
+#include <in3/client.h> // the core client
+#include <in3/eth_api.h>
+#include <in3/in3_curl.h> // transport implementation
+#include <in3/in3_init.h>
+#include <in3/utils.h>
 #include <stdio.h>
 
 static void get_tx_rpc(in3_t* in3);
 static void get_tx_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify txs
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -791,11 +769,11 @@ validating the result or receipt of an transaction
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
-
+#include <in3/client.h>   // the core client
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
+#include <in3/utils.h>
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -803,15 +781,6 @@ static void get_tx_receipt_rpc(in3_t* in3);
 static void get_tx_receipt_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify tx receipts
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -873,19 +842,21 @@ using the IPFS module
 ```c
 
 #include <in3/client.h>   // the core client
-#include <in3/in3_curl.h> // transport implementation
-#include <in3/ipfs.h>     // IPFS verifier
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/ipfs_api.h> // access ipfs-api
+#include <in3/log.h>      // logging functions
 #include <stdio.h>
 
 #define LOREM_IPSUM "Lorem ipsum dolor sit amet"
+#define return_err(err)                                \
+  do {                                                 \
+    printf(__FILE__ ":%d::Error %s\n", __LINE__, err); \
+    return;                                            \
+  } while (0)
 
-int main() {
-  in3_register_ipfs();
-  in3_register_curl();
-
-  in3_t* c = in3_for_chain(ETH_CHAIN_ID_IPFS);
-  char * result, *error;
-  char   tmp[100];
+static void ipfs_rpc_example(in3_t* c) {
+  char *result, *error;
+  char  tmp[100];
 
   in3_ret_t res = in3_client_rpc(
       c,
@@ -894,7 +865,7 @@ int main() {
       &result,
       &error);
   if (res != IN3_OK)
-    return -1;
+    return_err(in3_errmsg(res));
 
   printf("IPFS hash: %s\n", result);
   sprintf(tmp, "[%s, \"utf8\"]", result);
@@ -908,9 +879,42 @@ int main() {
       &result,
       &error);
   if (res != IN3_OK)
-    return -1;
+    return_err(in3_errmsg(res));
+  res = strcmp(result, "\"" LOREM_IPSUM "\"");
+  if (res) return_err("Content mismatch");
+}
 
-  return strcmp(result, "\"" LOREM_IPSUM "\"");
+static void ipfs_api_example(in3_t* c) {
+  bytes_t b         = {.data = (uint8_t*) LOREM_IPSUM, .len = strlen(LOREM_IPSUM)};
+  char*   multihash = ipfs_put(c, &b);
+  if (multihash == NULL)
+    return_err("ipfs_put API call error");
+  printf("IPFS hash: %s\n", multihash);
+
+  bytes_t* content = ipfs_get(c, multihash);
+  free(multihash);
+  if (content == NULL)
+    return_err("ipfs_get API call error");
+
+  int res = strncmp((char*) content->data, LOREM_IPSUM, content->len);
+  b_free(content);
+  if (res)
+    return_err("Content mismatch");
+}
+
+int main() {
+  // create new incubed client
+  in3_t* c = in3_for_chain(ETH_CHAIN_ID_IPFS);
+
+  // IPFS put/get using raw RPC calls
+  ipfs_rpc_example(c);
+
+  // IPFS put/get using API
+  ipfs_api_example(c);
+
+  // cleanup client after usage
+  in3_free(c);
+  return 0;
 }
 ```
 ### send_transaction
@@ -921,12 +925,12 @@ sending a transaction including signing it with a private key
 
 ```c
 
-#include <in3/client.h>    // the core client
-#include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
-#include <in3/signer.h>    // default signer implementation
-
+#include <in3/client.h>   // the core client
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
+#include <in3/signer.h>   // default signer implementation
+#include <in3/utils.h>
 #include <stdio.h>
 
 // fixme: This is only for the sake of demo. Do NOT store private keys as plaintext.
@@ -936,15 +940,6 @@ static void send_tx_rpc(in3_t* in3);
 static void send_tx_api(in3_t* in3);
 
 int main() {
-
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify txs
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -1021,11 +1016,12 @@ a example how to watch usn events and act upon it.
 ```c
 
 #include <in3/client.h>   // the core client
-#include <in3/eth_api.h>  // wrapper for easier use
-#include <in3/eth_full.h> // the full ethereum verifier containing the EVM
-#include <in3/in3_curl.h> // transport implementation
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
+#include <in3/log.h>      // logging functions
 #include <in3/signer.h>   // signer-api
-#include <in3/usn_api.h>  // api for renting
+#include <in3/usn_api.h>
+#include <in3/utils.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <time.h>
@@ -1041,15 +1037,6 @@ static int handle_booking(usn_event_t* ev) {
 }
 
 int main(int argc, char* argv[]) {
-
-  // register a chain-verifier for full Ethereum-Support in order to verify eth_call
-  // this needs to be called only once.
-  in3_register_eth_full();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* c = in3_for_chain(ETH_CHAIN_ID_MAINNET);
 
@@ -1097,12 +1084,12 @@ how to send a rent transaction to a usn contract usinig the usn-api.
 
 ```c
 
-#include <in3/client.h>   // the core client
-#include <in3/eth_api.h>  // wrapper for easier use
-#include <in3/eth_full.h> // the full ethereum verifier containing the EVM
-#include <in3/in3_curl.h> // transport implementation
+#include <in3/api_utils.h>
+#include <in3/eth_api.h>  // functions for direct api-access
+#include <in3/in3_init.h> // if included the verifier will automaticly be initialized.
 #include <in3/signer.h>   // signer-api
 #include <in3/usn_api.h>  // api for renting
+#include <in3/utils.h>
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -1129,15 +1116,6 @@ void unlock_key(in3_t* c, char* json_data, char* passwd) {
 }
 
 int main(int argc, char* argv[]) {
-
-  // register a chain-verifier for full Ethereum-Support in order to verify eth_call
-  // this needs to be called only once.
-  in3_register_eth_full();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
   in3_t* c = in3_for_chain(ETH_CHAIN_ID_GOERLI);
 
@@ -2481,86 +2459,6 @@ arguments:
 returns: `char *`
 
 
-#### as_double
-
-```c
-long double as_double(uint256_t d);
-```
-
-Converts a uint256_t in a long double. 
-
-Important: since a long double stores max 16 byte, there is no guarantee to have the full precision.
-
-Converts a uint256_t in a long double. 
-
-arguments:
-```eval_rst
-========================= ======= 
-`uint256_t <#uint256-t>`_  **d**  
-========================= ======= 
-```
-returns: `long double`
-
-
-#### as_long
-
-```c
-uint64_t as_long(uint256_t d);
-```
-
-Converts a uint256_t in a long . 
-
-Important: since a long double stores 8 byte, this will only use the last 8 byte of the value.
-
-Converts a uint256_t in a long . 
-
-arguments:
-```eval_rst
-========================= ======= 
-`uint256_t <#uint256-t>`_  **d**  
-========================= ======= 
-```
-returns: `uint64_t`
-
-
-#### to_uint256
-
-```c
-uint256_t to_uint256(uint64_t value);
-```
-
-Converts a uint64_t into its uint256_t representation. 
-
-arguments:
-```eval_rst
-============ =========== 
-``uint64_t``  **value**  
-============ =========== 
-```
-returns: [`uint256_t`](#uint256-t)
-
-
-#### decrypt_key
-
-```c
-in3_ret_t decrypt_key(d_token_t *key_data, char *password, bytes32_t dst);
-```
-
-Decrypts the private key from a json keystore file using PBKDF2 or SCRYPT (if enabled) 
-
-arguments:
-```eval_rst
-=========================== ============== 
-`d_token_t * <#d-token-t>`_  **key_data**  
-``char *``                   **password**  
-`bytes32_t <#bytes32-t>`_    **dst**       
-=========================== ============== 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 #### eth_log_free
 
 ```c
@@ -2591,34 +2489,13 @@ arguments:
 ========================================= ========= 
 ```
 
-#### to_checksum
-
-```c
-in3_ret_t to_checksum(address_t adr, chain_id_t chain_id, char out[43]);
-```
-
-converts the given address to a checksum address. 
-
-If chain_id is passed, it will use the EIP1191 to include it as well. 
-
-arguments:
-```eval_rst
-=========================== ============== 
-`address_t <#address-t>`_    **adr**       
-`chain_id_t <#chain-id-t>`_  **chain_id**  
-``char``                     **out**       
-=========================== ============== 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 #### in3_register_eth_api
 
 ```c
 void in3_register_eth_api();
 ```
+
+this function should only be called once and will register the eth-API verifier. 
 
 
 ## Module api/ipfs 
@@ -2935,6 +2812,109 @@ typedef char*(* get_error_fn) (void)
 returns: `char *(*`
 
 
+#### as_double
+
+```c
+long double as_double(uint256_t d);
+```
+
+Converts a uint256_t in a long double. 
+
+Important: since a long double stores max 16 byte, there is no guarantee to have the full precision.
+
+Converts a uint256_t in a long double. 
+
+arguments:
+```eval_rst
+========================= ======= 
+`uint256_t <#uint256-t>`_  **d**  
+========================= ======= 
+```
+returns: `long double`
+
+
+#### as_long
+
+```c
+uint64_t as_long(uint256_t d);
+```
+
+Converts a uint256_t in a long . 
+
+Important: since a long double stores 8 byte, this will only use the last 8 byte of the value.
+
+Converts a uint256_t in a long . 
+
+arguments:
+```eval_rst
+========================= ======= 
+`uint256_t <#uint256-t>`_  **d**  
+========================= ======= 
+```
+returns: `uint64_t`
+
+
+#### to_uint256
+
+```c
+uint256_t to_uint256(uint64_t value);
+```
+
+Converts a uint64_t into its uint256_t representation. 
+
+arguments:
+```eval_rst
+============ =========== 
+``uint64_t``  **value**  
+============ =========== 
+```
+returns: [`uint256_t`](#uint256-t)
+
+
+#### decrypt_key
+
+```c
+in3_ret_t decrypt_key(d_token_t *key_data, char *password, bytes32_t dst);
+```
+
+Decrypts the private key from a json keystore file using PBKDF2 or SCRYPT (if enabled) 
+
+arguments:
+```eval_rst
+=========================== ============== 
+`d_token_t * <#d-token-t>`_  **key_data**  
+``char *``                   **password**  
+`bytes32_t <#bytes32-t>`_    **dst**       
+=========================== ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### to_checksum
+
+```c
+in3_ret_t to_checksum(address_t adr, chain_id_t chain_id, char out[43]);
+```
+
+converts the given address to a checksum address. 
+
+If chain_id is passed, it will use the EIP1191 to include it as well. 
+
+arguments:
+```eval_rst
+=========================== ============== 
+`address_t <#address-t>`_    **adr**       
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+``char``                     **out**       
+=========================== ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### api_set_error_fn
 
 ```c
@@ -3127,6 +3107,48 @@ return value used by the signer for unspecified errors.
 ```
 
 
+#### in3_for_chain (chain_id)
+
+creates a new Incubes configuration for a specified chain and returns the pointer. 
+
+when creating the client only the one chain will be configured. (saves memory). but if you pass `ETH_CHAIN_ID_MULTICHAIN` as argument all known chains will be configured allowing you to switch between chains within the same client or configuring your own chain.
+
+you need to free this instance with `in3_free` after use!
+
+Before using the client you still need to set the tramsport and optional the storage handlers:
+
+- example of initialization: , ** This Method is depricated. you should use `in3_for_chain` instead.**
+
+```c
+// register verifiers
+in3_register_eth_full();
+
+// create new client
+in3_t* client = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+
+// configure storage...
+in3_storage_handler_t storage_handler;
+storage_handler.get_item = storage_get_item;
+storage_handler.set_item = storage_set_item;
+storage_handler.clear = storage_clear;
+
+// configure transport
+client->transport    = send_curl;
+
+// configure storage
+client->cache = &storage_handler;
+
+// init cache
+in3_cache_init(client);
+
+// ready to use ...
+```
+
+```c
+#define in3_for_chain (chain_id) in3_for_chain_default(chain_id)
+```
+
+
 #### in3_chain_type_t
 
 the type of the chain. 
@@ -3206,14 +3228,28 @@ They should be used as bitmask for the flags-property.
 The enum type contains the following values:
 
 ```eval_rst
-============================ ==== ===================================================================
+============================ ==== ===========================================================================
  **FLAGS_KEEP_IN3**          0x1  the in3-section with the proof will also returned
  **FLAGS_AUTO_UPDATE_LIST**  0x2  the nodelist will be automaticly updated if the last_block is newer
  **FLAGS_INCLUDE_CODE**      0x4  the code is included when sending eth_call-requests
  **FLAGS_BINARY**            0x8  the client will use binary format
  **FLAGS_HTTP**              0x10 the client will try to use http instead of https
  **FLAGS_STATS**             0x20 nodes will keep track of the stats (default=true)
-============================ ==== ===================================================================
+ **FLAGS_NODE_LIST_NO_SIG**  0x40 nodelist update request will not automatically ask for signatures and proof
+============================ ==== ===========================================================================
+```
+
+#### in3_node_attr_type_t
+
+a list of node attributes (mostly used internally) 
+
+The enum type contains the following values:
+
+```eval_rst
+====================== = =========================================================================
+ **ATTR_WHITELISTED**  1 indicates if node exists in whiteList
+ **ATTR_BOOT_NODE**    2 used to avoid filtering manually added nodes before first nodeList update
+====================== = =========================================================================
 ```
 
 #### d_signature_type_t
@@ -3290,6 +3326,13 @@ Node capabilities.
 typedef uint64_t in3_node_props_t
 ```
 
+#### in3_node_attr_t
+
+
+```c
+typedef uint8_t in3_node_attr_t
+```
+
 #### in3_node_t
 
 incubed node-configuration. 
@@ -3300,18 +3343,17 @@ These information are read from the Registry contract and stored in this struct 
 The stuct contains following fields:
 
 ```eval_rst
-======================================= ================= ================================================================================================
-`bytes_t * <#bytes-t>`_                  **address**      address of the server
-``uint64_t``                             **deposit**      the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
-``uint32_t``                             **index**        index within the nodelist, also used in the contract as key
-``uint32_t``                             **capacity**     the maximal capacity able to handle
-`in3_node_props_t <#in3-node-props-t>`_  **props**        used to identify the capabilities of the node. 
-                                                          
-                                                          See in3_node_props_type_t in nodelist.h
-``char *``                               **url**          the url of the node
-``bool``                                 **whitelisted**  boolean indicating if node exists in whiteList
-``bool``                                 **boot_node**    internal - used to avoid filtering manually added nodes before first nodeList update
-======================================= ================= ================================================================================================
+======================================= ============== ================================================================================================
+`bytes_t * <#bytes-t>`_                  **address**   address of the server
+``uint64_t``                             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
+``uint32_t``                             **index**     index within the nodelist, also used in the contract as key
+``uint32_t``                             **capacity**  the maximal capacity able to handle
+`in3_node_props_t <#in3-node-props-t>`_  **props**     used to identify the capabilities of the node. 
+                                                       
+                                                       See in3_node_props_type_t in nodelist.h
+``char *``                               **url**       the url of the node
+``uint8_t``                              **attrs**     bitmask of internal attributes
+======================================= ============== ================================================================================================
 ```
 
 #### in3_node_weight_t
@@ -3722,45 +3764,10 @@ returns: [`in3_t *`](#in3-t) : the incubed instance.
 
 
 
-#### in3_for_chain
+#### in3_for_chain_default
 
 ```c
-in3_t* in3_for_chain(chain_id_t chain_id);
-```
-
-creates a new Incubes configuration for a specified chain and returns the pointer. 
-
-when creating the client only the one chain will be configured. (saves memory). but if you pass `ETH_CHAIN_ID_MULTICHAIN` as argument all known chains will be configured allowing you to switch between chains within the same client or configuring your own chain.
-
-you need to free this instance with `in3_free` after use!
-
-Before using the client you still need to set the tramsport and optional the storage handlers:
-
-- example of initialization: , ** This Method is depricated. you should use `in3_for_chain` instead.**
-
-```c
-// register verifiers
-in3_register_eth_full();
-
-// create new client
-in3_t* client = in3_for_chain(ETH_CHAIN_ID_MAINNET);
-
-// configure storage...
-in3_storage_handler_t storage_handler;
-storage_handler.get_item = storage_get_item;
-storage_handler.set_item = storage_set_item;
-storage_handler.clear = storage_clear;
-
-// configure transport
-client->transport    = send_curl;
-
-// configure storage
-client->cache = &storage_handler;
-
-// init cache
-in3_cache_init(client);
-
-// ready to use ...
+in3_t* in3_for_chain_default(chain_id_t chain_id);
 ```
 
 arguments:
@@ -3769,9 +3776,7 @@ arguments:
 `chain_id_t <#chain-id-t>`_  **chain_id**  the chain_id (see ETH_CHAIN_ID_... constants).
 =========================== ============== ==============================================
 ```
-returns: [`in3_t *`](#in3-t) : the incubed instance. 
-
-
+returns: [`in3_t *`](#in3-t)
 
 
 #### in3_client_rpc
@@ -3791,6 +3796,28 @@ arguments:
 ``char **``          **result**  pointer to string which will be set if the request was successfull. This will hold the result as json-rpc-string. (make sure you free this after use!)
 ``char **``          **error**   pointer to a string containg the error-message. (make sure you free it after use!)
 =================== ============ ======================================================================================================================================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_rpc_raw
+
+```c
+in3_ret_t in3_client_rpc_raw(in3_t *c, char *request, char **result, char **error);
+```
+
+sends a request and stores the result in the provided buffer 
+
+arguments:
+```eval_rst
+=================== ============= ======================================================================================================================================================
+`in3_t * <#in3-t>`_  **c**        the pointer to the incubed client config.
+``char *``           **request**  the rpc request including method and params.
+``char **``          **result**   pointer to string which will be set if the request was successfull. This will hold the result as json-rpc-string. (make sure you free this after use!)
+``char **``          **error**    pointer to a string containg the error-message. (make sure you free it after use!)
+=================== ============= ======================================================================================================================================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -4103,13 +4130,6 @@ Request Context. This is used for each request holding request and response-poin
 
 File: [c/src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/context.h)
 
-#### ctx_set_error (c,msg,err)
-
-```c
-#define ctx_set_error (c,msg,err) ctx_set_error_intern(c, NULL, err)
-```
-
-
 #### ctx_type
 
 type of the request context, 
@@ -4383,48 +4403,6 @@ arguments:
 returns: [`in3_ctx_state_t`](#in3-ctx-state-t)
 
 
-#### in3_create_request
-
-```c
-in3_request_t* in3_create_request(in3_ctx_t *ctx);
-```
-
-creates a request-object, which then need to be filled with the responses. 
-
-each request object contains a array of reponse-objects. In order to set the response, you need to call
-
-```c
-// set a succesfull response
-sb_add_chars(&request->results[0].result, my_response);
-// set a error response
-sb_add_chars(&request->results[0].error, my_error);
-```
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_request_t *`](#in3-request-t)
-
-
-#### request_free
-
-```c
-void request_free(in3_request_t *req, const in3_ctx_t *ctx, bool response_free);
-```
-
-frees a previuosly allocated request. 
-
-arguments:
-```eval_rst
-=================================== =================== ======================================================================================
-`in3_request_t * <#in3-request-t>`_  **req**            the request.
-`in3_ctx_tconst , * <#in3-ctx-t>`_   **ctx**            the request context.
-``bool``                             **response_free**  if true the responses will freed also, but usually this is done when the ctx is freed.
-=================================== =================== ======================================================================================
-```
-
 #### ctx_free
 
 ```c
@@ -4570,32 +4548,6 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### ctx_set_error_intern
-
-```c
-in3_ret_t ctx_set_error_intern(in3_ctx_t *c, char *msg, in3_ret_t errnumber);
-```
-
-sets the error message in the context. 
-
-If there is a previous error it will append it. the return value will simply be passed so you can use it like
-
-```c
-return ctx_set_error(ctx, "wrong number of arguments", IN3_EINVAL)
-```
-arguments:
-```eval_rst
-=========================== =============== ===============================================
-`in3_ctx_t * <#in3-ctx-t>`_  **c**          the current request context.
-``char *``                   **msg**        the error message. (This string will be copied)
-`in3_ret_t <#in3-ret-t>`_    **errnumber**  the error code to return
-=========================== =============== ===============================================
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 #### ctx_get_error
 
 ```c
@@ -4614,6 +4566,26 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_rpc_ctx_raw
+
+```c
+in3_ctx_t* in3_client_rpc_ctx_raw(in3_t *c, char *request);
+```
+
+sends a request and returns a context used to access the result or errors. 
+
+This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
+
+arguments:
+```eval_rst
+=================== ============= ==================
+`in3_t * <#in3-t>`_  **c**        the client config.
+``char *``           **request**  rpc request.
+=================== ============= ==================
+```
+returns: [`in3_ctx_t *`](#in3-ctx-t)
 
 
 #### in3_client_rpc_ctx
@@ -4635,27 +4607,6 @@ arguments:
 =================== ============ ===================
 ```
 returns: [`in3_ctx_t *`](#in3-ctx-t)
-
-
-#### ctx_handle_failable
-
-```c
-in3_ret_t ctx_handle_failable(in3_ctx_t *ctx);
-```
-
-handles a failable context 
-
-This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
-
-arguments:
-```eval_rst
-=========================== ========= ============================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current request context.
-=========================== ========= ============================
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
 ### verifier.h
@@ -7863,6 +7814,27 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### eth_verify_eth_getBlockTransactionCount
+
+```c
+in3_ret_t eth_verify_eth_getBlockTransactionCount(in3_vctx_t *vc, bytes_t *block_hash, uint64_t blockNumber);
+```
+
+verifies block transaction count by number or hash 
+
+arguments:
+```eval_rst
+============================= ================= 
+`in3_vctx_t * <#in3-vctx-t>`_  **vc**           
+`bytes_t * <#bytes-t>`_        **block_hash**   
+``uint64_t``                   **blockNumber**  
+============================= ================= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### in3_register_eth_basic
 
 ```c
@@ -10827,6 +10799,32 @@ arguments:
 returns: `int` : 0 if added -1 if the value could not be handled. 
 
 
+
+
+## Module verifier 
+
+
+
+
+### in3_init.h
+
+IN3 init module for auto initializing verifiers and transport based on build config. 
+
+File: [c/src/verifier/in3_init.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/in3_init.h)
+
+#### in3_for_chain_auto_init
+
+```c
+in3_t* in3_for_chain_auto_init(chain_id_t chain_id);
+```
+
+arguments:
+```eval_rst
+=========================== ============== 
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+=========================== ============== 
+```
+returns: [`in3_t *`](#in3-t)
 
 
 ## Module verifier/ipfs 

@@ -162,11 +162,11 @@ public class Configure {
     clientConfig.setMaxAttempts(1);        // sets max attempts to 1 before giving up
     clientConfig.setProof(Proof.none);     // does not require proof (not recommended)
 
-    // Setup the NodeConfiguration object for the nodes on a certain chain
-    NodeConfiguration nodeConfiguration = new NodeConfiguration(Chain.GOERLI, clientConfig);
-    nodeConfiguration.setNeedsUpdate(false);
-    nodeConfiguration.setContract("0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f");
-    nodeConfiguration.setRegistryId("0x23d5345c5c13180a8080bd5ddbe7cde64683755dcce6e734d95b7b573845facb");
+    // Setup the ChainConfiguration object for the nodes on a certain chain
+    ChainConfiguration chainConfiguration = new ChainConfiguration(Chain.GOERLI, clientConfig);
+    chainConfiguration.setNeedsUpdate(false);
+    chainConfiguration.setContract("0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f");
+    chainConfiguration.setRegistryId("0x23d5345c5c13180a8080bd5ddbe7cde64683755dcce6e734d95b7b573845facb");
 
     in3.setConfig(clientConfig);
 
@@ -196,16 +196,16 @@ public class GetBalance {
     // create incubed
     IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
 
-    System.out.println("Balance API" + GetBalanceAPI(in3).longValue());
+    System.out.println("Balance API" + getBalanceAPI(in3).longValue());
 
-    System.out.println("Balance RPC " + GetBalanceRPC(in3));
+    System.out.println("Balance RPC " + getBalanceRPC(in3));
   }
 
-  static BigInteger GetBalanceAPI(IN3 in3) {
+  static BigInteger getBalanceAPI(IN3 in3) {
     return in3.getEth1API().getBalance(AC_ADDR, Block.LATEST);
   }
 
-  static String GetBalanceRPC(IN3 in3) {
+  static String getBalanceRPC(IN3 in3) {
     return in3.sendRPC("eth_getBalance", new Object[] {AC_ADDR, "latest"});
   }
 }
@@ -295,17 +295,17 @@ public class GetTransaction {
     // create incubed
     IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also dthe default)
 
-    Transaction txn = GetTransactionAPI(in3);
+    Transaction txn = getTransactionAPI(in3);
     System.out.println("Transaction API #blockNumber: " + txn.getBlockNumber());
 
-    System.out.println("Transaction RPC :" + GetTransactionRPC(in3));
+    System.out.println("Transaction RPC :" + getTransactionRPC(in3));
   }
 
-  static Transaction GetTransactionAPI(IN3 in3) {
+  static Transaction getTransactionAPI(IN3 in3) {
     return in3.getEth1API().getTransactionByHash(TXN_HASH);
   }
 
-  static String GetTransactionRPC(IN3 in3) {
+  static String getTransactionRPC(IN3 in3) {
     return in3.sendRPC("eth_getTransactionByHash", new Object[] {TXN_HASH});
   }
 }
@@ -331,17 +331,17 @@ public class GetTransactionReceipt {
     // create incubed
     IN3 in3 = IN3.forChain(Chain.MAINNET); // set it to mainnet (which is also the default)
 
-    TransactionReceipt txn = GetTransactionReceiptAPI(in3);
+    TransactionReceipt txn = getTransactionReceiptAPI(in3);
     System.out.println("TransactionRerceipt API : for txIndex " + txn.getTransactionIndex() + " Block num " + txn.getBlockNumber() + " Gas used " + txn.getGasUsed() + " status " + txn.getStatus());
 
-    System.out.println("TransactionReceipt RPC : " + GetTransactionReceiptRPC(in3));
+    System.out.println("TransactionReceipt RPC : " + getTransactionReceiptRPC(in3));
   }
 
-  static TransactionReceipt GetTransactionReceiptAPI(IN3 in3) {
+  static TransactionReceipt getTransactionReceiptAPI(IN3 in3) {
     return in3.getEth1API().getTransactionReceipt(TRANSACTION_HASH);
   }
 
-  static String GetTransactionReceiptRPC(IN3 in3) {
+  static String getTransactionReceiptRPC(IN3 in3) {
     return in3.sendRPC("eth_getTransactionReceipt", new Object[] {TRANSACTION_HASH});
   }
 }
@@ -421,6 +421,65 @@ java -cp $IN3/build/lib/in3.jar:. GetBlockAPI
 
 
 ## Package in3
+
+#### class BlockID
+
+##### fromHash
+
+ > public static [`BlockID`](#class-blockid) fromHash([`String`](#class-string) hash);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **hash**  
+========== ========== 
+```
+##### fromNumber
+
+ > public static [`BlockID`](#class-blockid) fromNumber([`long`](#class-long) number);
+
+arguments:
+```eval_rst
+======== ============ 
+``long``  **number**  
+======== ============ 
+```
+##### getNumber
+
+ > public `Long` getNumber();
+
+##### setNumber
+
+ > public `void` setNumber([`long`](#class-long) block);
+
+arguments:
+```eval_rst
+======== =========== 
+``long``  **block**  
+======== =========== 
+```
+##### getHash
+
+ > public `String` getHash();
+
+##### setHash
+
+ > public `void` setHash([`String`](#class-string) hash);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **hash**  
+========== ========== 
+```
+##### toJSON
+
+ > public `String` toJSON();
+
+##### toString
+
+ > public `String` toString();
+
 
 #### class Chain
 
@@ -547,11 +606,23 @@ returns the signer or wallet.
 
  > public [`Signer`](#class-signer) getSigner();
 
+##### getIpfs
+
+gets the ipfs-api 
+
+ > public [`in3.ipfs.API`](#class-in3.ipfs.api) getIpfs();
+
 ##### getEth1API
 
 gets the ethereum-api 
 
  > public [`in3.eth1.API`](#class-in3.eth1.api) getEth1API();
+
+##### getCrypto
+
+gets the utils/crypto-api 
+
+ > public [`Crypto`](#class-crypto) getCrypto();
 
 ##### setStorageProvider
 
@@ -619,7 +690,7 @@ send a request.
 
 The request must a valid json-string with method and params 
 
- > public `native String` send([`String`](#class-string) request);
+ > public `String` send([`String`](#class-string) request);
 
 arguments:
 ```eval_rst
@@ -633,7 +704,7 @@ send a request but returns a object like array or map with the parsed response.
 
 The request must a valid json-string with method and params 
 
- > public `native Object` sendobject([`String`](#class-string) request);
+ > public `Object` sendobject([`String`](#class-string) request);
 
 arguments:
 ```eval_rst
@@ -658,6 +729,18 @@ arguments:
 ```
 ##### sendRPCasObject
 
+ > public `Object` sendRPCasObject([`String`](#class-string) method, [`Object[]`](#class-object[]) params, [`boolean`](#class-boolean) useEnsResolver);
+
+arguments:
+```eval_rst
+============ ==================== 
+``String``    **method**          
+``Object[]``  **params**          
+``boolean``   **useEnsResolver**  
+============ ==================== 
+```
+##### sendRPCasObject
+
 send a RPC request by only passing the method and params. 
 
 It will create the raw request from it and return the result. 
@@ -670,6 +753,31 @@ arguments:
 ``String``    **method**  
 ``Object[]``  **params**  
 ============ ============ 
+```
+##### cacheClear
+
+clears the cache. 
+
+ > public `boolean` cacheClear();
+
+##### nodeList
+
+restrieves the node list 
+
+ > public [`IN3Node[]`](#class-in3node) nodeList();
+
+##### sign
+
+request for a signature of an already verified hash. 
+
+ > public [`SignedBlockHash[]`](#class-signedblockhash) sign([`BlockID[]`](#class-blockid[]) blocks, [`String[]`](#class-string[]) dataNodeAdresses);
+
+arguments:
+```eval_rst
+============================= ====================== 
+`BlockID[] <#class-blockid>`_  **blocks**            
+``String[]``                   **dataNodeAdresses**  
+============================= ====================== 
 ```
 ##### forChain
 
@@ -686,6 +794,8 @@ arguments:
 ======== ============= 
 ```
 ##### getVersion
+
+returns the current incubed version. 
 
  > public static `native String` getVersion();
 
@@ -714,207 +824,90 @@ arguments:
 ============ ============= 
 ```
 
-#### class JSON
+#### class IN3Node
 
-internal helper tool to represent a JSON-Object. 
+##### getUrl
 
-Since the internal representation of JSON in incubed uses hashes instead of name, the getter will creates these hashes. 
+ > public `String` getUrl();
 
-##### get
+##### getAddress
 
-gets the property 
+ > public `String` getAddress();
 
- > public `Object` get([`String`](#class-string) prop);
+##### getIndex
 
-arguments:
-```eval_rst
-========== ========== =========================
-``String``  **prop**  the name of the property.
-========== ========== =========================
-```
-returns: `Object` : the raw object. 
+ > public `int` getIndex();
 
+##### getDeposit
 
+ > public `String` getDeposit();
 
-##### put
+##### getProps
 
-adds values. 
+ > public `long` getProps();
 
-This function will be called from the JNI-Iterface.
+##### getTimeout
 
-Internal use only! 
+ > public `int` getTimeout();
 
- > public `void` put([`int`](#class-int) key, [`Object`](#class-object) val);
+##### getRegisterTime
 
-arguments:
-```eval_rst
-========== ========= ===================
-``int``     **key**  the hash of the key
-``Object``  **val**  the value object
-========== ========= ===================
-```
-##### getLong
+ > public `int` getRegisterTime();
 
-returns the property as long 
+##### getWeight
 
- > public `long` getLong([`String`](#class-string) key);
-
-arguments:
-```eval_rst
-========== ========= ================
-``String``  **key**  the propertyName
-========== ========= ================
-```
-returns: `long` : the long value 
+ > public `int` getWeight();
 
 
+#### class IN3Props
 
-##### getBigInteger
+##### IN3Props
 
-returns the property as BigInteger 
+ > public  IN3Props();
 
- > public `BigInteger` getBigInteger([`String`](#class-string) key);
+##### setDataNodes
+
+ > public `void` setDataNodes([`String[]`](#class-string[]) adresses);
 
 arguments:
 ```eval_rst
-========== ========= ================
-``String``  **key**  the propertyName
-========== ========= ================
+============ ============== 
+``String[]``  **adresses**  
+============ ============== 
 ```
-returns: `BigInteger` : the BigInteger value 
+##### setSignerNodes
 
-
-
-##### getStringArray
-
-returns the property as StringArray 
-
- > public `String[]` getStringArray([`String`](#class-string) key);
+ > public `void` setSignerNodes([`String[]`](#class-string[]) adresses);
 
 arguments:
 ```eval_rst
-========== ========= ================
-``String``  **key**  the propertyName
-========== ========= ================
+============ ============== 
+``String[]``  **adresses**  
+============ ============== 
 ```
-returns: `String[]` : the array or null 
-
-
-
-##### getString
-
-returns the property as String or in case of a number as hexstring. 
-
- > public `String` getString([`String`](#class-string) key);
-
-arguments:
-```eval_rst
-========== ========= ================
-``String``  **key**  the propertyName
-========== ========= ================
-```
-returns: `String` : the hexstring 
-
-
-
 ##### toString
 
  > public `String` toString();
 
-##### hashCode
+##### toJSON
 
- > public `int` hashCode();
+ > public `String` toJSON();
 
-##### equals
-
- > public `boolean` equals([`Object`](#class-object) obj);
-
-arguments:
-```eval_rst
-========== ========= 
-``Object``  **obj**  
-========== ========= 
-```
-##### asStringArray
-
-casts the object to a String[] 
-
- > public static `String[]` asStringArray([`Object`](#class-object) o);
-
-arguments:
-```eval_rst
-========== ======= 
-``Object``  **o**  
-========== ======= 
-```
-##### asBigInteger
-
- > public static `BigInteger` asBigInteger([`Object`](#class-object) o);
-
-arguments:
-```eval_rst
-========== ======= 
-``Object``  **o**  
-========== ======= 
-```
-##### asLong
-
- > public static `long` asLong([`Object`](#class-object) o);
-
-arguments:
-```eval_rst
-========== ======= 
-``Object``  **o**  
-========== ======= 
-```
-##### asInt
-
- > public static `int` asInt([`Object`](#class-object) o);
-
-arguments:
-```eval_rst
-========== ======= 
-``Object``  **o**  
-========== ======= 
-```
-##### asString
-
- > public static `String` asString([`Object`](#class-object) o);
-
-arguments:
-```eval_rst
-========== ======= 
-``Object``  **o**  
-========== ======= 
-```
-##### toJson
-
- > public static `String` toJson([`Object`](#class-object) ob);
-
-arguments:
-```eval_rst
-========== ======== 
-``Object``  **ob**  
-========== ======== 
-```
-##### appendKey
-
- > public static `void` appendKey([`StringBuilder`](#class-stringbuilder) sb, [`String`](#class-string) key, [`Object`](#class-object) value);
-
-arguments:
-```eval_rst
-================= =========== 
-``StringBuilder``  **sb**     
-``String``         **key**    
-``Object``         **value**  
-================= =========== 
-```
 
 #### class Loader
 
 ##### loadLibrary
 
  > public static `void` loadLibrary();
+
+
+#### class NodeList
+
+##### getNodes
+
+returns an array of IN3Node 
+
+ > public [`IN3Node[]`](#class-in3node) getNodes();
 
 
 #### class NodeProps
@@ -948,39 +941,32 @@ Type: static `final long`
 Type: static `final long`
 
 
-#### class TempStorageProvider
+#### class SignedBlockHash
 
-a simple Storage Provider storing the cache in the temp-folder. 
+##### getBlockHash
 
-##### getItem
+ > public `String` getBlockHash();
 
-returns a item from cache () 
+##### getBlock
 
- > public `byte[]` getItem([`String`](#class-string) key);
+ > public `long` getBlock();
 
-arguments:
-```eval_rst
-========== ========= ====================
-``String``  **key**  the key for the item
-========== ========= ====================
-```
-returns: `byte[]` : the bytes or null if not found. 
+##### getR
 
+ > public `String` getR();
 
+##### getS
 
-##### setItem
+ > public `String` getS();
 
-stores a item in the cache. 
+##### getV
 
- > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
+ > public `long` getV();
 
-arguments:
-```eval_rst
-========== ============= ====================
-``String``  **key**      the key for the item
-``byte[]``  **content**  the value to store
-========== ============= ====================
-```
+##### getMsgHash
+
+ > public `String` getMsgHash();
+
 
 #### enum Proof
 
@@ -1010,88 +996,113 @@ arguments:
 ============ ============= 
 ```
 
-#### interface Signer
-
-a Interface responsible for signing data or transactions. 
-
-##### prepareTransaction
-
-optiional method which allows to change the transaction-data before sending it. 
-
-This can be used for redirecting it through a multisig. 
-
- > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
-
-arguments:
-```eval_rst
-================================================= ========= 
-`IN3 <#class-in3>`_                                **in3**  
-`TransactionRequest <#class-transactionrequest>`_  **tx**   
-================================================= ========= 
-```
-##### hasAccount
-
-returns true if the account is supported (or unlocked) 
-
- > public `boolean` hasAccount([`String`](#class-string) address);
-
-arguments:
-```eval_rst
-========== ============= 
-``String``  **address**  
-========== ============= 
-```
-##### sign
-
-signing of the raw data. 
-
- > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
-
-arguments:
-```eval_rst
-========== ============= 
-``String``  **data**     
-``String``  **address**  
-========== ============= 
-```
-
-#### interface StorageProvider
-
-Provider methods to cache data. 
-
-These data could be nodelists, contract codes or validator changes. 
-
-##### getItem
-
-returns a item from cache () 
-
- > public `byte[]` getItem([`String`](#class-string) key);
-
-arguments:
-```eval_rst
-========== ========= ====================
-``String``  **key**  the key for the item
-========== ========= ====================
-```
-returns: `byte[]` : the bytes or null if not found. 
-
-
-
-##### setItem
-
-stores a item in the cache. 
-
- > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
-
-arguments:
-```eval_rst
-========== ============= ====================
-``String``  **key**      the key for the item
-``byte[]``  **content**  the value to store
-========== ============= ====================
-```
-
 ## Package in3.config
+
+#### class ChainConfiguration
+
+Part of the configuration hierarchy for IN3 Client. 
+
+Holds the configuration a node group in a particular Chain. 
+
+##### nodesConfig
+
+Type: [`NodeConfigurationArrayList< , >`](#class-nodeconfiguration)
+
+##### ChainConfiguration
+
+ > public  ChainConfiguration([`long`](#class-long) chain, [`ClientConfiguration`](#class-clientconfiguration) config);
+
+arguments:
+```eval_rst
+=================================================== ============ 
+``long``                                             **chain**   
+`ClientConfiguration <#class-clientconfiguration>`_  **config**  
+=================================================== ============ 
+```
+##### getChain
+
+ > public `long` getChain();
+
+##### isNeedsUpdate
+
+ > public `Boolean` isNeedsUpdate();
+
+##### setNeedsUpdate
+
+ > public `void` setNeedsUpdate([`boolean`](#class-boolean) needsUpdate);
+
+arguments:
+```eval_rst
+=========== ================= 
+``boolean``  **needsUpdate**  
+=========== ================= 
+```
+##### getContract
+
+ > public `String` getContract();
+
+##### setContract
+
+ > public `void` setContract([`String`](#class-string) contract);
+
+arguments:
+```eval_rst
+========== ============== 
+``String``  **contract**  
+========== ============== 
+```
+##### getRegistryId
+
+ > public `String` getRegistryId();
+
+##### setRegistryId
+
+ > public `void` setRegistryId([`String`](#class-string) registryId);
+
+arguments:
+```eval_rst
+========== ================ 
+``String``  **registryId**  
+========== ================ 
+```
+##### getWhiteListContract
+
+ > public `String` getWhiteListContract();
+
+##### setWhiteListContract
+
+ > public `void` setWhiteListContract([`String`](#class-string) whiteListContract);
+
+arguments:
+```eval_rst
+========== ======================= 
+``String``  **whiteListContract**  
+========== ======================= 
+```
+##### getWhiteList
+
+ > public `String[]` getWhiteList();
+
+##### setWhiteList
+
+ > public `void` setWhiteList([`String[]`](#class-string[]) whiteList);
+
+arguments:
+```eval_rst
+============ =============== 
+``String[]``  **whiteList**  
+============ =============== 
+```
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
+##### toString
+
+ > public `String` toString();
+
 
 #### class ClientConfiguration
 
@@ -1178,6 +1189,22 @@ arguments:
 ======= ==================== 
 ``int``  **signatureCount**  
 ======= ==================== 
+```
+##### isStats
+
+ > public `Boolean` isStats();
+
+##### setStats
+
+if true (default) the request will be counted as part of the regular stats, if not they are not shown as part of the dashboard. 
+
+ > public `void` setStats([`boolean`](#class-boolean) stats);
+
+arguments:
+```eval_rst
+=========== =========== 
+``boolean``  **stats**  
+=========== =========== 
 ```
 ##### getFinality
 
@@ -1383,17 +1410,17 @@ arguments:
 ```
 ##### getNodesConfig
 
- > public [`NodeConfigurationHashMap< Long, , >`](#class-nodeconfiguration) getNodesConfig();
+ > public [`ChainConfigurationHashMap< Long, , >`](#class-chainconfiguration) getNodesConfig();
 
-##### setNodesConfig
+##### setChainsConfig
 
- > public `void` setNodesConfig([`HashMap<`](#class-hashmap<) Long, [`NodeConfiguration`](#class-nodeconfiguration) >);
+ > public `void` setChainsConfig([`HashMap<`](#class-hashmap<) Long, [`ChainConfiguration`](#class-chainconfiguration) >);
 
 arguments:
 ```eval_rst
-================================================================= ================= 
-`NodeConfigurationHashMap< Long, , > <#class-nodeconfiguration>`_  **nodesConfig**  
-================================================================= ================= 
+=================================================================== ================== 
+`ChainConfigurationHashMap< Long, , > <#class-chainconfiguration>`_  **chainsConfig**  
+=================================================================== ================== 
 ```
 ##### markAsSynced
 
@@ -1416,125 +1443,19 @@ generates a json-string based on the internal data.
 
 #### class NodeConfiguration
 
-Part of the configuration hierarchy for IN3 Client. 
+Configuration Object for Incubed Client. 
 
-Holds the configuration a node group in a particular Chain. 
-
-##### nodeList
-
-Type: [`NodeListConfigurationArrayList< , >`](#class-nodelistconfiguration)
+It represents the node of a nodelist. 
 
 ##### NodeConfiguration
 
- > public  NodeConfiguration([`long`](#class-long) chain, [`ClientConfiguration`](#class-clientconfiguration) config);
+ > public  NodeConfiguration([`ChainConfiguration`](#class-chainconfiguration) config);
 
 arguments:
 ```eval_rst
-=================================================== ============ 
-``long``                                             **chain**   
-`ClientConfiguration <#class-clientconfiguration>`_  **config**  
-=================================================== ============ 
-```
-##### getChain
-
- > public `long` getChain();
-
-##### isNeedsUpdate
-
- > public `Boolean` isNeedsUpdate();
-
-##### setNeedsUpdate
-
- > public `void` setNeedsUpdate([`boolean`](#class-boolean) needsUpdate);
-
-arguments:
-```eval_rst
-=========== ================= 
-``boolean``  **needsUpdate**  
-=========== ================= 
-```
-##### getContract
-
- > public `String` getContract();
-
-##### setContract
-
- > public `void` setContract([`String`](#class-string) contract);
-
-arguments:
-```eval_rst
-========== ============== 
-``String``  **contract**  
-========== ============== 
-```
-##### getRegistryId
-
- > public `String` getRegistryId();
-
-##### setRegistryId
-
- > public `void` setRegistryId([`String`](#class-string) registryId);
-
-arguments:
-```eval_rst
-========== ================ 
-``String``  **registryId**  
-========== ================ 
-```
-##### getWhiteListContract
-
- > public `String` getWhiteListContract();
-
-##### setWhiteListContract
-
- > public `void` setWhiteListContract([`String`](#class-string) whiteListContract);
-
-arguments:
-```eval_rst
-========== ======================= 
-``String``  **whiteListContract**  
-========== ======================= 
-```
-##### getWhiteList
-
- > public `String[]` getWhiteList();
-
-##### setWhiteList
-
- > public `void` setWhiteList([`String[]`](#class-string[]) whiteList);
-
-arguments:
-```eval_rst
-============ =============== 
-``String[]``  **whiteList**  
-============ =============== 
-```
-##### toJSON
-
-generates a json-string based on the internal data. 
-
- > public `String` toJSON();
-
-##### toString
-
- > public `String` toString();
-
-
-#### class NodeListConfiguration
-
-Configuration Object for Incubed Client. 
-
-It represents the nodes of a nodelist. 
-
-##### NodeListConfiguration
-
- > public  NodeListConfiguration([`NodeConfiguration`](#class-nodeconfiguration) config);
-
-arguments:
-```eval_rst
-=============================================== ============ 
-`NodeConfiguration <#class-nodeconfiguration>`_  **config**  
-=============================================== ============ 
+================================================= ============ 
+`ChainConfiguration <#class-chainconfiguration>`_  **config**  
+================================================= ============ 
 ```
 ##### getUrl
 
@@ -1585,7 +1506,7 @@ arguments:
 
 #### interface Configuration
 
-a INterface class, which is able to generate a JSON-String. 
+an Interface class, which is able to generate a JSON-String. 
 
 ##### toJSON
 
@@ -1602,7 +1523,7 @@ a Wrapper for the incubed client offering Type-safe Access and additional helper
 
 ##### API
 
-creates a API using the given incubed instance. 
+creates an eth1.API using the given incubed instance. 
 
  > public  API([`IN3`](#class-in3) in3);
 
@@ -1963,9 +1884,89 @@ returns: `String` : transactionHash
 
 
 
+##### abiEncode
+
+encodes the arguments as described in the method signature using ABI-Encoding. 
+
+ > public `String` abiEncode([`String`](#class-string) signature, [`String[]`](#class-string[]) params);
+
+arguments:
+```eval_rst
+============ =============== 
+``String``    **signature**  
+``String[]``  **params**     
+============ =============== 
+```
+##### abiDecode
+
+decodes the data based on the signature. 
+
+ > public `String[]` abiDecode([`String`](#class-string) signature, [`String`](#class-string) encoded);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **signature**  
+``String``  **encoded**    
+========== =============== 
+```
+##### checksumAddress
+
+converts the given address to a checksum address. 
+
+ > public `String` checksumAddress([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### checksumAddress
+
+converts the given address to a checksum address. 
+
+Second parameter includes the chainId. 
+
+ > public `String` checksumAddress([`String`](#class-string) address, [`Boolean`](#class-boolean) useChainId);
+
+arguments:
+```eval_rst
+=========== ================ 
+``String``   **address**     
+``Boolean``  **useChainId**  
+=========== ================ 
+```
+##### ens
+
+resolve ens-name. 
+
+ > public `String` ens([`String`](#class-string) name);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **name**  
+========== ========== 
+```
+##### ens
+
+resolve ens-name. 
+
+Second parameter especifies if it is an address, owner, resolver or hash. 
+
+ > public `String` ens([`String`](#class-string) name, [`ENSMethod`](#class-ensmethod) type);
+
+arguments:
+```eval_rst
+=============================== ========== 
+``String``                       **name**  
+`ENSMethod <#class-ensmethod>`_  **type**  
+=============================== ========== 
+```
 ##### sendTransaction
 
-sends a Transaction as desribed by the TransactionRequest. 
+sends a Transaction as described by the TransactionRequest. 
 
 This will require a signer to be set in order to sign the transaction. 
 
@@ -2349,11 +2350,11 @@ arguments:
 `TransactionRequest <#class-transactionrequest>`_  **tx**   
 ================================================= ========= 
 ```
-##### hasAccount
+##### canSign
 
 returns true if the account is supported (or unlocked) 
 
- > public `boolean` hasAccount([`String`](#class-string) address);
+ > public `boolean` canSign([`String`](#class-string) address);
 
 arguments:
 ```eval_rst
@@ -2699,4 +2700,573 @@ arguments:
 ``String``  **data**  
 ========== ========== 
 ```
+
+#### enum ENSMethod
+
+The enum type contains the following values:
+
+```eval_rst
+============== = 
+ **addr**      0 
+ **resolver**  1 
+ **hash**      2 
+ **owner**     3 
+============== = 
+```
+
+## Package in3.ipfs
+
+#### class API
+
+API for ipfs custom methods. 
+
+To be used along with "Chain.IPFS" on in3 instance. 
+
+##### API
+
+creates a ipfs.API using the given incubed instance. 
+
+ > public  API([`IN3`](#class-in3) in3);
+
+arguments:
+```eval_rst
+=================== ========= 
+`IN3 <#class-in3>`_  **in3**  
+=================== ========= 
+```
+##### get
+
+Returns the content associated with specified multihash on success OR NULL on error. 
+
+ > public `byte[]` get([`String`](#class-string) multihash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **multihash**  
+========== =============== 
+```
+##### put
+
+Returns the IPFS multihash of stored content on success OR NULL on error. 
+
+ > public `String` put([`String`](#class-string) content);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **content**  
+========== ============= 
+```
+##### put
+
+Returns the IPFS multihash of stored content on success OR NULL on error. 
+
+ > public `String` put([`byte[]`](#class-byte[]) content);
+
+arguments:
+```eval_rst
+========== ============= 
+``byte[]``  **content**  
+========== ============= 
+```
+
+## Package in3.ipfs.API
+
+#### enum Enconding
+
+The enum type contains the following values:
+
+```eval_rst
+============ = 
+ **base64**  0 
+ **hex**     1 
+ **utf8**    2 
+============ = 
+```
+
+## Package in3.utils
+
+#### class Account
+
+Pojo that represents the result of an ecrecover operation (see: Crypto class). 
+
+##### getAddress
+
+address from ecrecover operation. 
+
+ > public `String` getAddress();
+
+##### getPublicKey
+
+public key from ecrecover operation. 
+
+ > public `String` getPublicKey();
+
+
+#### class Crypto
+
+a Wrapper for crypto-related helper functions. 
+
+##### Crypto
+
+ > public  Crypto([`IN3`](#class-in3) in3);
+
+arguments:
+```eval_rst
+=================== ========= 
+`IN3 <#class-in3>`_  **in3**  
+=================== ========= 
+```
+##### signData
+
+returns a signature given a message and a key. 
+
+ > public [`Signature`](#class-signature) signData([`String`](#class-string) msg, [`String`](#class-string) key, [`SignatureType`](#class-signaturetype) sigType);
+
+arguments:
+```eval_rst
+======================================= ============= 
+``String``                               **msg**      
+``String``                               **key**      
+`SignatureType <#class-signaturetype>`_  **sigType**  
+======================================= ============= 
+```
+##### decryptKey
+
+ > public `String` decryptKey([`String`](#class-string) key, [`String`](#class-string) passphrase);
+
+arguments:
+```eval_rst
+========== ================ 
+``String``  **key**         
+``String``  **passphrase**  
+========== ================ 
+```
+##### pk2address
+
+extracts the public address from a private key. 
+
+ > public `String` pk2address([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **key**  
+========== ========= 
+```
+##### pk2public
+
+extracts the public key from a private key. 
+
+ > public `String` pk2public([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **key**  
+========== ========= 
+```
+##### ecrecover
+
+extracts the address and public key from a signature. 
+
+ > public [`Account`](#class-account) ecrecover([`String`](#class-string) msg, [`String`](#class-string) sig);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **msg**  
+``String``  **sig**  
+========== ========= 
+```
+##### ecrecover
+
+extracts the address and public key from a signature. 
+
+ > public [`Account`](#class-account) ecrecover([`String`](#class-string) msg, [`String`](#class-string) sig, [`SignatureType`](#class-signaturetype) sigType);
+
+arguments:
+```eval_rst
+======================================= ============= 
+``String``                               **msg**      
+``String``                               **sig**      
+`SignatureType <#class-signaturetype>`_  **sigType**  
+======================================= ============= 
+```
+##### signData
+
+returns a signature given a message and a key. 
+
+ > public [`Signature`](#class-signature) signData([`String`](#class-string) msg, [`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **msg**  
+``String``  **key**  
+========== ========= 
+```
+
+#### class JSON
+
+internal helper tool to represent a JSON-Object. 
+
+Since the internal representation of JSON in incubed uses hashes instead of name, the getter will creates these hashes. 
+
+##### get
+
+gets the property 
+
+ > public `Object` get([`String`](#class-string) prop);
+
+arguments:
+```eval_rst
+========== ========== =========================
+``String``  **prop**  the name of the property.
+========== ========== =========================
+```
+returns: `Object` : the raw object. 
+
+
+
+##### put
+
+adds values. 
+
+This function will be called from the JNI-Iterface.
+
+Internal use only! 
+
+ > public `void` put([`int`](#class-int) key, [`Object`](#class-object) val);
+
+arguments:
+```eval_rst
+========== ========= ===================
+``int``     **key**  the hash of the key
+``Object``  **val**  the value object
+========== ========= ===================
+```
+##### getLong
+
+returns the property as long 
+
+ > public `long` getLong([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `long` : the long value 
+
+
+
+##### getBigInteger
+
+returns the property as BigInteger 
+
+ > public `BigInteger` getBigInteger([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `BigInteger` : the BigInteger value 
+
+
+
+##### getStringArray
+
+returns the property as StringArray 
+
+ > public `String[]` getStringArray([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `String[]` : the array or null 
+
+
+
+##### getString
+
+returns the property as String or in case of a number as hexstring. 
+
+ > public `String` getString([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `String` : the hexstring 
+
+
+
+##### toString
+
+ > public `String` toString();
+
+##### hashCode
+
+ > public `int` hashCode();
+
+##### equals
+
+ > public `boolean` equals([`Object`](#class-object) obj);
+
+arguments:
+```eval_rst
+========== ========= 
+``Object``  **obj**  
+========== ========= 
+```
+##### asStringArray
+
+casts the object to a String[] 
+
+ > public static `String[]` asStringArray([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asBigInteger
+
+ > public static `BigInteger` asBigInteger([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asLong
+
+ > public static `long` asLong([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asInt
+
+ > public static `int` asInt([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asString
+
+ > public static `String` asString([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### toJson
+
+ > public static `String` toJson([`Object`](#class-object) ob);
+
+arguments:
+```eval_rst
+========== ======== 
+``Object``  **ob**  
+========== ======== 
+```
+##### appendKey
+
+ > public static `void` appendKey([`StringBuilder`](#class-stringbuilder) sb, [`String`](#class-string) key, [`Object`](#class-object) value);
+
+arguments:
+```eval_rst
+================= =========== 
+``StringBuilder``  **sb**     
+``String``         **key**    
+``Object``         **value**  
+================= =========== 
+```
+
+#### class Signature
+
+##### getMessage
+
+ > public `String` getMessage();
+
+##### getMessageHash
+
+ > public `String` getMessageHash();
+
+##### getSignature
+
+ > public `String` getSignature();
+
+##### getR
+
+ > public `String` getR();
+
+##### getS
+
+ > public `String` getS();
+
+##### getV
+
+ > public `long` getV();
+
+
+#### class TempStorageProvider
+
+a simple Storage Provider storing the cache in the temp-folder. 
+
+##### getItem
+
+returns a item from cache () 
+
+ > public `byte[]` getItem([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ====================
+``String``  **key**  the key for the item
+========== ========= ====================
+```
+returns: `byte[]` : the bytes or null if not found. 
+
+
+
+##### setItem
+
+stores a item in the cache. 
+
+ > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
+
+arguments:
+```eval_rst
+========== ============= ====================
+``String``  **key**      the key for the item
+``byte[]``  **content**  the value to store
+========== ============= ====================
+```
+##### clear
+
+clear the cache. 
+
+ > public `boolean` clear();
+
+
+#### enum SignatureType
+
+The enum type contains the following values:
+
+```eval_rst
+============== = 
+ **eth_sign**  0 
+ **raw**       1 
+ **hash**      2 
+============== = 
+```
+
+#### interface Signer
+
+a Interface responsible for signing data or transactions. 
+
+##### prepareTransaction
+
+optiional method which allows to change the transaction-data before sending it. 
+
+This can be used for redirecting it through a multisig. 
+
+ > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
+
+arguments:
+```eval_rst
+================================================= ========= 
+`IN3 <#class-in3>`_                                **in3**  
+`TransactionRequest <#class-transactionrequest>`_  **tx**   
+================================================= ========= 
+```
+##### canSign
+
+returns true if the account is supported (or unlocked) 
+
+ > public `boolean` canSign([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### sign
+
+signing of the raw data. 
+
+ > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **data**     
+``String``  **address**  
+========== ============= 
+```
+
+#### interface StorageProvider
+
+Provider methods to cache data. 
+
+These data could be nodelists, contract codes or validator changes. 
+
+##### getItem
+
+returns a item from cache () 
+
+ > public `byte[]` getItem([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ====================
+``String``  **key**  the key for the item
+========== ========= ====================
+```
+returns: `byte[]` : the bytes or null if not found. 
+
+
+
+##### setItem
+
+stores a item in the cache. 
+
+ > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
+
+arguments:
+```eval_rst
+========== ============= ====================
+``String``  **key**      the key for the item
+``byte[]``  **content**  the value to store
+========== ============= ====================
+```
+##### clear
+
+clear the cache. 
+
+ > public `boolean` clear();
+
 

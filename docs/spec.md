@@ -1824,3 +1824,83 @@ This Method does not require any proof. (even if requested). Clients must at lea
 [snapshot]:../html/api-solidity.html#snapshot
 [saveBlockNumber]:../html/api-solidity.html#saveblocknumber
 [recreateBlockheaders]:../html/api-solidity.html#recreateblockheaders
+
+### IPFS
+
+A Node supporting IPFS must support these 2 RPC-Methods for uploading and downloading IPFS-Content. The node itself will run a ipfs-client to handle them.
+
+Fetching ipfs-content can be easily verified by creating the ipfs-hash based on the received data and comparing it to the requested ipfs-hash. Since there is no chance of manipulating the data, there is also no need to put a deposit or convict a node. That's why the registry-contract allows a zero-deposit fot ipfs-nodes.
+
+
+#### ipfs_get
+
+Fetches the data for a requested ipfs-hash. If the node is not able to resolve the hash or find the data a error should be reported.
+
+No proof or verification needed on the server side.
+
+Parameters:
+
+1. `ipfshash`: string - the ipfs multi hash
+2. `encoding`: the encoding used for the response. ( `hex` , `base64` or `utf8`)
+
+Returns:
+
+the content matching the requested hash.
+
+Request:
+
+```js
+{
+    "method":"ipfs_get",
+    "params":[
+        "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
+        "utf8"
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": "I love Incubed",
+}
+```
+
+
+#### ipfs_put
+
+Stores ipfs-content to the ipfs network.
+Important! As a client there is no garuantee that a node made this content available. ( just like `eth_sendRawTransaction` will only broadcast it). Even if the node stores the content there is no gurantee it will do it forever. 
+
+
+Parameters:
+
+1. `data`: string - the content encoded with the specified encoding.
+2. `encoding`: the encoding used for the response. ( `hex` , `base64` or `utf8`)
+
+Returns:
+
+ the ipfs multi hash
+
+Request:
+
+```js
+{
+    "method":"ipfs_put",
+    "params":[
+        "I love Incubed",
+        "utf8"
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
+}
+```
