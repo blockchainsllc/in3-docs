@@ -122,6 +122,77 @@ Once with the latest list at hand, the client can request any other on-chain inf
 - `in3_config` _ClientConfig or str_ - (optional) Configuration for the client. If not provided, default is loaded.
   
 
+#### node_list
+```python
+Client.node_list()
+```
+
+Gets the list of Incubed nodes registered in the selected chain registry contract.
+
+**Returns**:
+
+- `node_list` _NodeList_ - List of registered in3 nodes and metadata.
+  
+
+#### abi_encode
+```python
+Client.abi_encode(fn_signature: str, *fn_args)
+```
+
+Smart-contract ABI encoder. Used to serialize a rpc to the EVM.
+Based on the [Solidity specification.](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html)
+Note: Parameters refers to the list of variables in a method declaration.
+Arguments are the actual values that are passed in when the method is invoked.
+When you invoke a method, the arguments used must match the declaration's parameters in type and order.
+
+**Arguments**:
+
+- `fn_signature` _str_ - Function name, with parameters. i.e. `getBalance(uint256):uint256`, can contain the return types but will be ignored.
+- `fn_args` _tuple_ - Function parameters, in the same order as in passed on to method_name.
+
+**Returns**:
+
+- `encoded_fn_call` _str_ - i.e. "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+  
+
+#### abi_decode
+```python
+Client.abi_decode(fn_return_types: str, encoded_values: str)
+```
+
+Smart-contract ABI decoder. Used to parse rpc responses from the EVM.
+Based on the [Solidity specification.](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html)
+
+**Arguments**:
+
+- `fn_return_types` - Function return types. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`.
+  In case of the latter, the function signature will be ignored and only the return types will be parsed.
+- `encoded_values` - Abi encoded values. Usually the string returned from a rpc to the EVM.
+
+**Returns**:
+
+- `decoded_return_values` _tuple_ - "0x1234567890123456789012345678901234567890", "0x05"
+  
+
+#### call
+```python
+Client.call(transaction: RawTransaction, block_number: int)
+```
+
+Calls a smart-contract method that does not store the computation. Will be executed locally by Incubed's EVM.
+curl localhost:8545 -X POST --data '{"jsonrpc":"2.0", "method":"eth_call", "params":[{"from": "eth.accounts[0]", "to": "0x65da172d668fbaeb1f60e206204c2327400665fd", "data": "0x6ffa1caa0000000000000000000000000000000000000000000000000000000000000005"}, "latest"], "id":1}'
+Check https://ethereum.stackexchange.com/questions/3514/how-to-call-a-contract-method-using-the-eth-call-json-rpc-api for more.
+
+**Arguments**:
+
+  transaction (RawTransaction):
+- `block_number` _int or str_ - Desired block number integer or 'latest', 'earliest', 'pending'.
+
+**Returns**:
+
+- `method_returned_value` - A hexadecimal. For decoding use in3.abi_decode.
+  
+
 ### ClientConfig
 ```python
 ClientConfig(self,
@@ -227,6 +298,179 @@ EthereumApi(self, runtime: In3Runtime, chain_id: str)
 Module based on Ethereum's api and web3.js
 
 
+#### keccak256
+```python
+EthereumApi.keccak256(message: str)
+```
+
+Keccak-256 digest of the given data. Compatible with Ethereum but not with SHA3-256.
+
+**Arguments**:
+
+- `message` _str_ - Message to be hashed.
+
+**Returns**:
+
+- `digest` _str_ - The message digest.
+  
+
+#### gas_price
+```python
+EthereumApi.gas_price()
+```
+
+The current gas price in Wei (1 ETH equals 1000000000000000000 Wei ).
+
+**Returns**:
+
+- `price` _int_ - minimum gas value for the transaction to be mined
+  
+
+#### block_number
+```python
+EthereumApi.block_number()
+```
+
+Returns the number of the most recent block the in3 network can collect signatures to verify.
+Can be changed by Client.Config.replaceLatestBlock.
+If you need the very latest block, change Client.Config.signatureCount to zero.
+
+**Returns**:
+
+  block_number (int) : Number of the most recent block
+  
+
+#### get_balance
+```python
+EthereumApi.get_balance(address: str, at_block: int = 'latest')
+```
+
+Returns the balance of the account of given address.
+
+**Arguments**:
+
+- `address` _str_ - address to check for balance
+- `at_block` _int or str_ - block number IN3BlockNumber  or EnumBlockStatus
+
+**Returns**:
+
+- `balance` _int_ - integer of the current balance in wei.
+  
+
+#### get_storage_at
+```python
+EthereumApi.get_storage_at(
+address: str,
+position: int = 0,
+at_block: int = <BlockStatus.LATEST: 'latest'>)
+```
+
+Stored value in designed position at a given address. Storage can be used to store a smart contract state, constructor or just any data.
+Each contract consists of a EVM bytecode handling the execution and a storage to save the state of the contract.
+The storage is essentially a key/value store. Use get_code to get the smart-contract code.
+
+**Arguments**:
+
+- `address` _str_ - Ethereum account address
+- `position` _int_ - Position index, 0x0 up to 0x64
+- `at_block` _int or str_ - Block number
+
+**Returns**:
+
+- `storage_at` _str_ - Stored value in designed position. Use decode('hex') to see ascii format of the hex data.
+  
+
+#### get_code
+```python
+EthereumApi.get_code(address: str,
+at_block: int = <BlockStatus.LATEST: 'latest'>)
+```
+
+Smart-Contract bytecode in hexadecimal. If the account is a simple wallet the function will return '0x'.
+
+**Arguments**:
+
+- `address` _str_ - Ethereum account address
+- `at_block` _int or str_ - Block number
+
+**Returns**:
+
+- `bytecode` _str_ - Smart-Contract bytecode in hexadecimal.
+  
+
+#### get_transaction_count
+```python
+EthereumApi.get_transaction_count(
+address: str, at_block: int = <BlockStatus.LATEST: 'latest'>)
+```
+
+Number of transactions mined from this address. Used to set transaction nonce.
+Nonce is a value that will make a transaction fail in case it is different from (transaction count + 1).
+It exists to mitigate replay attacks.
+
+**Arguments**:
+
+- `address` _str_ - Ethereum account address
+- `at_block` _int_ - Block number
+
+**Returns**:
+
+- `tx_count` _int_ - Number of transactions mined from this address.
+  
+
+#### get_block_by_hash
+```python
+EthereumApi.get_block_by_hash(block_hash: str,
+get_full_block: bool = False)
+```
+
+Blocks can be identified by root hash of the block merkle tree (this), or sequential number in which it was mined (get_block_by_number).
+
+**Arguments**:
+
+- `block_hash` _str_ - Desired block hash
+- `get_full_block` _bool_ - If true, returns the full transaction objects, otherwise only its hashes.
+
+**Returns**:
+
+- `block` _Block_ - Desired block, if exists.
+  
+
+#### get_block_by_number
+```python
+EthereumApi.get_block_by_number(block_number: [<class 'int'>],
+get_full_block: bool = False)
+```
+
+Blocks can be identified by sequential number in which it was mined, or root hash of the block merkle tree (this) (get_block_by_hash).
+
+**Arguments**:
+
+- `block_number` _int or str_ - Desired block number integer or 'latest', 'earliest', 'pending'.
+- `get_full_block` _bool_ - If true, returns the full transaction objects, otherwise only its hashes.
+
+**Returns**:
+
+- `block` _Block_ - Desired block, if exists.
+  
+
+#### get_transaction_by_hash
+```python
+EthereumApi.get_transaction_by_hash(tx_hash: str)
+```
+
+Transactions can be identified by root hash of the transaction merkle tree (this) or by its position in the block transactions merkle tree.
+Every transaction hash is unique for the whole chain. Collision could in theory happen, chances are 67148E-63%.
+
+**Arguments**:
+
+- `tx_hash` - Transaction hash.
+
+**Returns**:
+
+- `transaction` - Desired transaction, if exists.
+  
+
 ### EthAccountApi
 ```python
 EthAccountApi(self, runtime: In3Runtime, factory: EthObjectFactory)
@@ -234,6 +478,99 @@ EthAccountApi(self, runtime: In3Runtime, factory: EthObjectFactory)
 
 Manages wallets and smart-contracts
 
+
+#### sign
+```python
+EthAccountApi.sign(address: str, data: str)
+```
+
+Use ECDSA to sign a message.
+
+**Arguments**:
+
+- `address` _str_ - Ethereum address of the wallet that will sign the message.
+- `data` _str_ - Data to be signed, EITHER a hash string or a Transaction.
+
+**Returns**:
+
+- `signed_message` _str_ - ECDSA calculated r, s, and parity v, concatenated. v = 27 + (r % 2)
+  
+
+#### send_transaction
+```python
+EthAccountApi.send_transaction(transaction: RawTransaction)
+```
+
+Signs and sends the assigned transaction. Requires the 'key' value to be set in ClientConfig.
+Transactions change the state of an account, just the balance, or additionally, the storage and the code.
+Every transaction has a cost, gas, paid in Wei. The transaction gas is calculated over estimated gas times the
+gas cost, plus an additional miner fee, if the sender wants to be sure that the transaction will be mined in the
+latest block.
+
+**Arguments**:
+
+- `transaction` - All information needed to perform a transaction. Minimum is from, to and value.
+  Client will add the other required fields, gas and chaindId.
+
+**Returns**:
+
+- `tx_hash` - Transaction hash, used to get the receipt and check if the transaction was mined.
+  
+
+#### get_transaction_receipt
+```python
+EthAccountApi.get_transaction_receipt(tx_hash: str)
+```
+
+After a transaction is received the by the client, it returns the transaction hash. With it, it is possible to
+gather the receipt, once a miner has mined and it is part of an acknowledged block. Because how it is possible,
+in distributed systems, that data is asymmetric in different parts of the system, the transaction is only "final"
+once a certain number of blocks was mined after it, and still it can be possible that the transaction is discarded
+after some time. But, in general terms, it is accepted that after 6 to 8 blocks from latest, that it is very
+likely that the transaction will stay in the chain.
+
+**Arguments**:
+
+- `tx_hash` - Transaction hash.
+
+**Returns**:
+
+  tx_receipt:
+  
+
+#### estimate_gas
+```python
+EthAccountApi.estimate_gas(transaction: RawTransaction)
+```
+
+Gas estimation for transaction. Used to fill transaction.gas field. Check RawTransaction docs for more on gas.
+
+**Arguments**:
+
+- `transaction` - Unsent transaction to be estimated. Important that the fields data or/and value are filled in.
+
+**Returns**:
+
+- `gas` _int_ - Calculated gas in Wei.
+  
+
+#### checksum_address
+```python
+EthAccountApi.checksum_address(address: str, add_chain_id: bool = True)
+```
+
+Will convert an upper or lowercase Ethereum address to a checksum address, that uses case to encode values.
+See [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md).
+
+**Arguments**:
+
+- `address` - Ethereum address string or object.
+- `add_chain_id` _bool_ - Will append the chain id of the address, for multi-chain support, canonical for Eth.
+
+**Returns**:
+
+- `checksum_address` - EIP-55 compliant, mixed-case address object.
+  
 
 ### in3.eth.model
 
