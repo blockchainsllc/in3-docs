@@ -16,6 +16,7 @@ Welcome to Incubed's documentation!
    api-c
    api-ts
    api-wasm
+   api-python
    api-java
    api-cmd
    api-node-server
