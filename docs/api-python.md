@@ -52,58 +52,153 @@ Explanation of this source code architecture and how it is organized. For more o
 - **in3.libin3.runtime**: Runtime object, bridging the remote procedure calls to the libin3 instances. 
 ## Examples
 
-### blocknumber
+### block_number
 
-source : [in3-c/python/examples/blocknumber.py](https://github.com/slockit/in3-c/blob/master/python/examples/blocknumber.py)
+source : [in3-c/python/examples/block_number.py](https://github.com/slockit/in3-c/blob/master/python/examples/block_number.py)
 
 
 
 ```python
-### Creating a new instance by chain definition
-
 import in3
 
-kovan = IN3Config()
-kovan.chainId = ChainsDefinitions.KOVAN.value
-in3_client = In3Client(in3_config=kovan)
 
-in3_client.eth.block_number() # Kovan's block's number
+print('\nEthereum Main Network')
+client = in3.Client()
+latest_block = client.eth.block_number()
+gas_price = client.eth.gas_price()
+print('Latest BN: {}\nGas Price: {} Wei'.format(latest_block, gas_price))
+
+print('\nEthereum Kovan Test Network')
+client = in3.Client('kovan')
+latest_block = client.eth.block_number()
+gas_price = client.eth.gas_price()
+print('Latest BN: {}\nGas Price: {} Wei'.format(latest_block, gas_price))
+
+print('\nEthereum Goerli Test Network')
+client = in3.Client('goerli')
+latest_block = client.eth.block_number()
+gas_price = client.eth.gas_price()
+print('Latest BN: {}\nGas Price: {} Wei'.format(latest_block, gas_price))
+
+# Results Example
+"""
+Ethereum Main Network
+Latest BN: 9801135
+Gas Price: 2000000000 Wei
+
+Ethereum Kovan Test Network
+Latest BN: 17713464
+Gas Price: 6000000000 Wei
+
+Ethereum Goerli Test Network
+Latest BN: 2460853
+Gas Price: 4610612736 Wei
+"""
 ```
 
-### chainId
+### in3_config
 
-source : [in3-c/python/examples/chainId.py](https://github.com/slockit/in3-c/blob/master/python/examples/chainId.py)
+source : [in3-c/python/examples/in3_config.py](https://github.com/slockit/in3-c/blob/master/python/examples/in3_config.py)
 
 
 
 ```python
-### Creating a new instance by "string" chainId
+import in3
 
-from in3py.client.in3_client import In3Client
-from in3py.client.in3_client import IN3Config
+if __name__ == '__main__':
 
-kovan = IN3Config()
-kovan.chainId= "0x2a"
-in3_client = In3Client(in3_config=kovan)
+    print('\nEthereum Goerli Test Network')
+    goerli_cfg = in3.ClientConfig(chainId=str(in3.Chain.GOERLI), signatureCount=3, timeout=10000)
+    client = in3.Client(goerli_cfg)
+    node_list = client.node_list()
+    print('\nIncubed Registry:')
+    print('\ttotal servers:', node_list.totalServers)
+    print('\tlast updated in block:', node_list.lastBlockNumber)
+    print('\tregistry ID:', node_list.registryId)
+    print('\tcontract address:', node_list.contract)
+    print('\nNodes Registered:\n')
+    for node in node_list.nodes:
+        print('\turl:', node.url)
+        print('\tdeposit:', node.deposit)
+        print('\tweight:', node.weight)
+        print('\tregistered in block:', node.registerTime)
+        print('\n')
 
-in3_client.eth.block_number() # Kovan's block's number
+# Results Example
+"""
+Ethereum Goerli Test Network
+
+Incubed Registry:
+	total servers: 7
+	last updated in block: 2320627
+	registry ID: 0x67c02e5e272f9d6b4a33716614061dd298283f86351079ef903bf0d4410a44ea
+	contract address: 0x5f51e413581dd76759e9eed51e63d14c8d1379c8
+
+Nodes Registered:
+
+	url: https://in3-v2.slock.it/goerli/nd-1
+	deposit: 10000000000000000
+	weight: 2000
+	registered in block: 1576227711
+
+
+	url: https://in3-v2.slock.it/goerli/nd-2
+	deposit: 10000000000000000
+	weight: 2000
+	registered in block: 1576227741
+
+
+	url: https://in3-v2.slock.it/goerli/nd-3
+	deposit: 10000000000000000
+	weight: 2000
+	registered in block: 1576227801
+
+
+	url: https://in3-v2.slock.it/goerli/nd-4
+	deposit: 10000000000000000
+	weight: 2000
+	registered in block: 1576227831
+
+
+	url: https://in3-v2.slock.it/goerli/nd-5
+	deposit: 10000000000000000
+	weight: 2000
+	registered in block: 1576227876
+
+
+	url: https://tincubeth.komputing.org/
+	deposit: 10000000000000000
+	weight: 1
+	registered in block: 1578947320
+
+
+	url: https://h5l45fkzz7oc3gmb.onion/
+	deposit: 10000000000000000
+	weight: 1
+	registered in block: 1578954071
+"""
 ```
 
 
-### Building 
 
-In order to run those examples, you need to install in3 first
+## Running the examples
 
+To run an example, you need to install in3 first:
 ```sh
 pip install in3
 ```
 
-In order to run a example use
+Copy one of the examples, or both and paste into a file, i.e. `example.py`:
 
-```
-python blocknumber.py
+`MacOS`
+```sh
+pbpaste > example.py
 ```
 
+Execute the example with python:
+```
+python example.py
+```
 
 ## in3
 
@@ -658,3 +753,113 @@ Account(self, address: str, chain_id: str, secret: str = None)
 
 Ethereum address of a wallet or smart-contract
 
+
+## in3.libin3
+
+
+### In3Runtime
+```python
+In3Runtime(self, timeout: int)
+```
+
+Instantiate libin3 and frees it when garbage collected.
+
+**Arguments**:
+
+- `timeout` _int_ - Time for http request connection and content timeout in milliseconds
+  
+
+#### call
+```python
+In3Runtime.call(fn_name: str, *args)
+```
+
+Make a remote procedure call to a function in libin3
+
+**Arguments**:
+
+- `fn_name` _str or Enum_ - Name of the function to be called
+- `*args` - Arguments matching the parameters order of this function
+
+**Returns**:
+
+- `fn_return` _str_ - String of values returned by the function, if any.
+  
+
+### in3.libin3.lib_loader
+
+Load libin3 shared library for the current system, map function signatures, map and set transport functions.
+
+Example of RPC to In3-Core library, In3 Network and back.
+```
++----------------+                               +----------+                       +------------+                        +------------------+
+|                | in3.client.eth.block_number() |          |  in3_client_exec_req  |            |  In3 Network Request   |                  |e
+|     python     +------------------------------>+  python  +----------------------->   libin3   +------------------------>     python       |
+|   application  |                               |   in3    |                       |  in3-core  |                        |  http_transport  |
+|                <-------------------------------+          <-----------------------+            <------------------------+                  |
++----------------+     primitive or Object       +----------+     ctype object      +------------+  in3_req_add_response  +------------------+
+```
+
+
+#### In3Request
+```python
+In3Request()
+```
+
+Request sent by the libin3 to the In3 Network, transported over the _http_transport function
+Based on in3/client/.h in3_request_t struct
+
+**Attributes**:
+
+- `payload` _str_ - the payload to send
+- `urls` _[str]_ - array of urls
+- `urls_len` _int_ - number of urls
+- `results` _str_ - the responses
+- `timeout` _int_ - the timeout 0= no timeout
+- `times` _int_ - measured times (in ms) which will be used for ajusting the weights
+  
+
+#### libin3_new
+```python
+libin3_new(timeout: int)
+```
+
+RPC to free libin3 objects in memory.
+
+**Arguments**:
+
+- `timeout` _int_ - Time in milliseconds for http requests to fail due to timeout
+
+**Returns**:
+
+- `instance` _int_ - Memory address of the shared library instance, return value from libin3_new
+  
+
+#### libin3_free
+```python
+libin3_free(instance: int)
+```
+
+RPC to free libin3 objects in memory.
+
+**Arguments**:
+
+- `instance` _int_ - Memory address of the shared library instance, return value from libin3_new
+  
+
+#### libin3_call
+```python
+libin3_call(instance: int, rpc: bytes)
+```
+
+Make Remote Procedure Call to an arbitrary method of a libin3 instance
+
+**Arguments**:
+
+- `instance` _int_ - Memory address of the shared library instance, return value from libin3_new
+- `rpc` _bytes_ - Serialized function call, a ethreum api json string.
+
+**Returns**:
+
+- `returned_value` _object_ - The returned function value(s)
+  
