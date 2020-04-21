@@ -54,7 +54,7 @@ Command-line Arguments
 --profile-prometheus                     URL of the prometheus gateway to report stats
 --registry                               The address of the server registry used to update the NodeList.
 --registryRPC                            The URL of the client in case the registry is not on the same chain.
---rpcUrl                                 The URL of the client.
+--rpcUrl                                 The URL of the client. User can specify multiple clients for higher security and data availability. If multiple URLs are used server will check block hash on all RPC clients before signing. Also server will only switch to another node when any request will fail on previous. Format for using multple clients is: --rpcUrl=http://rpc1.com --rpcUrl=http://rpc2.com 
 --startBlock                             BlockNumber to start watching the registry.
 --timeout                                Number of milliseconds needed to wait before a request times out.
 --version                                Output of the version number.
