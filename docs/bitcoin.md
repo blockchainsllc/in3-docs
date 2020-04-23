@@ -4,6 +4,6 @@
 
 ```mermaid
 graph TD
-  request -> check
-  check -yes-> blockheader
+  request --> check
+  check --> blockheader
 ```
