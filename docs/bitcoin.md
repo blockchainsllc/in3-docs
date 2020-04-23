@@ -39,3 +39,7 @@ the block (hence the block header is at height X). \
 *Merkle proofs are established by hashing a hash’s corresponding hash together 
 and climbing up the tree until you obtain the root hash which is or can be publicly known.* \
 A more detailed description an example can be found [here](https://medium.com/crypto-0-nite/merkle-proofs-explained-6dd429623dc5).
+
+## Verify the target
+
+### using finality headers
