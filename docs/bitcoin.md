@@ -1,10 +1,14 @@
 # Bitcoin Verification
 
-## BIP-34 (Bitcoin Improvement Proposal 34)
+## Block number proof
+
+### BIP-34 (Bitcoin Improvement Proposal 34)
 This BIP introduces an upgrade path for versioned transactions and blocks. A 
 unique value is added to newly produced coinbase transactions, and blocks are 
 updated to version 2. After block number 227,835 all blocks must include the 
 block height in their coinbase transaction.
+
+### Proof
 
 The server has to provide the following data:
 *  block header
@@ -21,7 +25,6 @@ graph LR
   id4 -->|Yes| id5[block height verified]
   id4 -->|No| id6[block height not verified]
 ```
-
 
 The block height is part of the signature script of the coinbase tx. The following
 example will show the steps to extract the block height out of the signature
@@ -40,6 +43,14 @@ the block (hence the block header is at height X). \
 and climbing up the tree until you obtain the root hash which is or can be publicly known.* \
 A more detailed description an example can be found [here](https://medium.com/crypto-0-nite/merkle-proofs-explained-6dd429623dc5).
 
-## Verify the target
+### Size of the proof
 
-### using finality headers
+As mentioned above there are three things that are neccessary for the proof: block header, coinbase tx and merkle proof.
+*  block header: always 80 bytes
+*  coinbase tx: variable size - largest found: 377 bytes
+*  merkle proof: variable size - 1 MB block limit = approximately 3500 tx, 12 hashes needed, 12 * 32 bytes = 384 bytes
+*  conclusion: maximum total size of: 80 + 377 + 384 = **841 bytes**
+
+The amount of 841 bytes is a maximum value. The size of the coinbase tx can be 
+much smaller (down to about 200 bytes). Depending on the amount of txs in the 
+block the size of the merkle proof can be much smaller as well (down to only 1 hash = 32 bytes).
