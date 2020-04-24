@@ -12,8 +12,8 @@ block height in their coinbase transaction.
 
 The server has to provide the following data:
 *  block header
-*  first tx of the block (coinbase tx)
-*  merkle proof for this tx
+*  coinbase tx (first tx of the block)
+*  merkle proof (for coinbase tx)
 
 This flowchart shows the process for a client to verify the height of the block:
 
@@ -58,6 +58,19 @@ block the size of the merkle proof can be much smaller as well (down to only 1 h
 
 ## Finality proof
 
+### Block header
+
+| **Size** | **Field** | **Description** |
+| ------ | ------ | ------ |
+| 4 bytes | Version | A version number to track software/protocol upgrades |
+| 32 bytes | Parent Hash | A reference to the hash of the previous (parent) block in the chain |
+| 32 bytes | Merkle Root | A hash of the root of the merkle tree of this block’s transactions |
+| 4 bytes | Timestamp | The approximate creation time of this block (seconds from Unix Epoch) |
+| 4 bytes | Bits | The Proof-of-Work algorithm difficulty target for this block |
+| 4 bytes| Nonce | A counter used for the Proof-of-Work algorithm |
+
+### Proof
+
 The server will provide n finality headers. Assume the client requests the block header of block X.
 The response of the server will include the header of block header and the block header of block X+1,
 X+2, ..., X+n. \
@@ -68,14 +81,74 @@ graph TB
     start([start]) --> id1
     id1[get hash of block header of block X using sha256 twice] --> id2[check if this hash is equal to the 'parent hash' of block header of block X+1]
     id2 --> id3{Equal?}
-    id3 -->|true| id4{X < n ?}
+    id3 -->|true| id4{X < X+n ?}
     id3 -->|false| notproofed
     id4 -->|true| id5[X += 1]
     id5 --> id1
     id4 -->|false| proofed
     proofed([no more finality headers: finality proofed])
     notproofed([error: finality not proofed])
-    click start "https://www.google.com/search?q=%C3%BCbersetzer&oq=%C3%BCber&aqs=chrome.0.69i59j69i57j0j46j0l2j69i60j69i61.1398j0j7&sourceid=chrome&ie=UTF-8" "Tooltip for a callback"
-    
-
 ```
+
+He starts with hash (using sha256 twice) of the first block header. This hash has to be equal
+to the parent hash of the second block header. Now he uses the hash (using sha256 twice) of
+the second block. This hash has to be equal to the parent hash of the third block header. And so on.
+If there is an error at some point (hash is not equal to parent hash) then the finality proof failed.
+
+### Example
+
+For this example the server provides the block hash and two finality headers.
+
+Hash: 00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7 (Block [625000](https://blockchair.com/bitcoin/block/625000)) \
+Finality Headers:
+*  **(1)** 00e00020**d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000**40273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c722
+*  **(2)** 00e0ff7f**c78d20fab2c28de35d00f7ec5fb269a63d597146d9b310000000000000000000**52960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb8784
+
+Reverse(Hash): d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000 \
+Parent Hash (1): d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000
+
+Hash of (1): c78d20fab2c28de35d00f7ec5fb269a63d597146d9b310000000000000000000 \
+Parent Hash (2): c78d20fab2c28de35d00f7ec5fb269a63d597146d9b310000000000000000000
+
+Finality proofed.
+
+## Verify target
+
+### Verification using finality headers
+
+The server has to provide the following data:
+*  block header
+*  finality headers (default 5)
+*  coinbase tx
+*  merkle proof (for coinbase tx)
+
+The client can verify the target by himself as follows:
+
+```mermaid
+graph TB
+    start([start]) --> id1
+    id1[verify block number] --> id2{Verified?}
+    id2 -->|true| id3[calculate epoch using block number]
+    id2 -->|false| exception
+    id3 --> id4[calculate difference to the epoch of the last verified target]
+    id4 --> id5{Difference > 5?}
+    id5 -->|false| id7
+    id5 -->|true| id6[request X additional block headers per extra epoch ]
+    id7[check evolution of target since last verified target] --> id8{Increased?}
+    id8 -->|true| id9[request X additional block headers per 5% increase]
+    id9 --> id10[execute finality proof]
+    id8 -->|false| id10
+    id10 --> id11{Proofed?}
+    id11 -->|true| id12([target verified])
+    id11 -->|false| exception
+    exception([error: server tried to fool the client])
+    
+```
+ToDo: Add description! \
+ToDo: Rework regarding the numbers needed! \
+ToDo: What happens when a new epoch starts within the finality headers?
+
+### Verification using signatures
+
+
+### Verification using different randomly chosen nodes
