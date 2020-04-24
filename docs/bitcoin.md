@@ -19,11 +19,11 @@ This flowchart shows the process for a client to verify the height of the block:
 
 ```mermaid
 graph LR
-  id1[extract block height]-->id2[calculate merkle root using tx id and merkle proof]
-  id2 --> id3[compare calculated merkle root and merkle root of block header]
-  id3 --> id4{Equal?}
-  id4 -->|Yes| id5[block height verified]
-  id4 -->|No| id6[block height not verified]
+    id1[extract block height]-->id2[calculate merkle root using tx id and merkle proof]
+    id2 --> id3[compare calculated merkle root and merkle root of block header]
+    id3 --> id4{Equal?}
+    id4 -->|Yes| id5[block height verified]
+    id4 -->|No| id6[block height not verified]
 ```
 
 The block height is part of the signature script of the coinbase tx. The following
@@ -54,3 +54,28 @@ As mentioned above there are three things that are neccessary for the proof: blo
 The amount of 841 bytes is a maximum value. The size of the coinbase tx can be 
 much smaller (down to about 200 bytes). Depending on the amount of txs in the 
 block the size of the merkle proof can be much smaller as well (down to only 1 hash = 32 bytes).
+
+
+## Finality proof
+
+The server will provide n finality headers. Assume the client requests the block header of block X.
+The response of the server will include the header of block header and the block header of block X+1,
+X+2, ..., X+n. \
+The client can verify the finality by himself as follows:
+
+```mermaid
+graph TB
+    start([start]) --> id1
+    id1[get hash of block header of block X using sha256 twice] --> id2[check if this hash is equal to the 'parent hash' of block header of block X+1]
+    id2 --> id3{Equal?}
+    id3 -->|true| id4{X < n ?}
+    id3 -->|false| notproofed
+    id4 -->|true| id5[X += 1]
+    id5 --> id1
+    id4 -->|false| proofed
+    proofed([no more finality headers: finality proofed])
+    notproofed([error: finality not proofed])
+    click start "https://www.google.com/search?q=%C3%BCbersetzer&oq=%C3%BCber&aqs=chrome.0.69i59j69i57j0j46j0l2j69i60j69i61.1398j0j7&sourceid=chrome&ie=UTF-8" "Tooltip for a callback"
+    
+
+```
