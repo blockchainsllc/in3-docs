@@ -78,10 +78,11 @@ The client can verify the finality by himself as follows:
 
 ```mermaid
 graph TB
-    start([start]) --> id1
+    start([start]) --> init[set N equal to X+n]
+    init --> id1
     id1[get hash of block header of block X using sha256 twice] --> id2[check if this hash is equal to the 'parent hash' of block header of block X+1]
     id2 --> id3{Equal?}
-    id3 -->|true| id4{X < X+n ?}
+    id3 -->|true| id4{X < N ?}
     id3 -->|false| notproofed
     id4 -->|true| id5[X += 1]
     id5 --> id1
