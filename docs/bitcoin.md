@@ -18,7 +18,7 @@ The server has to provide the following data:
 This flowchart shows the process for a client to verify the height of the block:
 
 ```mermaid
-graph LR
+graph TD
     id1[extract block height]-->id2[calculate merkle root using tx id and merkle proof]
     id2 --> id3[compare calculated merkle root and merkle root of block header]
     id3 --> id4{Equal?}
