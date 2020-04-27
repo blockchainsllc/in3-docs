@@ -145,15 +145,44 @@ graph TB
     exception([error: server tried to fool the client])
     
 ```
+
 ToDo: Add description! \
 ToDo: Rework regarding the numbers needed! \
-ToDo: What happens when a new epoch starts within the finality headers?
+ToDo: What happens when a new epoch starts within the finality headers? Do we accept that or is that an error?
 
 ### Verification using signatures
+
+```mermaid
+graph TB
+    start([start]) --> id1[fetch node list]
+    id1 --> id2[choose n signatures nodes SN]
+    id2 --> id3[send request to provider node PN including the signatures nodes]
+    id3 --> id4[PN collects the signatures from the SN]
+    id4 --> id5[PN sends response to client including data and signatures]
+    id5 --> id6[client checks signatures]
+    id6 --> id7{Verified?}
+    id7 -->|true| id8([client accepts response, hence target is verified])
+    id7 -->|false| id9([client doesn't accepts response])
+
+```
+
+The amount of signatures nodes n should be chosen with the 
+[Risk Calculation](https://in3.readthedocs.io/en/develop/Threat-Model-for-Incubed.html#risk-calculation) in mind.
+
+The clients starts with fetching the node list. He chooses n nodes to provide signatures.
+He sends his request to the provider node including all nodes that he wants signatures from.
+The server manages to get all signatures from these nodes. Finally, when the provider node
+gathered all signatures he sends the client a response including the data and signatures.
+The client verifies the signatures using the node list. The incentive for the nodes to be honest
+is their deposit which they will loose if they try to fool the network and someone convicts them.
 
 
 ### Verification using different randomly chosen nodes
 
+```mermaid
+graph TB
+    start([start]) --> id1
+```
 
 ### Calculate target
 
@@ -205,5 +234,5 @@ With this formula the taget can be calculated with absolute precision.
 The bits format is the target without absolute precision. That means it's much smaller
 regarding disk space. The bits are part of the block headers and will always be 4 bytes in total.
 These 4 bytes are split in the length of the target (1 byte) and the actual target
-(3 bytes)
+(3 bytes, imprecise).
 
