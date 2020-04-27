@@ -153,3 +153,57 @@ ToDo: What happens when a new epoch starts within the finality headers?
 
 
 ### Verification using different randomly chosen nodes
+
+
+### Calculate target
+
+```mermaid
+graph TB
+    start([start]) --> id1[get first block of epch]
+    start --> id2[get last block of epoch]
+    id1 --> id3{Availible?}
+    id2 --> id3
+    id3 -->|true| id5
+    id3 -->|false| id4[request block/s from server]
+    id4 --> id5[calculate time between first and last block]
+    id5 --> id6[divide expected time by actual time = factor]
+    id6 --> id7{Factor > 1?}
+    id7 -->|true| id8[blocks were mined faster - difficulty increases]
+    id7 -->|false| id9[blocks were mined slower - difficulty decreases]
+    id8 --> id10([difficuty x factor = new difficulty])
+    id9 --> id10
+```
+
+The target for the next epoch can be calculated by using the first and the last 
+block of an epoch (2016 blocks) to. The client has to divide the expected time for 2016 blocks 
+to be mined (2016 x 10 minutes) by the actual time it took (difference 
+between the two timestamps of the first and the last block) to calculate the factor. 
+The client uses this factor to calculate the difficulty (which is used to calculate 
+the target) for the next epoch: difficulty * factor = new difficulty.
+If miners were able to mine the blocks faster than expected the equation 
+should look like this: 20160 / 18144 = 1.11 (for example 18144 minutes = 9 minutes per block).
+Hence the new difficulty will be difficulty * 1.11.
+
+Two possibilities:
+*  the factor is greater than 1 (block were mined faster) → difficulty increases
+*  the number is less than 1 (block were  mined slower) → difficulty decreases
+
+Rule: Target adjustments are limited by a factor of 4 to prevent overly-large adjustments from one target to the next.
+
+### Difference between target, difficulty and bits
+
+These three things are actually almost the same. They all represent a number to define 
+the difficulty for the proof-of-work algorithm. 
+
+```
+target = targetmax / difficulty
+targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
+```
+
+With this formula the taget can be calculated with absolute precision.
+
+The bits format is the target without absolute precision. That means it's much smaller
+regarding disk space. The bits are part of the block headers and will always be 4 bytes in total.
+These 4 bytes are split in the length of the target (1 byte) and the actual target
+(3 bytes)
+
