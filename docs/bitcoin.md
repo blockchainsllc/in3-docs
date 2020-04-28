@@ -179,10 +179,32 @@ is their deposit which they will loose if they try to fool the network and someo
 
 ### Verification using different randomly chosen nodes
 
+**Should this methode be implemented?**
+The verification by using sigantures is less computational work for the client since
+the provider node collects all signatures and checks whether they are 
+correct or not. In this verifciation the client has to compare the responses
+from the nodes and has to decide whether he accepts a reponse or not.
+
 ```mermaid
 graph TB
-    start([start]) --> id1
+    start([start]) --> id1[fetch node list]
+    id1 --> id2[choose n nodes]
+    id2 --> id3[send request directly to the chosen nodes]
+    id3 --> id4[wait for every node to send a response]
+    id4 --> id5[compare the reponses]
+    id5 --> id6{All the same?}
+    id6 -->|true| id7[target verified]
+    id6 -->|false| id8[How many different responses?]
+    id8 --> id9{> 1?}
+    id9 -->|true| id10[More than one node had a different response than all others]
+    id9 -->|false| id11[One node had a different response than all other]
 ```
+
+ToDo: How does the convict-process looks like? (Graph id10 and id11)
+
+
+
+advantage: a single node doesn't know that other nodes were asked as well.
 
 ### Calculate target
 
