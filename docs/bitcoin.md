@@ -170,7 +170,10 @@ that epoch (which could be a indication for an attack) he requests even more ext
 block header for the finality proof. This way such an attack would cost a lot of money
 for the attacker because the higher the target gets (which makes it easier for him
 to mine blocks) the more blocks he has to mine resulting in the same computational power to
-mine the actual chain of blocks.
+mine the actual chain of blocks. \
+Finally the client will verify the target by executing the
+[finality proof](https://git.slock.it/in3/doc/-/blob/14-bitcoin-documentation/docs/bitcoin.md#finality-proof).
+He will accept the target if the finality proofs is true.
 
 
 
