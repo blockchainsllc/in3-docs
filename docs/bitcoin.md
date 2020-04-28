@@ -146,7 +146,35 @@ graph TB
     
 ```
 
-ToDo: Add description! \
+The client starts this verification process by verifying the block number (height) 
+by doing a [*block number proof*](https://git.slock.it/in3/doc/-/blob/14-bitcoin-documentation/docs/bitcoin.md#block-number-proof).
+If this verification ends up in an error then the client has to assume that the node
+tried to fool him. If not the client continues with calculating the epoch of this block
+(by using the block number). This information will be neccessary to check whether
+the finality blocks are all wihtin the same epoch or not. Next step will be to check
+how old the last verified target is. Why is that neccessary? The target gets adjusted
+every 2016 blocks (one epoch). Target adjustments are limited by a factor of 4 to 
+prevent overly-large adjustments from one target to the next. It would be an attack vector
+if the target is too old. The attacker could mine a chain of blocks which are
+probably-valid but not actually-valid with a larger target (less difficulty) which
+makes it easier for the attacker to mine these blocks (less computational power).
+It would be technical possible that the target increases by the factor 4 in every epoch.
+For example: the clients target is older than 5 epochs then he would accept a target
+which is 4 to the power of 5 (=1024) times larger than his last verfied target.
+As mentioned, the attacker could use this target to create a chain of blocks (to proof
+the finality) which are valid against that target and needs way less computational
+power (higher target = lower difficulty). \
+To prevent that attack vector the client requests more finality headers if the last 
+verified target is older than 5 epochs. If additionally the target increased since 
+that epoch (which could be a indication for an attack) he requests even more extra
+block header for the finality proof. This way such an attack would cost a lot of money
+for the attacker because the higher the target gets (which makes it easier for him
+to mine blocks) the more blocks he has to mine resulting in the same computational power to
+mine the actual chain of blocks.
+
+
+
+
 ToDo: Rework regarding the numbers needed! \
 ToDo: What happens when a new epoch starts within the finality headers? Do we accept that or is that an error?
 
