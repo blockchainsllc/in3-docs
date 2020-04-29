@@ -210,7 +210,7 @@ is their deposit which they will loose if they try to fool the network and someo
 
 ### Verification using different randomly chosen nodes
 
-**Should this methode be implemented?**
+**Should this methode be implemented?** \
 The verification by using sigantures is less computational work for the client since
 the provider node collects all signatures and checks whether they are 
 correct or not. In this verifciation the client has to compare the responses
@@ -231,11 +231,18 @@ graph TB
     id9 -->|false| id11[One node had a different response than all other]
 ```
 
-ToDo: How does the convict-process looks like? (Graph id10 and id11)
+The amount of signatures nodes n should be chosen with the 
+[Risk Calculation](https://in3.readthedocs.io/en/develop/Threat-Model-for-Incubed.html#risk-calculation) in mind.
 
+The client starts with fetching the node list. He chooses n nodes and sends the same
+request to all of them. He will wait until he receives all responses. Then he checks
+whether all response are the same. It is risky for a node trying to fool the client
+(by sending a wrong response) since a node doesn't know that other nodes have been asked as well.
+When all responses are the same the client assumes that he received the right data.
+**When there are differences in the responses (not the same data) then...**
 
+ToDo: How does the convict-process looks like? (Graph id10 and id11) - Add description
 
-advantage: a single node doesn't know that other nodes were asked as well.
 
 ### Calculate target
 
