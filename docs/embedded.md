@@ -75,13 +75,12 @@ contract Access {
 In3 will support a wide range of microcontrollers, in this guide we will use well-known esp32 with freertos framework, and an example android app to interact with it via Wifi connection. 
 
 **Instalation instructions**
+
 1. Clone the repo
 
-`git clone --recursive https://github.com/slockit/in3-devices-esp `
-
+`git clone --recursive https://github.com/slockit/in3-example-espidf`
 
 2. Deploy the contract with your favorite tool (truffle, etc) or use our previusly deployed contract on goerli, with address `0x36643F8D17FE745a69A2Fd22188921Fade60a98B`
-
 
 3. Config your SSID and password inside sdkconfig file `sdkconfig.defaults`
 
