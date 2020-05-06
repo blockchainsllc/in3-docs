@@ -2773,7 +2773,7 @@ arguments:
 
 ## Package in3.ipfs.API
 
-#### enum Enconding
+#### enum Encoding
 
 The enum type contains the following values:
 
