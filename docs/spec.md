@@ -1904,3 +1904,23 @@ Response:
   "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
 }
 ```
+
+### Bitcoin
+
+Standard JSON-RPC calls as described in https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list
+
+Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
+
+Depending on the method, different proofs are needed, which are described in this document.
+
+ToDo: Add description
+
+
+Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+
+*  **block**
+*  **final**
+*  **merkleProof**
+*  **cbtx**
+*  **cbtxMerkleProof**
+
