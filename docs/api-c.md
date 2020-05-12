@@ -131,6 +131,79 @@ While Incubed operates on JSON-RPC level, as a developer, you might want to use 
 
 
 
+## Sample Signature App for Ledger Blue & Ledger Nano S
+
+Run `make load` to build and load the application onto the device. 
+
+
+
+
+## Integration of ledger nano s with incubed
+
+1. Setup development environment for ledger nano s
+2. Build and install ledger nano Signer app into Ledger nano s usb device
+3. Install libusb hidlib
+4. Start using ledger nano s device with Incubed
+
+## Setup development environment for ledger nano s
+
+Setting up dev environment for Ledger nano s is one time activity and Signer application will be available to install directly from Ledger Manager in future. Ledger applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
+
+### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
+
+Download the Nano S SDK in bolos-sdk folder $ git clone [https://github.com/ledgerhq/nanos-secure-sdk](https://github.com/ledgerhq/nanos-secure-sdk)
+
+Download a prebuild gcc and move it to bolos-sdk folder [https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update](https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update)
+
+Download a prebuild clang and rename the folder to clang-arm-fropi then move it to bolos-sdk folder [http://releases.llvm.org/download.html#4.0.0](http://releases.llvm.org/download.html#4.0.0)
+
+### Add environment variables:
+
+sudo -H gedit /etc/environment
+
+ADD PATH TO BOLOS SDK: BOLOS_SDK="<path>/nanos-secure-sdk"
+
+ADD GCCPATH VARIABLE GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
+
+ADD CLANGPATH CLANGPATH="<path>/clang-arm-fropi/bin/"
+
+### Download and install ledger python tools
+
+Installation prerequisites :  $ sudo apt-get install libudev-dev  $ sudo apt-get install libusb-1.0-0-dev  $ sudo apt-get install python-dev (python 2.7)  $ sudo apt-get install virtualenv 
+
+Installation of ledgerblue: $ virtualenv ledger $ source ledger/bin/activate $ pip install ledgerblue
+
+Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerHQ/blue-loader-python)
+
+### Download and install ledger udev rules
+
+$ git clone [https://github.com/LedgerHQ/udev-rules](https://github.com/LedgerHQ/udev-rules)
+
+run script from the above download  $ sudo ./add_udev_rules.sh
+
+### Open new terminal and check for following installations :-
+
+$ sudo apt-get install gcc-multilib $ sudo apt-get install libc6-dev:i386
+
+## Build and install ledger nano Signer app into Ledger nano s usb device
+
+Once the setup is done, go to ledger-incubed-firmware-app folder and run:-
+
+$ make $ make load
+
+## Install libusb hidlib
+
+HIDAPI library is required to interact with ledger nano s device over usb , it is available for multiple platforms and can be cross compiled easily
+
+## Ref: https://github.com/libusb/hidapi
+
+## Start using ledger nano s device with Incubed
+
+Open the application on your ledger nano s usb device and make signing requests from incubed 
+
+
+
+
 ## Building
 
 While we provide binaries, you can also build from source:
@@ -233,6 +306,12 @@ Math optimizations used in the EVM. This will also increase the filesize.
 
 Default-Value: `-DFAST_MATH=OFF`
 
+#### GCC_ANALYZER
+
+GCC10 static code analyses
+
+Default-Value: `-DGCC_ANALYZER=OFF`
+
 #### IN3API
 
 build the USN-API which offer better interfaces and additional functions on top of the pure verification
@@ -268,6 +347,12 @@ Default-Value: `-DIPFS=ON`
 build the java-binding (shared-lib and jar-file)
 
 Default-Value: `-DJAVA=OFF`
+
+#### LEDGER_NANO
+
+include support for nano ledger
+
+Default-Value: `-DLEDGER_NANO=OFF`
 
 #### PAY_ETH
 
@@ -927,6 +1012,59 @@ int main() {
   // cleanup client after usage
   in3_free(c);
   return 0;
+}
+```
+### ledger_sign
+
+source : [in3-c/c/examples/ledger_sign.c](https://github.com/slockit/in3-c/blob/master/c/examples/ledger_sign.c)
+
+```c
+#include <in3/client.h>        // the core client
+#include <in3/eth_api.h>       // functions for direct api-access
+#include <in3/in3_init.h>      // if included the verifier will automaticly be initialized.
+#include <in3/ledger_signer.h> //to invoke ledger nano device for signing
+#include <in3/log.h>           // logging functions
+#include <in3/utils.h>
+#include <stdio.h>
+
+static void send_tx_api(in3_t* in3);
+
+int main() {
+  // create new incubed client
+  uint8_t bip_path[5] = {44, 60, 0, 0, 0};
+  in3_t*  in3         = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_log_set_level(LOG_DEBUG);
+  // setting ledger nano s to be the default signer for incubed client
+  // it will cause the transaction or any msg to be sent to ledger nanos device for siging
+  eth_ledger_set_signer(in3, bip_path);
+
+  // send tx using API
+  send_tx_api(in3);
+
+  // cleanup client after usage
+  in3_free(in3);
+}
+
+void send_tx_api(in3_t* in3) {
+  // prepare parameters
+  address_t to, from;
+  hex_to_bytes("0xC51fBbe0a68a7cA8d33f14a660126Da2A2FAF8bf", -1, from, 20);
+  hex_to_bytes("0xd46e8dd67c5d32be8058bb8eb970870f07244567", -1, to, 20);
+
+  bytes_t* data = hex_to_new_bytes("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", 82);
+
+  // send the tx
+  bytes_t* tx_hash = eth_sendTransaction(in3, from, to, OPTIONAL_T_VALUE(uint64_t, 0x96c0), OPTIONAL_T_VALUE(uint64_t, 0x9184e72a000), OPTIONAL_T_VALUE(uint256_t, to_uint256(0x9184e72a)), OPTIONAL_T_VALUE(bytes_t, *data), OPTIONAL_T_UNDEFINED(uint64_t));
+
+  // if the result is null there was an error and we can get the latest error message from eth_last_error()
+  if (!tx_hash)
+    printf("error sending the tx : %s\n", eth_last_error());
+  else {
+    printf("Transaction hash: ");
+    b_print(tx_hash);
+    b_free(tx_hash);
+  }
+  b_free(data);
 }
 ```
 ### send_transaction
@@ -5789,7 +5927,7 @@ returns: [`d_type_t`](#d-type-t)
 static int d_len(const d_token_t *item);
 ```
 
-number of elements in the token (only for object or array, other will return 0) 
+< number of elements in the token (only for object or array, other will return 0)
 
 arguments:
 ```eval_rst
@@ -6548,7 +6686,7 @@ returns: [`d_token_t *`](#d-token-t)
 #### d_iter
 
 ```c
-static d_iterator_t d_iter(d_token_t *parent);
+d_iterator_t d_iter(d_token_t *parent);
 ```
 
 creates a iterator for a object or array 
@@ -6710,6 +6848,7 @@ The enum type contains the following values:
  **IN3_WAITING**            -16 the process can not be finished since we are waiting for responses
  **IN3_EIGNORE**            -17 Ignorable error.
  **IN3_EPAYMENT_REQUIRED**  -18 payment required
+ **IN3_ENODEVICE**          -19 harware wallet device not connected
 =========================== === ==================================================================
 ```
 
@@ -7694,6 +7833,74 @@ arguments:
 =========================== ============= 
 ```
 returns: `char *`
+
+
+## Module signer/ledger-nano/signer 
+
+
+
+
+### ledger_signer.h
+
+this file defines the incubed configuration struct and it registration. 
+
+File: [c/src/signer/ledger-nano/signer/ledger_signer.h](https://github.com/slockit/in3-c/blob/master/c/src/signer/ledger-nano/signer/ledger_signer.h)
+
+#### eth_ledger_set_signer
+
+```c
+in3_ret_t eth_ledger_set_signer(in3_t *in3, uint8_t *bip_path);
+```
+
+arguments:
+```eval_rst
+=================== ============== 
+`in3_t * <#in3-t>`_  **in3**       
+``uint8_t *``        **bip_path**  
+=================== ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_ledger_get_public_key
+
+```c
+in3_ret_t eth_ledger_get_public_key(uint8_t *i_bip_path, uint8_t *o_public_key);
+```
+
+arguments:
+```eval_rst
+============= ================== 
+``uint8_t *``  **i_bip_path**    
+``uint8_t *``  **o_public_key**  
+============= ================== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_ledger_sign
+
+```c
+in3_ret_t eth_ledger_sign(void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst);
+```
+
+arguments:
+```eval_rst
+=========================================== ============= 
+``void *``                                   **ctx**      
+`d_signature_type_t <#d-signature-type-t>`_  **type**     
+`bytes_t <#bytes-t>`_                        **message**  
+`bytes_t <#bytes-t>`_                        **account**  
+``uint8_t *``                                **dst**      
+=========================================== ============= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
 ## Module transport/curl 
