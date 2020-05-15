@@ -131,73 +131,90 @@ While Incubed operates on JSON-RPC level, as a developer, you might want to use 
 
 
 
-## Sample Signature App for Ledger Blue & Ledger Nano S
-
-Run `make load` to build and load the application onto the device. 
-
-
-
-
-## Integration of ledger nano s with incubed
+## Integration of ledger nano
 
 1. Setup development environment for ledger nano s
 2. Build and install ledger nano Signer app into Ledger nano s usb device
 3. Install libusb hidlib
 4. Start using ledger nano s device with Incubed
 
-## Setup development environment for ledger nano s
+### Setup development environment for ledger nano s
 
 Setting up dev environment for Ledger nano s is one time activity and Signer application will be available to install directly from Ledger Manager in future. Ledger applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
 
 ### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
 
-Download the Nano S SDK in bolos-sdk folder $ git clone [https://github.com/ledgerhq/nanos-secure-sdk](https://github.com/ledgerhq/nanos-secure-sdk)
+Download the Nano S SDK in bolos-sdk folder
 
+```c
+$ git clone https://github.com/ledgerhq/nanos-secure-sdk
+```
 Download a prebuild gcc and move it to bolos-sdk folder [https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update](https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update)
 
 Download a prebuild clang and rename the folder to clang-arm-fropi then move it to bolos-sdk folder [http://releases.llvm.org/download.html#4.0.0](http://releases.llvm.org/download.html#4.0.0)
 
 ### Add environment variables:
 
+```c
 sudo -H gedit /etc/environment
 
-ADD PATH TO BOLOS SDK: BOLOS_SDK="<path>/nanos-secure-sdk"
+ADD PATH TO BOLOS SDK:
+BOLOS_SDK="<path>/nanos-secure-sdk"
 
-ADD GCCPATH VARIABLE GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
+ADD GCCPATH VARIABLE
+GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
 
-ADD CLANGPATH CLANGPATH="<path>/clang-arm-fropi/bin/"
+ADD CLANGPATH
+CLANGPATH="<path>/clang-arm-fropi/bin/"
+```
+#### Download and install ledger python tools
 
-### Download and install ledger python tools
+Installation prerequisites :
 
-Installation prerequisites :  $ sudo apt-get install libudev-dev  $ sudo apt-get install libusb-1.0-0-dev  $ sudo apt-get install python-dev (python 2.7)  $ sudo apt-get install virtualenv 
+```c
+$ sudo apt-get install libudev-dev <
+$ sudo apt-get install libusb-1.0-0-dev 
+$ sudo apt-get install python-dev (python 2.7)
+$ sudo apt-get install virtualenv
+```
+Installation of ledgerblue:
 
-Installation of ledgerblue: $ virtualenv ledger $ source ledger/bin/activate $ pip install ledgerblue
-
+```c
+$ virtualenv ledger
+$ source ledger/bin/activate
+$ pip install ledgerblue
+```
 Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerHQ/blue-loader-python)
 
-### Download and install ledger udev rules
+```c
+#### Download and install ledger udev rules 
 
-$ git clone [https://github.com/LedgerHQ/udev-rules](https://github.com/LedgerHQ/udev-rules)
+$ git clone https://github.com/LedgerHQ/udev-rules
 
-run script from the above download  $ sudo ./add_udev_rules.sh
+run script from the above download 
+$ sudo ./add_udev_rules.sh
+```
+#### Open new terminal and check for following installations
 
-### Open new terminal and check for following installations :-
-
-$ sudo apt-get install gcc-multilib $ sudo apt-get install libc6-dev:i386
-
-## Build and install ledger nano Signer app into Ledger nano s usb device
+```c
+$ sudo apt-get install gcc-multilib
+$ sudo apt-get install libc6-dev:i386
+```
+### Build and install ledger nano Signer app into Ledger nano s usb device
 
 Once the setup is done, go to ledger-incubed-firmware-app folder and run:-
 
-$ make $ make load
-
-## Install libusb hidlib
+```c
+$ make
+$ make load
+```
+#### Install libusb hidlib
 
 HIDAPI library is required to interact with ledger nano s device over usb , it is available for multiple platforms and can be cross compiled easily
 
-## Ref: https://github.com/libusb/hidapi
+Ref: [https://github.com/libusb/hidapi](https://github.com/libusb/hidapi)
 
-## Start using ledger nano s device with Incubed
+### Start using ledger nano s device with Incubed
 
 Open the application on your ledger nano s usb device and make signing requests from incubed 
 
@@ -3454,7 +3471,7 @@ The stuct contains following fields:
 `in3_verification_t <#in3-verification-t>`_  **verification**            Verification-type.
 `bytes_t * <#bytes-t>`_                      **signers**                 the addresses of servers requested to sign the blockhash
 ``uint8_t``                                  **signers_length**          number or addresses
-``uint32_t``                                 **time**                    meassured time in ms for the request
+``uint32_t *``                               **times**                   meassured times in ms for the request
 =========================================== ============================ ====================================================================
 ```
 
@@ -3572,6 +3589,7 @@ The stuct contains following fields:
 `in3_verified_hash_t * <#in3-verified-hash-t>`_  **verified_hashes**       contains the list of already verified blockhashes
 `in3_whitelist_t * <#in3-whitelist-t>`_          **whitelist**             if set the whitelist of the addresses.
 ``uint16_t``                                     **avg_block_time**        average block time (seconds) for this chain (calculated internally)
+``void *``                                       **conf**                  this configuration will be set by the verifiers and allow to add special structs here.
 `address_t <#address-t>`_                        **node**                  node that reported the last_block which necessitated a nodeList update
 ``uint64_t``                                     **exp_last_block**        the last_block when the nodelist last changed reported by this node
 ``uint64_t``                                     **timestamp**             approx. 
@@ -3665,15 +3683,19 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 
 #### in3_signer_t
 
+definition of a signer holding funciton-pointers and data. 
+
 
 The stuct contains following fields:
 
 ```eval_rst
-=================================== ================ 
-`in3_sign <#in3-sign>`_              **sign**        
-`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  
-``void *``                           **wallet**      
-=================================== ================ 
+=================================== ================ ======================================================================================
+`in3_sign <#in3-sign>`_              **sign**        function pointer returning a stored value for the given key.
+`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  function pointer returning capable of manipulating the transaction before signing it. 
+                                                     
+                                                     This is needed in order to support multisigs.
+``void *``                           **wallet**      custom object whill will be passed to functions
+=================================== ================ ======================================================================================
 ```
 
 #### in3_pay_prepare
@@ -3742,13 +3764,13 @@ if a payment handler is set it will be used when generating the request.
 The stuct contains following fields:
 
 ```eval_rst
-=================================================== ==================== 
-`in3_pay_prepare <#in3-pay-prepare>`_                **prepare**         
-`in3_pay_follow_up <#in3-pay-follow-up>`_            **follow_up**       
-`in3_pay_handle_request <#in3-pay-handle-request>`_  **handle_request**  
-`in3_pay_free <#in3-pay-free>`_                      **free**            
-``void *``                                           **cptr**            
-=================================================== ==================== 
+=================================================== ==================== =========================================================================================================================
+`in3_pay_prepare <#in3-pay-prepare>`_                **prepare**         payment prepearation function.
+`in3_pay_follow_up <#in3-pay-follow-up>`_            **follow_up**       payment function to be called after the request.
+`in3_pay_handle_request <#in3-pay-handle-request>`_  **handle_request**  this function is called when the in3-section of payload of the request is built and allows the handler to add properties.
+`in3_pay_free <#in3-pay-free>`_                      **free**            frees the custom pointer (cptr).
+``void *``                                           **cptr**            custom object whill will be passed to functions
+=================================================== ==================== =========================================================================================================================
 ```
 
 #### in3_response_t
@@ -3768,6 +3790,10 @@ The stuct contains following fields:
 ```
 
 #### in3_t
+
+Incubed Configuration. 
+
+This struct holds the configuration and also point to internal resources such as filters or chain configs. 
 
 
 The stuct contains following fields:
@@ -3885,11 +3911,11 @@ setter method for interacting with in3_node_props_t.
 
 arguments:
 ```eval_rst
-================================================= ================ 
-`in3_node_props_t * <#in3-node-props-t>`_          **node_props**  
-`in3_node_props_type_t <#in3-node-props-type-t>`_  **type**        
-``uint8_t``                                        **value**       
-================================================= ================ 
+================================================= ================ ===================================
+`in3_node_props_t * <#in3-node-props-t>`_          **node_props**  pointer to the properties to change
+`in3_node_props_type_t <#in3-node-props-type-t>`_  **type**        key or type of the property
+``uint8_t``                                        **value**       value to set
+================================================= ================ ===================================
 ```
 
 #### in3_node_props_get
@@ -3900,12 +3926,17 @@ static uint32_t in3_node_props_get(in3_node_props_t np, in3_node_props_type_t t)
 
 returns the value of the specified propertytype. 
 
+< the value to extract 
+
+
+
+
 arguments:
 ```eval_rst
-================================================= ======== 
-`in3_node_props_t <#in3-node-props-t>`_            **np**  
+================================================= ======== =====================
+`in3_node_props_t <#in3-node-props-t>`_            **np**  property to read from
 `in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
-================================================= ======== 
+================================================= ======== =====================
 ```
 returns: `uint32_t` : value as a number 
 
@@ -3920,12 +3951,14 @@ static bool in3_node_props_matches(in3_node_props_t np, in3_node_props_type_t t)
 
 checkes if the given type is set in the properties 
 
+< the value to extract
+
 arguments:
 ```eval_rst
-================================================= ======== 
-`in3_node_props_t <#in3-node-props-t>`_            **np**  
+================================================= ======== =====================
+`in3_node_props_t <#in3-node-props-t>`_            **np**  property to read from
 `in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
-================================================= ======== 
+================================================= ======== =====================
 ```
 returns: `bool` : true if set 
 
@@ -4052,7 +4085,7 @@ returns: `char *`
 #### in3_req_add_response
 
 ```c
-void in3_req_add_response(in3_response_t *res, int index, bool is_error, void *data, int data_len);
+void in3_req_add_response(in3_response_t *res, int index, bool is_error, const char *data, int data_len);
 ```
 
 adds a response for a request-object. 
@@ -4065,7 +4098,7 @@ arguments:
 `in3_response_t * <#in3-response-t>`_  **res**       the response-pointer
 ``int``                                **index**     the index of the url, since this request could go out to many urls
 ``bool``                               **is_error**  if true this will be reported as error. the message should then be the error-message
-``void *``                             **data**      the data or the the string
+``const char *``                       **data**      the data or the the string
 ``int``                                **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
 ===================================== ============== =====================================================================================
 ```
@@ -4188,7 +4221,9 @@ in3_ret_t in3_cache_init(in3_t *c);
 
 inits the cache. 
 
-this will try to read the nodelist from cache. 
+this will try to read the nodelist from cache.
+
+inits the cache. 
 
 arguments:
 ```eval_rst
@@ -4438,7 +4473,7 @@ The stuct contains following fields:
 ``unsigned int``                                   **attempt**             the number of attempts
 `d_token_t ** <#d-token-t>`_                       **responses**           references to the tokens representring the parsed responses
 `d_token_t ** <#d-token-t>`_                       **requests**            references to the tokens representring the requests
-`in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**    array of configs adjusted for each request.
+`in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**    configs for a request.
 `node_match_t * <#node-match-t>`_                  **nodes**               
 `cache_entry_t * <#cache-entry-t>`_                **cache**               optional cache-entries. 
                                                                            
@@ -4518,7 +4553,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 in3_ret_t in3_ctx_execute(in3_ctx_t *ctx);
 ```
 
-tries to execute the context, but stops whenever data are required. 
+execute the context, but stops whenever data are required. 
 
 This function should be used in order to call data in a asyncronous way, since this function will not use the transport-function to actually send it.
 
@@ -4528,6 +4563,49 @@ The caller is responsible for delivering the required responses. After calling y
 - IN3_OK : success, we have a result.
 - any other status = error
 
+```eval_rst
+.. graphviz::
+
+       digraph G {
+     node[fontname="Helvetica",   shape=Box, color=lightblue, style=filled ]
+      edge[fontname="Helvetica",   style=solid,  fontsize=8 , color=grey]
+      rankdir = LR;
+    
+      RPC[label="RPC-Request"]
+      CTX[label="in3_ctx_t"]
+    
+      sign[label="sign data",color=lightgrey, style=""]
+      request[label="fetch data",color=lightgrey, style=""]
+    
+      exec[ label="in3_ctx_execute()",color=lightgrey, style="", shape=circle ]
+      free[label="ctx_free()",color=lightgrey, style=""]
+    
+    
+      RPC -> CTX [label="ctx_new()"]
+      CTX -> exec
+    
+    
+      exec -> error [label="IN3_..."]
+      exec -> response[label="IN3_OK"]
+      exec -> waiting[label="IN3_WAITING"]
+    
+      waiting -> sign[label=CT_SIGN]
+      waiting -> request[label=CT_RPC] 
+    
+      sign -> exec [label="in3_req_add_response()"]
+      request -> exec[label="in3_req_add_response()"]
+    
+      response -> free
+      error->free
+    
+    
+     { rank = same; exec, sign, request }
+    
+    
+    
+    }
+    
+```
 Here is a example how to use this function:
 
 ```c
@@ -4877,18 +4955,54 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### in3_vc_set_config
+
+function which is called when the client is being configured. 
+
+This allows the verifier to add a custom-config to the chain based on the configuration. 
+
+
+```c
+typedef in3_ret_t(* in3_vc_set_config) (in3_t *c, d_token_t *conf, in3_chain_t *chain)
+```
+
+returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_vc_free
+
+Function which is called before the chain-instance is freed. 
+
+Here the verifier should clean up resources. 
+
+
+```c
+typedef void(* in3_vc_free) (in3_t *c, in3_chain_t *chain)
+```
+
+
 #### in3_verifier_t
+
+a Verifier. 
+
+Verifiers are registered globaly, but for a specific chain_type. Depending on the chain_type the first verifier is picked. 
 
 
 The stuct contains following fields:
 
 ```eval_rst
-======================================= ================ 
-`in3_verify <#in3-verify>`_              **verify**      
-`in3_pre_handle <#in3-pre-handle>`_      **pre_handle**  
-`in3_chain_type_t <#in3-chain-type-t>`_  **type**        
-`verifierstruct , * <#verifier>`_        **next**        
-======================================= ================ 
+========================================= ================ =============================================================================================================
+`in3_verify <#in3-verify>`_                **verify**      the verify-function is called by the core. 
+                                                           
+                                                           The result is either IN3_OK, IN3_WAITING (if a subrequest was added) or an error code.
+`in3_pre_handle <#in3-pre-handle>`_        **pre_handle**  called before sending the request and allows to manipulate or provide a raw_response to handle it internally.
+`in3_vc_set_config <#in3-vc-set-config>`_  **set_confg**   When configuring the client, each verifier will be passed a config-object.
+`in3_vc_free <#in3-vc-free>`_              **free_chain**  if this function is set, it will be called whenever a chain-instance is freed.
+`in3_chain_type_t <#in3-chain-type-t>`_    **type**        type of the chain, which is used when find a matching verifier.
+`verifierstruct , * <#verifier>`_          **next**        Since verifiers are organized in a linked list the next-pointer connects the registered verifiers.
+========================================= ================ =============================================================================================================
 ```
 
 #### in3_get_verifier
