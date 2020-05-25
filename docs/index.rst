@@ -18,6 +18,7 @@ Welcome to Incubed's documentation!
    api-wasm
    api-python
    api-java
+   api-dotnet
    api-cmd
    api-node-server
    api-solidity
