@@ -131,96 +131,6 @@ While Incubed operates on JSON-RPC level, as a developer, you might want to use 
 
 
 
-## Integration of ledger nano
-
-1. Setup development environment for ledger nano s
-2. Build and install ledger nano Signer app into Ledger nano s usb device
-3. Install libusb hidlib
-4. Start using ledger nano s device with Incubed
-
-### Setup development environment for ledger nano s
-
-Setting up dev environment for Ledger nano s is one time activity and Signer application will be available to install directly from Ledger Manager in future. Ledger applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
-
-### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
-
-Download the Nano S SDK in bolos-sdk folder
-
-```c
-$ git clone https://github.com/ledgerhq/nanos-secure-sdk
-```
-Download a prebuild gcc and move it to bolos-sdk folder [https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update](https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update)
-
-Download a prebuild clang and rename the folder to clang-arm-fropi then move it to bolos-sdk folder [http://releases.llvm.org/download.html#4.0.0](http://releases.llvm.org/download.html#4.0.0)
-
-### Add environment variables:
-
-```c
-sudo -H gedit /etc/environment
-
-ADD PATH TO BOLOS SDK:
-BOLOS_SDK="<path>/nanos-secure-sdk"
-
-ADD GCCPATH VARIABLE
-GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
-
-ADD CLANGPATH
-CLANGPATH="<path>/clang-arm-fropi/bin/"
-```
-#### Download and install ledger python tools
-
-Installation prerequisites :
-
-```c
-$ sudo apt-get install libudev-dev <
-$ sudo apt-get install libusb-1.0-0-dev 
-$ sudo apt-get install python-dev (python 2.7)
-$ sudo apt-get install virtualenv
-```
-Installation of ledgerblue:
-
-```c
-$ virtualenv ledger
-$ source ledger/bin/activate
-$ pip install ledgerblue
-```
-Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerHQ/blue-loader-python)
-
-```c
-#### Download and install ledger udev rules 
-
-$ git clone https://github.com/LedgerHQ/udev-rules
-
-run script from the above download 
-$ sudo ./add_udev_rules.sh
-```
-#### Open new terminal and check for following installations
-
-```c
-$ sudo apt-get install gcc-multilib
-$ sudo apt-get install libc6-dev:i386
-```
-### Build and install ledger nano Signer app into Ledger nano s usb device
-
-Once the setup is done, go to ledger-incubed-firmware-app folder and run:-
-
-```c
-$ make
-$ make load
-```
-#### Install libusb hidlib
-
-HIDAPI library is required to interact with ledger nano s device over usb , it is available for multiple platforms and can be cross compiled easily
-
-Ref: [https://github.com/libusb/hidapi](https://github.com/libusb/hidapi)
-
-### Start using ledger nano s device with Incubed
-
-Open the application on your ledger nano s usb device and make signing requests from incubed 
-
-
-
-
 ## Building
 
 While we provide binaries, you can also build from source:
@@ -250,6 +160,12 @@ When configuring cmake, you can set a lot of different incubed specific like `cm
 compiles the code as asm.js.
 
 Default-Value: `-DASMJS=OFF`
+
+#### ASSERTIONS
+
+includes assertions into the code, which help track errors but may cost time during runtime
+
+Default-Value: `-DASSERTIONS=OFF`
 
 #### BTC
 
@@ -1790,6 +1706,376 @@ Response:
 }
 ```
 
+
+
+## Integration of ledger nano
+
+1. Setup development environment for ledger nano s
+2. Build and install ledger nano Signer app into Ledger nano s usb device
+3. Build incubed source with ledger nano module
+4. Start using ledger nano s device with Incubed
+
+Note: Steps 1-2 are required to setup ledger nano device development environment to compile and install incubed application on your Ledger nano device.
+
+### Setup development environment for ledger nano s
+
+Setting up dev environment for Ledger nano s is one time activity and Signer application will be available to install directly from Ledger Manager in future. Ledger nano applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
+
+#### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
+
+Download the Nano S SDK in bolos-sdk folder 
+
+```c
+$ git clone https://github.com/ledgerhq/nanos-secure-sdk
+```
+```c
+Download a prebuild gcc and move it to bolos-sdk folder
+        Ref: https://launchpad.net/gcc-arm-embedded/+milestone/5-2016-q1-update
+
+Download a prebuild clang and rename the folder to clang-arm-fropi then move it to bolos-sdk folder
+        Ref: http://releases.llvm.org/download.html#4.0.0 
+```
+#### Add environment variables:
+
+```c
+sudo -H gedit /etc/environment
+```
+```c
+ADD PATH TO BOLOS SDK:
+BOLOS_SDK="<path>/nanos-secure-sdk"
+
+ADD GCCPATH VARIABLE
+GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
+
+ADD CLANGPATH
+CLANGPATH="<path>/clang-arm-fropi/bin/"
+```
+#### Download and install ledger python tools
+
+Installation prerequisites :
+
+```c
+$ sudo apt-get install libudev-dev <
+$ sudo apt-get install libusb-1.0-0-dev 
+$ sudo apt-get install python-dev (python 2.7)
+$ sudo apt-get install virtualenv
+```
+##### Installation of ledgerblue:
+
+```c
+$ virtualenv ledger
+$ source ledger/bin/activate
+$ pip install ledgerblue
+```
+Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerHQ/blue-loader-python)
+
+#### Download and install ledger udev rules
+
+ run script from the above download 
+
+```c
+
+```
+#### Open new terminal and check for following installations
+
+```c
+$ sudo apt-get install gcc-multilib
+$ sudo apt-get install libc6-dev:i386
+```
+### Build incubed source with ledger nano module
+
+To build incubed source with ledger nano:-
+
+1. Open root CMakeLists file and find LEDGER_NANO option
+2. Turn LEDGER_NANO option ON which is by default OFF
+3. Build incubed source 
+
+```c
+cd build
+cmake  .. && make
+```
+
+### Start using ledger nano s device with Incubed
+
+Open the application on your ledger nano s usb device and make signing requests from incubed.
+
+Following is the sample command to sendTransaction:- 
+
+```c
+bin/in3 send -to 0xd46e8dd67c5d32be8058bb8eb970870f07244567  -gas 0x96c0  -value 0x9184e72a  -path 0x2c3c000000 -debug
+```
+-path points to specific public/private key pair inside HD wallet derivation path . For Ethereum the default path is m/44'/60'/0'/0 , which we can pass in simplified way as hex string i.e [44,60,00,00,00] => 0x2c3c000000 
+
+
+
+
+## Module api/btc 
+
+
+
+
+### btc_api.h
+
+BTC API.
+
+This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
+
+File: [c/src/api/btc/btc_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/btc/btc_api.h)
+
+#### btc_transaction_in_t
+
+the tx in 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================= ================= ==========================
+``uint32_t``               **vout**         the tx index of the output
+`bytes32_t <#bytes32-t>`_  **txid**         the tx id of the output
+``uint32_t``               **sequence**     the sequence
+`bytes_t <#bytes-t>`_      **script**       the script
+`bytes_t <#bytes-t>`_      **txinwitness**  witnessdata (if used)
+========================= ================= ==========================
+```
+
+#### btc_transaction_out_t
+
+the tx out 
+
+
+The stuct contains following fields:
+
+```eval_rst
+===================== =================== ================================
+``uint64_t``           **value**          the value of the tx
+``uint32_t``           **n**              the index
+`bytes_t <#bytes-t>`_  **script_pubkey**  the script pubkey (or signature)
+===================== =================== ================================
+```
+
+#### btc_transaction_t
+
+a transaction 
+
+
+The stuct contains following fields:
+
+```eval_rst
+=================================================== ===================== ======================================================================
+``bool``                                             **in_active_chain**  true if it is part of the active chain
+`bytes_t <#bytes-t>`_                                **data**             the serialized transaction-data
+`bytes32_t <#bytes32-t>`_                            **txid**             the transaction id
+`bytes32_t <#bytes32-t>`_                            **hash**             the transaction hash
+``uint32_t``                                         **size**             raw size of the transaction
+``uint32_t``                                         **vsize**            virtual size of the transaction
+``uint32_t``                                         **weight**           weight of the tx
+``uint32_t``                                         **version**          used version
+``uint32_t``                                         **locktime**         locktime
+`btc_transaction_in_t * <#btc-transaction-in-t>`_    **vin**              array of transaction inputs
+`btc_transaction_out_t * <#btc-transaction-out-t>`_  **vout**             array of transaction outputs
+``uint32_t``                                         **vin_len**          number of tx inputs
+``uint32_t``                                         **vout_len**         number of tx outputs
+`bytes32_t <#bytes32-t>`_                            **blockhash**        hash of block containing the tx
+``uint32_t``                                         **confirmations**    number of confirmations or blocks mined on top of the containing block
+``uint32_t``                                         **time**             unix timestamp in seconds since 1970
+``uint32_t``                                         **blocktime**        unix timestamp in seconds since 1970
+=================================================== ===================== ======================================================================
+```
+
+#### btc_blockheader_t
+
+the blockheader 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================= =================== ======================================================================
+`bytes32_t <#bytes32-t>`_  **hash**           the hash of the blockheader
+``uint32_t``               **confirmations**  number of confirmations or blocks mined on top of the containing block
+``uint32_t``               **height**         block number
+``uint32_t``               **version**        used version
+`bytes32_t <#bytes32-t>`_  **merkleroot**     merkle root of the trie of all transactions in the block
+``uint32_t``               **time**           unix timestamp in seconds since 1970
+``uint32_t``               **nonce**          nonce-field of the block
+``uint8_t``                **bits**           bits (target) for the block
+`bytes32_t <#bytes32-t>`_  **chainwork**      total amount of work since genesis
+``uint32_t``               **n_tx**           number of transactions in the block
+`bytes32_t <#bytes32-t>`_  **previous_hash**  hash of the parent blockheader
+`bytes32_t <#bytes32-t>`_  **next_hash**      hash of the next blockheader
+``uint8_t``                **data**           raw serialized header-bytes
+========================= =================== ======================================================================
+```
+
+#### btc_block_txdata_t
+
+a block with all transactions including their full data 
+
+
+The stuct contains following fields:
+
+```eval_rst
+=========================================== ============ ========================
+`btc_blockheader_t <#btc-blockheader-t>`_    **header**  the blockheader
+``uint32_t``                                 **tx_len**  number of transactions
+`btc_transaction_t * <#btc-transaction-t>`_  **tx**      array of transactiondata
+=========================================== ============ ========================
+```
+
+#### btc_block_txids_t
+
+a block with all transaction ids 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================================= ============ ========================
+`btc_blockheader_t <#btc-blockheader-t>`_  **header**  the blockheader
+``uint32_t``                               **tx_len**  number of transactions
+`bytes32_t * <#bytes32-t>`_                **tx**      array of transaction ids
+========================================= ============ ========================
+```
+
+#### btc_get_transaction_bytes
+
+```c
+bytes_t* btc_get_transaction_bytes(in3_t *in3, bytes32_t txid);
+```
+
+gets the transaction as raw bytes or null if it does not exist. 
+
+You must free the result with b_free() after use! 
+
+arguments:
+```eval_rst
+========================= ========== ================
+`in3_t * <#in3-t>`_        **in3**   the in3-instance
+`bytes32_t <#bytes32-t>`_  **txid**  the txid
+========================= ========== ================
+```
+returns: [`bytes_t *`](#bytes-t)
+
+
+#### btc_get_transaction
+
+```c
+btc_transaction_t* btc_get_transaction(in3_t *in3, bytes32_t txid);
+```
+
+gets the transaction as struct or null if it does not exist. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+========================= ========== ================
+`in3_t * <#in3-t>`_        **in3**   the in3-instance
+`bytes32_t <#bytes32-t>`_  **txid**  the txid
+========================= ========== ================
+```
+returns: [`btc_transaction_t *`](#btc-transaction-t)
+
+
+#### btc_get_blockheader
+
+```c
+btc_blockheader_t* btc_get_blockheader(in3_t *in3, bytes32_t blockhash);
+```
+
+gets the blockheader as struct or null if it does not exist. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+========================= =============== ================
+`in3_t * <#in3-t>`_        **in3**        the in3-instance
+`bytes32_t <#bytes32-t>`_  **blockhash**  the block hash
+========================= =============== ================
+```
+returns: [`btc_blockheader_t *`](#btc-blockheader-t)
+
+
+#### btc_get_blockheader_bytes
+
+```c
+bytes_t* btc_get_blockheader_bytes(in3_t *in3, bytes32_t blockhash);
+```
+
+gets the blockheader as raw serialized data (80 bytes) or null if it does not exist. 
+
+You must free the result with b_free() after use! 
+
+arguments:
+```eval_rst
+========================= =============== ================
+`in3_t * <#in3-t>`_        **in3**        the in3-instance
+`bytes32_t <#bytes32-t>`_  **blockhash**  the block hash
+========================= =============== ================
+```
+returns: [`bytes_t *`](#bytes-t)
+
+
+#### btc_get_block_txdata
+
+```c
+btc_block_txdata_t* btc_get_block_txdata(in3_t *in3, bytes32_t blockhash);
+```
+
+gets the block as struct including all transaction data or null if it does not exist. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+========================= =============== ================
+`in3_t * <#in3-t>`_        **in3**        the in3-instance
+`bytes32_t <#bytes32-t>`_  **blockhash**  the block hash
+========================= =============== ================
+```
+returns: [`btc_block_txdata_t *`](#btc-block-txdata-t)
+
+
+#### btc_get_block_txids
+
+```c
+btc_block_txids_t* btc_get_block_txids(in3_t *in3, bytes32_t blockhash);
+```
+
+gets the block as struct including all transaction ids or null if it does not exist. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+========================= =============== ================
+`in3_t * <#in3-t>`_        **in3**        the in3-instance
+`bytes32_t <#bytes32-t>`_  **blockhash**  the block hash
+========================= =============== ================
+```
+returns: [`btc_block_txids_t *`](#btc-block-txids-t)
+
+
+#### btc_get_block_bytes
+
+```c
+bytes_t* btc_get_block_bytes(in3_t *in3, bytes32_t blockhash);
+```
+
+gets the block as raw serialized block bytes including all transactions or null if it does not exist. 
+
+You must free the result with b_free() after use! 
+
+arguments:
+```eval_rst
+========================= =============== ================
+`in3_t * <#in3-t>`_        **in3**        the in3-instance
+`bytes32_t <#bytes32-t>`_  **blockhash**  the block hash
+========================= =============== ================
+```
+returns: [`bytes_t *`](#bytes-t)
 
 
 ## Module api/eth1 
@@ -3904,7 +4190,7 @@ The stuct contains following fields:
 #### in3_node_props_set
 
 ```c
-void in3_node_props_set(in3_node_props_t *node_props, in3_node_props_type_t type, uint8_t value);
+NONULL void in3_node_props_set(in3_node_props_t *node_props, in3_node_props_type_t type, uint8_t value);
 ```
 
 setter method for interacting with in3_node_props_t. 
@@ -3917,6 +4203,8 @@ arguments:
 ``uint8_t``                                        **value**       value to set
 ================================================= ================ ===================================
 ```
+returns: `NONULL void`
+
 
 #### in3_node_props_get
 
@@ -4020,7 +4308,7 @@ returns: [`in3_t *`](#in3-t)
 #### in3_client_rpc
 
 ```c
-in3_ret_t in3_client_rpc(in3_t *c, const char *method, const char *params, char **result, char **error);
+NONULL in3_ret_t in3_client_rpc(in3_t *c, const char *method, const char *params, char **result, char **error);
 ```
 
 sends a request and stores the result in the provided buffer 
@@ -4035,7 +4323,7 @@ arguments:
 ``char **``          **error**   pointer to a string containg the error-message. (make sure you free it after use!)
 =================== ============ ======================================================================================================================================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4043,7 +4331,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_rpc_raw
 
 ```c
-in3_ret_t in3_client_rpc_raw(in3_t *c, const char *request, char **result, char **error);
+NONULL in3_ret_t in3_client_rpc_raw(in3_t *c, const char *request, char **result, char **error);
 ```
 
 sends a request and stores the result in the provided buffer 
@@ -4057,7 +4345,7 @@ arguments:
 ``char **``          **error**    pointer to a string containg the error-message. (make sure you free it after use!)
 =================== ============= ======================================================================================================================================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4065,7 +4353,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_exec_req
 
 ```c
-char* in3_client_exec_req(in3_t *c, char *req);
+NONULL char* in3_client_exec_req(in3_t *c, char *req);
 ```
 
 executes a request and returns result as string. 
@@ -4079,13 +4367,13 @@ arguments:
 ``char *``           **req**  the request as rpc.
 =================== ========= =========================================
 ```
-returns: `char *`
+returns: `NONULL char *`
 
 
 #### in3_req_add_response
 
 ```c
-void in3_req_add_response(in3_response_t *res, int index, bool is_error, const char *data, int data_len);
+NONULL void in3_req_add_response(in3_request_t *req, int index, bool is_error, const char *data, int data_len);
 ```
 
 adds a response for a request-object. 
@@ -4094,14 +4382,16 @@ This function should be used in the transport-function to set the response.
 
 arguments:
 ```eval_rst
-===================================== ============== =====================================================================================
-`in3_response_t * <#in3-response-t>`_  **res**       the response-pointer
-``int``                                **index**     the index of the url, since this request could go out to many urls
-``bool``                               **is_error**  if true this will be reported as error. the message should then be the error-message
-``const char *``                       **data**      the data or the the string
-``int``                                **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
-===================================== ============== =====================================================================================
+=================================== ============== =====================================================================================
+`in3_request_t * <#in3-request-t>`_  **req**       the request-pointer passed to the transport-function containing the payload and url
+``int``                              **index**     the index of the url, since this request could go out to many urls
+``bool``                             **is_error**  if true this will be reported as error. the message should then be the error-message
+``const char *``                     **data**      the data or the the string
+``int``                              **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
+=================================== ============== =====================================================================================
 ```
+returns: `NONULL void`
+
 
 #### in3_client_register_chain
 
@@ -4131,7 +4421,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_add_node
 
 ```c
-in3_ret_t in3_client_add_node(in3_t *client, chain_id_t chain_id, char *url, in3_node_props_t props, address_t address);
+NONULL in3_ret_t in3_client_add_node(in3_t *client, chain_id_t chain_id, char *url, in3_node_props_t props, address_t address);
 ```
 
 adds a node to a chain ore updates a existing node 
@@ -4148,7 +4438,7 @@ arguments:
 `address_t <#address-t>`_                **address**   
 ======================================= ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4156,7 +4446,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_remove_node
 
 ```c
-in3_ret_t in3_client_remove_node(in3_t *client, chain_id_t chain_id, address_t address);
+NONULL in3_ret_t in3_client_remove_node(in3_t *client, chain_id_t chain_id, address_t address);
 ```
 
 removes a node from a nodelist 
@@ -4171,7 +4461,7 @@ arguments:
 `address_t <#address-t>`_    **address**   
 =========================== ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4179,7 +4469,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_clear_nodes
 
 ```c
-in3_ret_t in3_client_clear_nodes(in3_t *client, chain_id_t chain_id);
+NONULL in3_ret_t in3_client_clear_nodes(in3_t *client, chain_id_t chain_id);
 ```
 
 removes all nodes from the nodelist 
@@ -4193,7 +4483,7 @@ arguments:
 `chain_id_t <#chain-id-t>`_  **chain_id**  
 =========================== ============== =========================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4201,7 +4491,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_free
 
 ```c
-void in3_free(in3_t *a);
+NONULL void in3_free(in3_t *a);
 ```
 
 frees the references of the client 
@@ -4212,11 +4502,13 @@ arguments:
 `in3_t * <#in3-t>`_  **a**  the pointer to the incubed client config to free.
 =================== ======= =================================================
 ```
+returns: `NONULL void`
+
 
 #### in3_cache_init
 
 ```c
-in3_ret_t in3_cache_init(in3_t *c);
+NONULL in3_ret_t in3_cache_init(in3_t *c);
 ```
 
 inits the cache. 
@@ -4231,7 +4523,7 @@ arguments:
 `in3_t * <#in3-t>`_  **c**  the incubed client
 =================== ======= ==================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4239,7 +4531,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_find_chain
 
 ```c
-in3_chain_t* in3_find_chain(in3_t *c, chain_id_t chain_id);
+NONULL in3_chain_t* in3_find_chain(in3_t *c, chain_id_t chain_id);
 ```
 
 finds the chain-config for the given chain_id. 
@@ -4253,13 +4545,13 @@ arguments:
 `chain_id_t <#chain-id-t>`_  **chain_id**  chain_id
 =========================== ============== ==================
 ```
-returns: [`in3_chain_t *`](#in3-chain-t)
+returns: [`in3_chain_tNONULL , *`](#in3-chain-t)
 
 
 #### in3_configure
 
 ```c
-char* in3_configure(in3_t *c, const char *config);
+NONULL char* in3_configure(in3_t *c, const char *config);
 ```
 
 configures the clent based on a json-config. 
@@ -4273,13 +4565,13 @@ arguments:
 ``const char *``     **config**  JSON-string with the configuration to set.
 =================== ============ ==========================================
 ```
-returns: `char *`
+returns: `NONULL char *`
 
 
 #### in3_get_config
 
 ```c
-char* in3_get_config(in3_t *c);
+NONULL char* in3_get_config(in3_t *c);
 ```
 
 gets the current config as json. 
@@ -4292,7 +4584,7 @@ arguments:
 `in3_t * <#in3-t>`_  **c**  the incubed client
 =================== ======= ==================
 ```
-returns: `char *`
+returns: `NONULL char *`
 
 
 #### in3_set_default_transport
@@ -4507,7 +4799,7 @@ The enum type contains the following values:
 #### ctx_new
 
 ```c
-in3_ctx_t* ctx_new(in3_t *client, const char *req_data);
+NONULL in3_ctx_t* ctx_new(in3_t *client, const char *req_data);
 ```
 
 creates a new context. 
@@ -4523,13 +4815,13 @@ arguments:
 ``const char *``     **req_data**  the rpc-request as json string.
 =================== ============== ===============================
 ```
-returns: [`in3_ctx_t *`](#in3-ctx-t)
+returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
 
 
 #### in3_send_ctx
 
 ```c
-in3_ret_t in3_send_ctx(in3_ctx_t *ctx);
+NONULL in3_ret_t in3_send_ctx(in3_ctx_t *ctx);
 ```
 
 sends a previously created context to nodes and verifies it. 
@@ -4542,7 +4834,7 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
 =========================== ========= ====================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4550,7 +4842,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_ctx_execute
 
 ```c
-in3_ret_t in3_ctx_execute(in3_ctx_t *ctx);
+NONULL in3_ret_t in3_ctx_execute(in3_ctx_t *ctx);
 ```
 
 execute the context, but stops whenever data are required. 
@@ -4684,7 +4976,7 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
 =========================== ========= ====================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4692,7 +4984,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_ctx_state
 
 ```c
-in3_ctx_state_t in3_ctx_state(in3_ctx_t *ctx);
+NONULL in3_ctx_state_t in3_ctx_state(in3_ctx_t *ctx);
 ```
 
 returns the current state of the context. 
@@ -4703,13 +4995,13 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
 =========================== ========= ====================
 ```
-returns: [`in3_ctx_state_t`](#in3-ctx-state-t)
+returns: [`in3_ctx_state_tNONULL `](#in3-ctx-state-t)
 
 
 #### ctx_free
 
 ```c
-void ctx_free(in3_ctx_t *ctx);
+NONULL void ctx_free(in3_ctx_t *ctx);
 ```
 
 frees all resources allocated during the request. 
@@ -4722,11 +5014,13 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
 =========================== ========= ====================
 ```
+returns: `NONULL void`
+
 
 #### ctx_add_required
 
 ```c
-in3_ret_t ctx_add_required(in3_ctx_t *parent, in3_ctx_t *ctx);
+NONULL in3_ret_t ctx_add_required(in3_ctx_t *parent, in3_ctx_t *ctx);
 ```
 
 adds a new context as a requirment. 
@@ -4784,7 +5078,7 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the new request context to add.
 =========================== ============ ===============================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4792,7 +5086,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### ctx_find_required
 
 ```c
-in3_ctx_t* ctx_find_required(const in3_ctx_t *parent, const char *method);
+NONULL in3_ctx_t* ctx_find_required(const in3_ctx_t *parent, const char *method);
 ```
 
 searches within the required request contextes for one with the given method. 
@@ -4806,13 +5100,13 @@ arguments:
 ``const char *``                    **method**  the method of the rpc-request.
 ================================== ============ ==============================
 ```
-returns: [`in3_ctx_t *`](#in3-ctx-t)
+returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
 
 
 #### ctx_remove_required
 
 ```c
-in3_ret_t ctx_remove_required(in3_ctx_t *parent, in3_ctx_t *ctx);
+NONULL in3_ret_t ctx_remove_required(in3_ctx_t *parent, in3_ctx_t *ctx);
 ```
 
 removes a required context after usage. 
@@ -4826,7 +5120,7 @@ arguments:
 `in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the request context to remove.
 =========================== ============ ==============================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4834,7 +5128,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### ctx_check_response_error
 
 ```c
-in3_ret_t ctx_check_response_error(in3_ctx_t *c, int i);
+NONULL in3_ret_t ctx_check_response_error(in3_ctx_t *c, int i);
 ```
 
 check if the response contains a error-property and reports this as error in the context. 
@@ -4846,7 +5140,7 @@ arguments:
 ``int``                      **i**  the index of the request to check (if this is a batch-request, otherwise 0).
 =========================== ======= ============================================================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4854,7 +5148,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### ctx_get_error
 
 ```c
-in3_ret_t ctx_get_error(in3_ctx_t *ctx, int id);
+NONULL in3_ret_t ctx_get_error(in3_ctx_t *ctx, int id);
 ```
 
 determins the errorcode for the given request. 
@@ -4866,7 +5160,7 @@ arguments:
 ``int``                      **id**   the index of the request to check (if this is a batch-request, otherwise 0).
 =========================== ========= ============================================================================
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -4874,7 +5168,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_client_rpc_ctx_raw
 
 ```c
-in3_ctx_t* in3_client_rpc_ctx_raw(in3_t *c, const char *request);
+NONULL in3_ctx_t* in3_client_rpc_ctx_raw(in3_t *c, const char *request);
 ```
 
 sends a request and returns a context used to access the result or errors. 
@@ -4888,13 +5182,13 @@ arguments:
 ``const char *``     **request**  rpc request.
 =================== ============= ==================
 ```
-returns: [`in3_ctx_t *`](#in3-ctx-t)
+returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
 
 
 #### in3_client_rpc_ctx
 
 ```c
-in3_ctx_t* in3_client_rpc_ctx(in3_t *c, const char *method, const char *params);
+NONULL in3_ctx_t* in3_client_rpc_ctx(in3_t *c, const char *method, const char *params);
 ```
 
 sends a request and returns a context used to access the result or errors. 
@@ -4909,7 +5203,7 @@ arguments:
 ``const char *``     **params**  params as string.
 =================== ============ ===================
 ```
-returns: [`in3_ctx_t *`](#in3-ctx-t)
+returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
 
 
 ### verifier.h
@@ -5008,7 +5302,7 @@ The stuct contains following fields:
 #### in3_get_verifier
 
 ```c
-in3_verifier_t* in3_get_verifier(in3_chain_type_t type);
+NONULL in3_verifier_t* in3_get_verifier(in3_chain_type_t type);
 ```
 
 returns the verifier for the given chainType 
@@ -5019,13 +5313,13 @@ arguments:
 `in3_chain_type_t <#in3-chain-type-t>`_  **type**  
 ======================================= ========== 
 ```
-returns: [`in3_verifier_t *`](#in3-verifier-t)
+returns: [`in3_verifier_tNONULL , *`](#in3-verifier-t)
 
 
 #### in3_register_verifier
 
 ```c
-void in3_register_verifier(in3_verifier_t *verifier);
+NONULL void in3_register_verifier(in3_verifier_t *verifier);
 ```
 
 arguments:
@@ -5034,6 +5328,8 @@ arguments:
 `in3_verifier_t * <#in3-verifier-t>`_  **verifier**  
 ===================================== ============== 
 ```
+returns: `NONULL void`
+
 
 #### vc_set_error
 
@@ -5156,7 +5452,7 @@ The stuct contains following fields:
 #### b_new
 
 ```c
-bytes_t* b_new(const uint8_t *data, uint32_t len);
+RETURNS_NONULL bytes_t* b_new(const uint8_t *data, uint32_t len);
 ```
 
 allocates a new byte array with 0 filled 
@@ -5168,13 +5464,13 @@ arguments:
 ``uint32_t``         **len**   
 =================== ========== 
 ```
-returns: [`bytes_t *`](#bytes-t)
+returns: [`bytes_tRETURNS_NONULL , *`](#bytes-t)
 
 
 #### b_print
 
 ```c
-void b_print(const bytes_t *a);
+NONULL void b_print(const bytes_t *a);
 ```
 
 prints a the bytes as hex to stdout 
@@ -5185,11 +5481,13 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_  **a**  
 ============================== ======= 
 ```
+returns: `NONULL void`
+
 
 #### ba_print
 
 ```c
-void ba_print(const uint8_t *a, size_t l);
+NONULL void ba_print(const uint8_t *a, size_t l);
 ```
 
 prints a the bytes as hex to stdout 
@@ -5201,11 +5499,13 @@ arguments:
 ``size_t``           **l**  
 =================== ======= 
 ```
+returns: `NONULL void`
+
 
 #### b_cmp
 
 ```c
-int b_cmp(const bytes_t *a, const bytes_t *b);
+NONULL int b_cmp(const bytes_t *a, const bytes_t *b);
 ```
 
 compares 2 byte arrays and returns 1 for equal and 0 for not equal 
@@ -5217,7 +5517,7 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_  **b**  
 ============================== ======= 
 ```
-returns: `int`
+returns: `NONULL int`
 
 
 #### bytes_cmp
@@ -5256,7 +5556,7 @@ arguments:
 #### b_dup
 
 ```c
-bytes_t* b_dup(const bytes_t *a);
+NONULL bytes_t* b_dup(const bytes_t *a);
 ```
 
 clones a byte array 
@@ -5267,13 +5567,13 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_  **a**  
 ============================== ======= 
 ```
-returns: [`bytes_t *`](#bytes-t)
+returns: [`bytes_tNONULL , *`](#bytes-t)
 
 
 #### b_read_byte
 
 ```c
-uint8_t b_read_byte(bytes_t *b, size_t *pos);
+NONULL uint8_t b_read_byte(bytes_t *b, size_t *pos);
 ```
 
 reads a byte on the current position and updates the pos afterwards. 
@@ -5285,13 +5585,13 @@ arguments:
 ``size_t *``             **pos**  
 ======================= ========= 
 ```
-returns: `uint8_t`
+returns: `NONULL uint8_t`
 
 
 #### b_read_int
 
 ```c
-uint32_t b_read_int(bytes_t *b, size_t *pos);
+NONULL uint32_t b_read_int(bytes_t *b, size_t *pos);
 ```
 
 reads a integer on the current position and updates the pos afterwards. 
@@ -5303,13 +5603,13 @@ arguments:
 ``size_t *``             **pos**  
 ======================= ========= 
 ```
-returns: `uint32_t`
+returns: `NONULL uint32_t`
 
 
 #### b_read_long
 
 ```c
-uint64_t b_read_long(bytes_t *b, size_t *pos);
+NONULL uint64_t b_read_long(bytes_t *b, size_t *pos);
 ```
 
 reads a long on the current position and updates the pos afterwards. 
@@ -5321,13 +5621,13 @@ arguments:
 ``size_t *``             **pos**  
 ======================= ========= 
 ```
-returns: `uint64_t`
+returns: `NONULL uint64_t`
 
 
 #### b_new_chars
 
 ```c
-char* b_new_chars(bytes_t *b, size_t *pos);
+NONULL char* b_new_chars(bytes_t *b, size_t *pos);
 ```
 
 creates a new string (needs to be freed) on the current position and updates the pos afterwards. 
@@ -5339,13 +5639,13 @@ arguments:
 ``size_t *``             **pos**  
 ======================= ========= 
 ```
-returns: `char *`
+returns: `NONULL char *`
 
 
 #### b_new_fixed_bytes
 
 ```c
-bytes_t* b_new_fixed_bytes(bytes_t *b, size_t *pos, int len);
+NONULL bytes_t* b_new_fixed_bytes(bytes_t *b, size_t *pos, int len);
 ```
 
 reads bytes with a fixed length on the current position and updates the pos afterwards. 
@@ -5358,7 +5658,7 @@ arguments:
 ``int``                  **len**  
 ======================= ========= 
 ```
-returns: [`bytes_t *`](#bytes-t)
+returns: [`bytes_tNONULL , *`](#bytes-t)
 
 
 #### bb_newl
@@ -5381,7 +5681,7 @@ returns: [`bytes_builder_t *`](#bytes-builder-t)
 #### bb_free
 
 ```c
-void bb_free(bytes_builder_t *bb);
+NONULL void bb_free(bytes_builder_t *bb);
 ```
 
 frees a bytebuilder and its content. 
@@ -5392,11 +5692,13 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
+returns: `NONULL void`
+
 
 #### bb_check_size
 
 ```c
-int bb_check_size(bytes_builder_t *bb, size_t len);
+NONULL int bb_check_size(bytes_builder_t *bb, size_t len);
 ```
 
 internal helper to increase the buffer if needed 
@@ -5408,13 +5710,13 @@ arguments:
 ``size_t``                               **len**  
 ======================================= ========= 
 ```
-returns: `int`
+returns: `NONULL int`
 
 
 #### bb_write_chars
 
 ```c
-void bb_write_chars(bytes_builder_t *bb, char *c, int len);
+NONULL void bb_write_chars(bytes_builder_t *bb, char *c, int len);
 ```
 
 writes a string to the builder. 
@@ -5427,11 +5729,13 @@ arguments:
 ``int``                                  **len**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_dyn_bytes
 
 ```c
-void bb_write_dyn_bytes(bytes_builder_t *bb, const bytes_t *src);
+NONULL void bb_write_dyn_bytes(bytes_builder_t *bb, const bytes_t *src);
 ```
 
 writes bytes to the builder with a prefixed length. 
@@ -5443,11 +5747,13 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_           **src**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_fixed_bytes
 
 ```c
-void bb_write_fixed_bytes(bytes_builder_t *bb, const bytes_t *src);
+NONULL void bb_write_fixed_bytes(bytes_builder_t *bb, const bytes_t *src);
 ```
 
 writes fixed bytes to the builder. 
@@ -5459,11 +5765,13 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_           **src**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_int
 
 ```c
-void bb_write_int(bytes_builder_t *bb, uint32_t val);
+NONULL void bb_write_int(bytes_builder_t *bb, uint32_t val);
 ```
 
 writes a ineteger to the builder. 
@@ -5475,11 +5783,13 @@ arguments:
 ``uint32_t``                             **val**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_long
 
 ```c
-void bb_write_long(bytes_builder_t *bb, uint64_t val);
+NONULL void bb_write_long(bytes_builder_t *bb, uint64_t val);
 ```
 
 writes s long to the builder. 
@@ -5491,11 +5801,13 @@ arguments:
 ``uint64_t``                             **val**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_long_be
 
 ```c
-void bb_write_long_be(bytes_builder_t *bb, uint64_t val, int len);
+NONULL void bb_write_long_be(bytes_builder_t *bb, uint64_t val, int len);
 ```
 
 writes any integer value with the given length of bytes 
@@ -5508,11 +5820,13 @@ arguments:
 ``int``                                  **len**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_byte
 
 ```c
-void bb_write_byte(bytes_builder_t *bb, uint8_t val);
+NONULL void bb_write_byte(bytes_builder_t *bb, uint8_t val);
 ```
 
 writes a single byte to the builder. 
@@ -5524,11 +5838,13 @@ arguments:
 ``uint8_t``                              **val**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_write_raw_bytes
 
 ```c
-void bb_write_raw_bytes(bytes_builder_t *bb, void *ptr, size_t len);
+NONULL void bb_write_raw_bytes(bytes_builder_t *bb, void *ptr, size_t len);
 ```
 
 writes the bytes to the builder. 
@@ -5541,11 +5857,13 @@ arguments:
 ``size_t``                               **len**  
 ======================================= ========= 
 ```
+returns: `NONULL void`
+
 
 #### bb_clear
 
 ```c
-void bb_clear(bytes_builder_t *bb);
+NONULL void bb_clear(bytes_builder_t *bb);
 ```
 
 resets the content of the builder. 
@@ -5556,11 +5874,13 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
+returns: `NONULL void`
+
 
 #### bb_replace
 
 ```c
-void bb_replace(bytes_builder_t *bb, int offset, int delete_len, uint8_t *data, int data_len);
+NONULL void bb_replace(bytes_builder_t *bb, int offset, int delete_len, uint8_t *data, int data_len);
 ```
 
 replaces or deletes a part of the content. 
@@ -5575,11 +5895,13 @@ arguments:
 ``int``                                  **data_len**    
 ======================================= ================ 
 ```
+returns: `NONULL void`
+
 
 #### bb_move_to_bytes
 
 ```c
-bytes_t* bb_move_to_bytes(bytes_builder_t *bb);
+RETURNS_NONULL NONULL bytes_t* bb_move_to_bytes(bytes_builder_t *bb);
 ```
 
 frees the builder and moves the content in a newly created bytes struct (which needs to be freed later). 
@@ -5590,13 +5912,13 @@ arguments:
 `bytes_builder_t * <#bytes-builder-t>`_  **bb**  
 ======================================= ======== 
 ```
-returns: [`bytes_t *`](#bytes-t)
+returns: [`bytes_tRETURNS_NONULL NONULL , *`](#bytes-t)
 
 
 #### bb_read_long
 
 ```c
-uint64_t bb_read_long(bytes_builder_t *bb, size_t *i);
+NONULL uint64_t bb_read_long(bytes_builder_t *bb, size_t *i);
 ```
 
 reads a long from the builder 
@@ -5608,13 +5930,13 @@ arguments:
 ``size_t *``                             **i**   
 ======================================= ======== 
 ```
-returns: `uint64_t`
+returns: `NONULL uint64_t`
 
 
 #### bb_read_int
 
 ```c
-uint32_t bb_read_int(bytes_builder_t *bb, size_t *i);
+NONULL uint32_t bb_read_int(bytes_builder_t *bb, size_t *i);
 ```
 
 reads a int from the builder 
@@ -5626,7 +5948,7 @@ arguments:
 ``size_t *``                             **i**   
 ======================================= ======== 
 ```
-returns: `uint32_t`
+returns: `NONULL uint32_t`
 
 
 #### bytes
@@ -5667,7 +5989,7 @@ returns: [`bytes_t`](#bytes-t)
 #### b_optimize_len
 
 ```c
-static void b_optimize_len(bytes_t *b);
+static NONULL void b_optimize_len(bytes_t *b);
 ```
 
 < changed the data and len to remove leading 0-bytes
@@ -5678,6 +6000,8 @@ arguments:
 `bytes_t * <#bytes-t>`_  **b**  
 ======================= ======= 
 ```
+returns: `NONULL void`
+
 
 ### data.h
 
@@ -6073,7 +6397,7 @@ returns: `bool`
 #### keyn
 
 ```c
-d_key_t keyn(const char *c, const size_t len);
+NONULL d_key_t keyn(const char *c, const size_t len);
 ```
 
 generates the keyhash for the given stringrange as defined by len 
@@ -6085,7 +6409,7 @@ arguments:
 ``const size_t``  **len**  
 ================ ========= 
 ```
-returns: `d_key_t`
+returns: `NONULL d_key_t`
 
 
 #### d_get
@@ -6165,7 +6489,7 @@ returns: [`d_token_t *`](#d-token-t)
 #### d_serialize_binary
 
 ```c
-void d_serialize_binary(bytes_builder_t *bb, d_token_t *t);
+NONULL void d_serialize_binary(bytes_builder_t *bb, d_token_t *t);
 ```
 
 write the token as binary data into the builder 
@@ -6177,11 +6501,13 @@ arguments:
 `d_token_t * <#d-token-t>`_              **t**   
 ======================================= ======== 
 ```
+returns: `NONULL void`
+
 
 #### parse_binary
 
 ```c
-json_ctx_t* parse_binary(const bytes_t *data);
+NONULL json_ctx_t* parse_binary(const bytes_t *data);
 ```
 
 parses the data and returns the context with the token, which needs to be freed after usage! 
@@ -6192,13 +6518,13 @@ arguments:
 `bytes_tconst , * <#bytes-t>`_  **data**  
 ============================== ========== 
 ```
-returns: [`json_ctx_t *`](#json-ctx-t)
+returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
 
 
 #### parse_binary_str
 
 ```c
-json_ctx_t* parse_binary_str(const char *data, int len);
+NONULL json_ctx_t* parse_binary_str(const char *data, int len);
 ```
 
 parses the data and returns the context with the token, which needs to be freed after usage! 
@@ -6210,13 +6536,13 @@ arguments:
 ``int``           **len**   
 ================ ========== 
 ```
-returns: [`json_ctx_t *`](#json-ctx-t)
+returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
 
 
 #### parse_json
 
 ```c
-json_ctx_t* parse_json(const char *js);
+NONULL json_ctx_t* parse_json(const char *js);
 ```
 
 parses json-data, which needs to be freed after usage! 
@@ -6227,13 +6553,13 @@ arguments:
 ``const char *``  **js**  
 ================ ======== 
 ```
-returns: [`json_ctx_t *`](#json-ctx-t)
+returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
 
 
 #### json_free
 
 ```c
-void json_free(json_ctx_t *parser_ctx);
+NONULL void json_free(json_ctx_t *parser_ctx);
 ```
 
 frees the parse-context after usage 
@@ -6244,11 +6570,13 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **parser_ctx**  
 ============================= ================ 
 ```
+returns: `NONULL void`
+
 
 #### d_to_json
 
 ```c
-str_range_t d_to_json(const d_token_t *item);
+NONULL str_range_t d_to_json(const d_token_t *item);
 ```
 
 returns the string for a object or array. 
@@ -6261,13 +6589,13 @@ arguments:
 `d_token_tconst , * <#d-token-t>`_  **item**  
 ================================== ========== 
 ```
-returns: [`str_range_t`](#str-range-t)
+returns: [`str_range_tNONULL `](#str-range-t)
 
 
 #### d_create_json
 
 ```c
-char* d_create_json(d_token_t *item);
+NONULL char* d_create_json(d_token_t *item);
 ```
 
 creates a json-string. 
@@ -6280,7 +6608,7 @@ arguments:
 `d_token_t * <#d-token-t>`_  **item**  
 =========================== ========== 
 ```
-returns: `char *`
+returns: `NONULL char *`
 
 
 #### json_create
@@ -6295,7 +6623,7 @@ returns: [`json_ctx_t *`](#json-ctx-t)
 #### json_create_null
 
 ```c
-d_token_t* json_create_null(json_ctx_t *jp);
+NONULL d_token_t* json_create_null(json_ctx_t *jp);
 ```
 
 arguments:
@@ -6304,13 +6632,13 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **jp**  
 ============================= ======== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_bool
 
 ```c
-d_token_t* json_create_bool(json_ctx_t *jp, bool value);
+NONULL d_token_t* json_create_bool(json_ctx_t *jp, bool value);
 ```
 
 arguments:
@@ -6320,13 +6648,13 @@ arguments:
 ``bool``                       **value**  
 ============================= =========== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_int
 
 ```c
-d_token_t* json_create_int(json_ctx_t *jp, uint64_t value);
+NONULL d_token_t* json_create_int(json_ctx_t *jp, uint64_t value);
 ```
 
 arguments:
@@ -6336,13 +6664,13 @@ arguments:
 ``uint64_t``                   **value**  
 ============================= =========== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_string
 
 ```c
-d_token_t* json_create_string(json_ctx_t *jp, char *value);
+NONULL d_token_t* json_create_string(json_ctx_t *jp, char *value);
 ```
 
 arguments:
@@ -6352,13 +6680,13 @@ arguments:
 ``char *``                     **value**  
 ============================= =========== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_bytes
 
 ```c
-d_token_t* json_create_bytes(json_ctx_t *jp, bytes_t value);
+NONULL d_token_t* json_create_bytes(json_ctx_t *jp, bytes_t value);
 ```
 
 arguments:
@@ -6368,13 +6696,13 @@ arguments:
 `bytes_t <#bytes-t>`_          **value**  
 ============================= =========== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_object
 
 ```c
-d_token_t* json_create_object(json_ctx_t *jp);
+NONULL d_token_t* json_create_object(json_ctx_t *jp);
 ```
 
 arguments:
@@ -6383,13 +6711,13 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **jp**  
 ============================= ======== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_create_array
 
 ```c
-d_token_t* json_create_array(json_ctx_t *jp);
+NONULL d_token_t* json_create_array(json_ctx_t *jp);
 ```
 
 arguments:
@@ -6398,13 +6726,13 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **jp**  
 ============================= ======== 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_object_add_prop
 
 ```c
-d_token_t* json_object_add_prop(d_token_t *object, d_key_t key, d_token_t *value);
+NONULL d_token_t* json_object_add_prop(d_token_t *object, d_key_t key, d_token_t *value);
 ```
 
 arguments:
@@ -6415,13 +6743,13 @@ arguments:
 `d_token_t * <#d-token-t>`_  **value**   
 =========================== ============ 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### json_array_add_value
 
 ```c
-d_token_t* json_array_add_value(d_token_t *object, d_token_t *value);
+NONULL d_token_t* json_array_add_value(d_token_t *object, d_token_t *value);
 ```
 
 arguments:
@@ -6431,7 +6759,7 @@ arguments:
 `d_token_t * <#d-token-t>`_  **value**   
 =========================== ============ 
 ```
-returns: [`d_token_t *`](#d-token-t)
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### d_get_keystr
@@ -6480,7 +6808,7 @@ delete the cached keynames
 #### key
 
 ```c
-static d_key_t key(const char *c);
+static NONULL d_key_t key(const char *c);
 ```
 
 arguments:
@@ -6489,7 +6817,7 @@ arguments:
 ``const char *``  **c**  
 ================ ======= 
 ```
-returns: `d_key_t`
+returns: `NONULL d_key_t`
 
 
 #### d_get_stringk
@@ -6854,6 +7182,9 @@ logs a debug-message including file and linenumber
 logs a debug-message without the filename 
 
 
+#### _assert (exp)
+
+
 #### msg_dump
 
 ```c
@@ -6963,6 +7294,7 @@ The enum type contains the following values:
  **IN3_EIGNORE**            -17 Ignorable error.
  **IN3_EPAYMENT_REQUIRED**  -18 payment required
  **IN3_ENODEVICE**          -19 harware wallet device not connected
+ **IN3_EAPDU**              -20 error in hardware wallet communication
 =========================== === ==================================================================
 ```
 
@@ -7065,7 +7397,7 @@ arguments:
 #### in3_cache_add_ptr
 
 ```c
-static cache_entry_t* in3_cache_add_ptr(cache_entry_t **cache, void *ptr);
+static NONULL cache_entry_t* in3_cache_add_ptr(cache_entry_t **cache, void *ptr);
 ```
 
 adds a pointer, which should be freed when the context is freed. 
@@ -7077,7 +7409,7 @@ arguments:
 ``void *``                            **ptr**    pointer to memory which shold be freed.
 ==================================== =========== =======================================
 ```
-returns: [`cache_entry_t *`](#cache-entry-t)
+returns: [`cache_entry_tNONULL , *`](#cache-entry-t)
 
 
 ### stringbuilder.h
@@ -7899,6 +8231,24 @@ arguments:
 ================ ======= 
 ```
 
+#### parse_float_val
+
+```c
+int64_t parse_float_val(const char *data, int32_t expo);
+```
+
+parses a float-string and returns the value as int 
+
+arguments:
+```eval_rst
+================ ========== ===============
+``const char *``  **data**  the data string
+``int32_t``       **expo**  the exponent
+================ ========== ===============
+```
+returns: `int64_t`
+
+
 ## Module pay/eth 
 
 
@@ -7954,6 +8304,56 @@ returns: `char *`
 
 
 
+### ethereum_apdu_client.h
+
+this file defines the incubed configuration struct and it registration. 
+
+File: [c/src/signer/ledger-nano/signer/ethereum_apdu_client.h](https://github.com/slockit/in3-c/blob/master/c/src/signer/ledger-nano/signer/ethereum_apdu_client.h)
+
+#### eth_ledger_set_signer_txn
+
+```c
+in3_ret_t eth_ledger_set_signer_txn(in3_t *in3, uint8_t *bip_path);
+```
+
+attaches ledger nano hardware wallet signer with incubed . 
+
+bip32 path to be given to point the specific public/private key in HD tree for Ethereum! 
+
+arguments:
+```eval_rst
+=================== ============== 
+`in3_t * <#in3-t>`_  **in3**       
+``uint8_t *``        **bip_path**  
+=================== ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_ledger_get_public_addr
+
+```c
+in3_ret_t eth_ledger_get_public_addr(uint8_t *i_bip_path, uint8_t *o_public_key);
+```
+
+returns public key at the bip_path . 
+
+returns IN3_ENODEVICE error if ledger nano device is not connected 
+
+arguments:
+```eval_rst
+============= ================== 
+``uint8_t *``  **i_bip_path**    
+``uint8_t *``  **o_public_key**  
+============= ================== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 ### ledger_signer.h
 
 this file defines the incubed configuration struct and it registration. 
@@ -7965,6 +8365,10 @@ File: [c/src/signer/ledger-nano/signer/ledger_signer.h](https://github.com/slock
 ```c
 in3_ret_t eth_ledger_set_signer(in3_t *in3, uint8_t *bip_path);
 ```
+
+attaches ledger nano hardware wallet signer with incubed . 
+
+bip32 path to be given to point the specific public/private key in HD tree for Ethereum! 
 
 arguments:
 ```eval_rst
@@ -7981,36 +8385,145 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_ledger_get_public_key
 
 ```c
-in3_ret_t eth_ledger_get_public_key(uint8_t *i_bip_path, uint8_t *o_public_key);
+in3_ret_t eth_ledger_get_public_key(uint8_t *bip_path, uint8_t *public_key);
 ```
+
+returns public key at the bip_path . 
+
+returns IN3_ENODEVICE error if ledger nano device is not connected 
 
 arguments:
 ```eval_rst
-============= ================== 
-``uint8_t *``  **i_bip_path**    
-``uint8_t *``  **o_public_key**  
-============= ================== 
+============= ================ 
+``uint8_t *``  **bip_path**    
+``uint8_t *``  **public_key**  
+============= ================ 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### eth_ledger_sign
+## Module signer/pk-signer 
+
+
+
+
+### signer.h
+
+Ethereum Nano verification. 
+
+File: [c/src/signer/pk-signer/signer.h](https://github.com/slockit/in3-c/blob/master/c/src/signer/pk-signer/signer.h)
+
+#### hasher_t
+
+The enum type contains the following values:
+
+```eval_rst
+================================ == 
+ **hasher_sha2**                 0  
+ **hasher_sha2d**                1  
+ **hasher_sha2_ripemd**          2  
+ **hasher_sha3**                 3  
+ **hasher_sha3k**                4  
+ **hasher_blake**                5  
+ **hasher_blaked**               6  
+ **hasher_blake_ripemd**         7  
+ **hasher_groestld_trunc**       8  
+ **hasher_overwinter_prevouts**  9  
+ **hasher_overwinter_sequence**  10 
+ **hasher_overwinter_outputs**   11 
+ **hasher_overwinter_preimage**  12 
+ **hasher_sapling_preimage**     13 
+================================ == 
+```
+
+#### eth_set_pk_signer
 
 ```c
-in3_ret_t eth_ledger_sign(void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst);
+in3_ret_t eth_set_pk_signer(in3_t *in3, bytes32_t pk);
 ```
+
+simply signer with one private key. 
+
+since the pk pointting to the 32 byte private key is not cloned, please make sure, you manage memory allocation correctly!
+
+simply signer with one private key. 
 
 arguments:
 ```eval_rst
-=========================================== ============= 
-``void *``                                   **ctx**      
-`d_signature_type_t <#d-signature-type-t>`_  **type**     
-`bytes_t <#bytes-t>`_                        **message**  
-`bytes_t <#bytes-t>`_                        **account**  
-``uint8_t *``                                **dst**      
-=========================================== ============= 
+========================= ========= 
+`in3_t * <#in3-t>`_        **in3**  
+`bytes32_t <#bytes32-t>`_  **pk**   
+========================= ========= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_set_pk_signer_hex
+
+```c
+uint8_t* eth_set_pk_signer_hex(in3_t *in3, char *key);
+```
+
+simply signer with one private key as hex. 
+
+simply signer with one private key as hex. 
+
+arguments:
+```eval_rst
+=================== ========= 
+`in3_t * <#in3-t>`_  **in3**  
+``char *``           **key**  
+=================== ========= 
+```
+returns: `uint8_t *`
+
+
+#### ec_sign_pk_hash
+
+```c
+in3_ret_t ec_sign_pk_hash(uint8_t *message, size_t len, uint8_t *pk, hasher_t hasher, uint8_t *dst);
+```
+
+Signs message after hashing it with hasher function given in 'hasher_t', with the given private key. 
+
+Signs message after hashing it with hasher function given in 'hasher_t', with the given private key. 
+
+arguments:
+```eval_rst
+============= ============= 
+``uint8_t *``  **message**  
+``size_t``     **len**      
+``uint8_t *``  **pk**       
+``hasher_t``   **hasher**   
+``uint8_t *``  **dst**      
+============= ============= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### ec_sign_pk_raw
+
+```c
+in3_ret_t ec_sign_pk_raw(uint8_t *message, uint8_t *pk, uint8_t *dst);
+```
+
+Signs message raw with the given private key. 
+
+Signs message raw with the given private key. 
+
+arguments:
+```eval_rst
+============= ============= 
+``uint8_t *``  **message**  
+``uint8_t *``  **pk**       
+``uint8_t *``  **dst**      
+============= ============= 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -8343,54 +8856,22 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-### signer.h
-
-Ethereum Nano verification. 
-
-File: [c/src/verifier/eth1/basic/signer.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/signer.h)
-
-#### eth_set_pk_signer
+#### sign_tx
 
 ```c
-in3_ret_t eth_set_pk_signer(in3_t *in3, bytes32_t pk);
+bytes_t sign_tx(d_token_t *tx, in3_ctx_t *ctx);
 ```
 
-simply signer with one private key. 
-
-since the pk pointting to the 32 byte private key is not cloned, please make sure, you manage memory allocation correctly!
-
-simply signer with one private key. 
+Signs transaction with the given context. 
 
 arguments:
 ```eval_rst
-========================= ========= 
-`in3_t * <#in3-t>`_        **in3**  
-`bytes32_t <#bytes32-t>`_  **pk**   
-========================= ========= 
+=========================== ========= 
+`d_token_t * <#d-token-t>`_  **tx**   
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  
+=========================== ========= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### eth_set_pk_signer_hex
-
-```c
-uint8_t* eth_set_pk_signer_hex(in3_t *in3, char *key);
-```
-
-simply signer with one private key as hex. 
-
-simply signer with one private key as hex. 
-
-arguments:
-```eval_rst
-=================== ========= 
-`in3_t * <#in3-t>`_  **in3**  
-``char *``           **key**  
-=================== ========= 
-```
-returns: `uint8_t *`
+returns: [`bytes_t`](#bytes-t)
 
 
 ### trie.h
@@ -10596,7 +11077,7 @@ File: [c/src/verifier/eth1/nano/eth_nano.h](https://github.com/slockit/in3-c/blo
 #### in3_verify_eth_nano
 
 ```c
-in3_ret_t in3_verify_eth_nano(in3_vctx_t *v);
+NONULL in3_ret_t in3_verify_eth_nano(in3_vctx_t *v);
 ```
 
 entry-function to execute the verification context. 
@@ -10607,7 +11088,7 @@ arguments:
 `in3_vctx_t * <#in3-vctx-t>`_  **v**  
 ============================= ======= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -10638,7 +11119,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_verify_signature
 
 ```c
-int eth_verify_signature(in3_vctx_t *vc, bytes_t *msg_hash, d_token_t *sig);
+NONULL int eth_verify_signature(in3_vctx_t *vc, bytes_t *msg_hash, d_token_t *sig);
 ```
 
 verifies a single signature blockheader. 
@@ -10653,13 +11134,13 @@ arguments:
 `d_token_t * <#d-token-t>`_    **sig**       
 ============================= ============== 
 ```
-returns: `int`
+returns: `NONULL int`
 
 
 #### ecrecover_signature
 
 ```c
-bytes_t* ecrecover_signature(bytes_t *msg_hash, d_token_t *sig);
+NONULL bytes_t* ecrecover_signature(bytes_t *msg_hash, d_token_t *sig);
 ```
 
 returns the address of the signature if the msg_hash is correct 
@@ -10671,13 +11152,13 @@ arguments:
 `d_token_t * <#d-token-t>`_  **sig**       
 =========================== ============== 
 ```
-returns: [`bytes_t *`](#bytes-t)
+returns: [`bytes_tNONULL , *`](#bytes-t)
 
 
 #### eth_verify_eth_getTransactionReceipt
 
 ```c
-in3_ret_t eth_verify_eth_getTransactionReceipt(in3_vctx_t *vc, bytes_t *tx_hash);
+NONULL in3_ret_t eth_verify_eth_getTransactionReceipt(in3_vctx_t *vc, bytes_t *tx_hash);
 ```
 
 verifies a transaction receipt. 
@@ -10689,7 +11170,7 @@ arguments:
 `bytes_t * <#bytes-t>`_        **tx_hash**  
 ============================= ============= 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -10719,7 +11200,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_verify_in3_whitelist
 
 ```c
-in3_ret_t eth_verify_in3_whitelist(in3_vctx_t *vc);
+NONULL in3_ret_t eth_verify_in3_whitelist(in3_vctx_t *vc);
 ```
 
 verifies the nodelist. 
@@ -10730,7 +11211,7 @@ arguments:
 `in3_vctx_t * <#in3-vctx-t>`_  **vc**  
 ============================= ======== 
 ```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
@@ -10801,7 +11282,7 @@ returns: `int`
 #### trie_path_to_nibbles
 
 ```c
-uint8_t* trie_path_to_nibbles(bytes_t path, int use_prefix);
+NONULL uint8_t* trie_path_to_nibbles(bytes_t path, int use_prefix);
 ```
 
 helper function split a path into 4-bit nibbles. 
@@ -10815,7 +11296,7 @@ arguments:
 ``int``                **use_prefix**  
 ===================== ================ 
 ```
-returns: `uint8_t *` : the resulting bytes represent a 4bit-number each and are terminated with a 0xFF. 
+returns: `NONULL uint8_t *` : the resulting bytes represent a 4bit-number each and are terminated with a 0xFF. 
 
 
 
@@ -10823,7 +11304,7 @@ returns: `uint8_t *` : the resulting bytes represent a 4bit-number each and are 
 #### trie_matching_nibbles
 
 ```c
-int trie_matching_nibbles(uint8_t *a, uint8_t *b);
+NONULL int trie_matching_nibbles(uint8_t *a, uint8_t *b);
 ```
 
 helper function to find the number of nibbles matching both paths. 
@@ -10835,23 +11316,8 @@ arguments:
 ``uint8_t *``  **b**  
 ============= ======= 
 ```
-returns: `int`
+returns: `NONULL int`
 
-
-#### trie_free_proof
-
-```c
-void trie_free_proof(bytes_t **proof);
-```
-
-used to free the NULL-terminated proof-array. 
-
-arguments:
-```eval_rst
-======================== =========== 
-`bytes_t ** <#bytes-t>`_  **proof**  
-======================== =========== 
-```
 
 ### rlp.h
 
