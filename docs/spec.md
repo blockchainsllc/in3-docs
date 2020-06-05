@@ -2212,3 +2212,61 @@ There will be five fields in the .in3 response: “block” (block header), “m
 Additionally we can verify the block number by using the coinbase transaction (“cbtx”) and the merkle proof for the coinbase transaction (“cbtxMerkleProof”). As mentioned above: extract block number out of cbtx and prove that the cbtx is part of the block by doing a merkle proof using the hashes of “cbtxMerkleProof”.
 
 
+#### getblockcount
+
+Returns the number of blocks in the longest blockchain.
+
+
+Parameters:
+
+1. finality       : (number, required) defines the amount of finality headers
+2. `verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getblockcount",
+        "params": [],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": 633219,
+    "in3": {
+        "proof": {
+            "block": "0x00000020d953f2d8d097bd8dfdeda8e0924ae5e3076377b8f1860300000000000000000010898a4ee6969d3e45310d72a8c97fb1b7ecd7f7e198852e2a73d58ed924f12da070da5e357f14173c2a8024",
+            "final": "0x00e0ff3f4a5c4c0d70e57fe9f94ce14007db00bf41b3d1523001090000000000000000000d5e28b09f206b8240bcfbb81f3aa6e6ca4b0018e19c54c44968f803f4931b722071da5e357f14170206c2db00004020054d540dbb5c5092ef307cd7a5d83df84fe07d8678b000000000000000000000ae04fa167ad764d8ed504bbfd50158f6d1c5bfe9b57f51d03591522cbbf56ee08273da5e357f1417d34a761f000040202b66e7f0bb2c1aefb59653b311d8cdd2e2844e42ee5504000000000000000000fe2b38886f634391cc29011516d1a202ca2c8c31a5e6d1ffc0b0ca67b9a523619477da5e357f141708883eae00004020011136bc3ff04a6dad6b7747cad0b1647b1cf07a4b5f01000000000000000000cf11fd26a52e4e6044751aedacf5143b6475df0fa8e7a33fced4a5af56ac1e1a3d78da5e357f1417c941adab00000020425d3c280c702540b5fc96c21883cd0e5988e685fd4c0200000000000000000032d676eab1bf1bb684f925a7e4033e9314ccd4003c1694cea2a5921a28167c69f079da5e357f141738a0ff2500e0ff37caf32b3d61d07102ce924be82a4d60fbbbb371b1d3151300000000000000000043443c6926b2b65c1c5fa1844aee32fd2e48a14b9587677c1a6ecb499c5f5672ee7ada5e357f141794170030000040205880b3f75274d93053b1cee7496d72783a19a3c0445a04000000000000000000eb9716e91b2ac9755137ee6c1f57cd756203bfced15bb1201a992715a933a7f73e7fda5e357f1417d056dce900000020e3eb3498671ecd2adbeb933be3195a569177c7429dba110000000000000000007b060f91f7cabd4f97d5dd6b6538074865be22b6f15ce548cb1a5ababe052f08de80da5e357f14173ab6393d",
+            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5b0383a909182f5669614254432f4d696e6564206279206c7a313130302f2cfabe6d6d55f47a2244f2f923064bddbe766308b2ad98a0977952812634c2d35e6aee85dc100000000000000010f1479601d4ed7ba6e134abf136570000ffffffff0355984229000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac00000000000000002b6a2952534b424c4f434b3a22f4f866999d099eccb598251e8349ead402ce627d8f02b191780d27001d51510000000000000000266a24aa21a9ed7ebc9bd29008579a52adf9b091c93893109be659297bfb9d13fe83b8a515a72d0120000000000000000000000000000000000000000000000000000000000000000000000000",
+            "cbtxMerkleProof": "0x9bf01a05c5e722710a95c61f8eb3be0f1fa3e60d553cf424a4e657e171c23337c07aa6989b4cb027951e58f1ba7eb73a5f5aabb31969581ce9c5bc15e9ab2befbcbc8dda16bf3454746ac8660499f54d2b8282499408abfab6b08dc3fd812101367d93342031b5127e88ba0503b6d4f5b50f0f24332dee26b3b6c835ef329944c51c910de850a038896c929adfe7f958ad89913a553ada684ff01b8aa0418a871a462467d9436a1eeb6266e63d1858cddd10c6278ce8f40f18e08dec4d2042123fa463f9029f9ef0a6bc616dabc836c374aaeb38e1e8bf1d97f4dba7f89194161a4fd5dd59fbb29ad1db1093ec7c1f53aa5549fa9c0c3a0553adc00a677f15a7df7ea6d197336c812bce8fc9f66222ebab5e4ec589c9b3a020d11f544d8efa7611bcb61f88143f62fed1b0f8391f06936c195168b64bc6657cc502f3788de5f163f509a708b543e1f961391f8062f2941f2b6e15121161d1eb58fb7053910327538092df5e80bb5cb738017a01c3353bd80200e097d04674069c3f731d33aa53"
+        },
+    }
+}
+```
+
+
+The server has to provide the following data to prove that this is block number X and that it’s final:
+    • `block header`
+    • `finality headers`
+    • `merkleProof for coinbase transaction`
+    • `coinbase transaction`
+
+
+Proof:
+
+The server is not able to prove the finality for the latest block (obviously there are no finality headers available yet). Instead the server will fetch the latest block with `getblockcount` and subtracts the finality and return this number to the client as the latest block number. This way the server is able to provide finality headers.
+The client could set finality equal to 0 to get the actual latest block the server knows about (Caution: this block is not final and could be not part of the blockchain later on due to a possible fork AND there could be a newer block that the server doesn’t know about yet due to latency in the network)
+The client can verify that the provided header is the header of block with the number X by extracting the block number out of the coinbase transaction. Furthermore server can verify that the coinbase transaction is part of the block by doing a merkle proof. Use the fields (“cbtx”) and (“cbtxMerkleProof”).
