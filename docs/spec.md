@@ -2315,3 +2315,63 @@ Response:
 ```
 
 The data and proof is similar to “getblockcount”. With the only difference that the hash of the block instead the number is returned.
+
+
+#### getdifficulty
+
+Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
+
+
+Parameters:
+
+1. `blocknumber` (string or number, optional) 
+Can be the number of a block, can be `latest`, `earliest` or `pending` to get the latest block or can be empty (no parameter) no get the latest block aswell (Hint: Latest block means always actual latest block minus finality)
+2. finality (number, required) defines the amount of finality headers
+3. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getdifficulty",
+        "params": [632154],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": 15138043247082.88,
+    "in3": {
+        "proof": {
+            "block": "0x000000203e031ec3b399e4285decc74c7318ace047a4caac188904000000000000000000747c8663cd524b7f82b3736cb48ebeac7378e54510b97c064384624015c128affebfd05ef69712170ac60abb",
+            "final": "0x000040206812d00071d70b710323be761b4b9be2b6ac8664b24d00000000000000000000af3b2dae3aab9a9f54baf9e9ff7bdd0b5e71c629dbe64ca5fbd2c90a73a98d0edbc0d05ef69712173514afd30000002017b4c8bec4466fb0ff6996fe20588f8015e86938bf1403000000000000000000ce06beb8815132cf56c13eb1495c5520ed9daf2a9908d79327d46fea1d2b5f944eced05ef6971217c4d9bb940000c02086e93b3857f5b9da906ad60e6300c88c1753b64f903d0500000000000000000011211ecb32c0676c50127cec7f4d3e7dd1993912d4f3d30645fa3d5ebfbc52440dd6d05ef69712170365f14400000020cdb0dba59d7f3f02fb3282334ed05f6fc12c3d0e05e902000000000000000000c87e5d1e27302bad50accfdb7598436ed9b15a2d2d7c7be172b7bb409cdf020515d7d05ef697121739cdba7100000020adaf79eb5b15f806487ce66d92e011aa25bfa66094fc0c000000000000000000a13ea23c26e8189ce607361ec30466dfeddbc53d04f5768b2ba955f9f05cca2ae1d9d05ef6971217bed898650000002036668a69100e3a4499d7e8d8299779549531f2845a5b09000000000000000000c5a7d557146bd2260db3b6621d3b7ee192be0ece0aad9612bbdbae455ec5e16c25dad05ef697121704547aa900e0ff2f482486bbcd13fc3863a00e2e80186058b6d4d215cee80d000000000000000000b9d4978627ce7e733b28f200b298a357afa2eeacc668af78844706fb37157d4ce0dad05ef697121759e62f6a0000c020fbbe72165e193db486a1dff5630e6d3eab7873c5fc95030000000000000000001ebb09059270810cf53f11de4c66f3989796d181665870438b5f81413172bef922dcd05ef697121750a5e8f2",
+            "cbtx": "0x020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff4a035aa50904ffbfd05e45552f48756f42692ffabe6d6dc5bd2f84bc5f223e846281bf3dfbef5f0b7fd16642bdd99455e04f83c24fa9440800000090fed21808d930a2511f030000000000ffffffff0321287128000000001976a914e582933875bedfdc448473c00b474f8f053a467588ac0000000000000000266a24aa21a9ed6dba5369abb46f47e8311aa4a7450a262ddb124b520492cf441de1948de6c7e20000000000000000266a24b9e11b6d7572aee0897fca2ce866b3d7b15c16031249e6661fd21edde134fb7e46faeadb0120000000000000000000000000000000000000000000000000000000000000000000000000",
+            "cbtxMerkleProof": "0xcc2c7ef80b5a927108284a719a23c744476fdf311910ebb5f0b6663a87961419167c8cfad4f3cf546e5bbbfd869c19f32c1123ccc3ce675f52e9fc2522e628fdfe31af91e15f90b5988cebfa995a1394e1ec1d1517eeccd8d7cf73616a9baa251b3425fc5e1777503264bcae4afd222b3b1c6c9545bccfdd9406be46aa0674d489236612acdf17d669575f8d7b69f9a17a7ca738b4231ab2d45a10c86297418c59926da3a88a3baf94624d3a664ad0eb6c6771bf9e75c51fd94c85684e6f417a2dcf15caa43010d52a29eba45298fb57798aebd466fc6050437b4b68928f5e9f6bbb336dfe1791f397813ae285cf463b910aad1060097f9973b3b1a1e99887ae46c0e3fd7b878ea7b336aa6da3001c3d83c05858208d755a1d91b4c94c2d4228185d81981d2bcfaa4aaaa4eb31f9833952fbbfd893d582a723186c85f41b3711ce34c78f196230f0a8dbe9492c7937c2fa2dd30633fe0ac14631d31052049401"
+        }
+    }
+}
+```
+
+This request returns the proof-of-work difficulty as a multiple of the minimum difficulty. The client can check that by using the “bits” field in the block header.
+
+For getting target out of the `bits` field:
+target = targetmax / difficulty → difficulty = targetmax / target
+(The block header doesn’t store the absolute precision of the target which means that the result (the difficulty) will be similar - but not equal - to the difficulty provided by the server.
+
+The target gained from `bits` will look like this:
+target (bits):       `1101190000000000000000000000000000000000000000 (Hex)`
+While the target calculated with the difficulty will look like this:
+target (difficulty):    `11011900000000d520f5ccb0ae02cb5e509c27f80669b5 (Hex)`
+Proofs that can be done by the client: Finality proof and number proof (with cbtx and btxMerkleProof) - both already mentioned and explained above.
