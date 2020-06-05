@@ -1933,10 +1933,10 @@ It returns data of block header for given block hash.
 
 Parameters:
 
-1. `hash`: (string, required) The block hash
-2. verbose (boolean, optional, default=true) true for a json object, false for the hex encoded data
-3. `in3.finality` (number, required) defines the amount of finality headers
-4. `in3.verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+1. `hash`             : (string, required) The block hash
+2. verbose            : (boolean, optional, default=true) true for a json object, false for the hex encoded data
+3. `in3.finality`     : (number, required) defines the amount of finality headers
+4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
 
 
 Request:
@@ -1993,3 +1993,84 @@ Proof:
 
 Proof data is given in response in in3.proof.final field . For construction of proof that the block header is part of the actual chain server checks if there are “enough” confirmations on this block header. We can set the amount of confirmations required in the in3.finality field (6 confirmations is common) in post request. The server will provide the n block headers after our block header. For example: We got the block header of block 1000 and set n=6 then in the response there will be block headers of block 1001..1006 in the .in3.proof.final field.
 The hash of block 1000 should be in the parent hash field of block header of block 1001. The hash of block 1001 (sha256 of block header twice) should be in the parent hash field of block header of block 1002. And so on. There are two more fields: “cbtx” and “cbtxMerkleProof” - They are necessary to prove the block number. Extract block number out of the coinbase transaction and prove that this transaction is part of the block by doing a merkle proof. 
+
+#### getblock
+
+Returns information of a block for given blockhash. The returned level of details depends on the argument verbosity.
+
+
+Parameters:
+
+1. `blockhash`          : (string, required) The block hash
+2. verbosity            : (boolean, optional, default=true) false for hex encoded data, true for a json object
+3. `in3.finality`       : (number, required) defines the amount of finality headers
+4. `in3.verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getblock",
+        "params":  ["00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7", true],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+        "hash": "00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7",
+        "confirmations": 8226,
+        "strippedsize": 914732,
+        "size": 1249337,
+        "weight": 3993533,
+        "height": 625000,
+        "version": 1073733632,
+        "versionHex": "3fffe000",
+        "merkleroot": "4d51591497f1d646070f9f9fdeb50dc338e2a8bb9a5cb721c55f452938165ff8",
+        "tx": [
+            "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
+            ...
+            "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
+        ],
+        "time": 1586364107,
+        "mediantime": 1586361287,
+        "nonce": 3963275925,
+        "bits": "171320bc",
+        "difficulty": 14715214060656.53,
+        "chainwork": "00000000000000000000000000000000000000000e4eba1824303796d776922b",
+        "nTx": 2626,
+        "previousblockhash": "000000000000000000068fb1ddc43ca83bc4bfb23444f7236992cfc565d40e08",
+        "nextblockhash": "00000000000000000010b3d94671593da669b25fecf7005de38dc2b2fa208dc7"
+    },
+    "in3": {
+        "proof": {
+            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c72200e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb87840000ff3f5850309cb99ee009a2819cdb9283e396076764da344002000000000000000000da4d65a89668db85948a30347743fe64a7d35e302d8160530655011bb5b7e182db028e5ebc20131796504eb400e0ff3facd633ac953ce979ce8271a1a8ce843a887a30862968120000000000000000009994a8ebf6351a2d85dd0897d342958072d277c5d12feec76d4772efb753d4216a038e5ebc20131758513e0e00000020bc2d4e13a52a86d08fd1785b1265bb7d7b65ff1a36ac11000000000000000000427a8fe62237452cc285092c37678bbb12fdf1b2d5b6944e090763b84e29d45537068e5ebc201317dd2cd63600008020374150cb15d2b13887ee9313ae04c9204cb43080a4440000000000000000000031ecb14f3b29aa944c0f89b490c55e03fc6613d6f04b16323a192ee086eb3be93d078e5ebc201317b4787cc100e0ff2f0be940315959b9d535a8ce6c37bdea2747e5c2e0c7ae01000000000000000000cd72741fd17ce7830d50ede288c21a655dbda597aa9624b39e329beee3cd3f498e088e5ebc201317a8460d6c00000020dcd3e76eb9632f4354d0ae8fdf06bbcc9cd6b961257b0000000000000000000023a1a05f4f38288d8fb5096f5e2779b2146ded9c376a5a741ba4cdba729cb1c16c098e5ebc20131792bbd60f"
+        },
+        "lastValidatorChange": 0,
+        "lastNodeList": 10205921,
+        "execTime": 594,
+        "rpcTime": 577,
+        "rpcCount": 1,
+        "currentBlock": -1,
+        "version": "2.1.0"
+    }
+}
+            
+```
+
+
+Proof:
+
+This proof is similar to the proof mentioned above in “getblockheader”. The client has to set an amount n of requested finality. The server will respond with the block data and additionally the finality headers in the .in3.proof.final field.
