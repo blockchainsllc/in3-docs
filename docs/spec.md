@@ -2074,3 +2074,141 @@ Response:
 Proof:
 
 This proof is similar to the proof mentioned above in “getblockheader”. The client has to set an amount n of requested finality. The server will respond with the block data and additionally the finality headers in the .in3.proof.final field.
+
+
+#### getrawtransaction
+
+It returns the raw transaction data.
+
+
+Parameters:
+
+1. `txid`           : (string, required) The transaction id
+2. verbose          : (boolean, optional, default=false) If false, return a string, otherwise return a json object
+3. `blockhash`      : (string, optional) The block in which to look for the transaction
+4. `in3.finality`   : (number, required) defines the amount of finality headers
+5. `verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getrawtransaction",
+        "params":  ["f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", true, 
+                "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+        "in_active_chain": true,
+        "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+        "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+        "version": 1,
+        "size": 518,
+        "vsize": 518,
+        "weight": 2072,
+        "locktime": 0,
+        "vin": [
+            {
+                "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
+                "vout": 0,
+                "scriptSig": {
+                    "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b[ALL] 03a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874",
+                    "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b012103a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874"
+                },
+                "sequence": 4294967295
+            },
+            {
+                "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
+                "vout": 0,
+                "scriptSig": {
+                    "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7[ALL] 03427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d",
+                    "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7012103427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d"
+                },
+                "sequence": 4294967295
+            },
+            {
+                "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
+                "vout": 1,
+                "scriptSig": {
+                    "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f32[ALL] 027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da",
+                    "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f320121027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da"
+                },
+                "sequence": 4294967295
+            }
+        ],
+        "vout": [
+            {
+                "value": 0.00017571,
+                "n": 0,
+                "scriptPubKey": {
+                    "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
+                    "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
+                    "reqSigs": 1,
+                    "type": "pubkeyhash",
+                    "addresses": [
+                        "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
+                    ]
+                }
+            },
+            {
+                "value": 0.00915732,
+                "n": 1,
+                "scriptPubKey": {
+                    "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
+                    "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
+                    "reqSigs": 1,
+                    "type": "scripthash",
+                    "addresses": [
+                        "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
+                    ]
+                }
+            }
+        ],
+        "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e87d9f0a90df89ac69bf9e5f6740a000000006a4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b012103a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874ffffffff44509eb1e52041a66e8e7191f77c460ae326e12e3d158a9c13c3dfd4825e9c86000000006b483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7012103427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255dffffffffff8efa7372998c2e6bd363c0046b3dbc2983ef5be12a4ac908e48a1b9ad2038a010000006a47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f320121027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045daffffffff02a3440000000000001976a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac14f90d000000000017a9148bb2b4b848d0b6336cc64ea57ae989630f447cba8700000000",
+        "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+        "confirmations": 8269,
+        "time": 1586333924,
+        "blocktime": 1586333924
+    },
+    "in3": {
+        "proof": {
+            "block": "00e00020497f4c193dbb347c2ecfcf6169e64c7478778340a0cb13000000000000000000cb59b377938a532525d52b8404390f17c35a50beb9d57292f3658cea34a386d7e4888d5e413b14174f045476",
+            "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cdf695233b100000000000000000001d3558af1306c6523ae4006355a85c42ba77c7fa8d272fde83610eeef937360c058c8d5e413b1417b504d22b00e0002043e319ef088530dc40f1111747bb7fdb0263e3c09d790c000000000000000000788f19b456acc30cc8be8103a79a25f348a395e250c5e8d01eeeef64b542a0d92e918d5ebc201317219ee6af000000206e9d58fb0ab8d0181b1c9e54614f80b64004c2e04da310000000000000000000231e0dd30652cce0c9a5ba1e32a2ad75a588fa2d80d2eb60cd4887085b233dedd0958d5ebc201317c40cfb3600000020d74de3252b9261e0a60d44939fb762bb08273a1933500f00000000000000000069a6eb135b81c92b5a5f493a452687b9995640c91a5dc19a63e411d0bf8f821d37988d5ebc2013175740b63a000000200e696d48239a3ebb0f4973fd8ff4cd202bc0a0be14ac040000000000000000008dbe05f223bae0feea4259bc62c2245776a03eeda65caab89ff65b8e0f28d9159e9a8d5ebc2013174b887e5000c0ff3fc1a7a2dff4d93bf1849ced7ea371176d5fbdb40f31cf0f000000000000000000f830d3b7b5949577cb8736fea5d3dcc2445d925160ed40f4c798c47b3c9742be0e9b8d5ebc2013170793403600000020d4bfd17299df5f5e34732018cf391402f9aa5e2080f109000000000000000000c3511f60184615794fd21471cd44608d811ae46d8bf9ac195807657d82bdc805b99e8d5ebc201317032eef050000c02081c2fe858a8adab9a089d35d1fd5787813dbdab202e0080000000000000000005a3f179d5675924c4ed0f2061b35d02b5d2c4b7c1e4648a707dfc296b5a55e1ccda18d5ebc2013176cbf576e00e0ff2f9d70d3e3f817842c82cdb9a7af8f02c03e3c5d504b73000000000000000000007ecfa0817fe1b69a7ad4bda7a711d9e6ea4e95fbd31c272085f2542a5421cb97aca28d5ebc201317ac263e7a00e0ff3f6075bc371c4622caf5495f797a3debb95f6858106dbd0e000000000000000000b1beaa0a10ac02b14d405d0fd093932a99a5cb6c668c47a44af42c4c50eb1ed7b3a48d5ebc201317fe276470",
+            "txIndex": 7,
+            "merkleProof": "0x348d4bb04943400a80f162c4ef64b746bc4af0ff4c165fd7ef1a4bcff714be1d66c7456a2c85cf8ab8c4833bd027811d649803d03e4d6af24a1ce350cc73fed73a072552648d01143b25d6e45df24e69d6649a2dc4f2ec0c075f7fa89c8a47cf781f0ac64e22b114d3ade17e09baaa7041c69b7df612779ffaea6f14f5e471bc45c256bfe6d80304443025b2aa439ab26ec1ba86d297c9c2d7a1d61193d7d00256bf1a607766f602f76f06f776aae8419e505ae93239ccda7e35e1559552e688",
+            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5f033e890904e2888d5e2f706f6f6c696e2e636f6d2ffabe6d6d96439d07cae2a0d0d7b459d69d6e8fbe84a28f9be160edb3c33279ebfbc7af8d010000000000000066e1bb5b9e64b5779c4872da7ee8ba921008d1689900a204000000000000ffffffff0491e3894a0000000017a91454705dd010ab50c03543a543cda327a60d9bf7af870000000000000000266a24b9e11b6ddd3fec243f225bbee268c09f1a616a2c6e5196a1e8977d59b32daf8ae52767570000000000000000266a24aa21a9edb1979b2b4464d1ef79257852017413a72a9cd2fa9048fa86052d1121f59d536c00000000000000002b6a2952534b424c4f434b3aa7a3b7405613557aba7780a86227466b8fa451f82f0cdce821aafe2400222c9901200000000000000000000000000000000000000000000000000000000000000000539da2fc",
+            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667bc256a0fd678d950d75174e8de0a94faa2a3de99c4f73c817f40929638d6c23b2d8afc5b7e0d03fc9f055cad0f9c1b195eade387c32ff122592ad29dbb5450ec93870e96719df9d8db0b663b6781f0ac64e22b114d3ade17e09baaa7041c69b7df612779ffaea6f14f5e471bc45c256bfe6d80304443025b2aa439ab26ec1ba86d297c9c2d7a1d61193d7d00256bf1a607766f602f76f06f776aae8419e505ae93239ccda7e35e1559552e688"
+        },
+        "lastValidatorChange": 0,
+        "lastNodeList": 10205921,
+        "execTime": 262,
+        "rpcTime": 255,
+        "rpcCount": 1,
+        "currentBlock": -1,
+        "version": "2.1.0"
+    }
+}
+```
+
+
+Proof:
+
+There will be five fields in the .in3 response: “block” (block header), “merkleProof” (hashes for merkle proof) and “final” (finality headers). We can check the finality as mentioned above. Furthermore, we can verify whether the transaction is part of that block or not. We have to do a merkle proof. For that we are going to use the transaction hash and the hashes of the merkleProof field to create a merkle root. This root hash has to be the same as the merkle root which is in the block header in the block field (32 bytes, starting byte 36).
+Additionally we can verify the block number by using the coinbase transaction (“cbtx”) and the merkle proof for the coinbase transaction (“cbtxMerkleProof”). As mentioned above: extract block number out of cbtx and prove that the cbtx is part of the block by doing a merkle proof using the hashes of “cbtxMerkleProof”.
+
+
