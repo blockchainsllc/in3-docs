@@ -19,9 +19,11 @@ Welcome to Incubed's documentation!
    api-python
    api-java
    api-dotnet
+   api-rust
    api-cmd
    api-node-server
    api-solidity
+   
 
 .. toctree::
    :maxdepth: 2
