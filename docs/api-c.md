@@ -209,6 +209,12 @@ if set human readable error messages will be inculded in th executable, otherwis
 
 Default-Value: `-DERR_MSG=ON`
 
+#### ESP_IDF
+
+include support for ESP-IDF microcontroller framework
+
+Default-Value: `-DESP_IDF=OFF`
+
 #### ETH_BASIC
 
 build basic eth verification.(all rpc-calls except eth_call)
@@ -297,7 +303,7 @@ Default-Value: `-DPAY_ETH=OFF`
 
 pkg-config executable
 
-Default-Value: `-DPKG_CONFIG_EXECUTABLE=/usr/local/bin/pkg-config`
+Default-Value: `-DPKG_CONFIG_EXECUTABLE=/opt/local/bin/pkg-config`
 
 #### POA
 
@@ -376,6 +382,48 @@ Default-Value: `-DWASM_SYNC=OFF`
 
 ## Examples
 
+### btc_transaction
+
+source : [in3-c/c/examples/btc_transaction.c](https://github.com/slockit/in3-c/blob/master/c/examples/btc_transaction.c)
+
+checking a Bitcoin transaction data
+
+```c
+
+#include <in3/btc_api.h>  // we need the btc-api
+#include <in3/client.h>   // the core client
+#include <in3/in3_init.h> // this header will make sure we initialize the default verifiers and transports
+#include <in3/utils.h>    // helper functions
+#include <stdio.h>
+
+int main() {
+  // create new incubed client for BTC
+  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_BTC);
+
+  // the hash of transaction that we want to get
+  bytes32_t tx_id;
+  hex_to_bytes("c41eee1c2d97f6158ea3b3aeba0a5271a2174067a38d089ccc1eefbc796706e0", -1, tx_id, 32);
+
+  // fetch and verify the transaction
+  btc_transaction_t* tx = btc_get_transaction(in3, tx_id);
+
+  if (!tx)
+    // if the result is null there was an error an we can get the latest error message from btc_last_error()
+    printf("error getting the tx : %s\n", btc_last_error());
+  else {
+    // we loop through the tx outputs
+    for (int i = 0; i < tx->vout_len; i++)
+      // and prrint the values
+      printf("Transaction vout #%d : value: %llu\n", i, tx->vout[i].value);
+
+    // don't forget the clean up!
+    free(tx);
+  }
+
+  // cleanup client after usage
+  in3_free(in3);
+}
+```
 ### call_a_function
 
 source : [in3-c/c/examples/call_a_function.c](https://github.com/slockit/in3-c/blob/master/c/examples/call_a_function.c)
@@ -952,8 +1000,9 @@ int main() {
 source : [in3-c/c/examples/ledger_sign.c](https://github.com/slockit/in3-c/blob/master/c/examples/ledger_sign.c)
 
 ```c
-#include <in3/client.h>        // the core client
-#include <in3/eth_api.h>       // functions for direct api-access
+#include <in3/client.h>  // the core client
+#include <in3/eth_api.h> // functions for direct api-access
+#include <in3/ethereum_apdu_client.h>
 #include <in3/in3_init.h>      // if included the verifier will automaticly be initialized.
 #include <in3/ledger_signer.h> //to invoke ledger nano device for signing
 #include <in3/log.h>           // logging functions
@@ -969,7 +1018,8 @@ int main() {
   in3_log_set_level(LOG_DEBUG);
   // setting ledger nano s to be the default signer for incubed client
   // it will cause the transaction or any msg to be sent to ledger nanos device for siging
-  eth_ledger_set_signer(in3, bip_path);
+  eth_ledger_set_signer_txn(in3, bip_path);
+  // eth_ledger_set_signer(in3, bip_path);
 
   // send tx using API
   send_tx_api(in3);
@@ -984,8 +1034,7 @@ void send_tx_api(in3_t* in3) {
   hex_to_bytes("0xC51fBbe0a68a7cA8d33f14a660126Da2A2FAF8bf", -1, from, 20);
   hex_to_bytes("0xd46e8dd67c5d32be8058bb8eb970870f07244567", -1, to, 20);
 
-  bytes_t* data = hex_to_new_bytes("d46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", 82);
-
+  bytes_t* data = hex_to_new_bytes("0x00", 0);
   // send the tx
   bytes_t* tx_hash = eth_sendTransaction(in3, from, to, OPTIONAL_T_VALUE(uint64_t, 0x96c0), OPTIONAL_T_VALUE(uint64_t, 0x9184e72a000), OPTIONAL_T_VALUE(uint256_t, to_uint256(0x9184e72a)), OPTIONAL_T_VALUE(bytes_t, *data), OPTIONAL_T_UNDEFINED(uint64_t));
 
@@ -1279,6 +1328,7 @@ The config params support the following properties :
 - **signatureCount** :`uint8_t` *(optional)* - number of signatures requested. example: 2
 - **finality** :`uint16_t` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators). example: 50
 - **includeCode** :`bool` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards. example: true
+- **bootWeights** :`bool` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. example: true
 - **maxAttempts** :`uint16_t` *(optional)* - max number of attempts in case a response is rejected. example: 10
 - **keepIn3** :`bool` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did. example: false
 - **key** :`bytes32` *(optional)* - the client key to sign requests. example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
@@ -1708,20 +1758,36 @@ Response:
 
 
 
-## Integration of ledger nano
+## Integration of Ledger Nano S
 
-1. Setup development environment for ledger nano s
-2. Build and install ledger nano Signer app into Ledger nano s usb device
-3. Build incubed source with ledger nano module
-4. Start using ledger nano s device with Incubed
+1. Ways to integrate Ledger Nano S
+2. Build incubed source with ledger nano module
+3. Start using ledger nano s device with Incubed
 
-Note: Steps 1-2 are required to setup ledger nano device development environment to compile and install incubed application on your Ledger nano device.
+### Ways to integrate Ledger Nano S
 
-### Setup development environment for ledger nano s
+Currently there are two ways to integrate Ledger Nano S with incubed for transaction and message signing:
 
-Setting up dev environment for Ledger nano s is one time activity and Signer application will be available to install directly from Ledger Manager in future. Ledger nano applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
+1. Install Ethereum app from Ledger Manager
+2. Setup development environment and install incubed signer app on your Ledger device
 
-#### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
+Option 1 is the convinient choice for most of the people as incubed signer app is not available to be installed from Ledger Manager and it will take efforts to configure development environment for ledger manager. The main differences in above approaches are following:
+
+ If you are confortable with Option 1 , all you need to do is setup you Ledger device as per usual instructions and install Ethereum app form Ledger Manager store. Otherwise if you are interested in Option 2 Please follow all the instructions given in "Setup development environment for ledger nano s" section .
+
+```c
+Ethereum official Ledger app requires rlp encoded transactions for  signing and there is not much scope for customization.Currently we have support for following operations with Ethereum app:
+1. Getting public key
+2. Sign Transactions
+3. Sign Messages
+
+Incubed signer app required just hash , so it is better option if you are looking to integrate incubed in such a way that you would manage all data formation on your end and use just hash to get signture from Ledger Nano S and use the signature as per your wish. 
+```
+#### Setup development environment for ledger nano s
+
+Setting up dev environment for Ledger nano s is one time activity and incubed signer application will be available to install directly from Ledger Manager in future. Ledger nano applications need linux System (recommended is Ubuntu) to build the binary to be installed on Ledger nano devices
+
+##### Download Toolchains and Nanos ledger SDK (As per latest Ubuntu LTS)
 
 Download the Nano S SDK in bolos-sdk folder 
 
@@ -1735,7 +1801,7 @@ Download a prebuild gcc and move it to bolos-sdk folder
 Download a prebuild clang and rename the folder to clang-arm-fropi then move it to bolos-sdk folder
         Ref: http://releases.llvm.org/download.html#4.0.0 
 ```
-#### Add environment variables:
+##### Add environment variables:
 
 ```c
 sudo -H gedit /etc/environment
@@ -1750,7 +1816,7 @@ GCCPATH="<path>/gcc-arm-none-eabi-5_3-2016q1/bin/"
 ADD CLANGPATH
 CLANGPATH="<path>/clang-arm-fropi/bin/"
 ```
-#### Download and install ledger python tools
+##### Download and install ledger python tools
 
 Installation prerequisites :
 
@@ -1769,18 +1835,25 @@ $ pip install ledgerblue
 ```
 Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerHQ/blue-loader-python)
 
-#### Download and install ledger udev rules
+##### Download and install ledger udev rules
 
  run script from the above download 
 
 ```c
 
 ```
-#### Open new terminal and check for following installations
+##### Open new terminal and check for following installations
 
 ```c
 $ sudo apt-get install gcc-multilib
 $ sudo apt-get install libc6-dev:i386
+```
+##### Install incubed signer app
+
+Once you complete all the steps, go to folder "c/src/signer/ledger-nano/firmware" and run following command , It will ask you to enter pin for approve installation on ledger nano device. follow all the steps and it will be done.
+
+```c
+make load
 ```
 ### Build incubed source with ledger nano module
 
@@ -1799,13 +1872,19 @@ cmake  .. && make
 
 Open the application on your ledger nano s usb device and make signing requests from incubed.
 
-Following is the sample command to sendTransaction:- 
+Following is the sample command to sendTransaction from command line utility:- 
 
 ```c
 bin/in3 send -to 0xd46e8dd67c5d32be8058bb8eb970870f07244567  -gas 0x96c0  -value 0x9184e72a  -path 0x2c3c000000 -debug
 ```
--path points to specific public/private key pair inside HD wallet derivation path . For Ethereum the default path is m/44'/60'/0'/0 , which we can pass in simplified way as hex string i.e [44,60,00,00,00] => 0x2c3c000000 
+-path points to specific public/private key pair inside HD wallet derivation path . For Ethereum the default path is m/44'/60'/0'/0 , which we can pass in simplified way as hex string i.e [44,60,00,00,00] => 0x2c3c000000
 
+If you want to use apis to integrate ledger nano support in your incubed application , feel free to explore apis given following header files:-
+
+```c
+ledger_signer.h : It contains APIs to integrate ledger nano device with incubed signer app.
+ethereum_apdu_client.h : It contains APIs to integrate ledger nano device with Ethereum ledger app.
+```
 
 
 
@@ -1821,6 +1900,15 @@ BTC API.
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
 File: [c/src/api/btc/btc_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/btc/btc_api.h)
+
+#### btc_last_error ()
+
+< The current error or null if all is ok 
+
+```c
+#define btc_last_error () api_last_error()
+```
+
 
 #### btc_transaction_in_t
 
@@ -2076,6 +2164,80 @@ arguments:
 ========================= =============== ================
 ```
 returns: [`bytes_t *`](#bytes-t)
+
+
+#### btc_d_to_tx
+
+```c
+btc_transaction_t* btc_d_to_tx(d_token_t *t);
+```
+
+Deserialization helpers. 
+
+arguments:
+```eval_rst
+=========================== ======= 
+`d_token_t * <#d-token-t>`_  **t**  
+=========================== ======= 
+```
+returns: [`btc_transaction_t *`](#btc-transaction-t)
+
+
+#### btc_d_to_blockheader
+
+```c
+btc_blockheader_t* btc_d_to_blockheader(d_token_t *t);
+```
+
+Deserializes a `btc_transaction_t` type. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+=========================== ======= 
+`d_token_t * <#d-token-t>`_  **t**  
+=========================== ======= 
+```
+returns: [`btc_blockheader_t *`](#btc-blockheader-t)
+
+
+#### btc_d_to_block_txids
+
+```c
+btc_block_txids_t* btc_d_to_block_txids(d_token_t *t);
+```
+
+Deserializes a `btc_blockheader_t` type. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+=========================== ======= 
+`d_token_t * <#d-token-t>`_  **t**  
+=========================== ======= 
+```
+returns: [`btc_block_txids_t *`](#btc-block-txids-t)
+
+
+#### btc_d_to_block_txdata
+
+```c
+btc_block_txdata_t* btc_d_to_block_txdata(d_token_t *t);
+```
+
+Deserializes a `btc_block_txids_t` type. 
+
+You must free the result with free() after use! 
+
+arguments:
+```eval_rst
+=========================== ======= 
+`d_token_t * <#d-token-t>`_  **t**  
+=========================== ======= 
+```
+returns: [`btc_block_txdata_t *`](#btc-block-txdata-t)
 
 
 ## Module api/eth1 
@@ -3479,6 +3641,15 @@ chain_id for evan
 ```
 
 
+#### ETH_CHAIN_ID_EWC
+
+chain_id for ewc 
+
+```c
+#define ETH_CHAIN_ID_EWC 0xf6
+```
+
+
 #### ETH_CHAIN_ID_IPFS
 
 chain_id for ipfs 
@@ -3672,7 +3843,7 @@ They should be used as bitmask for the flags-property.
 The enum type contains the following values:
 
 ```eval_rst
-============================ ==== ===========================================================================
+============================ ==== =============================================================================================
  **FLAGS_KEEP_IN3**          0x1  the in3-section with the proof will also returned
  **FLAGS_AUTO_UPDATE_LIST**  0x2  the nodelist will be automaticly updated if the last_block is newer
  **FLAGS_INCLUDE_CODE**      0x4  the code is included when sending eth_call-requests
@@ -3680,7 +3851,8 @@ The enum type contains the following values:
  **FLAGS_HTTP**              0x10 the client will try to use http instead of https
  **FLAGS_STATS**             0x20 nodes will keep track of the stats (default=true)
  **FLAGS_NODE_LIST_NO_SIG**  0x40 nodelist update request will not automatically ask for signatures and proof
-============================ ==== ===========================================================================
+ **FLAGS_BOOT_WEIGHTS**      0x80 if true the client will initialize the first weights from the nodelist given by the nodelist.
+============================ ==== =============================================================================================
 ```
 
 #### in3_node_attr_type_t
@@ -3935,6 +4107,26 @@ The stuct contains following fields:
 =============================================== ============== ============================================================
 ```
 
+#### in3_sign_ctx_t
+
+signing context. 
+
+This Context is passed to the signer-function. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+=========================================== =============== ===========================================================
+`d_signature_type_t <#d-signature-type-t>`_  **type**       the type of signature
+`bytes_t <#bytes-t>`_                        **message**    the message to sign
+`bytes_t <#bytes-t>`_                        **account**    the account to use for the signature
+``uint8_t``                                  **signature**  the resulting signature needs to be writte into these bytes
+``void *``                                   **wallet**     the custom wallet-pointer
+``void *``                                   **ctx**        the context of the request in order report errors
+=========================================== =============== ===========================================================
+```
+
 #### in3_sign
 
 signing function. 
@@ -3943,7 +4135,7 @@ signs the given data and write the signature to dst. the return value must be th
 
 
 ```c
-typedef in3_ret_t(* in3_sign) (void *ctx, d_signature_type_t type, bytes_t message, bytes_t account, uint8_t *dst)
+typedef in3_ret_t(* in3_sign) (in3_sign_ctx_t *ctx)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -3959,7 +4151,7 @@ for multisigs, we need to change the transaction to gro through the ms. if the n
 
 
 ```c
-typedef in3_ret_t(* in3_prepare_tx) (void *ctx, d_token_t *old_tx, json_ctx_t **new_tx)
+typedef in3_ret_t(* in3_prepare_tx) (void *ctx, bytes_t raw_tx, bytes_t *new_raw_tx)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -3975,13 +4167,14 @@ definition of a signer holding funciton-pointers and data.
 The stuct contains following fields:
 
 ```eval_rst
-=================================== ================ ======================================================================================
-`in3_sign <#in3-sign>`_              **sign**        function pointer returning a stored value for the given key.
-`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  function pointer returning capable of manipulating the transaction before signing it. 
-                                                     
-                                                     This is needed in order to support multisigs.
-``void *``                           **wallet**      custom object whill will be passed to functions
-=================================== ================ ======================================================================================
+=================================== ===================== ======================================================================================
+`in3_sign <#in3-sign>`_              **sign**             function pointer returning a stored value for the given key.
+`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**       function pointer returning capable of manipulating the transaction before signing it. 
+                                                          
+                                                          This is needed in order to support multisigs.
+``void *``                           **wallet**           custom object whill will be passed to functions
+`address_t <#address-t>`_            **default_address**  the address in case no address is assigned
+=================================== ===================== ======================================================================================
 ```
 
 #### in3_pay_prepare
@@ -4651,6 +4844,145 @@ arguments:
 =================================== ================ ===================================================================================================================================
 ```
 returns: [`in3_signer_t *`](#in3-signer-t)
+
+
+#### in3_sign_ctx_get_message
+
+```c
+bytes_t in3_sign_ctx_get_message(in3_sign_ctx_t *ctx);
+```
+
+helper function to retrieve and message from a in3_sign_ctx_t 
+
+helper function to retrieve and message from a in3_sign_ctx_t 
+
+arguments:
+```eval_rst
+===================================== ========= ==================
+`in3_sign_ctx_t * <#in3-sign-ctx-t>`_  **ctx**  the signer context
+===================================== ========= ==================
+```
+returns: [`bytes_t`](#bytes-t)
+
+
+#### in3_sign_ctx_get_account
+
+```c
+bytes_t in3_sign_ctx_get_account(in3_sign_ctx_t *ctx);
+```
+
+helper function to retrieve and account from a in3_sign_ctx_t 
+
+helper function to retrieve and account from a in3_sign_ctx_t 
+
+arguments:
+```eval_rst
+===================================== ========= ==================
+`in3_sign_ctx_t * <#in3-sign-ctx-t>`_  **ctx**  the signer context
+===================================== ========= ==================
+```
+returns: [`bytes_t`](#bytes-t)
+
+
+#### in3_sign_ctx_get_signature
+
+```c
+uint8_t* in3_sign_ctx_get_signature(in3_sign_ctx_t *ctx);
+```
+
+helper function to retrieve the signature from a in3_sign_ctx_t 
+
+arguments:
+```eval_rst
+===================================== ========= ==================
+`in3_sign_ctx_t * <#in3-sign-ctx-t>`_  **ctx**  the signer context
+===================================== ========= ==================
+```
+returns: `uint8_t *`
+
+
+#### in3_set_transport
+
+```c
+void in3_set_transport(in3_t *c, in3_transport_send cptr);
+```
+
+set the transport handler on the client. 
+
+arguments:
+```eval_rst
+=========================================== ========== =====================================================
+`in3_t * <#in3-t>`_                          **c**     the incubed client
+`in3_transport_send <#in3-transport-send>`_  **cptr**  custom pointer which will will be passed to functions
+=========================================== ========== =====================================================
+```
+
+#### in3_get_request_payload
+
+```c
+char* in3_get_request_payload(in3_request_t *request);
+```
+
+getter to retrieve the payload from a in3_request_t struct 
+
+arguments:
+```eval_rst
+=================================== ============= ==============
+`in3_request_t * <#in3-request-t>`_  **request**  request struct
+=================================== ============= ==============
+```
+returns: `char *`
+
+
+#### in3_get_request_urls
+
+```c
+char** in3_get_request_urls(in3_request_t *request);
+```
+
+getter to retrieve the urls list from a in3_request_t struct 
+
+arguments:
+```eval_rst
+=================================== ============= ==============
+`in3_request_t * <#in3-request-t>`_  **request**  request struct
+=================================== ============= ==============
+```
+returns: `char **`
+
+
+#### in3_get_request_urls_len
+
+```c
+int in3_get_request_urls_len(in3_request_t *request);
+```
+
+getter to retrieve the urls list length from a in3_request_t struct 
+
+arguments:
+```eval_rst
+=================================== ============= ==============
+`in3_request_t * <#in3-request-t>`_  **request**  request struct
+=================================== ============= ==============
+```
+returns: `int`
+
+
+#### in3_get_request_timeout
+
+```c
+uint32_t in3_get_request_timeout(in3_request_t *request);
+```
+
+getter to retrieve the urls list length from a in3_request_t struct 
+
+arguments:
+```eval_rst
+=================================== ============= ==============
+`in3_request_t * <#in3-request-t>`_  **request**  request struct
+=================================== ============= ==============
+```
+returns: `uint32_t`
 
 
 #### in3_set_storage_handler
@@ -6125,10 +6457,10 @@ The stuct contains following fields:
 `d_token_t * <#d-token-t>`_  **result**     the list of all tokens. 
                                             
                                             the first token is the main-token as returned by the parser.
-``char *``                   **c**          
-``size_t``                   **allocated**  pointer to the src-data
-``size_t``                   **len**        amount of tokens allocated result
-``size_t``                   **depth**      number of tokens in result
+``char *``                   **c**          pointer to the src-data
+``size_t``                   **allocated**  amount of tokens allocated result
+``size_t``                   **len**        number of tokens in result
+``size_t``                   **depth**      max depth of tokens in result
 =========================== =============== ============================================================
 ```
 
@@ -7615,6 +7947,42 @@ arguments:
 returns: [`sb_t *`](#sb-t)
 
 
+#### sb_add_escaped_chars
+
+```c
+sb_t* sb_add_escaped_chars(sb_t *sb, const char *chars);
+```
+
+add chars but escapes all quotes 
+
+arguments:
+```eval_rst
+================= =========== 
+`sb_t * <#sb-t>`_  **sb**     
+``const char *``   **chars**  
+================= =========== 
+```
+returns: [`sb_t *`](#sb-t)
+
+
+#### sb_add_int
+
+```c
+sb_t* sb_add_int(sb_t *sb, uint64_t val);
+```
+
+adds a numeric value to the stringbuilder 
+
+arguments:
+```eval_rst
+================= ========= 
+`sb_t * <#sb-t>`_  **sb**   
+``uint64_t``       **val**  
+================= ========= 
+```
+returns: [`sb_t *`](#sb-t)
+
+
 ### utils.h
 
 utility functions. 
@@ -7709,6 +8077,32 @@ if the return value is negative it will stop and return this value otherwise con
     int _r = (exp);        \
     if (_r < 0) return _r; \
   }
+```
+
+
+#### TRY_FINAL (exp,final)
+
+executes the expression and expects the return value to be a int indicating the error. 
+
+if the return value is negative it will stop and return this value otherwise continue. 
+
+```c
+#define TRY_FINAL (exp,final) {                           \
+    int _r = (exp);           \
+    final;                    \
+    if (_r < 0) return _r;    \
+  }
+```
+
+
+#### EXPECT_EQ (exp,val)
+
+executes the expression and expects value to equal val. 
+
+if not it will return IN3_EINVAL 
+
+```c
+#define EXPECT_EQ (exp,val) if ((exp) != val) return IN3_EINVAL;
 ```
 
 
@@ -8615,6 +9009,15 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### in3_register_http
+
+```c
+void in3_register_http();
+```
+
+registers http as a default transport. 
+
+
 ## Module verifier/btc 
 
 
@@ -8844,6 +9247,8 @@ in3_ret_t eth_handle_intern(in3_ctx_t *ctx, in3_response_t **response);
 
 this is called before a request is send 
 
+this is called before a request is send 
+
 arguments:
 ```eval_rst
 ====================================== ============== 
@@ -8856,22 +9261,91 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### sign_tx
+#### eth_prepare_unsigned_tx
 
 ```c
-bytes_t sign_tx(d_token_t *tx, in3_ctx_t *ctx);
+in3_ret_t eth_prepare_unsigned_tx(d_token_t *tx, in3_ctx_t *ctx, bytes_t *dst);
 ```
 
-Signs transaction with the given context. 
+prepares a transaction and writes the data to the dst-bytes. 
+
+In case of success, you MUST free only the data-pointer of the dst. 
 
 arguments:
 ```eval_rst
-=========================== ========= 
-`d_token_t * <#d-token-t>`_  **tx**   
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  
-=========================== ========= 
+=========================== ========= ======================================
+`d_token_t * <#d-token-t>`_  **tx**   a json-token desribing the transaction
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current context
+`bytes_t * <#bytes-t>`_      **dst**  the bytes to write the result to.
+=========================== ========= ======================================
 ```
-returns: [`bytes_t`](#bytes-t)
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_sign_raw_tx
+
+```c
+in3_ret_t eth_sign_raw_tx(bytes_t raw_tx, in3_ctx_t *ctx, address_t from, bytes_t *dst);
+```
+
+signs a unsigned raw transaction and writes the raw data to the dst-bytes. 
+
+In case of success, you MUST free only the data-pointer of the dst. 
+
+arguments:
+```eval_rst
+=========================== ============ =======================================
+`bytes_t <#bytes-t>`_        **raw_tx**  the unsigned raw transaction to sign
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the current context
+`address_t <#address-t>`_    **from**    the address of the account to sign with
+`bytes_t * <#bytes-t>`_      **dst**     the bytes to write the result to.
+=========================== ============ =======================================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### handle_eth_sendTransaction
+
+```c
+in3_ret_t handle_eth_sendTransaction(in3_ctx_t *ctx, d_token_t *req);
+```
+
+expects a req-object for a transaction and converts it into a sendRawTransaction after signing. 
+
+expects a req-object for a transaction and converts it into a sendRawTransaction after signing. 
+
+arguments:
+```eval_rst
+=========================== ========= ===================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current context
+`d_token_t * <#d-token-t>`_  **req**  the request
+=========================== ========= ===================
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_wallet_sign
+
+```c
+RETURNS_NONULL NONULL char* eth_wallet_sign(const char *key, const char *data);
+```
+
+minimum signer for the wallet, returns the signed message which needs to be freed 
+
+arguments:
+```eval_rst
+================ ========== 
+``const char *``  **key**   
+``const char *``  **data**  
+================ ========== 
+```
+returns: `RETURNS_NONULL NONULL char *`
 
 
 ### trie.h
@@ -10039,21 +10513,6 @@ arguments:
 =================== ========= 
 ```
 returns: `int32_t`
-
-
-#### evm_stack_peek_len
-
-```c
-int evm_stack_peek_len(evm_t *evm);
-```
-
-arguments:
-```eval_rst
-=================== ========= 
-`evm_t * <#evm-t>`_  **evm**  
-=================== ========= 
-```
-returns: `int`
 
 
 #### evm_run
@@ -11756,6 +12215,13 @@ returns: `int` : 0 if added -1 if the value could not be handled.
 IN3 init module for auto initializing verifiers and transport based on build config. 
 
 File: [c/src/verifier/in3_init.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/in3_init.h)
+
+#### in3_for_chain (chain_id)
+
+```c
+#define in3_for_chain (chain_id) in3_for_chain_auto_init(chain_id)
+```
+
 
 #### in3_for_chain_auto_init
 

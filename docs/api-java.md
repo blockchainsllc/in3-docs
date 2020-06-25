@@ -539,6 +539,12 @@ use local client
 
 Type: static `final long`
 
+##### BTC
+
+use bitcoin client 
+
+Type: static `final long`
+
 
 #### class IN3
 
@@ -611,6 +617,12 @@ returns the signer or wallet.
 gets the ipfs-api 
 
  > public [`in3.ipfs.API`](#class-in3.ipfs.api) getIpfs();
+
+##### getBtcAPI
+
+gets the btc-api 
+
+ > public [`in3.btc.API`](#class-in3.btc.api) getBtcAPI();
 
 ##### getEth1API
 
@@ -996,6 +1008,480 @@ arguments:
 ============ ============= 
 ```
 
+## Package in3.btc
+
+#### class API
+
+API for handling BitCoin data. 
+
+Use it when connected to Chain.BTC. 
+
+##### API
+
+creates a btc.API using the given incubed instance. 
+
+ > public  API([`IN3`](#class-in3) in3);
+
+arguments:
+```eval_rst
+=================== ========= 
+`IN3 <#class-in3>`_  **in3**  
+=================== ========= 
+```
+##### getTransaction
+
+Retrieves the transaction and returns the data as json. 
+
+ > public [`Transaction`](#class-transaction) getTransaction([`String`](#class-string) txid);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **txid**  
+========== ========== 
+```
+##### getTransactionBytes
+
+Retrieves the serialized transaction (bytes). 
+
+ > public `byte[]` getTransactionBytes([`String`](#class-string) txid);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **txid**  
+========== ========== 
+```
+##### getBlockHeader
+
+Retrieves the blockheader. 
+
+ > public [`BlockHeader`](#class-blockheader) getBlockHeader([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+##### getBlockHeaderBytes
+
+Retrieves the byte array representing teh serialized blockheader data. 
+
+ > public `byte[]` getBlockHeaderBytes([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+##### getBlockWithTxData
+
+Retrieves the block including the full transaction data. 
+
+Use Api::GetBlockWithTxIds" for only the transaction ids. 
+
+ > public [`Block`](#class-block) getBlockWithTxData([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+##### getBlockWithTxIds
+
+Retrieves the block including only transaction ids. 
+
+Use Api::GetBlockWithTxData for the full transaction data. 
+
+ > public [`Block`](#class-block) getBlockWithTxIds([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+##### getBlockBytes
+
+Retrieves the serialized block in bytes. 
+
+ > public `byte[]` getBlockBytes([`String`](#class-string) blockHash);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **blockHash**  
+========== =============== 
+```
+
+#### class Block
+
+A Block. 
+
+##### getTransactions
+
+Transactions or Transaction of a block. 
+
+ > public [`Transaction[]`](#class-transaction) getTransactions();
+
+##### getTransactionHashes
+
+Transactions or Transaction ids of a block. 
+
+ > public `String[]` getTransactionHashes();
+
+##### getSize
+
+Size of this block in bytes. 
+
+ > public `long` getSize();
+
+##### getWeight
+
+Weight of this block in bytes. 
+
+ > public `long` getWeight();
+
+
+#### class BlockHeader
+
+A Block header. 
+
+##### getHash
+
+The hash of the blockheader. 
+
+ > public `String` getHash();
+
+##### getConfirmations
+
+Number of confirmations or blocks mined on top of the containing block. 
+
+ > public `long` getConfirmations();
+
+##### getHeight
+
+Block number. 
+
+ > public `long` getHeight();
+
+##### getVersion
+
+Used version. 
+
+ > public `long` getVersion();
+
+##### getVersionHex
+
+Version as hex. 
+
+ > public `String` getVersionHex();
+
+##### getMerkleroot
+
+Merkle root of the trie of all transactions in the block. 
+
+ > public `String` getMerkleroot();
+
+##### getTime
+
+Unix timestamp in seconds since 1970. 
+
+ > public `long` getTime();
+
+##### getMediantime
+
+Unix timestamp in seconds since 1970. 
+
+ > public `long` getMediantime();
+
+##### getNonce
+
+Nonce-field of the block. 
+
+ > public `long` getNonce();
+
+##### getBits
+
+Bits (target) for the block as hex. 
+
+ > public `String` getBits();
+
+##### getDifficulty
+
+Difficulty of the block. 
+
+ > public `float` getDifficulty();
+
+##### getChainwork
+
+Total amount of work since genesis. 
+
+ > public `String` getChainwork();
+
+##### getNTx
+
+Number of transactions in the block. 
+
+ > public `long` getNTx();
+
+##### getPreviousblockhash
+
+Hash of the parent blockheader. 
+
+ > public `String` getPreviousblockhash();
+
+##### getNextblockhash
+
+Hash of the next blockheader. 
+
+ > public `String` getNextblockhash();
+
+
+#### class ScriptPubKey
+
+Script on a transaction output. 
+
+##### getAsm
+
+The hash of the blockheader. 
+
+ > public `String` getAsm();
+
+##### getHex
+
+The raw hex data. 
+
+ > public `String` getHex();
+
+##### getReqSigs
+
+The required sigs. 
+
+ > public `long` getReqSigs();
+
+##### getType
+
+The type e.g. 
+
+: pubkeyhash. 
+
+ > public `String` getType();
+
+##### getAddresses
+
+List of addresses. 
+
+ > public `String[]` getAddresses();
+
+
+#### class ScriptSig
+
+Script on a transaction input. 
+
+##### ScriptSig
+
+ > public  ScriptSig([`JSON`](#class-json) data);
+
+arguments:
+```eval_rst
+===================== ========== 
+`JSON <#class-json>`_  **data**  
+===================== ========== 
+```
+##### getAsm
+
+The asm data. 
+
+ > public `String` getAsm();
+
+##### getHex
+
+The raw hex data. 
+
+ > public `String` getHex();
+
+
+#### class Transaction
+
+A BitCoin Transaction. 
+
+##### asTransaction
+
+ > public static [`Transaction`](#class-transaction) asTransaction([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asTransactions
+
+ > public static [`Transaction[]`](#class-transaction) asTransactions([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getTxid
+
+Transaction Id. 
+
+ > public `String` getTxid();
+
+##### getHash
+
+The transaction hash (differs from txid for witness transactions). 
+
+ > public `String` getHash();
+
+##### getVersion
+
+The version. 
+
+ > public `long` getVersion();
+
+##### getSize
+
+The serialized transaction size. 
+
+ > public `long` getSize();
+
+##### getVsize
+
+The virtual transaction size (differs from size for witness transactions). 
+
+ > public `long` getVsize();
+
+##### getWeight
+
+The transactions weight (between vsize4-3 and vsize4). 
+
+ > public `long` getWeight();
+
+##### getLocktime
+
+The locktime. 
+
+ > public `long` getLocktime();
+
+##### getHex
+
+The hex representation of raw data. 
+
+ > public `String` getHex();
+
+##### getBlockhash
+
+The block hash of the block containing this transaction. 
+
+ > public `String` getBlockhash();
+
+##### getConfirmations
+
+The confirmations. 
+
+ > public `long` getConfirmations();
+
+##### getTime
+
+The transaction time in seconds since epoch (Jan 1 1970 GMT). 
+
+ > public `long` getTime();
+
+##### getBlocktime
+
+The block time in seconds since epoch (Jan 1 1970 GMT). 
+
+ > public `long` getBlocktime();
+
+##### getVin
+
+The transaction inputs. 
+
+ > public [`TransactionInput[]`](#class-transactioninput) getVin();
+
+##### getVout
+
+The transaction outputs. 
+
+ > public [`TransactionOutput[]`](#class-transactionoutput) getVout();
+
+
+#### class TransactionInput
+
+Input of a transaction. 
+
+##### getTxid
+
+The transaction id. 
+
+ > public `String` getTxid();
+
+##### getYout
+
+The index of the transactionoutput. 
+
+ > public `long` getYout();
+
+##### getScriptSig
+
+The script. 
+
+ > public [`ScriptSig`](#class-scriptsig) getScriptSig();
+
+##### getTxinwitness
+
+Hex-encoded witness data (if any). 
+
+ > public `String[]` getTxinwitness();
+
+##### getSequence
+
+The script sequence number. 
+
+ > public `long` getSequence();
+
+
+#### class TransactionOutput
+
+A BitCoin Transaction. 
+
+##### TransactionOutput
+
+ > public  TransactionOutput([`JSON`](#class-json) data);
+
+arguments:
+```eval_rst
+===================== ========== 
+`JSON <#class-json>`_  **data**  
+===================== ========== 
+```
+##### getValue
+
+The value in bitcoins. 
+
+ > public `float` getValue();
+
+##### getN
+
+The index in the transaction. 
+
+ > public `long` getN();
+
+##### getScriptPubKey
+
+The script of the transaction. 
+
+ > public [`ScriptPubKey`](#class-scriptpubkey) getScriptPubKey();
+
+
 ## Package in3.config
 
 #### class ChainConfiguration
@@ -1236,6 +1722,24 @@ arguments:
 ``boolean``  **includeCode**  
 =========== ================= 
 ```
+##### isBootWeights
+
+ > public `Boolean` isBootWeights();
+
+##### setBootWeights
+
+if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. 
+
+This is used only if no nodelist is availabkle from cache. 
+
+ > public `void` setBootWeights([`boolean`](#class-boolean) value);
+
+arguments:
+```eval_rst
+=========== =========== 
+``boolean``  **value**  
+=========== =========== 
+```
 ##### isKeepIn3
 
  > public `Boolean` isKeepIn3();
@@ -1249,20 +1753,6 @@ arguments:
 =========== ============= 
 ``boolean``  **keepIn3**  
 =========== ============= 
-```
-##### isUseBinary
-
- > public `Boolean` isUseBinary();
-
-##### setUseBinary
-
- > public `void` setUseBinary([`boolean`](#class-boolean) useBinary);
-
-arguments:
-```eval_rst
-=========== =============== 
-``boolean``  **useBinary**  
-=========== =============== 
 ```
 ##### isUseHttp
 
@@ -2380,6 +2870,16 @@ arguments:
 
 represents a Transaction in ethereum. 
 
+##### asTransaction
+
+ > public static [`Transaction`](#class-transaction) asTransaction([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
 ##### getBlockHash
 
 the blockhash of the block containing this transaction. 
