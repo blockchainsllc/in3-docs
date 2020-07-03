@@ -398,7 +398,7 @@ checking a Bitcoin transaction data
 
 int main() {
   // create new incubed client for BTC
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_BTC);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_BTC);
 
   // the hash of transaction that we want to get
   bytes32_t tx_id;
@@ -449,7 +449,7 @@ int main() {
   in3_log_set_prefix("");
 
   // create new incubed client
-  in3_t* c = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* c = in3_for_chain(CHAIN_ID_MAINNET);
 
   // define a address (20byte)
   address_t contract;
@@ -553,7 +553,7 @@ static void get_balance_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // get balance using raw RPC call
   get_balance_rpc(in3);
@@ -620,7 +620,7 @@ static void get_block_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // get block using raw RPC call
   get_block_rpc(in3);
@@ -687,8 +687,8 @@ static void get_logs_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3    = in3_for_chain(ETH_CHAIN_ID_MAINNET);
-  in3->chain_id = ETH_CHAIN_ID_KOVAN;
+  in3_t* in3    = in3_for_chain(CHAIN_ID_MAINNET);
+  in3->chain_id = CHAIN_ID_KOVAN;
 
   // get logs using raw RPC call
   get_logs_rpc(in3);
@@ -788,7 +788,7 @@ static void get_tx_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // get tx using raw RPC call
   get_tx_rpc(in3);
@@ -860,7 +860,7 @@ static void get_tx_receipt_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // get tx receipt using raw RPC call
   get_tx_receipt_rpc(in3);
@@ -982,7 +982,7 @@ static void ipfs_api_example(in3_t* c) {
 
 int main() {
   // create new incubed client
-  in3_t* c = in3_for_chain(ETH_CHAIN_ID_IPFS);
+  in3_t* c = in3_for_chain(CHAIN_ID_IPFS);
 
   // IPFS put/get using raw RPC calls
   ipfs_rpc_example(c);
@@ -1014,7 +1014,7 @@ static void send_tx_api(in3_t* in3);
 int main() {
   // create new incubed client
   uint8_t bip_path[5] = {44, 60, 0, 0, 0};
-  in3_t*  in3         = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t*  in3         = in3_for_chain(CHAIN_ID_MAINNET);
   in3_log_set_level(LOG_DEBUG);
   // setting ledger nano s to be the default signer for incubed client
   // it will cause the transaction or any msg to be sent to ledger nanos device for siging
@@ -1073,7 +1073,7 @@ static void send_tx_api(in3_t* in3);
 
 int main() {
   // create new incubed client
-  in3_t* in3 = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // convert the hexstring to bytes
   bytes32_t pk;
@@ -1170,7 +1170,7 @@ static int handle_booking(usn_event_t* ev) {
 
 int main(int argc, char* argv[]) {
   // create new incubed client
-  in3_t* c = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+  in3_t* c = in3_for_chain(CHAIN_ID_MAINNET);
 
   // switch to goerli
   c->chain_id = 0x5;
@@ -1249,7 +1249,7 @@ void unlock_key(in3_t* c, char* json_data, char* passwd) {
 
 int main(int argc, char* argv[]) {
   // create new incubed client
-  in3_t* c = in3_for_chain(ETH_CHAIN_ID_GOERLI);
+  in3_t* c = in3_for_chain(CHAIN_ID_GOERLI);
 
   // address of the usn-contract, which we copy from hex
   address_t contract;
@@ -3347,93 +3347,93 @@ the protocol version used when sending requests from the this client
 ```
 
 
-#### ETH_CHAIN_ID_MULTICHAIN
+#### CHAIN_ID_MULTICHAIN
 
 chain_id working with all known chains 
 
 ```c
-#define ETH_CHAIN_ID_MULTICHAIN 0x0
+#define CHAIN_ID_MULTICHAIN 0x0
 ```
 
 
-#### ETH_CHAIN_ID_MAINNET
+#### CHAIN_ID_MAINNET
 
 chain_id for mainnet 
 
 ```c
-#define ETH_CHAIN_ID_MAINNET 0x01
+#define CHAIN_ID_MAINNET 0x01
 ```
 
 
-#### ETH_CHAIN_ID_KOVAN
+#### CHAIN_ID_KOVAN
 
 chain_id for kovan 
 
 ```c
-#define ETH_CHAIN_ID_KOVAN 0x2a
+#define CHAIN_ID_KOVAN 0x2a
 ```
 
 
-#### ETH_CHAIN_ID_TOBALABA
+#### CHAIN_ID_TOBALABA
 
 chain_id for tobalaba 
 
 ```c
-#define ETH_CHAIN_ID_TOBALABA 0x44d
+#define CHAIN_ID_TOBALABA 0x44d
 ```
 
 
-#### ETH_CHAIN_ID_GOERLI
+#### CHAIN_ID_GOERLI
 
 chain_id for goerlii 
 
 ```c
-#define ETH_CHAIN_ID_GOERLI 0x5
+#define CHAIN_ID_GOERLI 0x5
 ```
 
 
-#### ETH_CHAIN_ID_EVAN
+#### CHAIN_ID_EVAN
 
 chain_id for evan 
 
 ```c
-#define ETH_CHAIN_ID_EVAN 0x4b1
+#define CHAIN_ID_EVAN 0x4b1
 ```
 
 
-#### ETH_CHAIN_ID_EWC
+#### CHAIN_ID_EWC
 
 chain_id for ewc 
 
 ```c
-#define ETH_CHAIN_ID_EWC 0xf6
+#define CHAIN_ID_EWC 0xf6
 ```
 
 
-#### ETH_CHAIN_ID_IPFS
+#### CHAIN_ID_IPFS
 
 chain_id for ipfs 
 
 ```c
-#define ETH_CHAIN_ID_IPFS 0x7d0
+#define CHAIN_ID_IPFS 0x7d0
 ```
 
 
-#### ETH_CHAIN_ID_BTC
+#### CHAIN_ID_BTC
 
 chain_id for btc 
 
 ```c
-#define ETH_CHAIN_ID_BTC 0x99
+#define CHAIN_ID_BTC 0x99
 ```
 
 
-#### ETH_CHAIN_ID_LOCAL
+#### CHAIN_ID_LOCAL
 
 chain_id for local chain 
 
 ```c
-#define ETH_CHAIN_ID_LOCAL 0xFFFF
+#define CHAIN_ID_LOCAL 0xFFFF
 ```
 
 
@@ -3495,7 +3495,7 @@ return value used by the signer for unspecified errors.
 
 creates a new Incubes configuration for a specified chain and returns the pointer. 
 
-when creating the client only the one chain will be configured. (saves memory). but if you pass `ETH_CHAIN_ID_MULTICHAIN` as argument all known chains will be configured allowing you to switch between chains within the same client or configuring your own chain.
+when creating the client only the one chain will be configured. (saves memory). but if you pass `CHAIN_ID_MULTICHAIN` as argument all known chains will be configured allowing you to switch between chains within the same client or configuring your own chain.
 
 you need to free this instance with `in3_free` after use!
 
@@ -3508,7 +3508,7 @@ Before using the client you still need to set the tramsport and optional the sto
 in3_register_eth_full();
 
 // create new client
-in3_t* client = in3_for_chain(ETH_CHAIN_ID_MAINNET);
+in3_t* client = in3_for_chain(CHAIN_ID_MAINNET);
 
 // configure transport
 client->transport    = send_curl;
@@ -4182,12 +4182,12 @@ returns: `bool` : true if set
 #### in3_new
 
 ```c
-in3_t* in3_new() __attribute__((deprecated("use in3_for_chain(ETH_CHAIN_ID_MULTICHAIN)")));
+in3_t* in3_new() __attribute__((deprecated("use in3_for_chain(CHAIN_ID_MULTICHAIN)")));
 ```
 
 creates a new Incubes configuration and returns the pointer. 
 
-This Method is depricated. you should use `in3_for_chain(ETH_CHAIN_ID_MULTICHAIN)` instead.
+This Method is depricated. you should use `in3_for_chain(CHAIN_ID_MULTICHAIN)` instead.
 
 you need to free this instance with `in3_free` after use!
 
@@ -4224,9 +4224,9 @@ in3_t* in3_for_chain_default(chain_id_t chain_id);
 
 arguments:
 ```eval_rst
-=========================== ============== ==============================================
-`chain_id_t <#chain-id-t>`_  **chain_id**  the chain_id (see ETH_CHAIN_ID_... constants).
-=========================== ============== ==============================================
+=========================== ============== ==========================================
+`chain_id_t <#chain-id-t>`_  **chain_id**  the chain_id (see CHAIN_ID_... constants).
+=========================== ============== ==========================================
 ```
 returns: [`in3_t *`](#in3-t)
 
