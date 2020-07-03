@@ -2056,7 +2056,7 @@ Proofs will add a special in3-section to the response containing a `proof`- obje
 
 
 
-####getblockheader
+### getblockheader
 
 It returns data of block header for given block hash.
 
@@ -2071,9 +2071,9 @@ Parameters:
 
 Returns:
 
-for verbose
-- `false` : a hex string with 80 bytes representing the blockheader.
-- `true`: a object representing the blockheader:
+
+- verbose:`false` : a hex string with 80 bytes representing the blockheader.
+- verbose:`true`: a object representing the blockheader:
 
     - `hash` : hex - the block hash (same as provided)
     - `confirmations` : number -  The number of confirmations, or -1 if the block is not on the main chain
