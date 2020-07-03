@@ -2131,3 +2131,459 @@ Response:
 }
 ```
 
+Standard JSON-RPC calls as described in https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list
+
+Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
+
+Depending on the method, different proofs are needed, which are described in this document.
+
+ToDo: Add description
+
+
+Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+
+*  **block**
+*  **final**
+*  **merkleProof**
+*  **cbtx**
+*  **cbtxMerkleProof**
+
+
+
+####getblockheader
+
+It returns data of block header for given block hash.
+
+
+Parameters:
+
+1. `hash`             : (string, required) The block hash
+2. verbose            : (boolean, optional, default=true) true for a json object, false for the hex encoded data
+3. `in3.finality`     : (number, required) defines the amount of finality headers
+4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getblockheader",
+        "params": ["000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220", true],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+        "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+        "confirmations": 8268,
+        "height": 624958,
+        "version": 536928256,
+        "versionHex": "2000e000",
+        "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
+        "time": 1586333924,
+        "mediantime": 1586332639,
+        "nonce": 1985217615,
+        "bits": "17143b41",
+        "difficulty": 13912524048945.91,
+        "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
+        "nTx": 33,
+        "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
+        "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
+    },
+    "in3": {
+        "proof": {
+            "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cdf695233b100000000000000000001d3558af1306c6523ae4006355a85c42ba77c7fa8d272fde83610eeef937360c058c8d5e413b1417b504d22b00e0002043e319ef088530dc40f1111747bb7fdb0263e3c09d790c000000000000000000788f19b456acc30cc8be8103a79a25f348a395e250c5e8d01eeeef64b542a0d92e918d5ebc201317219ee6af000000206e9d58fb0ab8d0181b1c9e54614f80b64004c2e04da310000000000000000000231e0dd30652cce0c9a5ba1e32a2ad75a588fa2d80d2eb60cd4887085b233dedd0958d5ebc201317c40cfb3600000020d74de3252b9261e0a60d44939fb762bb08273a1933500f00000000000000000069a6eb135b81c92b5a5f493a452687b9995640c91a5dc19a63e411d0bf8f821d37988d5ebc2013175740b63a000000200e696d48239a3ebb0f4973fd8ff4cd202bc0a0be14ac040000000000000000008dbe05f223bae0feea4259bc62c2245776a03eeda65caab89ff65b8e0f28d9159e9a8d5ebc2013174b887e5000c0ff3fc1a7a2dff4d93bf1849ced7ea371176d5fbdb40f31cf0f000000000000000000f830d3b7b5949577cb8736fea5d3dcc2445d925160ed40f4c798c47b3c9742be0e9b8d5ebc2013170793403600000020d4bfd17299df5f5e34732018cf391402f9aa5e2080f109000000000000000000c3511f60184615794fd21471cd44608d811ae46d8bf9ac195807657d82bdc805b99e8d5ebc201317032eef050000c02081c2fe858a8adab9a089d35d1fd5787813dbdab202e0080000000000000000005a3f179d5675924c4ed0f2061b35d02b5d2c4b7c1e4648a707dfc296b5a55e1ccda18d5ebc2013176cbf576e00e0ff2f9d70d3e3f817842c82cdb9a7af8f02c03e3c5d504b73000000000000000000007ecfa0817fe1b69a7ad4bda7a711d9e6ea4e95fbd31c272085f2542a5421cb97aca28d5ebc201317ac263e7a00e0ff3f6075bc371c4622caf5495f797a3debb95f6858106dbd0e000000000000000000b1beaa0a10ac02b14d405d0fd093932a99a5cb6c668c47a44af42c4c50eb1ed7b3a48d5ebc201317fe276470",
+            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5f033e890904e2888d5e2f706f6f6c696e2e636f6d2ffabe6d6d96439d07cae2a0d0d7b459d69d6e8fbe84a28f9be160edb3c33279ebfbc7af8d010000000000000066e1bb5b9e64b5779c4872da7ee8ba921008d1689900a204000000000000ffffffff0491e3894a0000000017a91454705dd010ab50c03543a543cda327a60d9bf7af870000000000000000266a24b9e11b6ddd3fec243f225bbee268c09f1a616a2c6e5196a1e8977d59b32daf8ae52767570000000000000000266a24aa21a9edb1979b2b4464d1ef79257852017413a72a9cd2fa9048fa86052d1121f59d536c00000000000000002b6a2952534b424c4f434b3aa7a3b7405613557aba7780a86227466b8fa451f82f0cdce821aafe2400222c9901200000000000000000000000000000000000000000000000000000000000000000539da2fc",
+            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667bc256a0fd678d950d75174e8de0a94faa2a3de99c4f73c817f40929638d6c23b2d8afc5b7e0d03fc9f055cad0f9c1b195eade387c32ff122592ad29dbb5450ec93870e96719df9d8db0b663b6781f0ac64e22b114d3ade17e09baaa7041c69b7df612779ffaea6f14f5e471bc45c256bfe6d80304443025b2aa439ab26ec1ba86d297c9c2d7a1d61193d7d00256bf1a607766f602f76f06f776aae8419e505ae93239ccda7e35e1559552e688"
+        }
+    }
+}
+```
+
+
+Proof:
+
+Proof data is given in response in in3.proof.final field . For construction of proof that the block header is part of the actual chain server checks if there are “enough” confirmations on this block header. We can set the amount of confirmations required in the in3.finality field (6 confirmations is common) in post request. The server will provide the n block headers after our block header. For example: We got the block header of block 1000 and set n=6 then in the response there will be block headers of block 1001..1006 in the .in3.proof.final field.
+The hash of block 1000 should be in the parent hash field of block header of block 1001. The hash of block 1001 (sha256 of block header twice) should be in the parent hash field of block header of block 1002. And so on. There are two more fields: “cbtx” and “cbtxMerkleProof” - They are necessary to prove the block number. Extract block number out of the coinbase transaction and prove that this transaction is part of the block by doing a merkle proof. 
+
+
+### getblock
+
+Returns information of a block for given blockhash. The returned level of details depends on the argument verbosity.
+
+
+Parameters:
+
+1. `blockhash`          : (string, required) The block hash
+2. verbosity            : (boolean, optional, default=true) false for hex encoded data, true for a json object
+3. `in3.finality`       : (number, required) defines the amount of finality headers
+4. `in3.verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getblock",
+        "params":  ["00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7", true],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+        "hash": "00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7",
+        "confirmations": 8226,
+        "strippedsize": 914732,
+        "size": 1249337,
+        "weight": 3993533,
+        "height": 625000,
+        "version": 1073733632,
+        "versionHex": "3fffe000",
+        "merkleroot": "4d51591497f1d646070f9f9fdeb50dc338e2a8bb9a5cb721c55f452938165ff8",
+        "tx": [
+            "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
+            ...
+            "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
+        ],
+        "time": 1586364107,
+        "mediantime": 1586361287,
+        "nonce": 3963275925,
+        "bits": "171320bc",
+        "difficulty": 14715214060656.53,
+        "chainwork": "00000000000000000000000000000000000000000e4eba1824303796d776922b",
+        "nTx": 2626,
+        "previousblockhash": "000000000000000000068fb1ddc43ca83bc4bfb23444f7236992cfc565d40e08",
+        "nextblockhash": "00000000000000000010b3d94671593da669b25fecf7005de38dc2b2fa208dc7"
+    },
+    "in3": {
+        "proof": {
+            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c72200e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb87840000ff3f5850309cb99ee009a2819cdb9283e396076764da344002000000000000000000da4d65a89668db85948a30347743fe64a7d35e302d8160530655011bb5b7e182db028e5ebc20131796504eb400e0ff3facd633ac953ce979ce8271a1a8ce843a887a30862968120000000000000000009994a8ebf6351a2d85dd0897d342958072d277c5d12feec76d4772efb753d4216a038e5ebc20131758513e0e00000020bc2d4e13a52a86d08fd1785b1265bb7d7b65ff1a36ac11000000000000000000427a8fe62237452cc285092c37678bbb12fdf1b2d5b6944e090763b84e29d45537068e5ebc201317dd2cd63600008020374150cb15d2b13887ee9313ae04c9204cb43080a4440000000000000000000031ecb14f3b29aa944c0f89b490c55e03fc6613d6f04b16323a192ee086eb3be93d078e5ebc201317b4787cc100e0ff2f0be940315959b9d535a8ce6c37bdea2747e5c2e0c7ae01000000000000000000cd72741fd17ce7830d50ede288c21a655dbda597aa9624b39e329beee3cd3f498e088e5ebc201317a8460d6c00000020dcd3e76eb9632f4354d0ae8fdf06bbcc9cd6b961257b0000000000000000000023a1a05f4f38288d8fb5096f5e2779b2146ded9c376a5a741ba4cdba729cb1c16c098e5ebc20131792bbd60f"
+        }
+    }
+}
+            
+```
+
+
+Proof:
+
+This proof is similar to the proof mentioned above in “getblockheader”. The client has to set an amount n of requested finality. The server will respond with the block data and additionally the finality headers in the .in3.proof.final field.
+
+
+### getrawtransaction
+
+It returns the raw transaction data.
+
+
+Parameters:
+
+1. `txid`            : (string, required) The transaction id
+2. verbose           : (boolean, optional, default=false) If false, return a string, otherwise return a json object
+3. `blockhash`       : (string, optional) The block in which to look for the transaction
+4. `in3.finality`    : (number, required) defines the amount of finality headers
+5. `in3.verification`: (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getrawtransaction",
+        "params":  ["f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", 
+                    true, 
+                    "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+        "in_active_chain": true,
+        "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+        "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+        "version": 1,
+        "size": 518,
+        "vsize": 518,
+        "weight": 2072,
+        "locktime": 0,
+        "vin": [
+            {
+                "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
+                "vout": 0,
+                "scriptSig": {
+                    "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b[ALL] 03a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874",
+                    "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b012103a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874"
+                },
+                "sequence": 4294967295
+            },
+            {
+                "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
+                "vout": 0,
+                "scriptSig": {
+                    "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7[ALL] 03427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d",
+                    "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7012103427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d"
+                },
+                "sequence": 4294967295
+            },
+            {
+                "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
+                "vout": 1,
+                "scriptSig": {
+                    "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f32[ALL] 027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da",
+                    "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f320121027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da"
+                },
+                "sequence": 4294967295
+            }
+        ],
+        "vout": [
+            {
+                "value": 0.00017571,
+                "n": 0,
+                "scriptPubKey": {
+                    "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
+                    "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
+                    "reqSigs": 1,
+                    "type": "pubkeyhash",
+                    "addresses": [
+                        "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
+                    ]
+                }
+            },
+            {
+                "value": 0.00915732,
+                "n": 1,
+                "scriptPubKey": {
+                    "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
+                    "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
+                    "reqSigs": 1,
+                    "type": "scripthash",
+                    "addresses": [
+                        "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
+                    ]
+                }
+            }
+        ],
+        "hex": "01000000038c091a ... 700000000",
+        "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+        "confirmations": 8269,
+        "time": 1586333924,
+        "blocktime": 1586333924
+    },
+    "in3": {
+        "proof": {
+            "block": "00e00020497f4c193dbb347c ... 5476",
+            "final": "0x00e0ff2720723034053c305058 ... fe276470",
+            "txIndex": 7,
+            "merkleProof": "0x348d4bb04940ac6 ... 3239ccda7e35e1559552e688",
+            "cbtx": "0x010000000 ... 00000000000000000000000000000000000000000000000000000539da2fc",
+            "cbtxMerkleProof": "0x6a8077bb4ce7 ... cda7e35e1559552e688"
+        }
+    }
+}
+```
+
+
+Proof:
+
+There will be five fields in the .in3 response: “block” (block header), “merkleProof” (hashes for merkle proof) and “final” (finality headers). We can check the finality as mentioned above. Furthermore, we can verify whether the transaction is part of that block or not. We have to do a merkle proof. For that we are going to use the transaction hash and the hashes of the merkleProof field to create a merkle root. This root hash has to be the same as the merkle root which is in the block header in the block field (32 bytes, starting byte 36).
+Additionally we can verify the block number by using the coinbase transaction (“cbtx”) and the merkle proof for the coinbase transaction (“cbtxMerkleProof”). As mentioned above: extract block number out of cbtx and prove that the cbtx is part of the block by doing a merkle proof using the hashes of “cbtxMerkleProof”.
+
+
+### getblockcount
+
+Returns the number of blocks in the longest blockchain.
+
+
+Parameters:
+
+1. finality       : (number, required) defines the amount of finality headers
+2. `verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getblockcount",
+        "params": [],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": 633219,
+    "in3": {
+        "proof": {
+            "block": "0x00000020d953f2d8d097bd8dfdeda8e0924ae5e3076377b8f1860300000000000000000010898a4ee6969d3e45310d72a8c97fb1b7ecd7f7e198852e2a73d58ed924f12da070da5e357f14173c2a8024",
+            "final": "0x00e0ff3f4a5c4c0d70e57fe9f94ce14007db00bf41b3d1523001090000000000000000000d5e28b09f206b8240bcfbb81f3aa6e6ca4b0018e19c54c44968f803f4931b722071da5e357f14170206c2db00004020054d540dbb5c5092ef307cd7a5d83df84fe07d8678b000000000000000000000ae04fa167ad764d8ed504bbfd50158f6d1c5bfe9b57f51d03591522cbbf56ee08273da5e357f1417d34a761f000040202b66e7f0bb2c1aefb59653b311d8cdd2e2844e42ee5504000000000000000000fe2b38886f634391cc29011516d1a202ca2c8c31a5e6d1ffc0b0ca67b9a523619477da5e357f141708883eae00004020011136bc3ff04a6dad6b7747cad0b1647b1cf07a4b5f01000000000000000000cf11fd26a52e4e6044751aedacf5143b6475df0fa8e7a33fced4a5af56ac1e1a3d78da5e357f1417c941adab00000020425d3c280c702540b5fc96c21883cd0e5988e685fd4c0200000000000000000032d676eab1bf1bb684f925a7e4033e9314ccd4003c1694cea2a5921a28167c69f079da5e357f141738a0ff2500e0ff37caf32b3d61d07102ce924be82a4d60fbbbb371b1d3151300000000000000000043443c6926b2b65c1c5fa1844aee32fd2e48a14b9587677c1a6ecb499c5f5672ee7ada5e357f141794170030000040205880b3f75274d93053b1cee7496d72783a19a3c0445a04000000000000000000eb9716e91b2ac9755137ee6c1f57cd756203bfced15bb1201a992715a933a7f73e7fda5e357f1417d056dce900000020e3eb3498671ecd2adbeb933be3195a569177c7429dba110000000000000000007b060f91f7cabd4f97d5dd6b6538074865be22b6f15ce548cb1a5ababe052f08de80da5e357f14173ab6393d",
+            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5b0383a909182f5669614254432f4d696e6564206279206c7a313130302f2cfabe6d6d55f47a2244f2f923064bddbe766308b2ad98a0977952812634c2d35e6aee85dc100000000000000010f1479601d4ed7ba6e134abf136570000ffffffff0355984229000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac00000000000000002b6a2952534b424c4f434b3a22f4f866999d099eccb598251e8349ead402ce627d8f02b191780d27001d51510000000000000000266a24aa21a9ed7ebc9bd29008579a52adf9b091c93893109be659297bfb9d13fe83b8a515a72d0120000000000000000000000000000000000000000000000000000000000000000000000000",
+            "cbtxMerkleProof": "0x9bf01a05c5e722710a95c61f8eb3be0f1fa3e60d553cf424a4e657e171c23337c07aa6989b4cb027951e58f1ba7eb73a5f5aabb31969581ce9c5bc15e9ab2befbcbc8dda16bf3454746ac8660499f54d2b8282499408abfab6b08dc3fd812101367d93342031b5127e88ba0503b6d4f5b50f0f24332dee26b3b6c835ef329944c51c910de850a038896c929adfe7f958ad89913a553ada684ff01b8aa0418a871a462467d9436a1eeb6266e63d1858cddd10c6278ce8f40f18e08dec4d2042123fa463f9029f9ef0a6bc616dabc836c374aaeb38e1e8bf1d97f4dba7f89194161a4fd5dd59fbb29ad1db1093ec7c1f53aa5549fa9c0c3a0553adc00a677f15a7df7ea6d197336c812bce8fc9f66222ebab5e4ec589c9b3a020d11f544d8efa7611bcb61f88143f62fed1b0f8391f06936c195168b64bc6657cc502f3788de5f163f509a708b543e1f961391f8062f2941f2b6e15121161d1eb58fb7053910327538092df5e80bb5cb738017a01c3353bd80200e097d04674069c3f731d33aa53"
+        },
+    }
+}
+```
+
+
+The server has to provide the following data to prove that this is block number X and that it’s final:
+    • `block header`
+    • `finality headers`
+    • `merkleProof for coinbase transaction`
+    • `coinbase transaction`
+
+
+Proof:
+
+The server is not able to prove the finality for the latest block (obviously there are no finality headers available yet). Instead the server will fetch the latest block with `getblockcount` and subtracts the finality and return this number to the client as the latest block number. This way the server is able to provide finality headers.
+The client could set finality equal to 0 to get the actual latest block the server knows about (Caution: this block is not final and could be not part of the blockchain later on due to a possible fork AND there could be a newer block that the server doesn’t know about yet due to latency in the network)
+The client can verify that the provided header is the header of block with the number X by extracting the block number out of the coinbase transaction. Furthermore server can verify that the coinbase transaction is part of the block by doing a merkle proof. Use the fields (“cbtx”) and (“cbtxMerkleProof”).
+
+
+### getbestblockhash
+
+Returns the hash of the best (tip) block in the longest blockchain.
+
+Parameters:
+
+1. `finality` (number, required) defines the amount of finality headers
+2. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getbestblockhash",
+        "params": [],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": "00000000000000000009013052d1b341bf00db0740e14cf9e97fe5700d4c5c4a",
+    "in3": {
+        "proof": {
+            "block": "0x00000020d953f2d ... 2a8024",
+            "final": "0x00e0ff3f4a ... 80da5e357f14173ab6393d",
+            "cbtx": "0x01000000000101 ... 000000",
+            "cbtxMerkleProof": "0x9bf01a05c5e722710a95c61f8eb ... 15121161d1eb58fb7053910327538092df5e80bb5cb738017a01c3353bd80200e097d04674069c3f731d33aa53"
+        }
+    }
+}
+```
+
+The data and proof is similar to “getblockcount”. With the only difference that the hash of the block instead the number is returned.
+
+
+### getdifficulty
+
+Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
+
+
+Parameters:
+
+1. `blocknumber` (string or number, optional) 
+Can be the number of a block, can be `latest`, `earliest` or `pending` to get the latest block or can be empty (no parameter) no get the latest block as well (Hint: Latest block means always actual latest block minus finality)
+2. finality (number, required) defines the amount of finality headers
+3. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
+
+
+Request:
+
+```js
+{
+        "jsonrpc": "2.0",
+        "id":1,
+        "method": "getdifficulty",
+        "params": [632154],
+        "in3":{
+                "finality":8,
+                "verification":"proof"
+        }
+}
+```
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": 15138043247082.88,
+    "in3": {
+        "proof": {
+            "block": "0x000000203e031ec3b399e4285de ... 60abb",
+            "final": "0x000040206812d000 ... f697121750a5e8f2",
+            "cbtx": "0x0200000000010100000000000000 ... 00000000000000000000000000000000000000000000000000000000000000000000",
+            "cbtxMerkleProof": "0xcc2c7ef80b5a927108284a719a23c ... 633fe0ac14631d31052049401"
+        }
+    }
+}
+```
+
+This request returns the proof-of-work difficulty as a multiple of the minimum difficulty. The client can check that by using the “bits” field in the block header.
+
+For getting target out of the `bits` field:
+target = targetmax / difficulty → difficulty = targetmax / target
+(The block header doesn’t store the absolute precision of the target which means that the result (the difficulty) will be similar - but not equal - to the difficulty provided by the server.
+
+The target gained from `bits` will look like this:
+target (bits):       `1101190000000000000000000000000000000000000000 (Hex)`
+While the target calculated with the difficulty will look like this:
+target (difficulty):    `11011900000000d520f5ccb0ae02cb5e509c27f80669b5 (Hex)`
+Proofs that can be done by the client: Finality proof and number proof (with cbtx and btxMerkleProof) - both already mentioned and explained above.
