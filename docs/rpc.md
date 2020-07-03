@@ -2042,18 +2042,32 @@ Response:
 For bitcoin incubed follows the specification as defined in [https://bitcoincore.org/en/doc/0.18.0/](https://bitcoincore.org/en/doc/0.18.0/).
 Internally the in3-server will add proofs as part of the responsens.
 
+Depending on the method, different proofs are needed, which are described in this document.
 
-### getblockheader
+ToDo: Add description
 
-returns the blockheader for the specified blockhash.
+Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+
+*  **block**
+*  **final**
+*  **merkleProof**
+*  **cbtx**
+*  **cbtxMerkleProof**
 
 
+
+####getblockheader
+
+It returns data of block header for given block hash.
 
 
 Parameters:
 
-1. `blockhash`: hex-string - the block hash
-2. `verbose`: boolean ( default: true) If verbose is false, returns a string that is serialized, hex-encoded data for blockheader 'hash'. If verbose is true, returns an Object with information about blockheader.
+1. `hash`             : (string, required) The block hash
+2. `verbose`          : (boolean, optional, default=true) true for a json object, false for the hex encoded data
+3. `in3.finality`     : (number, required) defines the amount of finality headers
+4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+
 
 Returns:
 
@@ -2086,81 +2100,8 @@ This proof section contains the following properties:
 - `cbtxMerkleProof` :hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
 
 
-Request:
-
-```js
-{
-    "method":"getblockheader",
-    "params":[
-        "0000000000000000000ef918d0d0f2302d9a668004a450861dbac8b9666f0c41",
-        true
-    ]
-}
-```
-
-Response:
-
-```js
-{
-    "id": 1,
-    "jsonrpc": "2.0",
-    "result": {
-        "hash": "0000000000000000000ef918d0d0f2302d9a668004a450861dbac8b9666f0c41",
-        "confirmations": 20,
-        "height": 637474,
-        "version": 671080448,
-        "versionHex": "27ffe000",
-        "merkleroot": "78494fcda46f53754918e7e21f0c6b5f6a91ee26bdf8812bfb2d6a626504346b",
-        "time": 1593766609,
-        "mediantime": 1593764780,
-        "nonce": 3592202191,
-        "bits": "1711d519",
-        "difficulty": 15784217546288.15,
-        "chainwork": "000000000000000000000000000000000000000010f2f6b6ae26d01e2cd1f845",
-        "nTx": 2410,
-        "previousblockhash": "0000000000000000001183419d133754272d5eb926e8b5f4e8d51803f373b9e4",
-        "nextblockhash": "000000000000000000117b21486aa769522cc815d0042f770121304ff36b364b"
-    },
-    "in3": {
-        "proof": {
-            "final": "0x00000020410c6f66b9c8ba1d8650a40480669a2d3...",
-            "cbtx": "0x020000000001010000000000000000000000000000...",
-            "cbtxMerkleProof": "0x22b7bc8c1df1cee0d93b6feeb99d19016e4de7a8b1d9f96572..."
-        }
-    }
-}
-```
-
-Standard JSON-RPC calls as described in https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list
-
-Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
-
-Depending on the method, different proofs are needed, which are described in this document.
-
-ToDo: Add description
-
-
-Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
-
-*  **block**
-*  **final**
-*  **merkleProof**
-*  **cbtx**
-*  **cbtxMerkleProof**
-
-
-
-####getblockheader
-
-It returns data of block header for given block hash.
-
-
-Parameters:
-
-1. `hash`             : (string, required) The block hash
-2. verbose            : (boolean, optional, default=true) true for a json object, false for the hex encoded data
-3. `in3.finality`     : (number, required) defines the amount of finality headers
-4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+Proof data is given in response in in3.proof.final field . For construction of proof that the block header is part of the actual chain server checks if there are “enough” confirmations on this block header. We can set the amount of confirmations required in the in3.finality field (6 confirmations is common) in post request. The server will provide the n block headers after our block header. For example: We got the block header of block 1000 and set n=6 then in the response there will be block headers of block 1001..1006 in the .in3.proof.final field.
+The hash of block 1000 should be in the parent hash field of block header of block 1001. The hash of block 1001 (sha256 of block header twice) should be in the parent hash field of block header of block 1002. And so on. There are two more fields: “cbtx” and “cbtxMerkleProof” - They are necessary to prove the block number. Extract block number out of the coinbase transaction and prove that this transaction is part of the block by doing a merkle proof. 
 
 
 Request:
@@ -2204,19 +2145,13 @@ Response:
     },
     "in3": {
         "proof": {
-            "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cdf695233b100000000000000000001d3558af1306c6523ae4006355a85c42ba77c7fa8d272fde83610eeef937360c058c8d5e413b1417b504d22b00e0002043e319ef088530dc40f1111747bb7fdb0263e3c09d790c000000000000000000788f19b456acc30cc8be8103a79a25f348a395e250c5e8d01eeeef64b542a0d92e918d5ebc201317219ee6af000000206e9d58fb0ab8d0181b1c9e54614f80b64004c2e04da310000000000000000000231e0dd30652cce0c9a5ba1e32a2ad75a588fa2d80d2eb60cd4887085b233dedd0958d5ebc201317c40cfb3600000020d74de3252b9261e0a60d44939fb762bb08273a1933500f00000000000000000069a6eb135b81c92b5a5f493a452687b9995640c91a5dc19a63e411d0bf8f821d37988d5ebc2013175740b63a000000200e696d48239a3ebb0f4973fd8ff4cd202bc0a0be14ac040000000000000000008dbe05f223bae0feea4259bc62c2245776a03eeda65caab89ff65b8e0f28d9159e9a8d5ebc2013174b887e5000c0ff3fc1a7a2dff4d93bf1849ced7ea371176d5fbdb40f31cf0f000000000000000000f830d3b7b5949577cb8736fea5d3dcc2445d925160ed40f4c798c47b3c9742be0e9b8d5ebc2013170793403600000020d4bfd17299df5f5e34732018cf391402f9aa5e2080f109000000000000000000c3511f60184615794fd21471cd44608d811ae46d8bf9ac195807657d82bdc805b99e8d5ebc201317032eef050000c02081c2fe858a8adab9a089d35d1fd5787813dbdab202e0080000000000000000005a3f179d5675924c4ed0f2061b35d02b5d2c4b7c1e4648a707dfc296b5a55e1ccda18d5ebc2013176cbf576e00e0ff2f9d70d3e3f817842c82cdb9a7af8f02c03e3c5d504b73000000000000000000007ecfa0817fe1b69a7ad4bda7a711d9e6ea4e95fbd31c272085f2542a5421cb97aca28d5ebc201317ac263e7a00e0ff3f6075bc371c4622caf5495f797a3debb95f6858106dbd0e000000000000000000b1beaa0a10ac02b14d405d0fd093932a99a5cb6c668c47a44af42c4c50eb1ed7b3a48d5ebc201317fe276470",
-            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5f033e890904e2888d5e2f706f6f6c696e2e636f6d2ffabe6d6d96439d07cae2a0d0d7b459d69d6e8fbe84a28f9be160edb3c33279ebfbc7af8d010000000000000066e1bb5b9e64b5779c4872da7ee8ba921008d1689900a204000000000000ffffffff0491e3894a0000000017a91454705dd010ab50c03543a543cda327a60d9bf7af870000000000000000266a24b9e11b6ddd3fec243f225bbee268c09f1a616a2c6e5196a1e8977d59b32daf8ae52767570000000000000000266a24aa21a9edb1979b2b4464d1ef79257852017413a72a9cd2fa9048fa86052d1121f59d536c00000000000000002b6a2952534b424c4f434b3aa7a3b7405613557aba7780a86227466b8fa451f82f0cdce821aafe2400222c9901200000000000000000000000000000000000000000000000000000000000000000539da2fc",
-            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667bc256a0fd678d950d75174e8de0a94faa2a3de99c4f73c817f40929638d6c23b2d8afc5b7e0d03fc9f055cad0f9c1b195eade387c32ff122592ad29dbb5450ec93870e96719df9d8db0b663b6781f0ac64e22b114d3ade17e09baaa7041c69b7df612779ffaea6f14f5e471bc45c256bfe6d80304443025b2aa439ab26ec1ba86d297c9c2d7a1d61193d7d00256bf1a607766f602f76f06f776aae8419e505ae93239ccda7e35e1559552e688"
+            "final": "0x00e0ff2720723034053c305058beb92ed010...",
+            "cbtx": "0x0100000000010100000000000000000000000...",
+            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b..."
         }
     }
 }
 ```
-
-
-Proof:
-
-Proof data is given in response in in3.proof.final field . For construction of proof that the block header is part of the actual chain server checks if there are “enough” confirmations on this block header. We can set the amount of confirmations required in the in3.finality field (6 confirmations is common) in post request. The server will provide the n block headers after our block header. For example: We got the block header of block 1000 and set n=6 then in the response there will be block headers of block 1001..1006 in the .in3.proof.final field.
-The hash of block 1000 should be in the parent hash field of block header of block 1001. The hash of block 1001 (sha256 of block header twice) should be in the parent hash field of block header of block 1002. And so on. There are two more fields: “cbtx” and “cbtxMerkleProof” - They are necessary to prove the block number. Extract block number out of the coinbase transaction and prove that this transaction is part of the block by doing a merkle proof. 
 
 
 ### getblock
@@ -2281,7 +2216,7 @@ Response:
     },
     "in3": {
         "proof": {
-            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c72200e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb87840000ff3f5850309cb99ee009a2819cdb9283e396076764da344002000000000000000000da4d65a89668db85948a30347743fe64a7d35e302d8160530655011bb5b7e182db028e5ebc20131796504eb400e0ff3facd633ac953ce979ce8271a1a8ce843a887a30862968120000000000000000009994a8ebf6351a2d85dd0897d342958072d277c5d12feec76d4772efb753d4216a038e5ebc20131758513e0e00000020bc2d4e13a52a86d08fd1785b1265bb7d7b65ff1a36ac11000000000000000000427a8fe62237452cc285092c37678bbb12fdf1b2d5b6944e090763b84e29d45537068e5ebc201317dd2cd63600008020374150cb15d2b13887ee9313ae04c9204cb43080a4440000000000000000000031ecb14f3b29aa944c0f89b490c55e03fc6613d6f04b16323a192ee086eb3be93d078e5ebc201317b4787cc100e0ff2f0be940315959b9d535a8ce6c37bdea2747e5c2e0c7ae01000000000000000000cd72741fd17ce7830d50ede288c21a655dbda597aa9624b39e329beee3cd3f498e088e5ebc201317a8460d6c00000020dcd3e76eb9632f4354d0ae8fdf06bbcc9cd6b961257b0000000000000000000023a1a05f4f38288d8fb5096f5e2779b2146ded9c376a5a741ba4cdba729cb1c16c098e5ebc20131792bbd60f"
+            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaa..."
         }
     }
 }
@@ -2461,9 +2396,9 @@ Response:
     "in3": {
         "proof": {
             "block": "0x00000020d953f2d8d097bd8dfdeda8e0924ae5e3076377b8f1860300000000000000000010898a4ee6969d3e45310d72a8c97fb1b7ecd7f7e198852e2a73d58ed924f12da070da5e357f14173c2a8024",
-            "final": "0x00e0ff3f4a5c4c0d70e57fe9f94ce14007db00bf41b3d1523001090000000000000000000d5e28b09f206b8240bcfbb81f3aa6e6ca4b0018e19c54c44968f803f4931b722071da5e357f14170206c2db00004020054d540dbb5c5092ef307cd7a5d83df84fe07d8678b000000000000000000000ae04fa167ad764d8ed504bbfd50158f6d1c5bfe9b57f51d03591522cbbf56ee08273da5e357f1417d34a761f000040202b66e7f0bb2c1aefb59653b311d8cdd2e2844e42ee5504000000000000000000fe2b38886f634391cc29011516d1a202ca2c8c31a5e6d1ffc0b0ca67b9a523619477da5e357f141708883eae00004020011136bc3ff04a6dad6b7747cad0b1647b1cf07a4b5f01000000000000000000cf11fd26a52e4e6044751aedacf5143b6475df0fa8e7a33fced4a5af56ac1e1a3d78da5e357f1417c941adab00000020425d3c280c702540b5fc96c21883cd0e5988e685fd4c0200000000000000000032d676eab1bf1bb684f925a7e4033e9314ccd4003c1694cea2a5921a28167c69f079da5e357f141738a0ff2500e0ff37caf32b3d61d07102ce924be82a4d60fbbbb371b1d3151300000000000000000043443c6926b2b65c1c5fa1844aee32fd2e48a14b9587677c1a6ecb499c5f5672ee7ada5e357f141794170030000040205880b3f75274d93053b1cee7496d72783a19a3c0445a04000000000000000000eb9716e91b2ac9755137ee6c1f57cd756203bfced15bb1201a992715a933a7f73e7fda5e357f1417d056dce900000020e3eb3498671ecd2adbeb933be3195a569177c7429dba110000000000000000007b060f91f7cabd4f97d5dd6b6538074865be22b6f15ce548cb1a5ababe052f08de80da5e357f14173ab6393d",
-            "cbtx": "0x010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff5b0383a909182f5669614254432f4d696e6564206279206c7a313130302f2cfabe6d6d55f47a2244f2f923064bddbe766308b2ad98a0977952812634c2d35e6aee85dc100000000000000010f1479601d4ed7ba6e134abf136570000ffffffff0355984229000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac00000000000000002b6a2952534b424c4f434b3a22f4f866999d099eccb598251e8349ead402ce627d8f02b191780d27001d51510000000000000000266a24aa21a9ed7ebc9bd29008579a52adf9b091c93893109be659297bfb9d13fe83b8a515a72d0120000000000000000000000000000000000000000000000000000000000000000000000000",
-            "cbtxMerkleProof": "0x9bf01a05c5e722710a95c61f8eb3be0f1fa3e60d553cf424a4e657e171c23337c07aa6989b4cb027951e58f1ba7eb73a5f5aabb31969581ce9c5bc15e9ab2befbcbc8dda16bf3454746ac8660499f54d2b8282499408abfab6b08dc3fd812101367d93342031b5127e88ba0503b6d4f5b50f0f24332dee26b3b6c835ef329944c51c910de850a038896c929adfe7f958ad89913a553ada684ff01b8aa0418a871a462467d9436a1eeb6266e63d1858cddd10c6278ce8f40f18e08dec4d2042123fa463f9029f9ef0a6bc616dabc836c374aaeb38e1e8bf1d97f4dba7f89194161a4fd5dd59fbb29ad1db1093ec7c1f53aa5549fa9c0c3a0553adc00a677f15a7df7ea6d197336c812bce8fc9f66222ebab5e4ec589c9b3a020d11f544d8efa7611bcb61f88143f62fed1b0f8391f06936c195168b64bc6657cc502f3788de5f163f509a708b543e1f961391f8062f2941f2b6e15121161d1eb58fb7053910327538092df5e80bb5cb738017a01c3353bd80200e097d04674069c3f731d33aa53"
+            "final": "0x00e0ff3f4a5c4c0d70e57fe9f94ce14007...",
+            "cbtx": "0x010000000001010000000000000000...",
+            "cbtxMerkleProof": "0x9bf01a05c5e722710a95c61f8eb3be0f1fa3e60..."
         },
     }
 }
