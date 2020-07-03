@@ -7,7 +7,7 @@ The Incubed Java client uses JNI in order to call native functions. But all the 
 
 like
 
-```c
+```sh
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
 ### Downloading
@@ -29,7 +29,7 @@ After which, install in3 with `mvn install`.
 
 For building the shared library you need to enable java by using the `-DJAVA=true` flag:
 
-```c
+```sh
 git clone git@github.com:slockit/in3-c.git
 mkdir -p in3-c/build
 cd in3-c/build
@@ -45,7 +45,7 @@ Step 1: Create a top-level CMakeLists.txt in android project inside app folder a
 
 The Content of the `CMakeLists.txt` should look like this:
 
-```c
+```sh
 cmake_minimum_required(VERSION 3.4.1)
 
 # turn off FAST_MATH in the evm.
@@ -68,7 +68,7 @@ endforeach()
 ```
 Step 2: clone [in3-c](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
 
-```c
+```sh
 #!/usr/bin/env sh
 
 #github-url for in3-c
@@ -107,7 +107,7 @@ source : [in3-c/java/examples/CallFunction.java](https://github.com/slockit/in3-
 
 Calling Functions of Contracts
 
-```c
+```java
 
 // This Example shows how to call functions and use the decoded results. Here we get the struct from the registry.
 
@@ -139,7 +139,7 @@ source : [in3-c/java/examples/Configure.java](https://github.com/slockit/in3-c/b
 
 Changing the default configuration
 
-```c
+```java
 
 // In order to change the default configuration, just use the classes inside in3.config package.
 
@@ -181,7 +181,7 @@ source : [in3-c/java/examples/GetBalance.java](https://github.com/slockit/in3-c/
 
 getting the Balance with or without API
 
-```c
+```java
 
 import in3.*;
 import in3.eth1.*;
@@ -216,7 +216,7 @@ source : [in3-c/java/examples/GetBlockAPI.java](https://github.com/slockit/in3-c
 
 getting a block with API
 
-```c
+```java
 
 import in3.*;
 import in3.eth1.*;
@@ -253,7 +253,7 @@ source : [in3-c/java/examples/GetBlockRPC.java](https://github.com/slockit/in3-c
 
 getting a block without API
 
-```c
+```java
 
 import in3.*;
 import in3.eth1.*;
@@ -280,7 +280,7 @@ source : [in3-c/java/examples/GetTransaction.java](https://github.com/slockit/in
 
 getting a Transaction with or without API
 
-```c
+```java
 
 import in3.*;
 import in3.eth1.*;
@@ -316,7 +316,7 @@ source : [in3-c/java/examples/GetTransactionReceipt.java](https://github.com/slo
 
 getting a TransactionReceipt with or without API
 
-```c
+```java
 
 import in3.*;
 import in3.eth1.*;
@@ -352,7 +352,7 @@ source : [in3-c/java/examples/SendTransaction.java](https://github.com/slockit/i
 
 Sending Transactions
 
-```c
+```java
 
 // In order to send, you need a Signer. The SimpleWallet class is a basic implementation which can be used.
 

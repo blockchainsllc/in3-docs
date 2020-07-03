@@ -146,7 +146,7 @@ While we provide binaries, you can also build from source:
 
 Incubed uses cmake for configuring:
 
-```c
+```sh
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release .. && make
 make install
@@ -1302,6 +1302,242 @@ gcc -o get_block_api get_block_api.c -lin3 -lcurl
 
 
 
+## How it works
+
+The core of incubed is the processing of json-rpc requests by fetching data from the network and verifying them. This is why in the `core`-module it is all about rpc-requests and their responses.
+
+### the statemachine
+
+Each request is represented internally by the `in3_ctx_t` -struct. This context is responsible for trying to find a verifyable answer to the request and acts as a statemachine.
+
+```eval_rst
+.. graphviz::
+
+    digraph G {
+        node[fontname="Helvetica",   shape=Box, color=lightblue, style=filled ]
+        edge[fontname="Helvetica",   style=solid,  fontsize=8 , color=grey]
+        rankdir = TB;
+    
+        RPC[label="RPC-Request"]
+        CTX[label="in3_ctx_t"]
+    
+        sign[label="sign",color=lightgrey, style=""]
+        request[label="fetch http",color=lightgrey, style=""]
+    
+        exec[ label="in3_ctx_exec_state()",color=lightgrey, style="", shape=ellipse ]
+        free[label="ctx_free()",color=lightgrey, style=""]
+    
+        waiting[label="need input"]
+    
+    
+        RPC -> CTX [label="ctx_new()"]
+        CTX -> exec
+    
+    
+        exec -> error [label="CTX_ERROR"]
+        exec -> response[label="CTX_SUCCESS"]
+        exec -> waiting[label="CTX_WAITING_TO_SEND"]
+        exec -> request[label="CTX_WAITING_FOR_RESPONSE"]
+    
+    
+        waiting -> sign[label=CT_SIGN]
+        waiting -> request[label=CT_RPC] 
+    
+        sign -> exec [label="in3_ctx_add_response()"]
+        request -> exec[label="in3_ctx_add_response()"]
+    
+        response -> free
+        error->free
+    
+    
+      { rank = same; error, response }
+    
+      { rank = same; exec,waiting }
+      { rank = same; CTX,request }
+    
+    
+        }
+    
+```
+In order to process a request we follow these steps.
+
+1. `ctx_new` which creates a new context by parsing a JSON-RPC request.
+2. `in3_ctx_exec_state` this will try to process the state and returns the new state, which will be one of he following:
+
+- `CTX_SUCCESS` - we have a response
+- `CTX_ERROR` - we stop because of an unrecoverable error
+- `CTX_WAITING_TO_SEND` - we need input and need to send out a request. By calling `in3_create_request()` the ctx will switch to the state to `CTX_WAITING_FOR_RESPONSE` until all the needed responses are repoorted. While it is possible to fetch all responses and add them before calling `in3_ctx_exec_state()`, but it would be more efficient if can send all requests out, but then create a response-queue and set one response add a time so we can return as soon as we have the first verifiable response.
+- `CTX_WAITING_FOR_RESPONSE` - the request has been send, but no verifieable response is available. Once the next (or more) responses have been added, we call `in3_ctx_exec_state()` again, which will verify all available responses. If we could verify it, we have a respoonse, if not we may either wait for more responses ( in case we send out multiple requests -> `CTX_WAITING_FOR_RESPONSE` ) or we send out new requests (`CTX_WAITING_TO_SEND`)
+
+the `in3_send_ctx`-function will executly this:
+
+```c
+in3_ret_t in3_send_ctx(in3_ctx_t* ctx) {
+  ctx_req_transports_t transports = {0};
+  while (true) {
+    switch (in3_ctx_exec_state(ctx)) {
+      case CTX_ERROR:
+      case CTX_SUCCESS:
+        transport_cleanup(ctx, &transports, true);
+        return ctx->verification_state;
+
+      case CTX_WAITING_FOR_RESPONSE:
+        in3_handle_rpc_next(ctx, &transports);
+        break;
+
+      case CTX_WAITING_TO_SEND: {
+        in3_ctx_t* last = in3_ctx_last_waiting(ctx);
+        switch (last->type) {
+          case CT_SIGN:
+            in3_handle_sign(last);
+            break;
+          case CT_RPC:
+            in3_handle_rpc(last, &transports);
+        }
+      }
+    }
+  }
+}
+```
+### sync calls with in3_send_ctx
+
+This statemachine can be used to process requests synchronously or asynchronously. The `in3_send_ctx` function, which is used in most convinience-functions will do this synchronously. In order to get user input it relies on 2 callback-functions:
+
+- to sign : [`in3_signer_t`](#in3-signer-t) struct including its callback function is set in the `in3_t` configuration.
+- to fetch data : a [in3_transport_send](#in3-transport-send) function-pointer will be set in the `in3_t` configuration.
+
+#### signing
+
+For signing the client expects a [`in3_signer_t`](#in3-signer-t) struct to be set. Setting should be done by using the [`in3_set_signer()`](#in3-set-signer) function. This function expects 3 arguments (after the client config itself):
+
+- `sign` - this is a function pointer to actual signing-function. Whenever the incubed client needs a signature it will prepare a signing context [`in3_sign_ctx_t`](#in3-sign-ctx-t), which holds all relevant data, like message and the address for signing. The result will always be a signature which you need to copy into the `signature`-field of this context. The return value must signal the success of the execution. While `IN3_OK` represents success, `IN3_WAITING`can be used to indicate that we need to execute again since there may be a sub-request that needs to finished up before being able to sign. In case of an error [`ctx_set_error`](#ctx-set-error) should be used to report the details of the error including returning the `IN3_E...` as error-code.
+- `prepare_tx`- this function is optional and gives you a chance to change the data before signing. For example signing with a mutisig would need to do manipulate the data and also the target in order to redirect it to the multisig contract.
+- `wallet` - this is a optional `void*` which will be set in the signing context. It can be used to point to any data structure you may need in order to sign.
+
+As a example this is the implemantation of the signer-function for a simple raw private key:
+
+```c
+
+in3_ret_t eth_sign_pk_ctx(in3_sign_ctx_t* ctx) {
+  uint8_t* pk = ctx->wallet;
+  switch (ctx->type) {
+    case SIGN_EC_RAW:
+      return ec_sign_pk_raw(ctx->message.data, pk, ctx->signature);
+    case SIGN_EC_HASH:
+      return ec_sign_pk_hash(ctx->message.data, ctx->message.len, pk, hasher_sha3k, ctx->signature);
+    default:
+      return IN3_ENOTSUP;
+  }
+  return IN3_OK;
+}
+```
+The pk-signer uses the wallet-pointer to point to the raw 32 bytes private key and will use this to sign.
+
+#### transport
+
+The transport function is a function-pointer set in the client configuration (`in3_t`) which will be used in the `in3_send_ctx()` function whenever data are required to get from the network. the function will get a [`request_t`](#request-t) object as argument.
+
+The main responsibility of this function is to fetch the requested data and the call [`in3_ctx_add_response`](#in3-ctx-add-response) to report this to the context. if the request only sends one request to one url, this is all you have to do. But if the user uses a configuration of `request_count` >1, the `request` object will contain a list of multiples urls. In this case transport function still has 3 options to accomplish this:
+
+1. send the payload to each url sequentially. This is **NOT** recommented, since this increases the time the user has to wait for a response. Especially if some of the request may run into a timeout.
+2. send the all in parallel and wait for all the finish. This is better, but it still means, we may have to wait until the last one responses even though we may have a verifiable response already reported.
+3. send them all in parallel and return as soon as we have the first response. This increases the performance since we don't have to wait if we have one. But since we don't know yet whether this response is also correct, we must be prepared to also read the other responses if needed, which means the transport would be called multiple times for the same request. In order to process multiple calls to the same resouces the request-object contains two fields:
+
+- `cptr` - a custom `void*` which can be set in the first call pointing to recources you may need to continue in the subsequent calls.
+- `action` - This value is enum ( [`#in3_req_action_t`](#in3-req-action-t) ), which indicates these current state
+
+So only if you need to continue your call later, because you don't want to and can't set all the responses yet, you need set the `cptr` to a non NULL value. And only in this case `in3_send_ctx()` will follow this process with these states:
+
+```eval_rst
+.. graphviz::
+
+    digraph G {
+        node[fontname="Helvetica",   shape=Box, color=lightblue, style=filled ]
+        rankdir = TB;
+    
+        REQ_ACTION_SEND -> REQ_ACTION_RECEIVE -> REQ_ACTION_CLEANUP
+        REQ_ACTION_RECEIVE -> REQ_ACTION_RECEIVE
+    
+```
+- `REQ_ACTION_SEND` - this will always be set in the first call.
+- `REQ_ACTION_RECEIVE` - a call with this state indicates that there was a send call prior but since we do not have all responses yet, the transport should now set the next reponse. So this call may be called multiple times until either we have found a verifieable response or the number of urls is reached. Important during this call the `urls` field of the request will be NULL since this should not send a new request.
+- `REQ_ACTION_CLEANUP` - this will only be used if the `cptr` was set before. Here the transport should only clean up any allocated resources. This will also be called if not all responses were used.
+
+While there are of course existing implementations for the transport-function ( as default we use `in3_curl_c`), especially for embedded devices you may even implement your own.
+
+### async calls
+
+While for sync calls you can just implement a transport function, you can also take full control of the process which allows to execute it completly async. The basic process is the same layed out in the [state machine](#the-statemachine).
+
+For the js for example the main-loop is part of a async function.
+
+```js
+async sendRequest(rpc) {
+
+    // create the context
+    const r = in3w.ccall('in3_create_request_ctx', 'number', ['number', 'string'], [this.ptr, JSON.stringify(rpc)]);
+
+    // hold a queue for responses for the different request contexts
+    let responses = {}
+
+    try {
+      // main async loop
+      while (true) {
+
+          // execute and fetch the new state ( in this case the ctx_execute-function will return the status including the created request as json)
+          const state = JSON.parse(call_string('ctx_execute', r))
+          switch (state.status) {
+              // CTX_ERROR
+              case 'error':
+                  throw new Error(state.error || 'Unknown error')
+
+              // CTX_SUCCESS
+              case 'ok':
+                  return state.result
+
+              // CTX_WAITING_FOR_RESPONSE
+              case 'waiting':
+                  // await the promise for the next response ( the state.request contains the context-pointer to know which queue)
+                  await getNextResponse(responses, state.request)
+                  break
+
+              // CTX_WAITING_TO_SEND
+              case 'request': {
+                  // the request already contains the type, urls and payload.
+                  const req = state.request
+                  switch (req.type) {
+                      case 'sign':
+                          try {
+                              // get the message and account from the request
+                              const [message, account] = Array.isArray(req.payload) ? req.payload[0].params : req.payload.params;
+                              // check if can sign
+                              if (!(await this.signer.canSign(account))) throw new Error('unknown account ' + account)
+
+                              // and set the signature (65 bytes) as response. 
+                              setResponse(req.ctx, toHex(await this.signer.sign(message, account, true, false)), 0, false)
+                          } catch (ex) {
+                              // or set the error
+                              setResponse(req.ctx, ex.message || ex, 0, true)
+                          }
+                          break;
+
+                      case 'rpc':
+                          // here we will send a new request, which puts its responses in a queue
+                          await getNextResponse(responses, req)
+                  }
+              }
+          }
+      }
+    }
+    finally {
+        // we always need to cleanup
+        in3w.ccall('in3_request_free', 'void', ['number'], [r])
+    }
+}
+```
+
+
+
 ## RPC
 
 The core of incubed is to execute rpc-requests which will be send to the incubed nodes and verified. This means the available RPC-Requests are defined by the clients itself.
@@ -1370,7 +1606,7 @@ Example:
 
 Request: 
 
-```c
+```js
 {
     "method": "in3_config",
     "params": [{
@@ -1397,7 +1633,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": true
@@ -1418,7 +1654,7 @@ the ABI-encoded data as hex including the 4 byte function-signature. These data 
 
 Request:
 
-```c
+```js
 {
     "method":"in3_abiEncode",
     "params":[
@@ -1429,7 +1665,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890",
@@ -1450,7 +1686,7 @@ a array (if more then one arguments in the result-type) or the the value after d
 
 Request:
 
-```c
+```js
 {
     "method":"in3_abiDecode",
     "params":[
@@ -1461,7 +1697,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": ["0x1234567890123456789012345678901234567890","0x05"],
@@ -1482,7 +1718,7 @@ the address-string using the upper/lowercase hex characters.
 
 Request:
 
-```c
+```js
 {
     "method":"in3_checksumAddress",
     "params":[
@@ -1493,7 +1729,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
@@ -1519,7 +1755,7 @@ the address-string using the upper/lowercase hex characters.
 
 Request:
 
-```c
+```js
 {
     "method":"in3_ens",
     "params":[
@@ -1530,7 +1766,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
@@ -1550,7 +1786,7 @@ the address-string.
 
 Request:
 
-```c
+```js
 {
     "method":"in3_pk2address",
     "params":[
@@ -1560,7 +1796,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
@@ -1580,7 +1816,7 @@ the public key.
 
 Request:
 
-```c
+```js
 {
     "method":"in3_pk2public",
     "params":[
@@ -1590,7 +1826,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
@@ -1615,7 +1851,7 @@ a object with 2 properties:
 
 Request:
 
-```c
+```js
 {
     "method":"in3_ecrecover",
     "params":[
@@ -1627,7 +1863,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": {
@@ -1659,7 +1895,7 @@ a object with the following properties:
 
 Request:
 
-```c
+```js
 {
     "method":"in3_signData",
     "params":[
@@ -1671,7 +1907,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": {
@@ -1699,7 +1935,7 @@ a raw private key (32 bytes)
 
 Request:
 
-```c
+```js
 {
     "method": "in3_decryptKey",
     "params": [
@@ -1729,7 +1965,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
@@ -1741,7 +1977,7 @@ clears the incubed cache (usually found in the .in3-folder)
 
 Request:
 
-```c
+```js
 {
     "method":"in3_cacheClear",
     "params":[]
@@ -1749,7 +1985,7 @@ Request:
 ```
 Response:
 
-```c
+```js
 {
   "id": 1,
   "result": true
@@ -1791,7 +2027,7 @@ Setting up dev environment for Ledger nano s is one time activity and incubed si
 
 Download the Nano S SDK in bolos-sdk folder 
 
-```c
+```sh
 $ git clone https://github.com/ledgerhq/nanos-secure-sdk
 ```
 ```c
@@ -1803,7 +2039,7 @@ Download a prebuild clang and rename the folder to clang-arm-fropi then move it 
 ```
 ##### Add environment variables:
 
-```c
+```sh
 sudo -H gedit /etc/environment
 ```
 ```c
@@ -1820,7 +2056,7 @@ CLANGPATH="<path>/clang-arm-fropi/bin/"
 
 Installation prerequisites :
 
-```c
+```sh
 $ sudo apt-get install libudev-dev <
 $ sudo apt-get install libusb-1.0-0-dev 
 $ sudo apt-get install python-dev (python 2.7)
@@ -1828,7 +2064,7 @@ $ sudo apt-get install virtualenv
 ```
 ##### Installation of ledgerblue:
 
-```c
+```sh
 $ virtualenv ledger
 $ source ledger/bin/activate
 $ pip install ledgerblue
@@ -1844,7 +2080,7 @@ Ref: [https://github.com/LedgerHQ/blue-loader-python](https://github.com/LedgerH
 ```
 ##### Open new terminal and check for following installations
 
-```c
+```sh
 $ sudo apt-get install gcc-multilib
 $ sudo apt-get install libc6-dev:i386
 ```
@@ -1852,7 +2088,7 @@ $ sudo apt-get install libc6-dev:i386
 
 Once you complete all the steps, go to folder "c/src/signer/ledger-nano/firmware" and run following command , It will ask you to enter pin for approve installation on ledger nano device. follow all the steps and it will be done.
 
-```c
+```sh
 make load
 ```
 ### Build incubed source with ledger nano module
@@ -1863,7 +2099,7 @@ To build incubed source with ledger nano:-
 2. Turn LEDGER_NANO option ON which is by default OFF
 3. Build incubed source 
 
-```c
+```sh
 cd build
 cmake  .. && make
 ```
@@ -1874,7 +2110,7 @@ Open the application on your ledger nano s usb device and make signing requests 
 
 Following is the sample command to sendTransaction from command line utility:- 
 
-```c
+```sh
 bin/in3 send -to 0xd46e8dd67c5d32be8058bb8eb970870f07244567  -gas 0x96c0  -value 0x9184e72a  -path 0x2c3c000000 -debug
 ```
 -path points to specific public/private key pair inside HD wallet derivation path . For Ethereum the default path is m/44'/60'/0'/0 , which we can pass in simplified way as hex string i.e [44,60,00,00,00] => 0x2c3c000000
@@ -1888,7 +2124,7 @@ ethereum_apdu_client.h : It contains APIs to integrate ledger nano device with E
 
 
 
-## Module api/btc 
+## Module api 
 
 
 
@@ -2238,11 +2474,6 @@ arguments:
 =========================== ======= 
 ```
 returns: [`btc_block_txdata_t *`](#btc-block-txdata-t)
-
-
-## Module api/eth1 
-
-
 
 
 ### eth_api.h
@@ -3113,11 +3344,6 @@ void in3_register_eth_api();
 this function should only be called once and will register the eth-API verifier. 
 
 
-## Module api/ipfs 
-
-
-
-
 ### ipfs_api.h
 
 IPFS API.
@@ -3164,11 +3390,6 @@ arguments:
 =================== =============== 
 ```
 returns: [`bytes_t *`](#bytes-t)
-
-
-## Module api/usn 
-
-
 
 
 ### usn_api.h
@@ -3388,11 +3609,6 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-## Module api/utils 
-
-
-
-
 ### api_utils.h
 
 Ethereum API utils.
@@ -3567,7 +3783,7 @@ returns current error or null if all is ok
 returns: `char *`
 
 
-## Module core/client 
+## Module core 
 
 
 
@@ -3800,21 +4016,6 @@ The enum type contains the following values:
 ==================== = ==================================================
 ```
 
-#### in3_verification_t
-
-verification as delivered by the server. 
-
-This will be part of the in3-request and will be generated based on the prooftype. 
-
-The enum type contains the following values:
-
-```eval_rst
-======================== = ===============================
- **VERIFICATION_NEVER**  0 No Verifacation.
- **VERIFICATION_PROOF**  1 Includes the proof of the data.
-======================== = ===============================
-```
-
 #### in3_node_props_type_t
 
 The enum type contains the following values:
@@ -3881,6 +4082,22 @@ The enum type contains the following values:
 ================== = ======================
 ```
 
+#### in3_req_action_t
+
+Filter type used internally when managing filters. 
+
+The enum type contains the following values:
+
+```eval_rst
+======================== = ===============================================
+ **REQ_ACTION_SEND**     0 The request should be send.
+ **REQ_ACTION_RECEIVE**  1 a response is expected now. 
+                           
+                           the request will not contains the urls anymore!
+ **REQ_ACTION_CLEANUP**  2 the cstptr can perform clean up
+======================== = ===============================================
+```
+
 #### in3_filter_type_t
 
 Filter type used internally when managing filters. 
@@ -3902,35 +4119,6 @@ type for a chain_id.
 
 ```c
 typedef uint32_t chain_id_t
-```
-
-#### in3_request_config_t
-
-the configuration as part of each incubed request. 
-
-This will be generated for each request based on the client-configuration. the verifier may access this during verification in order to check against the request. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-=========================================== ============================ ====================================================================
-`chain_id_t <#chain-id-t>`_                  **chain_id**                the chain to be used. 
-                                                                         
-                                                                         this is holding the integer-value of the hexstring.
-``uint_fast8_t``                             **flags**                   the current flags from the client.
-``uint8_t``                                  **use_full_proof**          this flaqg is set, if the proof is set to "PROOF_FULL"
-`bytes_t * <#bytes-t>`_                      **verified_hashes**         a list of blockhashes already verified. 
-                                                                         
-                                                                         The Server will not send any proof for them again .
-``uint16_t``                                 **verified_hashes_length**  number of verified blockhashes
-``uint8_t``                                  **latest_block**            the last blocknumber the nodelistz changed
-``uint16_t``                                 **finality**                number of signatures( in percent) needed in order to reach finality.
-`in3_verification_t <#in3-verification-t>`_  **verification**            Verification-type.
-`bytes_t * <#bytes-t>`_                      **signers**                 the addresses of servers requested to sign the blockhash
-``uint8_t``                                  **signers_length**          number or addresses
-``uint32_t *``                               **times**                   meassured times in ms for the request
-=========================================== ============================ ====================================================================
 ```
 
 #### in3_node_props_t
@@ -4123,7 +4311,7 @@ The stuct contains following fields:
 `bytes_t <#bytes-t>`_                        **account**    the account to use for the signature
 ``uint8_t``                                  **signature**  the resulting signature needs to be writte into these bytes
 ``void *``                                   **wallet**     the custom wallet-pointer
-``void *``                                   **ctx**        the context of the request in order report errors
+`in3_ctxstruct , * <#in3-ctx>`_              **ctx**        the context of the request in order report errors
 =========================================== =============== ===========================================================
 ```
 
@@ -4151,7 +4339,7 @@ for multisigs, we need to change the transaction to gro through the ms. if the n
 
 
 ```c
-typedef in3_ret_t(* in3_prepare_tx) (void *ctx, bytes_t raw_tx, bytes_t *new_raw_tx)
+typedef in3_ret_t(* in3_prepare_tx) (struct in3_ctx *ctx, bytes_t raw_tx, bytes_t *new_raw_tx)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -4185,7 +4373,7 @@ allows the payment to handle things before the request will be send.
 
 
 ```c
-typedef in3_ret_t(* in3_pay_prepare) (void *ctx, void *cptr)
+typedef in3_ret_t(* in3_pay_prepare) (struct in3_ctx *ctx, void *cptr)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -4199,7 +4387,7 @@ called after receiving a parseable response with a in3-section.
 
 
 ```c
-typedef in3_ret_t(* in3_pay_follow_up) (void *ctx, void *node, d_token_t *in3, d_token_t *error, void *cptr)
+typedef in3_ret_t(* in3_pay_follow_up) (struct in3_ctx *ctx, void *node, d_token_t *in3, d_token_t *error, void *cptr)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -4225,7 +4413,7 @@ this function is called when the in3-section of payload of the request is built 
 
 
 ```c
-typedef in3_ret_t(* in3_pay_handle_request) (void *ctx, sb_t *sb, in3_request_config_t *rc, void *cptr)
+typedef in3_ret_t(* in3_pay_handle_request) (struct in3_ctx *ctx, sb_t *sb, void *cptr)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -4262,10 +4450,11 @@ if the error has a length>0 the response will be rejected
 The stuct contains following fields:
 
 ```eval_rst
-=============== ============ ==================================
-`sb_t <#sb-t>`_  **error**   a stringbuilder to add any errors!
-`sb_t <#sb-t>`_  **result**  a stringbuilder to add the result
-=============== ============ ==================================
+========================= =========== =================================================================
+`in3_ret_t <#in3-ret-t>`_  **state**  the state of the response
+`sb_t <#sb-t>`_            **data**   a stringbuilder to add the result
+``uint32_t``               **time**   measured time (in ms) which will be used for ajusting the weights
+========================= =========== =================================================================
 ```
 
 #### in3_t
@@ -4310,6 +4499,7 @@ The stuct contains following fields:
 ``uint16_t``                                         **chains_length**         number of configured chains
 `in3_filter_handler_t * <#in3-filter-handler-t>`_    **filters**               filter handler
 `in3_node_props_t <#in3-node-props-t>`_              **node_props**            used to identify the capabilities of the node.
+``uint_fast16_t``                                    **pending**               number of pending requests created with this instance
 ``void *``                                           **internal**              pointer to internal data
 =================================================== ========================== =======================================================================================
 ```
@@ -4324,15 +4514,14 @@ represents a RPC-request
 The stuct contains following fields:
 
 ```eval_rst
-===================================== ============== ==================================================================
-``char *``                             **payload**   the payload to send
-``char **``                            **urls**      array of urls
-``int``                                **urls_len**  number of urls
-`in3_response_t * <#in3-response-t>`_  **results**   the responses
-``uint32_t``                           **timeout**   the timeout 0= no timeout
-``uint32_t *``                         **times**     measured times (in ms) which will be used for ajusting the weights
-`in3_t * <#in3-t>`_                    **in3**       pointer to associated IN3 instance
-===================================== ============== ==================================================================
+======================================= ============== =======================================
+``char *``                               **payload**   the payload to send
+``char **``                              **urls**      array of urls
+``uint_fast16_t``                        **urls_len**  number of urls
+`in3_req_action_t <#in3-req-action-t>`_  **action**    the action the transport should execute
+`in3_ctxstruct , * <#in3-ctx>`_          **ctx**       the current context
+``void *``                               **cptr**      a custom ptr to hold information during
+======================================= ============== =======================================
 ```
 
 #### in3_transport_send
@@ -4561,29 +4750,6 @@ arguments:
 =================== ========= =========================================
 ```
 returns: `NONULL char *`
-
-
-#### in3_req_add_response
-
-```c
-NONULL void in3_req_add_response(in3_request_t *req, int index, bool is_error, const char *data, int data_len);
-```
-
-adds a response for a request-object. 
-
-This function should be used in the transport-function to set the response. 
-
-arguments:
-```eval_rst
-=================================== ============== =====================================================================================
-`in3_request_t * <#in3-request-t>`_  **req**       the request-pointer passed to the transport-function containing the payload and url
-``int``                              **index**     the index of the url, since this request could go out to many urls
-``bool``                             **is_error**  if true this will be reported as error. the message should then be the error-message
-``const char *``                     **data**      the data or the the string
-``int``                              **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
-=================================== ============== =====================================================================================
-```
-returns: `NONULL void`
 
 
 #### in3_client_register_chain
@@ -4985,6 +5151,28 @@ arguments:
 returns: `uint32_t`
 
 
+#### in3_set_signer
+
+```c
+in3_signer_t* in3_set_signer(in3_t *c, in3_sign sign, in3_prepare_tx prepare_tx, void *wallet);
+```
+
+set the signer on the client. 
+
+the caller will need to free this pointer after usage. 
+
+arguments:
+```eval_rst
+=================================== ================ ===================================================================================================================================
+`in3_t * <#in3-t>`_                  **c**           the incubed client
+`in3_sign <#in3-sign>`_              **sign**        function pointer returning a stored value for the given key.
+`in3_prepare_tx <#in3-prepare-tx>`_  **prepare_tx**  function pointer returning capable of manipulating the transaction before signing it. This is needed in order to support multisigs.
+``void *``                           **wallet**      custom object whill will be passed to functions
+=================================== ================ ===================================================================================================================================
+```
+returns: [`in3_signer_t *`](#in3-signer-t)
+
+
 #### in3_set_storage_handler
 
 ```c
@@ -5006,6 +5194,29 @@ arguments:
 =============================================== ============== ============================================================
 ```
 returns: [`in3_storage_handler_t *`](#in3-storage-handler-t)
+
+
+#### in3_req_add_response
+
+```c
+NONULL void in3_req_add_response(in3_request_t *req, int index, bool is_error, const char *data, int data_len);
+```
+
+adds a response for a request-object. 
+
+This function should be used in the transport-function to set the response. 
+
+arguments:
+```eval_rst
+=================================== ============== =====================================================================================
+`in3_request_t * <#in3-request-t>`_  **req**       the the request
+``int``                              **index**     the index of the url, since this request could go out to many urls
+``bool``                             **is_error**  if true this will be reported as error. the message should then be the error-message
+``const char *``                     **data**      the data or the the string
+``int``                              **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
+=================================== ============== =====================================================================================
+```
+returns: `NONULL void`
 
 
 ### context.h
@@ -5036,12 +5247,12 @@ you can check this state after each execute-call.
 The enum type contains the following values:
 
 ```eval_rst
-================================== == ============================================================
- **CTX_SUCCESS**                   0  The ctx has a verified result.
- **CTX_WAITING_FOR_REQUIRED_CTX**  1  there are required contexts, which need to be resolved first
- **CTX_WAITING_FOR_RESPONSE**      2  the response is not set yet
- **CTX_ERROR**                     -1 the request has a error
-================================== == ============================================================
+============================== == ==========================================================
+ **CTX_SUCCESS**               0  The ctx has a verified result.
+ **CTX_WAITING_TO_SEND**       1  the request has not been sent yet
+ **CTX_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
+ **CTX_ERROR**                 -1 the request has a error
+============================== == ==========================================================
 ```
 
 #### ctx_type_t
@@ -5087,27 +5298,28 @@ This is generated for each request and represents the current state. it holds th
 The stuct contains following fields:
 
 ```eval_rst
-================================================= ======================== =========================================================================================================
-`ctx_type_t <#ctx-type-t>`_                        **type**                the type of the request
-`in3_t * <#in3-t>`_                                **client**              reference to the client
-`json_ctx_t * <#json-ctx-t>`_                      **request_context**     the result of the json-parser for the request.
-`json_ctx_t * <#json-ctx-t>`_                      **response_context**    the result of the json-parser for the response.
-``char *``                                         **error**               in case of an error this will hold the message, if not it points to `NULL`
-``int``                                            **len**                 the number of requests
-``unsigned int``                                   **attempt**             the number of attempts
-`d_token_t ** <#d-token-t>`_                       **responses**           references to the tokens representring the parsed responses
-`d_token_t ** <#d-token-t>`_                       **requests**            references to the tokens representring the requests
-`in3_request_config_t * <#in3-request-config-t>`_  **requests_configs**    configs for a request.
-`node_match_t * <#node-match-t>`_                  **nodes**               
-`cache_entry_t * <#cache-entry-t>`_                **cache**               optional cache-entries. 
-                                                                           
-                                                                           These entries will be freed when cleaning up the context.
-`in3_response_t * <#in3-response-t>`_              **raw_response**        the raw response-data, which should be verified.
-`in3_ctxstruct , * <#in3-ctx>`_                    **required**            pointer to the next required context. 
-                                                                           
-                                                                           if not NULL the data from this context need get finished first, before being able to resume this context.
-`in3_ret_t <#in3-ret-t>`_                          **verification_state**  state of the verification
-================================================= ======================== =========================================================================================================
+===================================== ======================== =========================================================================================================
+`ctx_type_t <#ctx-type-t>`_            **type**                the type of the request
+`in3_ret_t <#in3-ret-t>`_              **verification_state**  state of the verification
+``char *``                             **error**               in case of an error this will hold the message, if not it points to `NULL`
+``uint_fast16_t``                      **len**                 the number of requests
+``uint_fast16_t``                      **attempt**             the number of attempts
+`json_ctx_t * <#json-ctx-t>`_          **request_context**     the result of the json-parser for the request.
+`json_ctx_t * <#json-ctx-t>`_          **response_context**    the result of the json-parser for the response.
+`d_token_t ** <#d-token-t>`_           **requests**            references to the tokens representring the requests
+`d_token_t ** <#d-token-t>`_           **responses**           references to the tokens representring the parsed responses
+`in3_response_t * <#in3-response-t>`_  **raw_response**        the raw response-data, which should be verified.
+`bytes_t * <#bytes-t>`_                **signers**             the addresses of servers requested to sign the blockhash
+``uint_fast8_t``                       **signers_length**      number or addresses
+`node_match_t * <#node-match-t>`_      **nodes**               selected nodes to process the request, which are stored as linked list.
+`cache_entry_t * <#cache-entry-t>`_    **cache**               optional cache-entries. 
+                                                               
+                                                               These entries will be freed when cleaning up the context.
+`in3_ctxstruct , * <#in3-ctx>`_        **required**            pointer to the next required context. 
+                                                               
+                                                               if not NULL the data from this context need get finished first, before being able to resume this context.
+`in3_t * <#in3-t>`_                    **client**              reference to the client
+===================================== ======================== =========================================================================================================
 ```
 
 #### in3_ctx_state_t
@@ -5120,12 +5332,12 @@ you can check this state after each execute-call.
 The enum type contains the following values:
 
 ```eval_rst
-================================== == ============================================================
- **CTX_SUCCESS**                   0  The ctx has a verified result.
- **CTX_WAITING_FOR_REQUIRED_CTX**  1  there are required contexts, which need to be resolved first
- **CTX_WAITING_FOR_RESPONSE**      2  the response is not set yet
- **CTX_ERROR**                     -1 the request has a error
-================================== == ============================================================
+============================== == ==========================================================
+ **CTX_SUCCESS**               0  The ctx has a verified result.
+ **CTX_WAITING_TO_SEND**       1  the request has not been sent yet
+ **CTX_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
+ **CTX_ERROR**                 -1 the request has a error
+============================== == ==========================================================
 ```
 
 #### ctx_new
@@ -5169,6 +5381,40 @@ arguments:
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_ctx_last_waiting
+
+```c
+NONULL in3_ctx_t* in3_ctx_last_waiting(in3_ctx_t *ctx);
+```
+
+finds the last waiting request-context. 
+
+arguments:
+```eval_rst
+=========================== ========= ====================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
+=========================== ========= ====================
+```
+returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
+
+
+#### in3_ctx_exec_state
+
+```c
+NONULL in3_ctx_state_t in3_ctx_exec_state(in3_ctx_t *ctx);
+```
+
+executes the context and returns its state. 
+
+arguments:
+```eval_rst
+=========================== ========= ====================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
+=========================== ========= ====================
+```
+returns: [`in3_ctx_state_tNONULL `](#in3-ctx-state-t)
 
 
 #### in3_ctx_execute
@@ -5216,8 +5462,8 @@ The caller is responsible for delivering the required responses. After calling y
       waiting -> sign[label=CT_SIGN]
       waiting -> request[label=CT_RPC] 
     
-      sign -> exec [label="in3_req_add_response()"]
-      request -> exec[label="in3_req_add_response()"]
+      sign -> exec [label="in3_ctx_add_response()"]
+      request -> exec[label="in3_ctx_add_response()"]
     
       response -> free
       error->free
@@ -5268,7 +5514,7 @@ Here is a example how to use this function:
             ctx->client->transport(request);
 
             // clean up
-            request_free(request, ctx, false);
+            request_free(request);
             break;
         }
 
@@ -5538,6 +5784,46 @@ arguments:
 returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
 
 
+#### in3_ctx_get_proof
+
+```c
+NONULL in3_proof_t in3_ctx_get_proof(in3_ctx_t *ctx);
+```
+
+determines the proof as set in the request. 
+
+arguments:
+```eval_rst
+=========================== ========= ====================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current request.
+=========================== ========= ====================
+```
+returns: [`in3_proof_tNONULL `](#in3-proof-t)
+
+
+#### in3_ctx_add_response
+
+```c
+NONULL void in3_ctx_add_response(in3_ctx_t *ctx, int index, bool is_error, const char *data, int data_len);
+```
+
+adds a response to a context. 
+
+This function should be used in the transport-function to set the response. 
+
+arguments:
+```eval_rst
+=========================== ============== =====================================================================================
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**       the current context
+``int``                      **index**     the index of the url, since this request could go out to many urls
+``bool``                     **is_error**  if true this will be reported as error. the message should then be the error-message
+``const char *``             **data**      the data or the the string
+``int``                      **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
+=========================== ============== =====================================================================================
+```
+returns: `NONULL void`
+
+
 ### verifier.h
 
 Verification Context. This context is passed to the verifier. 
@@ -5679,11 +5965,6 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-## Module core/util 
-
-
 
 
 ### bytes.h
@@ -8643,7 +8924,7 @@ arguments:
 returns: `int64_t`
 
 
-## Module pay/eth 
+## Module pay 
 
 
 
@@ -8693,7 +8974,7 @@ arguments:
 returns: `char *`
 
 
-## Module signer/ledger-nano/signer 
+## Module signer 
 
 
 
@@ -8796,11 +9077,6 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-## Module signer/pk-signer 
-
-
 
 
 ### signer.h
@@ -8924,7 +9200,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-## Module transport/curl 
+## Module transport 
 
 
 
@@ -8970,11 +9246,6 @@ void in3_register_curl();
 registers curl as a default transport. 
 
 
-## Module transport/http 
-
-
-
-
 ### in3_http.h
 
 transport-handler using simple http. 
@@ -9018,7 +9289,7 @@ void in3_register_http();
 registers http as a default transport. 
 
 
-## Module verifier/btc 
+## Module verifier 
 
 
 
@@ -9055,11 +9326,6 @@ void in3_register_btc();
 ```
 
 this function should only be called once and will register the bitcoin verifier. 
-
-
-## Module verifier/eth1/basic 
-
-
 
 
 ### eth_basic.h
@@ -9513,11 +9779,6 @@ arguments:
 `bytes_t * <#bytes-t>`_  **value**  
 ======================= =========== 
 ```
-
-## Module verifier/eth1/evm 
-
-
-
 
 ### big.h
 
@@ -11237,11 +11498,6 @@ This is a partial payment when multiplied by dlog256(exponent)e for the EXP oper
 #### UPDATE_ACCOUNT_CODE (...)
 
 
-## Module verifier/eth1/full 
-
-
-
-
 ### eth_full.h
 
 Ethereum Nanon verification. 
@@ -11272,11 +11528,6 @@ void in3_register_eth_full();
 ```
 
 this function should only be called once and will register the eth-full verifier. 
-
-
-## Module verifier/eth1/nano 
-
-
 
 
 ### chainspec.h
@@ -12205,11 +12456,6 @@ returns: `int` : 0 if added -1 if the value could not be handled.
 
 
 
-## Module verifier 
-
-
-
-
 ### in3_init.h
 
 IN3 init module for auto initializing verifiers and transport based on build config. 
@@ -12236,11 +12482,6 @@ arguments:
 =========================== ============== 
 ```
 returns: [`in3_t *`](#in3-t)
-
-
-## Module verifier/ipfs 
-
-
 
 
 ### ipfs.h
