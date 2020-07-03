@@ -13,14 +13,18 @@ Welcome to Incubed's documentation!
    milestones
    benchmarkSummary
    embedded
+   rpc
    api-c
    api-ts
    api-wasm
    api-python
    api-java
+   api-dotnet
+   api-rust
    api-cmd
    api-node-server
    api-solidity
+   
 
 .. toctree::
    :maxdepth: 2
