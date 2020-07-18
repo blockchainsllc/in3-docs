@@ -158,11 +158,10 @@ use incubed as Web3Provider in web3js
 ```js
 /// use incubed as Web3Provider in web3js 
 
-// import in3-Module
-import { IN3 } from 'in3-wasm'
+const in3wasm = require('in3-wasm');
 const Web3 = require('web3')
 
-const in3 = new IN3({
+const in3 = new in3wasm.IN3({
     proof: 'standard',
     signatureCount: 1,
     requestCount: 1,
@@ -179,8 +178,7 @@ const web3 = new Web3(in3.createWeb3Provider());
     const block = await web3.eth.getBlock('latest')
     console.log("Block : ", block)
 
-})().catch(console.error);
-```
+})().catch(console.error);```
 
 ### in3_in_browser
 
