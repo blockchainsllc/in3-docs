@@ -2040,16 +2040,13 @@ Response:
 ## btc
 
 For bitcoin incubed follows the specification as defined in [https://bitcoincore.org/en/doc/0.18.0/](https://bitcoincore.org/en/doc/0.18.0/).
-Internally the in3-server will add proofs as part of the responsens.
+Internally the in3-server will add proofs as part of the responses. The proof data differs between the methods. You will read which proof data will be provided and how the data can be used to prove the result for each method.
 
-Depending on the method, different proofs are needed, which are described in this document.
-
-ToDo: Add description
-
-Proofs will add a special in3-section to the response containing a `proof`- object. Each `in3`-section of the response containing proofs has a property with a proof-object with the following properties:
+Proofs will add a special `in3`-section to the response containing a `proof`- object. This object will contain parts of or all of the following properties:
 
 *  **block**
 *  **final**
+*  **txIndex**
 *  **merkleProof**
 *  **cbtx**
 *  **cbtxMerkleProof**
@@ -2058,64 +2055,65 @@ Proofs will add a special in3-section to the response containing a `proof`- obje
 
 ### getblockheader
 
-It returns data of block header for given block hash.
+Returns data of block header for given block hash. The returned level of details depends on the argument verbosity.
 
 
 Parameters:
 
 1. `hash`             : (string, required) The block hash
-2. `verbose`          : (boolean, optional, default=true) true for a json object, false for the hex encoded data
+2. `verbosity`        : (number or boolean, optional, default=1) 0 or false for the hex-encoded data, 1 or true for a json object
 3. `in3.finality`     : (number, required) defines the amount of finality headers
-4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
 Returns:
 
 
-- verbose:`false` : a hex string with 80 bytes representing the blockheader.
-- verbose:`true`: a object representing the blockheader:
+- verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+- verbose `1` or `true`: an object representing the blockheader:
 
-    - `hash` : hex - the block hash (same as provided)
-    - `confirmations` : number -  The number of confirmations, or -1 if the block is not on the main chain
-    - `height` : number : The block height or index
-    - `version` : number - The block version
-    - `versionHex` : hex - The block version formatted in hexadecimal
-    - `merkleroot` : hex - The merkle root ( 32 bytes )
-    - `time` : number - The block time in seconds since epoch (Jan 1 1970 GMT)
+    - `hash`: hex - the block hash (same as provided)
+    - `confirmations`: number -  The number of confirmations, or -1 if the block is not on the main chain
+    - `height`: number : The block height or index
+    - `version`: number - The block version
+    - `versionHex`: hex - The block version formatted in hexadecimal
+    - `merkleroot`: hex - The merkle root ( 32 bytes )
+    - `time`: number - The block time in seconds since epoch (Jan 1 1970 GMT)
     - `mediantime`: number - The median block time in seconds since epoch (Jan 1 1970 GMT)
     - `nonce`: number -  The nonce
-    - `bits` : hex - The bits ( 4 bytes as hex) representing the target
-    - `difficulty` : number - The difficulty
-    - `chainwork` : hex -  Expected number of hashes required to produce the current chain (in hex)
-    - `nTx` : number - The number of transactions in the block.
-    - `previousblockhash` : hex - The hash of the previous block
-    - `nextblockhash` : hex - The hash of the next block
+    - `bits`: hex - The bits ( 4 bytes as hex) representing the target
+    - `difficulty`: number - The difficulty
+    - `chainwork`: hex -  Expected number of hashes required to produce the current chain (in hex)
+    - `nTx`: number - The number of transactions in the block.
+    - `previousblockhash`: hex - The hash of the previous block
+    - `nextblockhash`: hex - The hash of the next block
 
 
 
-This proof section contains the following properties:
+The `proof`-object contains the following properties:
 
-- `final` : hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `cbtx` :  hex - the serialized coinbase transaction of the block ( this is needed to get the verified blocknumber)
-- `cbtxMerkleProof` :hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
 
+The finality headers from the `final`-field will be used to perform a finality proof. To verify the block number we are going to perform a block number proof using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
 
-Proof data is given in response in in3.proof.final field . For construction of proof that the block header is part of the actual chain server checks if there are “enough” confirmations on this block header. We can set the amount of confirmations required in the in3.finality field (6 confirmations is common) in post request. The server will provide the n block headers after our block header. For example: We got the block header of block 1000 and set n=6 then in the response there will be block headers of block 1001..1006 in the .in3.proof.final field.
-The hash of block 1000 should be in the parent hash field of block header of block 1001. The hash of block 1001 (sha256 of block header twice) should be in the parent hash field of block header of block 1002. And so on. There are two more fields: “cbtx” and “cbtxMerkleProof” - They are necessary to prove the block number. Extract block number out of the coinbase transaction and prove that this transaction is part of the block by doing a merkle proof. 
+*Description for finality proof, extract block number and merkle proof will be part of the concept.*
 
+**Example**
 
 Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getblockheader",
-        "params": ["000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220", true],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getblockheader",
+    "params": ["000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220", true],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2145,9 +2143,9 @@ Response:
     },
     "in3": {
         "proof": {
-            "final": "0x00e0ff2720723034053c305058beb92ed010...",
-            "cbtx": "0x0100000000010100000000000000000000000...",
-            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b..."
+            "final": "0x00e0ff2720723034053c305058beb92ed010...276470",
+            "cbtx": "0x0100000000010100000000000000000000000...39da2fc",
+            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688"
         }
     }
 }
@@ -2156,16 +2154,61 @@ Response:
 
 ### getblock
 
-Returns information of a block for given blockhash. The returned level of details depends on the argument verbosity.
+Returns data of block for given block hash. The returned level of details depends on the argument verbosity.
 
 
 Parameters:
 
 1. `blockhash`          : (string, required) The block hash
-2. verbosity            : (boolean, optional, default=true) false for hex encoded data, true for a json object
+2. `verbosity`          : (number or boolean, optional, default=true) 0 or false for hex-encoded data, 1 or true for a json object, and 2 for json object **with** transaction data
 3. `in3.finality`       : (number, required) defines the amount of finality headers
-4. `in3.verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+4. `in3.verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
+Returns
+
+- verbose `0` or `false` : a string that is serialized, hex-encoded data for block hash
+- verbose `1` or `true`: an object representing the block:
+
+    - `hash`: hex - the block hash (same as provided)
+    - `confirmations` : number -  The number of confirmations, or -1 if the block is not on the main chain
+    - `size`:
+    - `strippedsize`: 
+    - `weight`: 
+    - `height`: number - The block height or index
+    - `version`: number - The block version
+    - `versionHex`: hex - The block version formatted in hexadecimal
+    - `merkleroot`: hex - The merkle root ( 32 bytes )
+    - `tx`: array of string - The transaction ids
+    - `time`: number - The block time in seconds since epoch (Jan 1 1970 GMT)
+    - `mediantime`: number - The median block time in seconds since epoch (Jan 1 1970 GMT)
+    - `nonce`: number -  The nonce
+    - `bits`: hex - The bits ( 4 bytes as hex) representing the target
+    - `difficulty`: number - The difficulty
+    - `chainwork`: hex -  Expected number of hashes required to produce the current chain (in hex)
+    - `nTx`: number - The number of transactions in the block.
+    - `previousblockhash`: hex - The hash of the previous block
+    - `nextblockhash`: hex - The hash of the next block
+
+- verbose `2`: an object representing the block with information about each transaction:
+
+    - `...`: same output as `verbosity`=`1`
+    - `tx`: array of objects - The transactions in the format of the `getrawtransaction` RPC. `tx` result is different from `verbosity`=`1`
+    - `...`: same output as `verbosity`=`1`
+
+
+The `proof`-object contains the following properties:
+
+- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+
+The finality headers from the `final`-field will be used to perform a finality proof. To verify the block number we are going to perform a block number proof using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
+
+*Description for finality proof, extract block number and merkle proof will be part of the concept.*
+
+
+
+**Example**
 
 Request:
 
@@ -2216,7 +2259,9 @@ Response:
     },
     "in3": {
         "proof": {
-            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaa..."
+            "final": "0x00e00020d7cd60cab00255bb13bbb023fd5d85daaa...bbd60f",
+            "cbtx": "0x0100000000010100000000000000000000000000000000...4ddd5c",
+            "cbtxMerkleProof": "0xa22e7468d9bf239167ff6f97d066818b4a5278d29fc13dbcbd5...4b2f3a"
         }
     }
 }
@@ -2224,24 +2269,72 @@ Response:
 ```
 
 
-Proof:
-
-This proof is similar to the proof mentioned above in “getblockheader”. The client has to set an amount n of requested finality. The server will respond with the block data and additionally the finality headers in the .in3.proof.final field.
-
-
 ### getrawtransaction
 
-It returns the raw transaction data.
+Returns the raw transaction data. The returned level of details depends on the argument verbosity.
 
 
 Parameters:
 
 1. `txid`            : (string, required) The transaction id
-2. verbose           : (boolean, optional, default=false) If false, return a string, otherwise return a json object
+2. `verbosity`       : (number or boolean, optional, default=1) 0 or false for the hex-encoded data for `txid`, 1 or true for a json object with information about `txid`
 3. `blockhash`       : (string, optional) The block in which to look for the transaction
 4. `in3.finality`    : (number, required) defines the amount of finality headers
-5. `in3.verification`: (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+5. `in3.verification`: (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
+Returns:
+
+- verbose `0` or `false`: a string that is serialized, hex-encoded data for `txid`
+- verbose `1` or `false`: an object representing the transaction:
+
+    - `in_active_chain`: boolean - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+    - `hex`: string - The serialized, hex-encoded data for `txid`
+    - `txid`: string - The transaction id (same as provided)
+    - `hash`: string - The transaction hash (differs from txid for witness transactions)
+    - `size`: number - The serialized transaction size
+    - `vsize`: number - The virtual transaction size (differs from size for witness transactions)
+    - `weight`: number - The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
+    - `version`: number - The version
+    - `locktime`: number - The lock time
+    - `vin`: array of json objects
+        - `txid`: number - The transaction id
+        - `vout`: number
+        - `scriptSig`: json objectt - The script
+            - `asm`: string - asm
+            - `hex`: string - hex
+        - `sequence`: number - The script sequence number
+        - `txinwitness`: array of string - hex-encoded witness data (if any)
+    - `vout`: array of json objects
+        - `value`: number - The value in BTC
+        - `n`: number - index
+        - `scriptPubKey`: json object
+            - `asm`: string - asm
+            - `hex`: string - hex
+            - `reqSigs`: number - The required sigs 
+            - `type`: string - The type, eg 'pubkeyhash' 
+            - `addresses`: json array of string
+                - `address`: string - bitcoin address
+    - `blockhash`: string - the block hash
+    - `confirmations`: number - The confirmations
+    - `blocktime`: number - The block time in seconds since epoch (Jan 1 1970 GMT)
+    - `time`: number - Same as "blocktime"
+
+The `proof`-object contains the following properties:
+
+- `block`: hex - a hex string with 80 bytes representing the blockheader
+- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+- `txIndex`: number - index of the transaction (`txIndex`=`0` for coinbase transaction, necessary to create/verify the merkle proof)
+- `merkleProof`: hex - the merkle proof of the requested transaction, proving the correctness of the transaction
+- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+
+
+
+There will be five fields in the .in3 response: “block” (block header), “merkleProof” (hashes for merkle proof) and “final” (finality headers). We can check the finality as mentioned above. Furthermore, we can verify whether the transaction is part of that block or not. We have to do a merkle proof. For that we are going to use the transaction hash and the hashes of the merkleProof field to create a merkle root. This root hash has to be the same as the merkle root which is in the block header in the block field (32 bytes, starting byte 36).
+Additionally we can verify the block number by using the coinbase transaction (“cbtx”) and the merkle proof for the coinbase transaction (“cbtxMerkleProof”). As mentioned above: extract block number out of cbtx and prove that the cbtx is part of the block by doing a merkle proof using the hashes of “cbtxMerkleProof”.
+
+
+**Example**
 
 Request:
 
@@ -2281,8 +2374,8 @@ Response:
                 "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
                 "vout": 0,
                 "scriptSig": {
-                    "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b[ALL] 03a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874",
-                    "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228ccf362f6043639efe02201d573e65394228ae30cfdc67b0456a5fb02af4fdbf29c2771c8a5dcfee4b2c9b012103a6ab31dcae7d90085809b58fbac506631a57dc34ed942e74ef116e0800254874"
+                    "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874",
+                    "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874"
                 },
                 "sequence": 4294967295
             },
@@ -2290,8 +2383,8 @@ Response:
                 "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
                 "vout": 0,
                 "scriptSig": {
-                    "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7[ALL] 03427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d",
-                    "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4e47abc7cd2a0c77b5402204cdfd79646e50590386e1cb7334aaf9338016d2f3657fefa1bf3a23a0e3454e7012103427d40830bb4648442f9a4d901ea42a7bbdb8af39e9596e1a91d3b34e8f3255d"
+                    "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d",
+                    "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d"
                 },
                 "sequence": 4294967295
             },
@@ -2299,8 +2392,8 @@ Response:
                 "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
                 "vout": 1,
                 "scriptSig": {
-                    "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f32[ALL] 027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da",
-                    "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12848749bbe9d57664ef3022056f564fdb4da99cde5c856211c93a820f9222af0292039a8e3dd9d429c172f320121027f3061a928f1780afceb18813215febbec05bd4b186feff66fd32128520045da"
+                    "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da",
+                    "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da"
                 },
                 "sequence": 4294967295
             }
@@ -2333,30 +2426,24 @@ Response:
                 }
             }
         ],
-        "hex": "01000000038c091a ... 700000000",
+        "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000"
         "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-        "confirmations": 8269,
+        "confirmations": 15307,
         "time": 1586333924,
         "blocktime": 1586333924
     },
     "in3": {
         "proof": {
-            "block": "00e00020497f4c193dbb347c ... 5476",
-            "final": "0x00e0ff2720723034053c305058 ... fe276470",
+            "block": "0x00e00020497f4c193dbb347c2ecfcf6169e64c747877...045476",
+            "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cd...276470",
             "txIndex": 7,
-            "merkleProof": "0x348d4bb04940ac6 ... 3239ccda7e35e1559552e688",
-            "cbtx": "0x010000000 ... 00000000000000000000000000000000000000000000000000000539da2fc",
-            "cbtxMerkleProof": "0x6a8077bb4ce7 ... cda7e35e1559552e688"
+            "merkleProof": "0x348d4bb04943400a80f162c4ef64b746bc4af0...52e688",
+            "cbtx": "0x010000000001010000000000000000000000000000000...9da2fc",
+            "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667bc256a...52e688"
         }
     }
 }
 ```
-
-
-Proof:
-
-There will be five fields in the .in3 response: “block” (block header), “merkleProof” (hashes for merkle proof) and “final” (finality headers). We can check the finality as mentioned above. Furthermore, we can verify whether the transaction is part of that block or not. We have to do a merkle proof. For that we are going to use the transaction hash and the hashes of the merkleProof field to create a merkle root. This root hash has to be the same as the merkle root which is in the block header in the block field (32 bytes, starting byte 36).
-Additionally we can verify the block number by using the coinbase transaction (“cbtx”) and the merkle proof for the coinbase transaction (“cbtxMerkleProof”). As mentioned above: extract block number out of cbtx and prove that the cbtx is part of the block by doing a merkle proof using the hashes of “cbtxMerkleProof”.
 
 
 ### getblockcount
@@ -2367,7 +2454,7 @@ Returns the number of blocks in the longest blockchain.
 Parameters:
 
 1. finality       : (number, required) defines the amount of finality headers
-2. `verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+2. `verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
 Request:
@@ -2426,7 +2513,7 @@ Returns the hash of the best (tip) block in the longest blockchain.
 Parameters:
 
 1. `finality` (number, required) defines the amount of finality headers
-2. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+2. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 Request:
 
@@ -2474,7 +2561,7 @@ Parameters:
 1. `blocknumber` (string or number, optional) 
 Can be the number of a block, can be `latest`, `earliest` or `pending` to get the latest block or can be empty (no parameter) no get the latest block as well (Hint: Latest block means always actual latest block minus finality)
 2. finality (number, required) defines the amount of finality headers
-3. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof` or `proofWithSignature`)
+3. `verification` (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
 
