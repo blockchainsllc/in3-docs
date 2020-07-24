@@ -2214,14 +2214,14 @@ Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getblock",
-        "params":  ["00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7", true],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getblock",
+    "params":  ["00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7", true],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2340,16 +2340,16 @@ Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getrawtransaction",
-        "params":  ["f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", 
-                    true, 
-                    "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getrawtransaction",
+    "params":  ["f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", 
+                true, 
+                "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2482,14 +2482,14 @@ Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getblockcount",
-        "params": [],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getblockcount",
+    "params": [],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2549,14 +2549,14 @@ Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getbestblockhash",
-        "params": [],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getbestblockhash",
+    "params": [],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2620,14 +2620,14 @@ Request:
 
 ```js
 {
-        "jsonrpc": "2.0",
-        "id":1,
-        "method": "getdifficulty",
-        "params": [631910],
-        "in3":{
-                "finality":8,
-                "verification":"proof"
-        }
+    "jsonrpc": "2.0",
+    "id":1,
+    "method": "getdifficulty",
+    "params": [631910],
+    "in3":{
+        "finality":8,
+        "verification":"proof"
+    }
 }
 ```
 
@@ -2656,14 +2656,110 @@ Whenever the client is not able to trust the changes of the target (which is the
 
 Parameters:
 
-1. `target_dap`   : (string or number, required) the number of the difficulty adjustment period (dap) we are looking for
-2. `verified_dap` : (string or number, required) the number of the closest already verified dap
-3. `max_diff`     : (string or number, required) the maximum target difference between 2 verified daps
-4. `max_dap`      : (string or number, required) the maximum amount of daps between 2 verified daps
-5. `limit`        : (string or number, optional) the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
+1. `target_dap`        : (string or number, required) the number of the difficulty adjustment period (dap) we are looking for
+2. `verified_dap`      : (string or number, required) the number of the closest already verified dap
+3. `max_diff`          : (string or number, required) the maximum target difference between 2 verified daps
+4. `max_dap`           : (string or number, required) the maximum amount of daps between 2 verified daps
+5. `limit`             : (string or number, optional) the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
+6. `in3.finality`      : (number, required) defines the amount of finality headers
+7. `in3.verification`  : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+
+Hints:
+
+- difference between `target_dap` and `verified_dap` should be greater than `1`
+- `target_dap` and `verified_dap` have to be greater than `0`
+- `limit` will be set to `40` internaly when the parameter is equal to `0` or greater than `40`
+- `max_dap` can't be equal to `0`
+- `max_diff` equal to `0` means no tolerance regarding the change of the target - the path will contain every dap between `target_dap` and `verified_dap` (under consideration of `limit`)
+- total possible amount of finality headers (`in3.finaliy` \* `limit`) can't be greater than `1000`
+- changes of a target will always be accepted if it decreased from one dap to another (i.e. difficulty to mine a block increased)
+- in case a dap that we want to verify next (i.e. add it to the path) is only 1 dap apart from a verified dap (i.e. `verified_dap` or latest dap of the path) *but* not within the given limit (`max_diff`) it will still be added to the path (since we can't do even smaller steps)
+
+Returns: A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data. 
 
 
-Returns:
+The `dap`-object contains the following properties:
 
+- `dap`: number - the numer of the difficulty adjustment period
+- `block`: hex - a hex string with 80 bytes representing the  (always the first block of a dap)
+- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
-The `proof`-object contains the following properties:
+The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with `verified_dap`. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a finality proof. This allows us to consider the target of the block header as verified. Therefore we have a verified target for this `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a block number proof using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
+
+*Description for finality proof, extract block number and merkle proof will be part of the concept.*
+
+**Example**
+
+Request:
+
+```js
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "in3_proofTarget",
+    "params": [230,200,5,5,15],
+    "in3":{
+                "finality" : 8,
+                "verification":"proof"
+        }
+}
+```
+
+Response:
+
+```js
+{
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "dap": 205,
+            "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
+            "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
+            "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
+            "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
+        },
+        {
+            "dap": 210,
+            "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
+            "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
+            "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
+            "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
+        },
+        {
+            "dap": 215,
+            "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
+            "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
+            "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
+            "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
+        },
+        {
+            "dap": 220,
+            "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
+            "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
+            "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
+            "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
+        },
+        {
+            "dap": 225,
+            "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
+            "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
+            "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
+            "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
+        }
+    ],
+    "in3": {
+        "lastNodeList": 3101668,
+        "execTime": 2760,
+        "rpcTime": 172,
+        "rpcCount": 1,
+        "currentBlock": 3101713,
+        "version": "2.1.0"
+    }
+}
+```
+
+*Graph to visualize the usage of proofTarget* 
+ 
