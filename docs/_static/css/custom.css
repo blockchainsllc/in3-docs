@@ -6,3 +6,17 @@ a.external { font-weight: bold;}
 
 .wy-nav-side {    background-color: #333333 !important;}
 .wy-side-nav-search {    background-color: #333333 !important;}
+
+
+p.caption {
+    color: #009999 !important;
+}
+
+
+a {
+    color: #009999 ;
+}
+
+a:hover.external {
+    color: #009999 ;
+}
