@@ -2096,7 +2096,7 @@ The `proof`-object contains the following properties:
 - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
 
-The finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). To verify the block number we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
+The finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). To verify the block number we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 **Example**
 
@@ -2200,11 +2200,7 @@ The `proof`-object contains the following properties:
 - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
 
-The finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). To verify the block number we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
-
-*Description for finality proof, extract block number and merkle proof will be part of the concept.*
-
-
+The finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). To verify the block number we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 **Example**
 
@@ -2327,10 +2323,7 @@ The `proof`-object contains the following properties:
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
 
-The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). By doing a merkle proof using the `txIndex`-field and the `merkleProof`-field the correctness of the requested transation can be proven. Furthermore we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field). 
-
-*Description for finality proof, extract block number and merkle proof will be part of the concept.*
-
+The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). By doing a [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) using the `txIndex`-field and the `merkleProof`-field the correctness of the requested transation can be proven. Furthermore we are going to perform a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). 
 
 **Example**
 
@@ -2466,11 +2459,9 @@ The `proof`-object contains the following properties:
 
 
 The server is not able to prove the finality for the latest block (obviously there are no finality headers available yet). Instead the server will fetch the number of the latest block and subtracts the amount of finality headers (set in `in3.finality`-field) and returns the result to the client (the result is considered as the latest block number). By doing so the server is able to provide finality headers. \
-The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
+The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 The client can set `in3.finality` equal to `0` to get the actual latest block number. **Caution**: This block is not final and could no longer be part of the blockchain later on due to the possibility of a fork. Additionally, there may already be a newer block that the server does not yet know about due to latency in the network.
-
-*Description for finality proof, extract block number and merkle proof will be part of the concept.*
 
 **Example**
 
@@ -2531,12 +2522,9 @@ The `proof`-object contains the following properties:
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
 The server is not able to prove the finality for the latest block (obviously there are no finality headers available yet). Instead the server will fetch the number of the latest block and subtracts the amount of finality headers (set in `in3.finality`-field) and returns the hash of this block to the client (the result is considered as the latest block hash). By doing so the server is able to provide finality headers. \
-The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
+The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 The client can set `in3.finality` equal to `0` to get the actual latest block hash. **Caution**: This block is not final and could no longer be part of the blockchain later on due to the possibility of a fork. Additionally, there may already be a newer block that the server does not yet know about due to latency in the network.
-
-*Description for finality proof, extract block number and merkle proof will be part of the concept.*
-
 
 **Example**
 
@@ -2601,15 +2589,11 @@ The `proof`-object contains the following properties:
 - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
-In case the client requests the diffictuly of a certain block (`blocknumber` is a certain number) the `block`-field will contain the block header of this block and the `final`-field the corresponding finality headers. In case the client requests the difficulty of the latest block the server is not able to prove the finality for this block (obviously there are no finality headers available yet). The server considers the latest block minus `in3.finality` as the latest block and returns its difficulty. For both cases the block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field).
+In case the client requests the diffictuly of a certain block (`blocknumber` is a certain number) the `block`-field will contain the block header of this block and the `final`-field the corresponding finality headers. In case the client requests the difficulty of the latest block the server is not able to prove the finality for this block (obviously there are no finality headers available yet). The server considers the latest block minus `in3.finality` as the latest block and returns its difficulty. For both cases the block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 The result itself (the difficulty) can be verified in two ways:
 - by converting the difficulty into a target and check whether the block hash is lower than the target (since we proved the finality we consider the block hash as verified)
 - by converting the difficulty and the bits (part of the block header) into a target and check if both targets are similar (they will not be equal since the target of the bits is not getting saved with full precision)
-
-*Description for difficulty -> target and bits -> target will be part of the concept*
-
-*Description for finality proof, extract block number and merkle proof will be part of the concept.*
 
 
 **Example**
@@ -2684,8 +2668,7 @@ The `dap`-object contains the following properties:
 - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
 - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
-The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with `verified_dap`. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). This allows us to consider the target of the block header as verified. Therefore we have a verified target for this `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the merkle proof for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
-
+The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with `verified_dap`. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof). This allows us to consider the target of the block header as verified. Therefore we have a verified target for this `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
 
 **Example**
 
