@@ -2741,5 +2741,7 @@ Response:
 }
 ```
 
-*Graph to visualize the usage of proofTarget* 
+This graph shows the usage of this method and visualizes the result from above. The client is not able to trust the changes of the target due to his limits (`max_diff` and `max_dap`). This method provides a path of daps in which the limits are fulfilled from dap to another. The client is going to trust the target of the target dap since he is able to perform a step by step verification of the target by using the path of daps.
+
+![](proofTarget.png)
  
