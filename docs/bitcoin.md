@@ -195,7 +195,7 @@ Decode:
 
 2. Prove the existence and correctness of the coinbase transaction
 
-To trust the extracted block number it's necessary to verify the existence and correctness of the coinbase transaction. This can be done by performing a merkle proof [Block Proof](#block-proof) using the provided block header and the merkle proof data.
+To trust the extracted block number it's necessary to verify the existence and correctness of the coinbase transaction. This can be done by performing a [merkle proof](#transaction-proof-merkle-proof) using the provided block header and the merkle proof data.
 
 **Size of a block number proof**
 
