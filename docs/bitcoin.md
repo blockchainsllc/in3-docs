@@ -4,7 +4,7 @@ Bitcoin may be a complete different chain but there are ways to verify a Bitcoin
 
 ## Concept
 
-For the verification of Bitcoin we make use of the Simplified Payment Verification proposed in the Bitcoin paper (LINK) by Satoshi Nakamoto.
+For the verification of Bitcoin we make use of the Simplified Payment Verification proposed in the [Bitcoin paper](https://bitcoin.org/bitcoin.pdf) by Satoshi Nakamoto.
 
 > It is possible to verify payments without running a full network node. A user only needs to keep
 a copy of the block headers of the longest proof-of-work chain, which he can get by querying
@@ -33,7 +33,7 @@ expensive an attack would be to create wrong blocks with finality headers that a
 
 Bitcoin uses the target for the mining process where miners are hashing the block data over and over again to find a hash that is smaller than the target (while changing the data a little bit each try to generate a different hash). Miners across the network can verify a newly published blocks by checking the block hash against the target. The same applies for clients. Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header.
 
-This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in block proof LINK). You will read about two different options to verify a target.
+This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-proof)). You will read about two different options to verify a target.
 
 #### Difficulty Adjustment Period 
 
@@ -59,9 +59,9 @@ The client maintains a cache with the number of a difficulty adjustment period (
 
 > How does the verification works?
 
-We completely rely on the finality of a block. We can verify the target of a block (and therefore for a whole period) by requesting a block header (`getblockheader`) and `n`-amount of finality headers. If we are able to prove the finality using the finality proof (LINK) we can consider the target as verified as mentioned earlier.
+We completely rely on the finality of a block. We can verify the target of a block (and therefore for a whole period) by requesting a block header (`getblockheader`) and `n`-amount of finality headers. If we are able to prove the finality using the [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof) we can consider the target as verified as mentioned earlier.
 
-The client sets a limit in his configuration regarding the maximum change of the target from a verified one to the one he wants to verify. The client will not trust the changes of the target when they are too big (i.e. greater than the limit). In this case the client will use the proofTarget-method (LINK) to verify the big changes in smaller steps.
+The client sets a limit in his configuration regarding the maximum change of the target from a verified one to the one he wants to verify. The client will not trust the changes of the target when they are too big (i.e. greater than the limit). In this case the client will use the [proofTarget-method](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/rpc.md#btc_in3_prooftarget) to verify the big changes in smaller steps.
 
 #### Verification using signatures
 
@@ -70,7 +70,7 @@ The client sets a limit in his configuration regarding the maximum change of the
 This approach uses signatures of Incubed nodes to verify the target.
 
 Since the target is part of the block header we just have to be very sure that the block header is correct - which leads us to a correct target. The client fetches the node list and chooses n nodes which will provide signature. Afterwards he sends a `getblockheader`-request (also containing the addresses of the selected nodes) to a random provider node. This node asks the signatures nodes to sign his result (the block header). The response will include the block header itself and all the signatures as well. The client can verify all signatures by using the node list and therefore verifying the actual result (a verified block header and therefore a verified target). The incentivation for the nodes to act honest is their deposit which they will loose in case they act malicious.
-(more details 1.5 Architecture LINK)
+(see [here](https://github.com/slockit/in3/blob/master/in3_image.png) for more details of this process)
 
 The amount of signatures nodes n should be chosen with the 
 [Risk Calculation](https://in3.readthedocs.io/en/develop/Threat-Model-for-Incubed.html#risk-calculation) in mind.
