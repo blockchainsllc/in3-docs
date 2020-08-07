@@ -17,6 +17,7 @@ We are following a simple process: A client requests certain data, the server se
 expensive an attack would be to create wrong blocks with finality headers that are probably valid but not actually valid.
 
 **Bitcoin Block Header**  
+
 | **Size** | **Field** | **Description** |
 | ------ | ------ | ------ |
 | 4 bytes | Version | A version number to track software/protocol upgrades |
