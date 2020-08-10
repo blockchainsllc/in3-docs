@@ -2306,8 +2306,7 @@ Returns:
             - `hex`: string - hex
             - `reqSigs`: number - The required sigs 
             - `type`: string - The type, eg 'pubkeyhash' 
-            - `addresses`: json array of string
-                - `address`: string - bitcoin address
+            - `addresses`: json array of strings (each representing a bitcoin adress)
     - `blockhash`: string - the block hash
     - `confirmations`: number - The confirmations
     - `blocktime`: number - The block time in seconds since epoch (Jan 1 1970 GMT)
