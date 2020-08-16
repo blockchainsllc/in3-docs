@@ -1934,6 +1934,10 @@ See JSON-RPC-Spec
 
 Signing is **not supported** since the nodes are serving a public rpc-enpoint. These methods will return a error. The client may still support those methods, but handle those requests internally.
 
+### eth_sendTransactionAndWait
+
+Sends a Transaction just like `eth_sendTransaction` but instead of returning the TransactionHash it will wait until the transaction is mined and return the transaction receipt. See [eth_getTransactionReceipt](https://eth.wiki/json-rpc/API#eth_getTransactionReceipt).
+
 ### eth_sendRawTransaction
 
 See JSON-RPC-Spec 

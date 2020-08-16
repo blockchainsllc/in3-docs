@@ -1,10 +1,21 @@
 # API Reference Dotnet
 
-
 Dotnet bindings and library for in3. Go to our [readthedocs](https://in3.readthedocs.io/en/develop/api-dotnet.html) page for more on usage.
 
-This library is based on the [C version of Incubed](http://github.com/slockit/in3-c)
+This library is based on the [C version of Incubed](http://github.com/slockit/in3-c).
 
+
+## Runtimes
+
+Since this is built on top of the native library, it is limited to the followin runtimes (RID)
+
+-  osx-x64
+-  linux-x86
+-  linux-x64
+-  win-x64
+-  linux-arm64
+
+For more information, see [Rid Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog).
 
 ## Quickstart
 
@@ -16,43 +27,196 @@ dotnet add package Slockit.In3
 
 ## Examples
 
-### test
+### CallSmartContractFunction
 
-source : [in3-c/dotnet/examples/test.cs](https://github.com/slockit/in3-c/blob/master/dotnet/examples/test.cs)
-
-example of a simple BlockNumber
+source : [in3-c/dotnet/Examples/CallSmartContractFunction](https://github.com/slockit/in3-c/blob/master/dotnet/Examples/CallSmartContractFunction/Program.cs)
 
 
-```dotnet
-/// example of a simple BlockNumber
 
+```c#
+using System;
+using System.Numerics;
+using In3;
+using In3.Eth1;
+
+namespace CallSmartContractFunction
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            // Set it to mainnet
+            IN3 mainnetClient = IN3.ForChain(Chain.Mainnet);
+            ClientConfiguration cfg = mainnetClient.Configuration;
+            cfg.Proof = Proof.None;
+
+            string contractAddress = "0x2736D225f85740f42D17987100dc8d58e9e16252";
+
+            // Create the query transaction
+            TransactionRequest serverCountQuery = new TransactionRequest();
+            serverCountQuery.To = contractAddress;
+
+            // Define the function and the parameters to query the total in3 servers
+            serverCountQuery.Function = "totalServers():uint256";
+            serverCountQuery.Params = new object[0];
+
+            string[] serverCountResult = (string[])mainnetClient.Eth1.Call(serverCountQuery, BlockParameter.Latest);
+            BigInteger servers = DataTypeConverter.HexStringToBigint(serverCountResult[0]);
+
+            for (int i = 0; i < servers; i++)
+            {
+                TransactionRequest serverDetailQuery = new TransactionRequest();
+                serverDetailQuery.To = contractAddress;
+
+                // Define the function and the parameters to query the in3 servers detail
+                serverDetailQuery.Function = "servers(uint256):(string,address,uint32,uint256,uint256,address)";
+                serverDetailQuery.Params = new object[] { i }; // index of the server (uint256) as per solidity function signature
+
+                string[] serverDetailResult = (string[])mainnetClient.Eth1.Call(serverDetailQuery, BlockParameter.Latest);
+                Console.Out.WriteLine($"Server url: {serverDetailResult[0]}");
+            }
+        }
+    }
+```
+
+### ConnectToEthereum
+
+source : [in3-c/dotnet/Examples/ConnectToEthereum](https://github.com/slockit/in3-c/blob/master/dotnet/Examples/ConnectToEthereum/Program.cs)
+
+
+
+```c#
 using System;
 using System.Numerics;
 using In3;
 
-namespace ConsoleTest
+namespace ConnectToEthereum
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            IN3 in3 = IN3.ForChain(Chain.Mainnet);
-            in3.Configuration.UseHttp = true;
-            BigInteger result = in3.Eth1.BlockNumber();
-            Console.Out.Write(result);
+            Console.Out.WriteLine("Ethereum Main Network");
+            IN3 mainnetClient = IN3.ForChain(Chain.Mainnet);
+            BigInteger mainnetLatest = mainnetClient.Eth1.BlockNumber();
+            BigInteger mainnetCurrentGasPrice = mainnetClient.Eth1.GetGasPrice();
+            Console.Out.WriteLine($"Latest Block Number: {mainnetLatest}");
+            Console.Out.WriteLine($"Gas Price: {mainnetCurrentGasPrice} Wei");
+
+            Console.Out.WriteLine("Ethereum Kovan Test Network");
+            IN3 kovanClient = IN3.ForChain(Chain.Kovan);
+            BigInteger kovanLatest = kovanClient.Eth1.BlockNumber();
+            BigInteger kovanCurrentGasPrice = kovanClient.Eth1.GetGasPrice();
+            Console.Out.WriteLine($"Latest Block Number: {kovanLatest}");
+            Console.Out.WriteLine($"Gas Price: {kovanCurrentGasPrice} Wei");
+
+            Console.Out.WriteLine("Ethereum Goerli Test Network");
+            IN3 goerliClient = IN3.ForChain(Chain.Goerli);
+            BigInteger goerliLatest = goerliClient.Eth1.BlockNumber();
+            BigInteger clientCurrentGasPrice = goerliClient.Eth1.GetGasPrice();
+            Console.Out.WriteLine($"Latest Block Number: {goerliLatest}");
+            Console.Out.WriteLine($"Gas Price: {clientCurrentGasPrice} Wei");
         }
     }
 }
 ```
 
-### build examples
+### EnsResolver
+
+source : [in3-c/dotnet/Examples/EnsResolver](https://github.com/slockit/in3-c/blob/master/dotnet/Examples/EnsResolver/Program.cs)
 
 
-```sh
-dotnet add package Slockit.In3
+
+```c#
+using System;
+using In3;
+
+namespace EnsResolver
+{
+    public class Program
+    {
+        static void Main()
+        {
+            IN3 in3 = IN3.ForChain(Chain.Mainnet);
+
+            string cryptoKittiesDomain = "cryptokitties.eth";
+            string resolver = in3.Eth1.Ens(cryptoKittiesDomain, ENSParameter.Resolver);
+            string owner = in3.Eth1.Ens(cryptoKittiesDomain, ENSParameter.Owner);
+
+            Console.Out.WriteLine($"The owner of {cryptoKittiesDomain} is {owner}, resolver is {resolver}.");
+        }
+    }
+}
 ```
 
-TODO explain how to set up example-projects
+### SendTransaction
+
+source : [in3-c/dotnet/Examples/SendTransaction](https://github.com/slockit/in3-c/blob/master/dotnet/Examples/SendTransaction/Program.cs)
+
+
+
+```c#
+using System;
+using System.Threading;
+using In3;
+using In3.Crypto;
+using In3.Eth1;
+
+namespace SendTransaction
+{
+    public class Program
+    {
+        static void Main()
+        {
+            IN3 goerliClient = IN3.ForChain(Chain.Goerli);
+
+            string myPrivateKey = "0x0829B3C639A3A8F2226C8057F100128D4F7AE8102C92048BA6DE38CF4D3BC6F1";
+            string receivingAddress = "0x6FA33809667A99A805b610C49EE2042863b1bb83";
+
+            // Get the wallet, which is the default signer.
+            SimpleWallet myAccountWallet = (SimpleWallet)goerliClient.Signer;
+
+            string myAccount = myAccountWallet.AddRawKey(myPrivateKey);
+
+            // Create the transaction request
+            TransactionRequest transferWei = new TransactionRequest();
+            transferWei.To = receivingAddress;
+            transferWei.From = myAccount;
+            transferWei.Value = 300;
+
+            // Get the current gas prices
+            long currentGasPrice = goerliClient.Eth1.GetGasPrice();
+            transferWei.GasPrice = currentGasPrice;
+
+            long estimatedSpentGas = goerliClient.Eth1.EstimateGas(transferWei, BlockParameter.Latest);
+            Console.Out.WriteLine($"Estimated gas to spend: {estimatedSpentGas}");
+
+            string transactionHash = goerliClient.Eth1.SendTransaction(transferWei);
+            Console.Out.WriteLine($"Transaction {transactionHash} sent.");
+            Thread.Sleep(30000);
+
+            TransactionReceipt receipt = goerliClient.Eth1.GetTransactionReceipt(transactionHash);
+            Console.Out.WriteLine($"Transaction {transactionHash} mined on block {receipt.BlockNumber}.");
+        }
+    }
+}
+```
+
+### Build Examples
+
+
+To setup and run the example projects, simply run on the respective project folder:
+
+```sh
+dotnet run
+```
+
+To build all of them, on the solution folder, run:
+
+```sh
+dotnet build
+```
+
 
 ## Index
 
@@ -60,9 +224,17 @@ TODO explain how to set up example-projects
 - [Account](#T-In3-Crypto-Account 'In3.Crypto.Account')
   - [Address](#P-In3-Crypto-Account-Address 'In3.Crypto.Account.Address')
   - [PublicKey](#P-In3-Crypto-Account-PublicKey 'In3.Crypto.Account.PublicKey')
+- [Api](#T-In3-Btc-Api 'In3.Btc.Api')
 - [Api](#T-In3-Crypto-Api 'In3.Crypto.Api')
 - [Api](#T-In3-Eth1-Api 'In3.Eth1.Api')
 - [Api](#T-In3-Ipfs-Api 'In3.Ipfs.Api')
+  - [GetBlockBytes(blockHash)](#M-In3-Btc-Api-GetBlockBytes-System-String- 'In3.Btc.Api.GetBlockBytes(System.String)')
+  - [GetBlockHeader(blockHash)](#M-In3-Btc-Api-GetBlockHeader-System-String- 'In3.Btc.Api.GetBlockHeader(System.String)')
+  - [GetBlockHeaderBytes(blockHash)](#M-In3-Btc-Api-GetBlockHeaderBytes-System-String- 'In3.Btc.Api.GetBlockHeaderBytes(System.String)')
+  - [GetBlockWithTxData(blockHash)](#M-In3-Btc-Api-GetBlockWithTxData-System-String- 'In3.Btc.Api.GetBlockWithTxData(System.String)')
+  - [GetBlockWithTxIds(blockHash)](#M-In3-Btc-Api-GetBlockWithTxIds-System-String- 'In3.Btc.Api.GetBlockWithTxIds(System.String)')
+  - [GetTransaction(txid)](#M-In3-Btc-Api-GetTransaction-System-String- 'In3.Btc.Api.GetTransaction(System.String)')
+  - [GetTransactionBytes(txid)](#M-In3-Btc-Api-GetTransactionBytes-System-String- 'In3.Btc.Api.GetTransactionBytes(System.String)')
   - [DecryptKey(pk,passphrase)](#M-In3-Crypto-Api-DecryptKey-System-String,System-String- 'In3.Crypto.Api.DecryptKey(System.String,System.String)')
   - [EcRecover(signedData,signature,signatureType)](#M-In3-Crypto-Api-EcRecover-System-String,System-String,In3-Crypto-SignatureType- 'In3.Crypto.Api.EcRecover(System.String,System.String,In3.Crypto.SignatureType)')
   - [Pk2Address(pk)](#M-In3-Crypto-Api-Pk2Address-System-String- 'In3.Crypto.Api.Pk2Address(System.String)')
@@ -74,7 +246,7 @@ TODO explain how to set up example-projects
   - [BlockNumber()](#M-In3-Eth1-Api-BlockNumber 'In3.Eth1.Api.BlockNumber')
   - [Call(request,blockNumber)](#M-In3-Eth1-Api-Call-In3-Eth1-TransactionRequest,System-Numerics-BigInteger- 'In3.Eth1.Api.Call(In3.Eth1.TransactionRequest,System.Numerics.BigInteger)')
   - [ChecksumAddress(address,shouldUseChainId)](#M-In3-Eth1-Api-ChecksumAddress-System-String,System-Nullable{System-Boolean}- 'In3.Eth1.Api.ChecksumAddress(System.String,System.Nullable{System.Boolean})')
-  - [ENS(name,type)](#M-In3-Eth1-Api-ENS-System-String,System-Nullable{In3-ENSParameter}- 'In3.Eth1.Api.ENS(System.String,System.Nullable{In3.ENSParameter})')
+  - [Ens(name,type)](#M-In3-Eth1-Api-Ens-System-String,In3-ENSParameter- 'In3.Eth1.Api.Ens(System.String,In3.ENSParameter)')
   - [EstimateGas(request,blockNumber)](#M-In3-Eth1-Api-EstimateGas-In3-Eth1-TransactionRequest,System-Numerics-BigInteger- 'In3.Eth1.Api.EstimateGas(In3.Eth1.TransactionRequest,System.Numerics.BigInteger)')
   - [GetBalance(address,blockNumber)](#M-In3-Eth1-Api-GetBalance-System-String,System-Numerics-BigInteger- 'In3.Eth1.Api.GetBalance(System.String,System.Numerics.BigInteger)')
   - [GetBlockByHash(blockHash,shouldIncludeTransactions)](#M-In3-Eth1-Api-GetBlockByHash-System-String,System-Boolean- 'In3.Eth1.Api.GetBlockByHash(System.String,System.Boolean)')
@@ -124,11 +296,33 @@ TODO explain how to set up example-projects
   - [TotalDifficulty](#P-In3-Eth1-Block-TotalDifficulty 'In3.Eth1.Block.TotalDifficulty')
   - [TransactionsRoot](#P-In3-Eth1-Block-TransactionsRoot 'In3.Eth1.Block.TransactionsRoot')
   - [Uncles](#P-In3-Eth1-Block-Uncles 'In3.Eth1.Block.Uncles')
+- [BlockHeader](#T-In3-Btc-BlockHeader 'In3.Btc.BlockHeader')
+  - [Bits](#P-In3-Btc-BlockHeader-Bits 'In3.Btc.BlockHeader.Bits')
+  - [Chainwork](#P-In3-Btc-BlockHeader-Chainwork 'In3.Btc.BlockHeader.Chainwork')
+  - [Confirmations](#P-In3-Btc-BlockHeader-Confirmations 'In3.Btc.BlockHeader.Confirmations')
+  - [Difficulty](#P-In3-Btc-BlockHeader-Difficulty 'In3.Btc.BlockHeader.Difficulty')
+  - [Hash](#P-In3-Btc-BlockHeader-Hash 'In3.Btc.BlockHeader.Hash')
+  - [Height](#P-In3-Btc-BlockHeader-Height 'In3.Btc.BlockHeader.Height')
+  - [Mediantime](#P-In3-Btc-BlockHeader-Mediantime 'In3.Btc.BlockHeader.Mediantime')
+  - [Merkleroot](#P-In3-Btc-BlockHeader-Merkleroot 'In3.Btc.BlockHeader.Merkleroot')
+  - [NTx](#P-In3-Btc-BlockHeader-NTx 'In3.Btc.BlockHeader.NTx')
+  - [Nextblockhash](#P-In3-Btc-BlockHeader-Nextblockhash 'In3.Btc.BlockHeader.Nextblockhash')
+  - [Nonce](#P-In3-Btc-BlockHeader-Nonce 'In3.Btc.BlockHeader.Nonce')
+  - [Previousblockhash](#P-In3-Btc-BlockHeader-Previousblockhash 'In3.Btc.BlockHeader.Previousblockhash')
+  - [Time](#P-In3-Btc-BlockHeader-Time 'In3.Btc.BlockHeader.Time')
+  - [Version](#P-In3-Btc-BlockHeader-Version 'In3.Btc.BlockHeader.Version')
+  - [VersionHex](#P-In3-Btc-BlockHeader-VersionHex 'In3.Btc.BlockHeader.VersionHex')
 - [BlockParameter](#T-In3-BlockParameter 'In3.BlockParameter')
   - [Earliest](#P-In3-BlockParameter-Earliest 'In3.BlockParameter.Earliest')
   - [Latest](#P-In3-BlockParameter-Latest 'In3.BlockParameter.Latest')
+- [Block\`1](#T-In3-Btc-Block`1 'In3.Btc.Block`1')
+  - [Size](#P-In3-Btc-Block`1-Size 'In3.Btc.Block`1.Size')
+  - [Tx](#P-In3-Btc-Block`1-Tx 'In3.Btc.Block`1.Tx')
+  - [Weight](#P-In3-Btc-Block`1-Weight 'In3.Btc.Block`1.Weight')
 - [Chain](#T-In3-Chain 'In3.Chain')
+  - [Btc](#F-In3-Chain-Btc 'In3.Chain.Btc')
   - [Evan](#F-In3-Chain-Evan 'In3.Chain.Evan')
+  - [Ewc](#F-In3-Chain-Ewc 'In3.Chain.Ewc')
   - [Goerli](#F-In3-Chain-Goerli 'In3.Chain.Goerli')
   - [Ipfs](#F-In3-Chain-Ipfs 'In3.Chain.Ipfs')
   - [Kovan](#F-In3-Chain-Kovan 'In3.Chain.Kovan')
@@ -147,13 +341,12 @@ TODO explain how to set up example-projects
   - [WhiteListContract](#P-In3-Configuration-ChainConfiguration-WhiteListContract 'In3.Configuration.ChainConfiguration.WhiteListContract')
 - [ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration')
   - [AutoUpdateList](#P-In3-Configuration-ClientConfiguration-AutoUpdateList 'In3.Configuration.ClientConfiguration.AutoUpdateList')
+  - [BootWeights](#P-In3-Configuration-ClientConfiguration-BootWeights 'In3.Configuration.ClientConfiguration.BootWeights')
   - [ChainsConfiguration](#P-In3-Configuration-ClientConfiguration-ChainsConfiguration 'In3.Configuration.ClientConfiguration.ChainsConfiguration')
   - [Finality](#P-In3-Configuration-ClientConfiguration-Finality 'In3.Configuration.ClientConfiguration.Finality')
   - [IncludeCode](#P-In3-Configuration-ClientConfiguration-IncludeCode 'In3.Configuration.ClientConfiguration.IncludeCode')
   - [KeepIn3](#P-In3-Configuration-ClientConfiguration-KeepIn3 'In3.Configuration.ClientConfiguration.KeepIn3')
   - [MaxAttempts](#P-In3-Configuration-ClientConfiguration-MaxAttempts 'In3.Configuration.ClientConfiguration.MaxAttempts')
-  - [MaxBlockCache](#P-In3-Configuration-ClientConfiguration-MaxBlockCache 'In3.Configuration.ClientConfiguration.MaxBlockCache')
-  - [MaxCodeCache](#P-In3-Configuration-ClientConfiguration-MaxCodeCache 'In3.Configuration.ClientConfiguration.MaxCodeCache')
   - [MinDeposit](#P-In3-Configuration-ClientConfiguration-MinDeposit 'In3.Configuration.ClientConfiguration.MinDeposit')
   - [NodeLimit](#P-In3-Configuration-ClientConfiguration-NodeLimit 'In3.Configuration.ClientConfiguration.NodeLimit')
   - [NodeProps](#P-In3-Configuration-ClientConfiguration-NodeProps 'In3.Configuration.ClientConfiguration.NodeProps')
@@ -164,15 +357,33 @@ TODO explain how to set up example-projects
   - [SignatureCount](#P-In3-Configuration-ClientConfiguration-SignatureCount 'In3.Configuration.ClientConfiguration.SignatureCount')
   - [Timeout](#P-In3-Configuration-ClientConfiguration-Timeout 'In3.Configuration.ClientConfiguration.Timeout')
   - [UseHttp](#P-In3-Configuration-ClientConfiguration-UseHttp 'In3.Configuration.ClientConfiguration.UseHttp')
+- [Context](#T-In3-Context-Context 'In3.Context.Context')
+  - [#ctor(ctx,nativeClient)](#M-In3-Context-Context-#ctor-System-IntPtr,In3-Native-NativeClient- 'In3.Context.Context.#ctor(System.IntPtr,In3.Native.NativeClient)')
+  - [CreateNativeCtx(nativeIn3Ptr,rpc)](#M-In3-Context-Context-CreateNativeCtx-System-IntPtr,System-String- 'In3.Context.Context.CreateNativeCtx(System.IntPtr,System.String)')
+  - [Dispose()](#M-In3-Context-Context-Dispose 'In3.Context.Context.Dispose')
+  - [Execute()](#M-In3-Context-Context-Execute 'In3.Context.Context.Execute')
+  - [FromRpc(wrapper,rpc)](#M-In3-Context-Context-FromRpc-In3-Native-NativeClient,System-String- 'In3.Context.Context.FromRpc(In3.Native.NativeClient,System.String)')
+  - [GetErrorMessage()](#M-In3-Context-Context-GetErrorMessage 'In3.Context.Context.GetErrorMessage')
+  - [GetLastWaiting()](#M-In3-Context-Context-GetLastWaiting 'In3.Context.Context.GetLastWaiting')
+  - [GetResponse()](#M-In3-Context-Context-GetResponse 'In3.Context.Context.GetResponse')
+  - [GetType()](#M-In3-Context-Context-GetType 'In3.Context.Context.GetType')
+  - [HandleRequest()](#M-In3-Context-Context-HandleRequest 'In3.Context.Context.HandleRequest')
+  - [HandleSign()](#M-In3-Context-Context-HandleSign 'In3.Context.Context.HandleSign')
+  - [IsValid()](#M-In3-Context-Context-IsValid 'In3.Context.Context.IsValid')
+  - [ReportError()](#M-In3-Context-Context-ReportError-System-String- 'In3.Context.Context.ReportError(System.String)')
+- [DataTypeConverter](#T-In3-Utils-DataTypeConverter 'In3.Utils.DataTypeConverter')
+  - [HexStringToBigint(source)](#M-In3-Utils-DataTypeConverter-HexStringToBigint-System-String- 'In3.Utils.DataTypeConverter.HexStringToBigint(System.String)')
 - [DefaultTransport](#T-In3-Transport-DefaultTransport 'In3.Transport.DefaultTransport')
   - [#ctor()](#M-In3-Transport-DefaultTransport-#ctor 'In3.Transport.DefaultTransport.#ctor')
   - [Handle(url,payload)](#M-In3-Transport-DefaultTransport-Handle-System-String,System-String- 'In3.Transport.DefaultTransport.Handle(System.String,System.String)')
 - [ENSParameter](#T-In3-ENSParameter 'In3.ENSParameter')
-  - [Addr](#F-In3-ENSParameter-Addr 'In3.ENSParameter.Addr')
-  - [Hash](#F-In3-ENSParameter-Hash 'In3.ENSParameter.Hash')
-  - [Owner](#F-In3-ENSParameter-Owner 'In3.ENSParameter.Owner')
-  - [Resolver](#F-In3-ENSParameter-Resolver 'In3.ENSParameter.Resolver')
+  - [Addr](#P-In3-ENSParameter-Addr 'In3.ENSParameter.Addr')
+  - [Hash](#P-In3-ENSParameter-Hash 'In3.ENSParameter.Hash')
+  - [Owner](#P-In3-ENSParameter-Owner 'In3.ENSParameter.Owner')
+  - [Resolver](#P-In3-ENSParameter-Resolver 'In3.ENSParameter.Resolver')
 - [IN3](#T-In3-IN3 'In3.IN3')
+  - [#ctor(chainId)](#M-In3-IN3-#ctor-In3-Chain- 'In3.IN3.#ctor(In3.Chain)')
+  - [Btc](#P-In3-IN3-Btc 'In3.IN3.Btc')
   - [Configuration](#P-In3-IN3-Configuration 'In3.IN3.Configuration')
   - [Crypto](#P-In3-IN3-Crypto 'In3.IN3.Crypto')
   - [Eth1](#P-In3-IN3-Eth1 'In3.IN3.Eth1')
@@ -180,7 +391,9 @@ TODO explain how to set up example-projects
   - [Signer](#P-In3-IN3-Signer 'In3.IN3.Signer')
   - [Storage](#P-In3-IN3-Storage 'In3.IN3.Storage')
   - [Transport](#P-In3-IN3-Transport 'In3.IN3.Transport')
+  - [Finalize()](#M-In3-IN3-Finalize 'In3.IN3.Finalize')
   - [ForChain(chain)](#M-In3-IN3-ForChain-In3-Chain- 'In3.IN3.ForChain(In3.Chain)')
+  - [SendRpc(method,args,in3)](#M-In3-IN3-SendRpc-System-String,System-Object[],System-Collections-Generic-Dictionary{System-String,System-Object}- 'In3.IN3.SendRpc(System.String,System.Object[],System.Collections.Generic.Dictionary{System.String,System.Object})')
 - [InMemoryStorage](#T-In3-Storage-InMemoryStorage 'In3.Storage.InMemoryStorage')
   - [#ctor()](#M-In3-Storage-InMemoryStorage-#ctor 'In3.Storage.InMemoryStorage.#ctor')
   - [Clear()](#M-In3-Storage-InMemoryStorage-Clear 'In3.Storage.InMemoryStorage.Clear')
@@ -224,6 +437,16 @@ TODO explain how to set up example-projects
   - [NodePropProof](#F-In3-Configuration-Props-NodePropProof 'In3.Configuration.Props.NodePropProof')
   - [NodePropSigner](#F-In3-Configuration-Props-NodePropSigner 'In3.Configuration.Props.NodePropSigner')
   - [NodePropStats](#F-In3-Configuration-Props-NodePropStats 'In3.Configuration.Props.NodePropStats')
+- [RpcException](#T-In3-Exceptions-RpcException 'In3.Exceptions.RpcException')
+- [ScriptPubKey](#T-In3-Btc-ScriptPubKey 'In3.Btc.ScriptPubKey')
+  - [Addresses](#P-In3-Btc-ScriptPubKey-Addresses 'In3.Btc.ScriptPubKey.Addresses')
+  - [Asm](#P-In3-Btc-ScriptPubKey-Asm 'In3.Btc.ScriptPubKey.Asm')
+  - [Hex](#P-In3-Btc-ScriptPubKey-Hex 'In3.Btc.ScriptPubKey.Hex')
+  - [ReqSigs](#P-In3-Btc-ScriptPubKey-ReqSigs 'In3.Btc.ScriptPubKey.ReqSigs')
+  - [Type](#P-In3-Btc-ScriptPubKey-Type 'In3.Btc.ScriptPubKey.Type')
+- [ScriptSig](#T-In3-Btc-ScriptSig 'In3.Btc.ScriptSig')
+  - [Asm](#P-In3-Btc-ScriptSig-Asm 'In3.Btc.ScriptSig.Asm')
+  - [Hex](#P-In3-Btc-ScriptSig-Hex 'In3.Btc.ScriptSig.Hex')
 - [SignatureType](#T-In3-Crypto-SignatureType 'In3.Crypto.SignatureType')
   - [EthSign](#P-In3-Crypto-SignatureType-EthSign 'In3.Crypto.SignatureType.EthSign')
   - [Hash](#P-In3-Crypto-SignatureType-Hash 'In3.Crypto.SignatureType.Hash')
@@ -249,7 +472,22 @@ TODO explain how to set up example-projects
   - [Clear()](#M-In3-Storage-Storage-Clear 'In3.Storage.Storage.Clear')
   - [GetItem(key)](#M-In3-Storage-Storage-GetItem-System-String- 'In3.Storage.Storage.GetItem(System.String)')
   - [SetItem(key,content)](#M-In3-Storage-Storage-SetItem-System-String,System-Byte[]- 'In3.Storage.Storage.SetItem(System.String,System.Byte[])')
+- [Transaction](#T-In3-Btc-Transaction 'In3.Btc.Transaction')
 - [Transaction](#T-In3-Eth1-Transaction 'In3.Eth1.Transaction')
+  - [Blockhash](#P-In3-Btc-Transaction-Blockhash 'In3.Btc.Transaction.Blockhash')
+  - [Blocktime](#P-In3-Btc-Transaction-Blocktime 'In3.Btc.Transaction.Blocktime')
+  - [Confirmations](#P-In3-Btc-Transaction-Confirmations 'In3.Btc.Transaction.Confirmations')
+  - [Hash](#P-In3-Btc-Transaction-Hash 'In3.Btc.Transaction.Hash')
+  - [Hex](#P-In3-Btc-Transaction-Hex 'In3.Btc.Transaction.Hex')
+  - [Locktime](#P-In3-Btc-Transaction-Locktime 'In3.Btc.Transaction.Locktime')
+  - [Size](#P-In3-Btc-Transaction-Size 'In3.Btc.Transaction.Size')
+  - [Time](#P-In3-Btc-Transaction-Time 'In3.Btc.Transaction.Time')
+  - [Txid](#P-In3-Btc-Transaction-Txid 'In3.Btc.Transaction.Txid')
+  - [Version](#P-In3-Btc-Transaction-Version 'In3.Btc.Transaction.Version')
+  - [Vin](#P-In3-Btc-Transaction-Vin 'In3.Btc.Transaction.Vin')
+  - [Vout](#P-In3-Btc-Transaction-Vout 'In3.Btc.Transaction.Vout')
+  - [Vsize](#P-In3-Btc-Transaction-Vsize 'In3.Btc.Transaction.Vsize')
+  - [Weight](#P-In3-Btc-Transaction-Weight 'In3.Btc.Transaction.Weight')
   - [BlockHash](#P-In3-Eth1-Transaction-BlockHash 'In3.Eth1.Transaction.BlockHash')
   - [BlockNumber](#P-In3-Eth1-Transaction-BlockNumber 'In3.Eth1.Transaction.BlockNumber')
   - [ChainId](#P-In3-Eth1-Transaction-ChainId 'In3.Eth1.Transaction.ChainId')
@@ -273,6 +511,16 @@ TODO explain how to set up example-projects
   - [Transactions](#P-In3-Eth1-TransactionBlock-Transactions 'In3.Eth1.TransactionBlock.Transactions')
 - [TransactionHashBlock](#T-In3-Eth1-TransactionHashBlock 'In3.Eth1.TransactionHashBlock')
   - [Transactions](#P-In3-Eth1-TransactionHashBlock-Transactions 'In3.Eth1.TransactionHashBlock.Transactions')
+- [TransactionInput](#T-In3-Btc-TransactionInput 'In3.Btc.TransactionInput')
+  - [ScriptSig](#P-In3-Btc-TransactionInput-ScriptSig 'In3.Btc.TransactionInput.ScriptSig')
+  - [Sequence](#P-In3-Btc-TransactionInput-Sequence 'In3.Btc.TransactionInput.Sequence')
+  - [Txid](#P-In3-Btc-TransactionInput-Txid 'In3.Btc.TransactionInput.Txid')
+  - [Txinwitness](#P-In3-Btc-TransactionInput-Txinwitness 'In3.Btc.TransactionInput.Txinwitness')
+  - [Yout](#P-In3-Btc-TransactionInput-Yout 'In3.Btc.TransactionInput.Yout')
+- [TransactionOutput](#T-In3-Btc-TransactionOutput 'In3.Btc.TransactionOutput')
+  - [N](#P-In3-Btc-TransactionOutput-N 'In3.Btc.TransactionOutput.N')
+  - [ScriptPubKey](#P-In3-Btc-TransactionOutput-ScriptPubKey 'In3.Btc.TransactionOutput.ScriptPubKey')
+  - [Value](#P-In3-Btc-TransactionOutput-Value 'In3.Btc.TransactionOutput.Value')
 - [TransactionReceipt](#T-In3-Eth1-TransactionReceipt 'In3.Eth1.TransactionReceipt')
   - [BlockHash](#P-In3-Eth1-TransactionReceipt-BlockHash 'In3.Eth1.TransactionReceipt.BlockHash')
   - [BlockNumber](#P-In3-Eth1-TransactionReceipt-BlockNumber 'In3.Eth1.TransactionReceipt.BlockNumber')
@@ -324,6 +572,17 @@ The address.
 
 The public key.
 
+<a name='T-In3-Btc-Api'></a>
+### Api `type`
+
+
+
+In3.Btc
+
+
+
+API for handling BitCoin data. Use it when connected to [Btc](#F-In3-Chain-Btc 'In3.Chain.Btc').
+
 <a name='T-In3-Crypto-Api'></a>
 ### Api `type`
 
@@ -356,6 +615,169 @@ In3.Ipfs
 
 
 API for ipfs realted methods. To be used along with [Ipfs](#F-In3-Chain-Ipfs 'In3.Chain.Ipfs') on [IN3](#T-In3-IN3 'In3.IN3'). Ipfs stands for and is a peer-to-peer hypermedia protocol designed to make the web faster, safer, and more open.
+
+<a name='M-In3-Btc-Api-GetBlockBytes-System-String-'></a>
+#### GetBlockBytes(blockHash) `method`
+
+
+
+Retrieves the serialized block in bytes.
+
+###### Returns
+
+The bytes of the block.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **blockHash** -  The hash of the Block. 
+
+###### Example
+
+```
+byte[] blockBytes = in3.Btc.GetBlockBytes("000000000000000000064ba7512ecc70cabd7ed17e31c06f2205d5ecdadd6d22");
+```
+
+<a name='M-In3-Btc-Api-GetBlockHeader-System-String-'></a>
+#### GetBlockHeader(blockHash) `method`
+
+
+
+Retrieves the blockheader.
+
+###### Returns
+
+The Block header.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **blockHash** -  The hash of the Block. 
+
+###### Example
+
+```
+BlockHeader header = in3.Btc.GetBlockHeader("0000000000000000000cd3c5d7638014e78a5fba33be5fa5cb10ef9f03d99e60");
+```
+
+<a name='M-In3-Btc-Api-GetBlockHeaderBytes-System-String-'></a>
+#### GetBlockHeaderBytes(blockHash) `method`
+
+
+
+Retrieves the byte array representing teh serialized blockheader data.
+
+###### Returns
+
+The Block header in bytes.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **blockHash** -  The hash of the Block. 
+
+###### Example
+
+```
+byte[] header = in3.Btc.GetBlockHeaderBytes("0000000000000000000cd3c5d7638014e78a5fba33be5fa5cb10ef9f03d99e60");
+```
+
+<a name='M-In3-Btc-Api-GetBlockWithTxData-System-String-'></a>
+#### GetBlockWithTxData(blockHash) `method`
+
+
+
+Retrieves the block including the full transaction data. Use [GetBlockWithTxIds](#M-In3-Btc-Api-GetBlockWithTxIds-System-String- 'In3.Btc.Api.GetBlockWithTxIds(System.String)') for only the transaction ids.
+
+###### Returns
+
+The block of type [Block\`1](#T-In3-Btc-Block`1 'In3.Btc.Block`1').
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **blockHash** -  The hash of the Block. 
+
+###### Example
+
+```
+Block{Transaction} block = in3.Btc.GetBlockWithTxData("000000000000000000064ba7512ecc70cabd7ed17e31c06f2205d5ecdadd6d22");
+Transaction t1 = block.Tx[0];
+```
+
+<a name='M-In3-Btc-Api-GetBlockWithTxIds-System-String-'></a>
+#### GetBlockWithTxIds(blockHash) `method`
+
+
+
+Retrieves the block including only transaction ids. Use [GetBlockWithTxData](#M-In3-Btc-Api-GetBlockWithTxData-System-String- 'In3.Btc.Api.GetBlockWithTxData(System.String)') for the full transaction data.
+
+###### Returns
+
+The block of type [Block\`1](#T-In3-Btc-Block`1 'In3.Btc.Block`1').
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **blockHash** -  The hash of the Block. 
+
+###### Example
+
+```
+Block{string} block = in3.Btc.GetBlockWithTxIds("000000000000000000064ba7512ecc70cabd7ed17e31c06f2205d5ecdadd6d22");
+string t1 = block.Tx[0];
+```
+
+<a name='M-In3-Btc-Api-GetTransaction-System-String-'></a>
+#### GetTransaction(txid) `method`
+
+
+
+Retrieves the transaction and returns the data as json.
+
+###### Returns
+
+The transaction object.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **txid** -  The transaction Id. 
+
+###### Example
+
+```
+Transaction desiredTransaction = in3.Btc.GetTransaction("1427c7d1698e61afe061950226f1c149990b8c1e1b157320b0c4acf7d6b5605d");
+```
+
+<a name='M-In3-Btc-Api-GetTransactionBytes-System-String-'></a>
+#### GetTransactionBytes(txid) `method`
+
+
+
+Retrieves the serialized transaction (bytes).
+
+###### Returns
+
+The byte array for the Transaction.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **txid** -  The transaction Id. 
+
+###### Example
+
+```
+byte[] serializedTransaction = in3.Btc.GetTransactionBytes("1427c7d1698e61afe061950226f1c149990b8c1e1b157320b0c4acf7d6b5605d");
+```
 
 <a name='M-In3-Crypto-Api-DecryptKey-System-String,System-String-'></a>
 #### DecryptKey(pk,passphrase) `method`
@@ -560,8 +982,8 @@ EIP-55 compliant, mixed-case address.
 -  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **address** -  Ethereum address. 
 -  [System.Nullable{System.Boolean}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Nullable 'System.Nullable{System.Boolean}')  **shouldUseChainId** -  If `true`, the chain id is integrated as well. Default being `false`. 
 
-<a name='M-In3-Eth1-Api-ENS-System-String,System-Nullable{In3-ENSParameter}-'></a>
-#### ENS(name,type) `method`
+<a name='M-In3-Eth1-Api-Ens-System-String,In3-ENSParameter-'></a>
+#### Ens(name,type) `method`
 
 
 
@@ -576,11 +998,11 @@ The resolved entity for the domain.
 
 
 -  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **name** -  ENS domain name. 
--  [System.Nullable{In3.ENSParameter}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Nullable 'System.Nullable{In3.ENSParameter}')  **type** -  One of [ENSParameter](#T-In3-ENSParameter 'In3.ENSParameter'). 
+-  [In3.ENSParameter](#T-In3-ENSParameter 'In3.ENSParameter')  **type** -  One of [ENSParameter](#T-In3-ENSParameter 'In3.ENSParameter'). 
 
 ###### Remarks
 
-The actual semantics of the returning value changes according to `type` .
+The actual semantics of the returning value changes according to `type`.
 
 <a name='M-In3-Eth1-Api-EstimateGas-In3-Eth1-TransactionRequest,System-Numerics-BigInteger-'></a>
 #### EstimateGas(request,blockNumber) `method`
@@ -1292,6 +1714,122 @@ The roothash of the merkletree containing all transaction of the block.
 
 List of uncle hashes.
 
+<a name='T-In3-Btc-BlockHeader'></a>
+### BlockHeader `type`
+
+
+
+In3.Btc
+
+
+
+A Block header.
+
+<a name='P-In3-Btc-BlockHeader-Bits'></a>
+#### Bits `property`
+
+
+
+Bits (target) for the block as hex.
+
+<a name='P-In3-Btc-BlockHeader-Chainwork'></a>
+#### Chainwork `property`
+
+
+
+Total amount of work since genesis.
+
+<a name='P-In3-Btc-BlockHeader-Confirmations'></a>
+#### Confirmations `property`
+
+
+
+Number of confirmations or blocks mined on top of the containing block.
+
+<a name='P-In3-Btc-BlockHeader-Difficulty'></a>
+#### Difficulty `property`
+
+
+
+Difficulty of the block.
+
+<a name='P-In3-Btc-BlockHeader-Hash'></a>
+#### Hash `property`
+
+
+
+The hash of the blockheader.
+
+<a name='P-In3-Btc-BlockHeader-Height'></a>
+#### Height `property`
+
+
+
+Block number.
+
+<a name='P-In3-Btc-BlockHeader-Mediantime'></a>
+#### Mediantime `property`
+
+
+
+Unix timestamp in seconds since 1970.
+
+<a name='P-In3-Btc-BlockHeader-Merkleroot'></a>
+#### Merkleroot `property`
+
+
+
+Merkle root of the trie of all transactions in the block.
+
+<a name='P-In3-Btc-BlockHeader-NTx'></a>
+#### NTx `property`
+
+
+
+Number of transactions in the block.
+
+<a name='P-In3-Btc-BlockHeader-Nextblockhash'></a>
+#### Nextblockhash `property`
+
+
+
+Hash of the next blockheader.
+
+<a name='P-In3-Btc-BlockHeader-Nonce'></a>
+#### Nonce `property`
+
+
+
+Nonce-field of the block.
+
+<a name='P-In3-Btc-BlockHeader-Previousblockhash'></a>
+#### Previousblockhash `property`
+
+
+
+Hash of the parent blockheader.
+
+<a name='P-In3-Btc-BlockHeader-Time'></a>
+#### Time `property`
+
+
+
+Unix timestamp in seconds since 1970.
+
+<a name='P-In3-Btc-BlockHeader-Version'></a>
+#### Version `property`
+
+
+
+Used version.
+
+<a name='P-In3-Btc-BlockHeader-VersionHex'></a>
+#### VersionHex `property`
+
+
+
+Version as hex.
+
 <a name='T-In3-BlockParameter'></a>
 ### BlockParameter `type`
 
@@ -1321,6 +1859,38 @@ Constant associated with the latest mined block in the chain.
 
 While the parameter itself is constant the current "latest" block changes everytime a new block is mined. The result of the operations are also related to `ReplaceLatestBlock` on [ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration').
 
+<a name='T-In3-Btc-Block`1'></a>
+### Block\`1 `type`
+
+
+
+In3.Btc
+
+
+
+A Block.
+
+<a name='P-In3-Btc-Block`1-Size'></a>
+#### Size `property`
+
+
+
+Size of this block in bytes.
+
+<a name='P-In3-Btc-Block`1-Tx'></a>
+#### Tx `property`
+
+
+
+Transactions or Transaction ids of a block. [GetBlockWithTxData](#M-In3-Btc-Api-GetBlockWithTxData-System-String- 'In3.Btc.Api.GetBlockWithTxData(System.String)') or [GetBlockWithTxIds](#M-In3-Btc-Api-GetBlockWithTxIds-System-String- 'In3.Btc.Api.GetBlockWithTxIds(System.String)').
+
+<a name='P-In3-Btc-Block`1-Weight'></a>
+#### Weight `property`
+
+
+
+Weight of this block in bytes.
+
 <a name='T-In3-Chain'></a>
 ### Chain `type`
 
@@ -1332,12 +1902,26 @@ In3
 
 Represents the multiple chains supported by Incubed.
 
+<a name='F-In3-Chain-Btc'></a>
+#### Btc `constants`
+
+
+
+Bitcoin chain.
+
 <a name='F-In3-Chain-Evan'></a>
 #### Evan `constants`
 
 
 
 Evan testnet.
+
+<a name='F-In3-Chain-Ewc'></a>
+#### Ewc `constants`
+
+
+
+Ewf chain.
 
 <a name='F-In3-Chain-Goerli'></a>
 #### Goerli `constants`
@@ -1496,6 +2080,14 @@ Use in conjunction with [ChainConfiguration](#T-In3-Configuration-ChainConfigura
 
 If `true` the nodelist will be automatically updated. False may compromise data security.
 
+<a name='P-In3-Configuration-ClientConfiguration-BootWeights'></a>
+#### BootWeights `property`
+
+
+
+if true, the first request (updating the nodelist) will also fetch the current health status
+ and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache.
+
 <a name='P-In3-Configuration-ClientConfiguration-ChainsConfiguration'></a>
 #### ChainsConfiguration `property`
 
@@ -1530,20 +2122,6 @@ Tthe in3-section (custom node on the RPC call) with the proof will also returned
 
 
 Maximum times the client will retry to contact a certain node.
-
-<a name='P-In3-Configuration-ClientConfiguration-MaxBlockCache'></a>
-#### MaxBlockCache `property`
-
-
-
-Maximum blocks kept in memory.
-
-<a name='P-In3-Configuration-ClientConfiguration-MaxCodeCache'></a>
-#### MaxCodeCache `property`
-
-
-
-Maximum number of bytes used to cache EVM code in memory.
 
 <a name='P-In3-Configuration-ClientConfiguration-MinDeposit'></a>
 #### MinDeposit `property`
@@ -1625,6 +2203,235 @@ Milliseconds before a request times out.
 
 Disable ssl on the Http connection.
 
+<a name='T-In3-Context-Context'></a>
+### Context `type`
+
+
+
+In3.Context
+
+
+
+Acts as the main orchestrator for the execution of an rpc. Holds a reference to the native context (ctx) and wraps behavior around it.
+
+<a name='M-In3-Context-Context-#ctor-System-IntPtr,In3-Native-NativeClient-'></a>
+#### #ctor(ctx,nativeClient) `constructor`
+
+
+
+Standard constructor, private so people use [FromRpc](#M-In3-Context-Context-FromRpc-In3-Native-NativeClient,System-String- 'In3.Context.Context.FromRpc(In3.Native.NativeClient,System.String)').
+
+###### Parameters
+
+
+
+-  [System.IntPtr](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.IntPtr 'System.IntPtr')  **ctx** -  The native rpc context. 
+-  [In3.Native.NativeClient](#T-In3-Native-NativeClient 'In3.Native.NativeClient')  **nativeClient** -  Object that encapsulates the native client. 
+
+<a name='M-In3-Context-Context-CreateNativeCtx-System-IntPtr,System-String-'></a>
+#### CreateNativeCtx(nativeIn3Ptr,rpc) `method`
+
+
+
+Method to manage the creation of the native ctx request.
+
+###### Returns
+
+Native rpc pointer
+
+###### Parameters
+
+
+
+-  [System.IntPtr](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.IntPtr 'System.IntPtr')  **nativeIn3Ptr** -  Native client pointer. 
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **rpc** -  The rpc request 
+
+###### Exceptions
+
+| Name | Description |
+
+| [In3.Exceptions.RpcException](#T-In3-Exceptions-RpcException 'In3.Exceptions.RpcException') |  |
+
+<a name='M-In3-Context-Context-Dispose'></a>
+#### Dispose() `method`
+
+
+
+Destructor method for the native ctx encapsulated by the [Context](#T-In3-Context-Context 'In3.Context.Context') object.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-Execute'></a>
+#### Execute() `method`
+
+
+
+Proxy to in3_ctx_execute, every invocation generates a new state.
+
+###### Returns
+
+The state as computed by in3_ctx_execute.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-FromRpc-In3-Native-NativeClient,System-String-'></a>
+#### FromRpc(wrapper,rpc) `method`
+
+
+
+Factory-like method to build a Context object from an rpc request.
+
+###### Returns
+
+An instance of context.
+
+###### Parameters
+
+
+
+-  [In3.Native.NativeClient](#T-In3-Native-NativeClient 'In3.Native.NativeClient')  **wrapper** -  The object that encapsulates the native client pointer. 
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **rpc** -  The rpc request 
+
+<a name='M-In3-Context-Context-GetErrorMessage'></a>
+#### GetErrorMessage() `method`
+
+
+
+Retrieve the error result on the context.
+
+###### Returns
+
+A string describing the encountered error.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-GetLastWaiting'></a>
+#### GetLastWaiting() `method`
+
+
+
+Method responsible to fetch the pending context references in the current context.
+
+###### Returns
+
+A context object.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-GetResponse'></a>
+#### GetResponse() `method`
+
+
+
+Method to get the consolidated response of a request.
+
+###### Returns
+
+The final result.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-GetType'></a>
+#### GetType() `method`
+
+
+
+Method to get the consolidated response of a request.
+
+###### Returns
+
+The final result.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-HandleRequest'></a>
+#### HandleRequest() `method`
+
+
+
+Handle rpc request in an asynchronous manner.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-HandleSign'></a>
+#### HandleSign() `method`
+
+
+
+Handle signing request in an asynchronous manner.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-IsValid'></a>
+#### IsValid() `method`
+
+
+
+Conditional to verify if the encapsulated pointer actually points to something.
+
+###### Returns
+
+if its valid, `false` if it is not.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='M-In3-Context-Context-ReportError-System-String-'></a>
+#### ReportError() `method`
+
+
+
+Setter for the error on the current context. Proxies it to the native context.
+
+###### Parameters
+
+This method has no parameters.
+
+<a name='T-In3-Utils-DataTypeConverter'></a>
+### DataTypeConverter `type`
+
+
+
+In3.Utils
+
+
+
+General util class for conversion between blockchain types.
+
+<a name='M-In3-Utils-DataTypeConverter-HexStringToBigint-System-String-'></a>
+#### HexStringToBigint(source) `method`
+
+
+
+Converts a zero-prefixed hex (e.g.: 0x05) to [BigInteger](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Numerics.BigInteger 'System.Numerics.BigInteger')
+
+###### Returns
+
+The number representation of `source`.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **source** -  The hex number string. 
+
 <a name='T-In3-Transport-DefaultTransport'></a>
 ### DefaultTransport `type`
 
@@ -1674,31 +2481,31 @@ In3
 
 
 
-Defines the kind of entity associated with the ENS Resolved. Used along with [ENS](#M-In3-Eth1-Api-ENS-System-String,System-Nullable{In3-ENSParameter}- 'In3.Eth1.Api.ENS(System.String,System.Nullable{In3.ENSParameter})').
+Defines the kind of entity associated with the ENS Resolved. Used along with [Ens](#M-In3-Eth1-Api-Ens-System-String,In3-ENSParameter- 'In3.Eth1.Api.Ens(System.String,In3.ENSParameter)').
 
-<a name='F-In3-ENSParameter-Addr'></a>
-#### Addr `constants`
+<a name='P-In3-ENSParameter-Addr'></a>
+#### Addr `property`
 
 
 
 Address.
 
-<a name='F-In3-ENSParameter-Hash'></a>
-#### Hash `constants`
+<a name='P-In3-ENSParameter-Hash'></a>
+#### Hash `property`
 
 
 
 Hash.
 
-<a name='F-In3-ENSParameter-Owner'></a>
-#### Owner `constants`
+<a name='P-In3-ENSParameter-Owner'></a>
+#### Owner `property`
 
 
 
 Owner.
 
-<a name='F-In3-ENSParameter-Resolver'></a>
-#### Resolver `constants`
+<a name='P-In3-ENSParameter-Resolver'></a>
+#### Resolver `property`
 
 
 
@@ -1716,6 +2523,26 @@ In3
 Incubed network client. Connect to the blockchain via a list of bootnodes, then gets the latest list of nodes in
 the network and ask a certain number of the to sign the block header of given list, putting their deposit at stake.
 Once with the latest list at hand, the client can request any other on-chain information using the same scheme.
+
+<a name='M-In3-IN3-#ctor-In3-Chain-'></a>
+#### #ctor(chainId) `constructor`
+
+
+
+Standard constructor, use [ForChain](#M-In3-IN3-ForChain-In3-Chain- 'In3.IN3.ForChain(In3.Chain)') instead.
+
+###### Parameters
+
+
+
+-  [In3.Chain](#T-In3-Chain 'In3.Chain')  **chainId** -  The chainId to connect to. 
+
+<a name='P-In3-IN3-Btc'></a>
+#### Btc `property`
+
+
+
+Gets [Api](#T-In3-Btc-Api 'In3.Btc.Api') object.
 
 <a name='P-In3-IN3-Configuration'></a>
 #### Configuration `property`
@@ -1766,6 +2593,17 @@ Get or Sets [Storage](#T-In3-Storage-Storage 'In3.Storage.Storage') object. If n
 
 Gets or sets [Transport](#T-In3-Transport-Transport 'In3.Transport.Transport') object. If not set [DefaultTransport](#T-In3-Transport-DefaultTransport 'In3.Transport.DefaultTransport') will be used.
 
+<a name='M-In3-IN3-Finalize'></a>
+#### Finalize() `method`
+
+
+
+Finalizer for the client.
+
+###### Parameters
+
+This method has no parameters.
+
 <a name='M-In3-IN3-ForChain-In3-Chain-'></a>
 #### ForChain(chain) `method`
 
@@ -1788,6 +2626,25 @@ An Incubed instance.
 ```
 IN3 client = IN3.ForChain(Chain.Mainnet);
 ```
+
+<a name='M-In3-IN3-SendRpc-System-String,System-Object[],System-Collections-Generic-Dictionary{System-String,System-Object}-'></a>
+#### SendRpc(method,args,in3) `method`
+
+
+
+Method used to communicate with the client. In general, its preferably to use the API.
+
+###### Returns
+
+The result of the Rpc operation as JSON.
+
+###### Parameters
+
+
+
+-  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **method** -  Rpc method. 
+-  [System.Object[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Object[] 'System.Object[]')  **args** -  Arguments to the operation. 
+-  [System.Collections.Generic.Dictionary{System.String,System.Object}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.Dictionary 'System.Collections.Generic.Dictionary{System.String,System.Object}')  **in3** -  Internal parameters to be repassed to the server or to change the client behavior. 
 
 <a name='T-In3-Storage-InMemoryStorage'></a>
 ### InMemoryStorage `type`
@@ -2170,6 +3027,92 @@ filter out non-signer nodes.
 
 filter out nodes that do not provide stats.
 
+<a name='T-In3-Exceptions-RpcException'></a>
+### RpcException `type`
+
+
+
+In3.Exceptions
+
+
+
+Custom Exception to be thrown during the
+
+<a name='T-In3-Btc-ScriptPubKey'></a>
+### ScriptPubKey `type`
+
+
+
+In3.Btc
+
+
+
+Script on a transaction output.
+
+<a name='P-In3-Btc-ScriptPubKey-Addresses'></a>
+#### Addresses `property`
+
+
+
+List of addresses.
+
+<a name='P-In3-Btc-ScriptPubKey-Asm'></a>
+#### Asm `property`
+
+
+
+The asm data,
+
+<a name='P-In3-Btc-ScriptPubKey-Hex'></a>
+#### Hex `property`
+
+
+
+The raw hex data.
+
+<a name='P-In3-Btc-ScriptPubKey-ReqSigs'></a>
+#### ReqSigs `property`
+
+
+
+The required sigs.
+
+<a name='P-In3-Btc-ScriptPubKey-Type'></a>
+#### Type `property`
+
+
+
+The type.
+
+###### Example
+
+pubkeyhash
+
+<a name='T-In3-Btc-ScriptSig'></a>
+### ScriptSig `type`
+
+
+
+In3.Btc
+
+
+
+Script on a transaction input.
+
+<a name='P-In3-Btc-ScriptSig-Asm'></a>
+#### Asm `property`
+
+
+
+The asm data.
+
+<a name='P-In3-Btc-ScriptSig-Hex'></a>
+#### Hex `property`
+
+
+
+The raw hex data.
+
 <a name='T-In3-Crypto-SignatureType'></a>
 ### SignatureType `type`
 
@@ -2311,7 +3254,7 @@ Signs the transaction data with the private key associated with the invoked acco
 
 ###### Returns
 
-The signed transactiond ata.
+The signed transaction data.
 
 ###### Parameters
 
@@ -2472,6 +3415,17 @@ Stores an item to cache.
 -  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **key** -  The key for the item. 
 -  [System.Byte[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Byte[] 'System.Byte[]')  **content** -  The value to store. 
 
+<a name='T-In3-Btc-Transaction'></a>
+### Transaction `type`
+
+
+
+In3.Btc
+
+
+
+A BitCoin Transaction.
+
 <a name='T-In3-Eth1-Transaction'></a>
 ### Transaction `type`
 
@@ -2482,6 +3436,104 @@ In3.Eth1
 
 
 Class representing a transaction that was accepted by the Ethereum chain.
+
+<a name='P-In3-Btc-Transaction-Blockhash'></a>
+#### Blockhash `property`
+
+
+
+The block hash of the block containing this transaction.
+
+<a name='P-In3-Btc-Transaction-Blocktime'></a>
+#### Blocktime `property`
+
+
+
+The block time in seconds since epoch (Jan 1 1970 GMT).
+
+<a name='P-In3-Btc-Transaction-Confirmations'></a>
+#### Confirmations `property`
+
+
+
+The confirmations.
+
+<a name='P-In3-Btc-Transaction-Hash'></a>
+#### Hash `property`
+
+
+
+The transaction hash (differs from txid for witness transactions).
+
+<a name='P-In3-Btc-Transaction-Hex'></a>
+#### Hex `property`
+
+
+
+The hex representation of raw data.
+
+<a name='P-In3-Btc-Transaction-Locktime'></a>
+#### Locktime `property`
+
+
+
+The locktime.
+
+<a name='P-In3-Btc-Transaction-Size'></a>
+#### Size `property`
+
+
+
+The serialized transaction size.
+
+<a name='P-In3-Btc-Transaction-Time'></a>
+#### Time `property`
+
+
+
+The transaction time in seconds since epoch (Jan 1 1970 GMT).
+
+<a name='P-In3-Btc-Transaction-Txid'></a>
+#### Txid `property`
+
+
+
+Transaction Id.
+
+<a name='P-In3-Btc-Transaction-Version'></a>
+#### Version `property`
+
+
+
+The version.
+
+<a name='P-In3-Btc-Transaction-Vin'></a>
+#### Vin `property`
+
+
+
+The transaction inputs.
+
+<a name='P-In3-Btc-Transaction-Vout'></a>
+#### Vout `property`
+
+
+
+The transaction outputs.
+
+<a name='P-In3-Btc-Transaction-Vsize'></a>
+#### Vsize `property`
+
+
+
+The virtual transaction size (differs from size for witness transactions).
+
+<a name='P-In3-Btc-Transaction-Weight'></a>
+#### Weight `property`
+
+
+
+The transaction’s weight (between vsize4-3 and vsize4).
 
 <a name='P-In3-Eth1-Transaction-BlockHash'></a>
 #### BlockHash `property`
@@ -2659,6 +3711,84 @@ Array with the full transactions containing on this block.
 ###### Remarks
 
 Returned when `shouldIncludeTransactions` on [Api](#T-In3-Eth1-Api 'In3.Eth1.Api') get block methods are set to `false`.
+
+<a name='T-In3-Btc-TransactionInput'></a>
+### TransactionInput `type`
+
+
+
+In3.Btc
+
+
+
+Input of a transaction.
+
+<a name='P-In3-Btc-TransactionInput-ScriptSig'></a>
+#### ScriptSig `property`
+
+
+
+The script.
+
+<a name='P-In3-Btc-TransactionInput-Sequence'></a>
+#### Sequence `property`
+
+
+
+The script sequence number.
+
+<a name='P-In3-Btc-TransactionInput-Txid'></a>
+#### Txid `property`
+
+
+
+The transaction id.
+
+<a name='P-In3-Btc-TransactionInput-Txinwitness'></a>
+#### Txinwitness `property`
+
+
+
+Hex-encoded witness data (if any).
+
+<a name='P-In3-Btc-TransactionInput-Yout'></a>
+#### Yout `property`
+
+
+
+The index of the transactionoutput.
+
+<a name='T-In3-Btc-TransactionOutput'></a>
+### TransactionOutput `type`
+
+
+
+In3.Btc
+
+
+
+Output of a transaction.
+
+<a name='P-In3-Btc-TransactionOutput-N'></a>
+#### N `property`
+
+
+
+The index in the transaction.
+
+<a name='P-In3-Btc-TransactionOutput-ScriptPubKey'></a>
+#### ScriptPubKey `property`
+
+
+
+The script of the transaction.
+
+<a name='P-In3-Btc-TransactionOutput-Value'></a>
+#### Value `property`
+
+
+
+The value in bitcoins.
 
 <a name='T-In3-Eth1-TransactionReceipt'></a>
 ### TransactionReceipt `type`
