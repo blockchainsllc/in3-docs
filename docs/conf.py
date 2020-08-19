@@ -23,13 +23,13 @@ from recommonmark.transform import AutoStructify
 from recommonmark.parser import CommonMarkParser
 import recommonmark
 project = u'Incubed'
-copyright = u'2019, Slock.it'
-author = u'Slock.it GmbH'
+copyright = u'2020, Blockchains LLC'
+author = u'Blockchains LLC'
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'1.2'
+release = u'2.3'
 
 
 # -- General configuration ---------------------------------------------------
@@ -120,7 +120,7 @@ html_theme = "sphinx_rtd_theme"
 # documentation.
 #
 #html_theme_options = {}
-html_logo = 'slockit_logo.svg'
+html_logo = 'bllc.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -169,7 +169,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Incubed.tex', u'Incubed Documentation',
-     u'Slock.it GmbH', 'manual'),
+     u'Blockchains LLC', 'manual'),
 ]
 
 

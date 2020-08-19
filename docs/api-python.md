@@ -11,6 +11,7 @@ Go to our [readthedocs](https://in3.readthedocs.io/) page for more.
 #### Install with pip 
  
 ```shell script
+pip install in3
 ```
 
 #### In3 Client API
@@ -30,9 +31,16 @@ in3_client.account  # ethereum account api
 in3_client.contract  # ethereum smart-contract api
 ```
 
-#### Tests
+#### Developing & Tests
+Install dev dependencies, IDEs should automatically recognize interpreter if done like this.
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Compile local libraries and run tests. Make sure you have cmake installed.
 ```bash
-pytest --pylama
+./buidl_libs.sh
 ```
 
 #### Index
@@ -216,19 +224,21 @@ print('\nEthereum Name Service')
 
 # Instantiate In3 Client for Goerli
 chain = 'goerli'
-client = in3.Client(chain)
+client = in3.Client(chain, cache_enabled=False)
 address = client.ens_address(domain)
+# owner = client.ens_owner(domain)
+# _print()
 
 # Instantiate In3 Client for Mainnet
 chain = 'mainnet'
-client = in3.Client(chain)
+client = in3.Client(chain, cache_enabled=False)
 address = client.ens_address(domain)
 owner = client.ens_owner(domain)
 _print()
 
 # Instantiate In3 Client for Kovan
 chain = 'kovan'
-client = in3.Client(chain)
+client = in3.Client(chain, cache_enabled=True)
 try:
     address = client.ens_address(domain)
     owner = client.ens_owner(domain)
@@ -268,33 +278,43 @@ import time
 
 # On Metamask, be sure to be connected to the correct chain, click on the `...` icon on the right corner of
 # your Account name, select `Account Details`. There, click `Export Private Key`, copy the value to use as secret.
-sender_secret = hex(0x9852782D2AD26C64161665586D23391ECED2D2ED7432A1D26FD326D28EA0171F)
-receiver = hex(0x6FA33809667A99A805b610C49EE2042863b1bb83)
-# 1000000000000000000 == 1 ETH
+# By reading the terminal input, this value will stay in memory only. Don't forget to cls or clear terminal after ;)
+sender_secret = input("Sender secret: ")
+receiver = input("Receiver address: ")
+#     1000000000000000000 == 1 ETH
+#              1000000000 == 1 Gwei Check https://etherscan.io/gasTracker.
 value_in_wei = 1463926659
+# None for Eth mainnet
 chain = 'goerli'
-client = in3.Client(chain)
+client = in3.Client(chain if chain else 'mainnet')
 # A transaction is only final if a certain number of blocks are mined on top of it.
 # This number varies with the chain's consensus algorithm. Time can be calculated over using:
 # wait_time = blocks_for_consensus * avg_block_time_in_secs
-confirmation_wait_time_in_seconds = 25
+# For mainnet and paying low gas, it might take 10 minutes.
+confirmation_wait_time_in_seconds = 30
 etherscan_link_mask = 'https://{}{}etherscan.io/tx/{}'
 
-print('Ethereum Transaction using Incubed\n')
+print('-= Ethereum Transaction using Incubed =- \n')
 try:
     sender = client.eth.account.recover(sender_secret)
     tx = in3.eth.NewTransaction(to=receiver, value=value_in_wei)
-    print('Sending {} Wei from {} to {}.\n'.format(tx.value, sender.address, tx.to))
+    print('[.] Sending {} Wei from {} to {}. Please wait.\n'.format(tx.value, sender.address, tx.to))
     tx_hash = client.eth.account.send_transaction(sender, tx)
-    print('Transaction accepted with hash {}.'.format(tx_hash))
+    print('[.] Transaction accepted with hash {}.'.format(tx_hash))
     add_dot_if_chain = '.' if chain else ''
     print(etherscan_link_mask.format(chain, add_dot_if_chain, tx_hash))
-    print('\nWaiting {} seconds for confirmation.\n'.format(confirmation_wait_time_in_seconds))
-    time.sleep(confirmation_wait_time_in_seconds)
-    receipt: in3.eth.TransactionReceipt = client.eth.transaction_receipt(tx_hash)
-    print('Transaction was sent successfully!')
-    print(json.dumps(receipt.to_dict(), indent=4, sort_keys=True))
-    print('\nMined on block {} used {} GWei.'.format(receipt.blockNumber, receipt.gasUsed))
+    while True:
+        try:
+            print('\n[.] Waiting {} seconds for confirmation.\n'.format(confirmation_wait_time_in_seconds))
+            time.sleep(confirmation_wait_time_in_seconds)
+            receipt: in3.eth.TransactionReceipt = client.eth.transaction_receipt(tx_hash)
+            print('[.] Transaction was sent successfully!\n')
+            print(json.dumps(receipt.to_dict(), indent=4, sort_keys=True))
+            print('[.] Mined on block {} used {} GWei.'.format(receipt.blockNumber, receipt.gasUsed))
+            break
+        except Exception:
+            print('[!] Transaction not mined yet, check https://etherscan.io/gasTracker.')
+            print('[!] Just wait some minutes longer than the average for the price paid!')
 except in3.PrivateKeyNotFoundException as e:
     print(str(e))
 except in3.ClientException as e:
@@ -382,6 +402,72 @@ To address:
 
 ```
 
+### smart_meter_write
+
+source : [in3-c/python/examples/smart_meter_write.py](https://github.com/slockit/in3-c/blob/master/python/examples/smart_meter_write.py)
+
+
+
+```python
+"""
+[{"type":"event","name":"NewReadStored","inputs":[{"type":"address","name":"meter","internalType":"address","indexed":true},{"type":"uint256","name":"bucket","internalType":"uint256","indexed":true},{"type":"address","name":"operator","internalType":"address","indexed":false},{"type":"uint256","name":"timestamp","internalType":"uint256","indexed":false},{"type":"bytes","name":"data","internalType":"bytes","indexed":false}],"anonymous":false},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"DAILY_BUCKET","inputs":[],"constant":true},{"type":"function","stateMutability":"nonpayable","payable":false,"outputs":[],"name":"store","inputs":[{"type":"address","name":"meter","internalType":"address"},{"type":"bytes","name":"data","internalType":"bytes"},{"type":"uint256","name":"timestamp","internalType":"uint256"},{"type":"uint256","name":"bucket","internalType":"uint256"}],"constant":false},{"type":"function","stateMutability":"nonpayable","payable":false,"outputs":[],"name":"storeWithDailyBucket","inputs":[{"type":"address","name":"meter","internalType":"address"},{"type":"bytes","name":"data","internalType":"bytes"},{"type":"uint256","name":"timestamp","internalType":"uint256"}],"constant":false}]
+
+0xf23FF7472FC62C6bEe2F960f5b4170Ab3C1C26d2
+"""
+import base64
+import json
+
+import in3
+import hashlib
+import random
+import time
+
+if __name__ == '__main__':
+
+    c = in3.Client(chain='ewc', in3_config=in3.ClientConfig(transport_binary_format=True))
+
+    smart_meter_registry_addr = '0xf23FF7472FC62C6bEe2F960f5b4170Ab3C1C26d2'
+    # meter, bucket, operator, timestamp, data
+    NewReadStoredEvent = 'NewReadStored(address,uint,address,uint,bytes))'
+    try:
+        # meter, data, timestamp
+        storeWithDailyBucket = 'storeWithDailyBucket(address,bytes,uint256)'
+        meter_addr = '0xb11469A59dF65312737053c4785FA7Ff28660013'
+        salt = hex(random.getrandbits(64))
+        secret_read = hashlib.sha512(b'1101101')
+        secret_read.update(salt.encode('utf8'))
+        secret_read = secret_read.hexdigest()
+        # secret_read = base64.b64encode(secret_read.digest())
+        timestamp = int(time.time())
+        sender_secret = input("Sender secret: ")
+        sender = c.eth.account.recover(sender_secret)
+        encoded_contract_call = c.eth.contract.encode(storeWithDailyBucket, meter_addr, secret_read, timestamp)
+        tx = in3.eth.NewTransaction(to=smart_meter_registry_addr,
+                                    data=encoded_contract_call)
+        tx.gasLimit = c.eth.account.estimate_gas(tx)
+        tx_hash = c.eth.account.send_transaction(sender=sender, transaction=tx)
+        print('https://explorer.energyweb.org/tx/{}'.format(tx_hash))
+        confirmation_wait_time_in_seconds = 60
+        while True:
+            try:
+                print('\n[.] Waiting {} seconds for confirmation.\n'.format(confirmation_wait_time_in_seconds))
+                time.sleep(confirmation_wait_time_in_seconds)
+                receipt: in3.eth.TransactionReceipt = c.eth.transaction_receipt(tx_hash)
+                print('[.] Transaction was sent successfully!\n')
+                print(json.dumps(receipt.to_dict(), indent=4, sort_keys=True))
+                print('[.] Mined on block {} used {} GWei.'.format(receipt.blockNumber, receipt.gasUsed))
+                break
+            except Exception:
+                print('[!] Transaction not mined yet, check https://etherscan.io/gasTracker.')
+                print('[!] Just wait some minutes longer than the average for the price paid!')
+    except in3.PrivateKeyNotFoundException as e:
+        print(str(e))
+    except in3.ClientException as e:
+        print('Client returned error: ', str(e))
+        print('Please try again.')
+
+```
+
 
 ### Running the examples
 
@@ -411,7 +497,8 @@ python example.py
 Client(self,
 chain: str = 'mainnet',
 in3_config: ClientConfig = None,
-transport=<CFunctionType object at 0x10f000390>)
+cache_enabled: bool = True,
+transport=<function https_transport at 0x101898e60>)
 ```
 
 Incubed network client. Connect to the blockchain via a list of bootnodes, then gets the latest list of nodes in
@@ -420,7 +507,10 @@ Once with the latest list at hand, the client can request any other on-chain inf
 
 **Arguments**:
 
+- `chain` _str_ - Ethereum chain to connect to. Defaults to mainnet. Options: 'mainnet', 'kovan', 'goerli', 'ewc'.
 - `in3_config` _ClientConfig or str_ - (optional) Configuration for the client. If not provided, default is loaded.
+- `cache_enabled` _bool_ - False will disable local storage caching.
+- `transport` _function_ - Transport function for custom request routing. Defaults to https.
   
 
 #### refresh_node_list
@@ -433,6 +523,18 @@ Gets the list of Incubed nodes registered in the selected chain registry contrac
 **Returns**:
 
 - `node_list` _NodeList_ - List of registered in3 nodes and metadata.
+  
+
+#### config
+```python
+Client.config()
+```
+
+Client configuration dictionary.
+
+**Returns**:
+
+- `config` _dict_ - Client configuration keys and values.
   
 
 #### ens_namehash
@@ -477,7 +579,7 @@ Resolves ENS domain name to Ethereum address of domain owner.
 
 **Arguments**:
 
-- `domain_name` - ENS supported domain. mydomain.ens, mydomain.xyz, etc
+- `domain_name` - ENS supported domain. i.e mydomain.eth
 - `registry` - ENS registry contract address. i.e. 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e
 
 **Returns**:
@@ -494,7 +596,7 @@ Resolves ENS domain name to Smart-contract address of the resolver registered fo
 
 **Arguments**:
 
-- `domain_name` - ENS supported domain. mydomain.ens, mydomain.xyz, etc
+- `domain_name` - ENS supported domain. i.e mydomain.eth
 - `registry` - ENS registry contract address. i.e. 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e
 
 **Returns**:
@@ -518,8 +620,11 @@ request_retries: int = None,
 response_proof_level: str = None,
 response_includes_code: bool = None,
 response_keep_proof: bool = None,
+transport_binary_format: bool = None,
+transport_ignore_tls: bool = None,
 cached_blocks: int = None,
 cached_code_bytes: int = None,
+boot_weights: bool = None,
 in3_registry: dict = None)
 ```
 
@@ -541,7 +646,7 @@ The verification policy enforces an extra step of security, adding a financial s
 - `latest_block_stall` _int_ - Distance considered safe, consensus wise, from the very latest block. Higher values exponentially increases state finality, and therefore data security, as well guaranteeded responses from in3 nodes. example: 10 - will ask for the state from (latestBlock-10).
 - `account_secret` _str_ - Account SK to sign all in3 requests. (Experimental use `set_account_sk`) example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
 - `node_signatures` _int_ - Node signatures attesting the response to your request. Will send a separate request for each. example: 3 nodes will have to sign the response.
-- `node_signature_consensus` _int_ - Useful when signatureCount <= 1. The client will check for consensus in responses. example: 10 - will ask for 10 different nodes and compare results looking for a consensus in the responses.
+- `node_signature_consensus` _int_ - Useful when node_signatures <= 1. The client will check for consensus in responses. example: 10 - will ask for 10 different nodes and compare results looking for a consensus in the responses.
 - `node_min_deposit` _int_ - Only nodes owning at least this amount will be chosen to sign responses to your requests. i.e. 1000000000000000000 Wei
 - `node_list_auto_update` _bool_ - If true the nodelist will be automatically updated. False may compromise data security.
 - `node_limit` _int_ - Limit nodes stored in the client. example: 150 nodes
@@ -550,8 +655,11 @@ The verification policy enforces an extra step of security, adding a financial s
 - `response_proof_level` _str_ - 'none'|'standard'|'full' Full gets the whole block Patricia-Merkle-Tree, Standard only verifies the specific tree branch concerning the request, None only verifies the root hashes, like a light-client does.
 - `response_includes_code` _bool_ - If true, every request with the address field will include the data, if existent, that is stored in that wallet/smart-contract. If false, only the code digest is included.
 - `response_keep_proof` _bool_ - If true, proof data will be kept in every rpc response. False will remove this data after using it to verify the responses. Useful for debugging and manually verifying the proofs.
+- `transport_binary_format` - If true, the client will communicate with the server using a binary payload instead of json.
+- `transport_ignore_tls` - The client usually verify https tls certificates. To communicate over insecure http, turn this on.
 - `cached_blocks` _int_ - Maximum blocks kept in memory. example: 100 last requested blocks
 - `cached_code_bytes` _int_ - Maximum number of bytes used to cache EVM code in memory. example: 100000 bytes
+- `boot_weights` _bool_ - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache.
 - `in3_registry` _dict_ - In3 Registry Smart Contract configuration data
   
 
@@ -568,7 +676,7 @@ indeed mined are in the correct chain fork.
 
 - `url` _str_ - Endpoint to post to example: https://in3.slock.it
 - `index` _int_ - Index within the contract example: 13
-- `address` _in3.Account_ - Address of the node, which is the public address it iis signing with. example: 0x6C1a01C2aB554930A937B0a2E8105fB47946c679
+- `address` _in3.Account_ - Address of the node, which is the public address it is signing with. example: 0x6C1a01C2aB554930A937B0a2E8105fB47946c679
 - `deposit` _int_ - Deposit of the node in wei example: 12350000
 - `props` _int_ - Properties of the node. example: 3
 - `timeout` _int_ - Time (in seconds) until an owner is able to receive his deposit back after he unregisters himself example: 3600
@@ -1170,37 +1278,27 @@ Encapsulates low-level rpc calls into a comprehensive runtime.
 
 ### In3Runtime
 ```python
-In3Runtime(self, chain_id: int,
-transport: <function CFUNCTYPE at 0x10ea948c0>)
+In3Runtime(self, chain_id: int, cache_enabled: bool, transport_fn)
 ```
 
 Instantiate libin3 and frees it when garbage collected.
 
 **Arguments**:
 
-- `chain_id` _int_ - Chain-id based on EIP-155. If None provided, will connect to the Ethereum network. i.e: 0x1 for mainNet
+- `chain_id` _int_ - Chain-id based on EIP-155. Default is 0x1 for Ethereum mainNet.
+- `cache_enabled` _bool_ - False will disable local storage cache.
+- `transport_fn` - Transport function to handle the HTTP Incubed Network requests.
   
 
-### Library Loader
+### in3.libin3.rpc_api
 
 Load libin3 shared library for the current system, map function ABI, sets in3 network transport functions.
-
-Example of RPC to In3-Core library, In3 Network and back.
-```
-+----------------+                               +----------+                       +------------+                        +------------------+
-|                | in3.client.eth.block_number() |          |     in3_client_rpc    |            |  In3 Network Request   |                  |e
-|     python     +------------------------------>+  python  +----------------------->   libin3   +------------------------>     python       |
-|   application  |                               |   in3    |                       |  in3-core  |                        |  http_transport  |
-|                <-------------------------------+          <-----------------------+            <------------------------+                  |
-+----------------+     primitive or Object       +----------+     ctype object      +------------+  in3_req_add_response  +------------------+
-```
 
 
 #### libin3_new
 ```python
-libin3_new(chain_id: int,
-transport: <function CFUNCTYPE at 0x10ea948c0>,
-debug=False)
+libin3_new(chain_id: int, cache_enabled: bool,
+transport_fn: <function CFUNCTYPE at 0x10182ce60>)
 ```
 
 Instantiate new In3 Client instance.
@@ -1208,8 +1306,9 @@ Instantiate new In3 Client instance.
 **Arguments**:
 
 - `chain_id` _int_ - Chain id as integer
-- `transport` - Transport function for the in3 network requests
-- `debug` - Turn on debugger logging
+- `cache_enabled` _bool_ - False will disable local storage cache.
+- `transport_fn` - Transport function for the in3 network requests
+- `storage_fn` - Cache Storage function for node list and requests caching
 
 **Returns**:
 
@@ -1226,23 +1325,6 @@ Free In3 Client objects from memory.
 **Arguments**:
 
 - `instance` _int_ - Memory address of the client instance, return value from libin3_new
-  
-
-#### libin3_exec
-```python
-libin3_exec(instance: int, rpc: bytes)
-```
-
-Make Remote Procedure Call mapped methods in the client.
-
-**Arguments**:
-
-- `instance` _int_ - Memory address of the client instance, return value from libin3_new
-- `rpc` _bytes_ - Serialized function call, a json string.
-
-**Returns**:
-
-- `returned_value` _object_ - The returned function value(s)
   
 
 #### libin3_call
@@ -1276,10 +1358,31 @@ Register the signer module in the In3 Client instance, with selected private key
 - `private_key` - 256 bit number.
   
 
-#### init
+#### libin3_in3_req_add_response
 ```python
-init()
+libin3_in3_req_add_response(*args)
 ```
 
-Loads library depending on host system.
+Transport function that registers a response to a request.
 
+**Arguments**:
+
+  *args:
+  
+
+#### libin3_new_bytes_t
+```python
+libin3_new_bytes_t(value: bytes, length: int)
+```
+
+C Bytes struct
+
+**Arguments**:
+
+- `length` - byte array length
+- `value` - byte array
+
+**Returns**:
+
+- `ptr_addr` - address of the instance of this struct
+  

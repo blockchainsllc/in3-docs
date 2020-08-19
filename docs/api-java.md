@@ -515,6 +515,12 @@ use goerli testnet
 
 Type: static `final long`
 
+##### EWC
+
+use ewf chain 
+
+Type: static `final long`
+
 ##### EVAN
 
 use evan testnet 
@@ -556,24 +562,6 @@ The client can then be configured.
 
  > public  IN3();
 
-##### getKey
-
-the client key to sign requests 
-
- > public `native byte[]` getKey();
-
-##### setKey
-
-sets the client key to sign requests 
-
- > public `native void` setKey([`byte[]`](#class-byte[]) val);
-
-arguments:
-```eval_rst
-========== ========= 
-``byte[]``  **val**  
-========== ========= 
-```
 ##### getConfig
 
 returns the current configuration. 
@@ -582,18 +570,6 @@ any changes to the configuration will be applied witth the next request.
 
  > public [`ClientConfiguration`](#class-clientconfiguration) getConfig();
 
-##### setKey
-
-sets the client key as hexstring to sign requests 
-
- > public `void` setKey([`String`](#class-string) val);
-
-arguments:
-```eval_rst
-========== ========= 
-``String``  **val**  
-========== ========= 
-```
 ##### setSigner
 
 sets the signer or wallet. 
@@ -1768,22 +1744,6 @@ arguments:
 ``boolean``  **useHttp**  
 =========== ============= 
 ```
-##### getMaxCodeCache
-
- > public `Long` getMaxCodeCache();
-
-##### setMaxCodeCache
-
-sets number of max bytes used to cache the code in memory 
-
- > public `void` setMaxCodeCache([`long`](#class-long) maxCodeCache);
-
-arguments:
-```eval_rst
-======== ================== 
-``long``  **maxCodeCache**  
-======== ================== 
-```
 ##### getTimeout
 
  > public `Long` getTimeout();
@@ -1881,22 +1841,6 @@ arguments:
 ========== ========= 
 ``String``  **rpc**  
 ========== ========= 
-```
-##### getMaxBlockCache
-
- > public `Long` getMaxBlockCache();
-
-##### setMaxBlockCache
-
-sets the number of blocks cached in memory 
-
- > public `void` setMaxBlockCache([`long`](#class-long) maxBlockCache);
-
-arguments:
-```eval_rst
-======== =================== 
-``long``  **maxBlockCache**  
-======== =================== 
 ```
 ##### getNodesConfig
 
