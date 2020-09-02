@@ -6,37 +6,42 @@ Bitcoin may be a complete different chain but there are ways to verify a Bitcoin
 
 For the verification of Bitcoin we make use of the Simplified Payment Verification proposed in the [Bitcoin paper](https://bitcoin.org/bitcoin.pdf) by Satoshi Nakamoto.
 
-> It is possible to verify payments without running a full network node. A user only needs to keep
-a copy of the block headers of the longest proof-of-work chain, which he can get by querying
-network nodes until he's convinced he has the longest chain, and obtain the Merkle branch
-linking the transaction to the block it's timestamped in. He can't check the transaction for
-himself, but by linking it to a place in the chain, he can see that a network node has accepted it,
-and blocks added after it further confirm the network has accepted it. As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network.
+> It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it. As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network.
 
-We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. the wrong block is final). You will read about possible proofs and how they work in detail. Additionally how secure a certain finality is and how
-expensive an attack would be to create wrong blocks with finality headers that are probably valid but not actually valid.
+In contrast to SPV-clients an Incubed client does not keep a copy of all block headers, instead the client is stateless and only requests required block headers. We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. delivering a chain of fake-blocks). This does not really work for very old blocks. Beside the very low difficulty at this time, the miner has many years of time to pre-mine a wrong chain of blocks. Therefore, we are setting some hard-coded checkpoints of hashes of bygone blocks. Proving the correctness of old blocks can be achieved by checking the linking from the requested block to a certain checkpoint (the server needs to provide the corresponding data). The only way for an attacker to fool the client would be by finding a hash collision.
 
-**Bitcoin Block Header**  
+### Bitcoin Block Header
 
-| **Size** | **Field** | **Description** |
-| ------ | ------ | ------ |
-| 4 bytes | Version | A version number to track software/protocol upgrades |
-| 32 bytes | Parent Hash | A reference to the hash of the previous (parent) block in the chain |
-| 32 bytes | Merkle Root | A hash of the root of the merkle tree of this block’s transactions |
-| 4 bytes | Timestamp | The approximate creation time of this block (seconds from Unix Epoch) |
-| 4 bytes | Bits | The Proof-of-Work algorithm difficulty target for this block |
-| 4 bytes| Nonce | A counter used for the Proof-of-Work algorithm |
+```eval_rst
 
++-------------------+--------------------+--------------------------------------------------------------------------+
+| Size              | Field              | Description                                                              |
++===================+====================+==========================================================================+
+| 4 bytes           | Version            | A version number to track software/protocol upgrades                     |
++-------------------+--------------------+--------------------------------------------------------------------------+
+| 32 bytes          | Parent Hash        | A reference to the hash of the previous (parent) block in the chain      |
++-------------------+--------------------+--------------------------------------------------------------------------+
+| 32 bytes          | Merkle Root        | A hash of the root of the merkle tree of this block’s transactions       |
++-------------------+--------------------+--------------------------------------------------------------------------+
+| 4 bytes           | Timestamp          | The approximate creation time of this block (seconds from Unix Epoch)    |
++-------------------+--------------------+--------------------------------------------------------------------------+
+| 4 bytes           | Bits               | The Proof-of-Work algorithm difficulty target for this block             |     
++-------------------+--------------------+--------------------------------------------------------------------------+
+| 4 bytes           | Nonce              | A counter used for the Proof-of-Work algorithm                           |
++-------------------+--------------------+--------------------------------------------------------------------------+
+```
 
-## Proofs
+### Finality in Bitcoin
+In terms of Bitcoin, finality is the assurance or guarantee that a block and its included transactions will not be revoked once committed to the blockchain. Bitcoin uses a probabilistic finality in which the probability that a block will not be reverted increases as the block sinks deeper into the chain. The deeper the block, the more likely that the fork containing that block is the longest chain. After being 6 blocks deep into the Bitcoin blockchain it is very unlikely (but not impossible) for that block to be reverted.
 
-### Target Proof
+### Mining in Bitcoin
+The process of trying to add a new block of transactions to the Bitcoin blockchain is called *mining*. Miners are competing in a network-wide competition, each trying to find a new block faster than anyone else. The first miner who finds a block broadcasts it across the network and other miners are adding it to their blockchain after verifying the block. Miners restart the mining-process after a new block was added to the blockchain to build on top of this block. As a result, the blockchain is constantly growing – one block every 10 minutes on average.
 
-Bitcoin uses the target for the mining process where miners are hashing the block data over and over again to find a hash that is smaller than the target (while changing the data a little bit each try to generate a different hash). Miners across the network can verify a newly published blocks by checking the block hash against the target. The same applies for clients. Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header.
+> But how can miners *find* a block? 
 
-This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-proof)). You will read about two different options to verify a target.
+They start by filling a candidate block with transactions from their memory pool. Next they construct a block header for this block, which is a summary of all the data in the block including a reference to a block that is already part of the blockchain (known as the parent hash). Now the actual mining happens: miners put the block header through the SHA256 hash function and hope that the resulting hash is below the current target. If this is not the case, miners keep trying by incrementing a number in the block header resulting in a completely different hash. This process is referred to as proof-of-work.
 
-#### Difficulty Adjustment Period 
+### Difficulty Adjustment Period 
 
 This section is important to understand how the adjustment of the difficulty (and therefore the target) works. The knowledge of this section serves as the basis for the remaining part.
 
@@ -51,8 +56,16 @@ The difficulty is a big number used for the adjustment process. The target is us
 ```js
 target = targetmax / difficulty
 
-tagetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
+targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
 ```
+
+## Proofs
+
+### Target Proof
+
+Bitcoin uses the target for the mining process where miners are hashing the block data over and over again to find a hash that is smaller than the target (while changing the data a little bit each try to generate a different hash). Miners across the network can verify a newly published blocks by checking the block hash against the target. The same applies for clients. Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header.
+
+This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-proof)). You will read about two different options to verify a target.
 
 #### Verification using finality headers
 
@@ -126,8 +139,15 @@ Hash: 00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7 (block #[
 
 Finality Headers:
 
-- **(1)** 00e00020**d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000**40273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c722
-*  **(2)** 00e0ff7f**c78d20fab2c28de35d00f7ec5fb269a63d597146d9b310000000000000000000**52960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb8784
+- **(1)** 
+```
+00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c722 
+```
+*  **(2)** 
+```
+00e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb8784
+```
+
 ```
 Hash (reversed): d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000
 Parent Hash (1): d7cd60cab00255bb13bbb023fd5d85daaaf389720a1400000000000000000000
@@ -138,9 +158,18 @@ Parent Hash (2): c78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000
 
 **Risk Calculation**
 
-Since all proofs rely on the finality of a block the next paragraph will display the costs for a possible attack vector. A malicious node could provide a modified block header (i.e. changing the data to gain benefits) and finality block headers which are valid but not actually valid (i.e. not part of the longest chain). The client would trust this data in case he has no other information to check against.
+A malicious node could provide a modified block header (i.e. changing the data to gain benefits) and finality block headers which are valid but not actually valid (i.e. not part of the longest chain / chain of fake-blocks). The client would trust this data in case he has no other information to check against. The following calculation outlines the security (in terms of $) when the client is requesting one of the newer blocks and 6 finality headers. This results in a total of 7 fake-blocks that an atacker has to calculate to fool the client. The calculation is based on assumptions and averages.
 
-*Calculation: How secure are 6 finality headers? (block reward and operating costs like power consumption and hardware)*
+Assume that the attacker has 10% of the total
+mining power. This would mean he needs around 100 minutes to mine 1 block (average block time of Bitcoin is 10 minutes) and around 700 minutes to mine 7 blocks. While mining fake-blocks, the attacker loses his chance of earning block rewards. Assuming that we would have been able to mine 7 blocks, with a current block reward of 6.25 BTC and $11,400 per Bitcoin at the time of writing:
+
+
+```math
+7 \cdot 6.25 BTC = 43.75 BTC
+
+43.75 BTC \cdot \frac{ $11,400 }{1 BTC} = $498,750
+```
+
 
 
 ### Transaction Proof (Merkle Proof)

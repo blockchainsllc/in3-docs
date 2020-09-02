@@ -2293,7 +2293,7 @@ Returns:
     - `vin`: array of json objects
         - `txid`: number - The transaction id
         - `vout`: number
-        - `scriptSig`: json objectt - The script
+        - `scriptSig`: json object - The script
             - `asm`: string - asm
             - `hex`: string - hex
         - `sequence`: number - The script sequence number
