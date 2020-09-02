@@ -164,14 +164,6 @@ Assume that the attacker has 10% of the total
 mining power. This would mean he needs around 100 minutes to mine 1 block (average block time of Bitcoin is 10 minutes) and around 700 minutes to mine 7 blocks. While mining fake-blocks, the attacker loses his chance of earning block rewards. Assuming that we would have been able to mine 7 blocks, with a current block reward of 6.25 BTC and $11,400 per Bitcoin at the time of writing:
 
 
-```math
-7 \cdot 6.25 BTC = 43.75 BTC
-
-43.75 BTC \cdot \frac{ $11,400 }{1 BTC} = $498,750
-```
-
-
-
 ### Transaction Proof (Merkle Proof)
 
 Necessary data to perform this proof:
