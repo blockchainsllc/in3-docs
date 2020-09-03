@@ -65,7 +65,7 @@ targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
 
 Bitcoin uses the target for the mining process where miners are hashing the block data over and over again to find a hash that is smaller than the target (while changing the data a little bit each try to generate a different hash). Miners across the network can verify a newly published blocks by checking the block hash against the target. The same applies for clients. Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header.
 
-This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#block-proof)). You will read about two different options to verify a target.
+This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](bitcoin.md#block-proof)). You will read about two different options to verify a target.
 
 #### Verification using finality headers
 
@@ -73,9 +73,9 @@ The client maintains a cache with the number of a difficulty adjustment period (
 
 > How does the verification works?
 
-We completely rely on the finality of a block. We can verify the target of a block (and therefore for a whole period) by requesting a block header (`getblockheader`) and `n`-amount of finality headers. If we are able to prove the finality using the [finality proof](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/bitcoin.md#finality-proof) we can consider the target as verified as mentioned earlier.
+We completely rely on the finality of a block. We can verify the target of a block (and therefore for a whole period) by requesting a block header (`getblockheader`) and `n`-amount of finality headers. If we are able to prove the finality using the [finality proof](bitcoin.md#finality-proof) we can consider the target as verified as mentioned earlier.
 
-The client sets a limit in his configuration regarding the maximum change of the target from a verified one to the one he wants to verify. The client will not trust the changes of the target when they are too big (i.e. greater than the limit). In this case the client will use the [proofTarget-method](https://git.slock.it/in3/doc/-/blob/19-documentation-verification-process/docs/rpc.md#btc_in3_prooftarget) to verify the big changes in smaller steps.
+The client sets a limit in his configuration regarding the maximum change of the target from a verified one to the one he wants to verify. The client will not trust the changes of the target when they are too big (i.e. greater than the limit). In this case the client will use the [proofTarget-method](rpc.md#btc_prooftarget) to verify the big changes in smaller steps.
 
 #### Verification using signatures
 
@@ -87,7 +87,7 @@ Since the target is part of the block header we just have to be very sure that t
 (see [here](https://github.com/slockit/in3/blob/master/in3_image.png) for more details of this process)
 
 The amount of signatures nodes n should be chosen with the 
-[Risk Calculation](https://in3.readthedocs.io/en/develop/Threat-Model-for-Incubed.html#risk-calculation) in mind.
+[Risk Calculation](Threat-Model-for-Incubed.md#risk-calculation) in mind.
 
 ### Block Proof
 
@@ -163,11 +163,44 @@ A malicious node could provide a modified block header (i.e. changing the data t
 Assume that the attacker has 10% of the total
 mining power. This would mean he needs around 100 minutes to mine 1 block (average block time of Bitcoin is 10 minutes) and around 700 minutes to mine 7 blocks. While mining fake-blocks, the attacker loses his chance of earning block rewards. Assuming that we would have been able to mine 7 blocks, with a current block reward of 6.25 BTC and $11,400 per Bitcoin at the time of writing:
 
+```
+7 * 6.25 BTC = 43.75 BTC
 
-```math
-43.75 BTC \cdot \frac{ $11,400 }{1 BTC} = $498,750
+43.75 BTC * ($11,400 / 1 BTC) = $498,750
 ```
 
+Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others. [15]
+A new [Antminer S9](https://www.buybitcoinworldwide.com/mining/hardware/) with 14 TH/s can be bought for $3,000. This would mean an attacker has to pay $2,568,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
+
+Hashing power can also be rented online. Obviously nobody is offering to lend 12 EH/s of hashing power – but for this calculation we assume that an attacker is still able to rent this amount of hashing power. The website [nicehash.com](https://www.nicehash.com/marketplace) is offering 1 PH/s for 0.0098 BTC (for 24 hours).
+
+```
+1 PH/s = 0.0098 BTC
+
+12 EH/s = 117.6 BTC
+```
+
+Assuming it is possible to rent it for 700 minutes only (which would be 48.6% of one day).
+
+```
+117.6 BTC * 0.486 = 57.15 BTC
+
+57.15 BTC * ($11,400 / 1 BTC) = $651,510
+
+Total: $498,750 + $651,510 = $1,150,260
+```
+
+Therefore, 6 finality headers provide a security of estimated **$1,150,260** in total.
+
+> What does that mean for the client?
+
+A rental car is equipped with an Incubed client running on a microship to perform authorization checks and activate the ignition if necessary. The car is its own owner and it has a Bitcoin address to receive payments to rent itself to customers. Part of the authorization check is the verification of the existence and correctness of the payment (using the Incubed client). Therefore, a customers sends the hash of the payment transaction to the car to be authorized in case the transaction gets verified. 
+
+Assuming that a customer (Bob) runs a malicious Incubed node and the car randomly asks exactly this node for the verification of the transaction. Bob could fool the car by creating a fake-transaction in a fake-block. To prove the correctness of the fake-transaction, Bob needs to calculate a chain of fake-blocks as well (to prove the finality). In this case the car would authorize Bob because it was able to verify the transaction, even though the transaction is fake.
+
+Bob would be able to use the car without having to pay for it, **but** performing such an attack (calculate a wrong block and 6 finality headers) is very expensive as shown above. And this is what is meant by *security in terms of $* - fooling the client in such a scenario is definitely not worth it (since paying the actual fees for the car would be a *far* less than the cost of performing such an attack). Hence, Incubed clients can trust in the correctness of a transaction (with a high probability) if the value is less than $1,150,260 and the server is able to provide 6 finality headers for the block that transaction is included. The higher the number of finality blocks, the higher the security (i.e. the higher the costs for an attack). The following figure shows the cost to mine *n* fake-blocks based on the numbers mentioned above.
+
+![Bitcoin Risk Calculation](btc_riskcalculation.png)
 
 
 ### Transaction Proof (Merkle Proof)
@@ -222,7 +255,7 @@ Decode:
 
 2. Prove the existence and correctness of the coinbase transaction
 
-To trust the extracted block number it's necessary to verify the existence and correctness of the coinbase transaction. This can be done by performing a [merkle proof](#transaction-proof-merkle-proof) using the provided block header and the merkle proof data.
+To trust the extracted block number it's necessary to verify the existence and correctness of the coinbase transaction. This can be done by performing a [merkle proof](bitcoin.md#transaction-proof-merkle-proof) using the provided block header and the merkle proof data.
 
 **Size of a block number proof**
 
@@ -268,7 +301,7 @@ But since the BlockHeader does not contain the BlockNumber, we have to use the t
 - the BlockHeaders gives as Proof
 
 
-The Verification of the BlockHeader can be done directly in Solitidy, because the EVM offers a precompiled Contract at address `0x2` : sha256, which is needed to calculate the Blockhash. With this in mind we can follow the steps as described in [Block Proof](#block-proof) implemented in Solidity.
+The Verification of the BlockHeader can be done directly in Solitidy, because the EVM offers a precompiled Contract at address `0x2` : sha256, which is needed to calculate the Blockhash. With this in mind we can follow the steps as described in [Block Proof](bitcoin.md#block-proof) implemented in Solidity.
 
 
 While doing so we need to add the difficulties of each block and store the last blockHash and the `totalDifficulty` for later.
