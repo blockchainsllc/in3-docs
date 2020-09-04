@@ -4,7 +4,7 @@ Bitcoin may be a complete different chain but there are ways to verify a Bitcoin
 
 ## Concept
 
-For the verification of Bitcoin we make use of the Simplified Payment Verification proposed in the [Bitcoin paper](https://bitcoin.org/bitcoin.pdf) by Satoshi Nakamoto.
+For the verification of Bitcoin we make use of the Simplified Payment Verification (SPV) proposed in the [Bitcoin paper](https://bitcoin.org/bitcoin.pdf) by Satoshi Nakamoto.
 
 > It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it. As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network.
 
@@ -32,7 +32,7 @@ In contrast to SPV-clients an Incubed client does not keep a copy of all block h
 ```
 
 ### Finality in Bitcoin
-In terms of Bitcoin, finality is the assurance or guarantee that a block and its included transactions will not be revoked once committed to the blockchain. Bitcoin uses a probabilistic finality in which the probability that a block will not be reverted increases as the block sinks deeper into the chain. The deeper the block, the more likely that the fork containing that block is the longest chain. After being 6 blocks deep into the Bitcoin blockchain it is very unlikely (but not impossible) for that block to be reverted.
+In terms of Bitcoin, finality is the assurance or guarantee that a block and its included transactions will not be revoked once committed to the blockchain. Bitcoin uses a probabilistic finality in which the probability that a block will not be reverted increases as the block sinks deeper into the chain. The deeper the block, the more likely that the fork containing that block is the longest chain. After being 6 blocks deep into the Bitcoin blockchain it is very unlikely (but not impossible) for that block to be reverted. (For more information see [here](https://medium.com/mechanism-labs/finality-in-blockchain-consensus-d1f83c120a9a))
 
 ### Mining in Bitcoin
 The process of trying to add a new block of transactions to the Bitcoin blockchain is called *mining*. Miners are competing in a network-wide competition, each trying to find a new block faster than anyone else. The first miner who finds a block broadcasts it across the network and other miners are adding it to their blockchain after verifying the block. Miners restart the mining-process after a new block was added to the blockchain to build on top of this block. As a result, the blockchain is constantly growing – one block every 10 minutes on average.
@@ -63,9 +63,7 @@ targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
 
 ### Target Proof
 
-Bitcoin uses the target for the mining process where miners are hashing the block data over and over again to find a hash that is smaller than the target (while changing the data a little bit each try to generate a different hash). Miners across the network can verify a newly published blocks by checking the block hash against the target. The same applies for clients. Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header.
-
-This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](bitcoin.html#block-proof)). You will read about two different options to verify a target.
+Having a verified target on the client-side is important to verify the proof of work and therefore the data itself (assuming that the data is correct when someone put a lot of work into it). Since the target is part of a block header (`bits`-field) we can verify the target by verifying the block header. This is a dilemma since we want to verify the target by verifying the block header but we need a verified target to verify the block header (as shown in [block proof](bitcoin.html#block-proof)). You will read about two different options to verify a target.
 
 #### Verification using finality headers
 
@@ -123,10 +121,6 @@ Necessary data to perform this proof:
 - Block header (block `X`)
 - Finality block header (block `X+1`, ..., `X+n`)
 
-In terms of Bitcoin, finality is the assurance or guarantee that a block and its included transactions will not be revoked once comitted to the blockchain. Bitcoin uses a probabilistic finality in which the probability that a block will not be reverted increases as the block sinks deeper into the chain. The deeper the block, the more likely that the fork containing that block is the longest chain. After being 6 blocks deep into the Bitcoin blockchain it is very unlikely - but not impossible - of that block being reverted.
-(For more information see [here](https://medium.com/mechanism-labs/finality-in-blockchain-consensus-d1f83c120a9a))
-
-
 The finality for block `X` can be proven as follows: 
 
 The proof data contains the block header of block `X` as well as `n` following block headers as finality headers. In Bitcoin every block header includes a `parentHash`-field which contains the block hash of its predecessor. By checking this linking the finality can be proven for block `X`. Meaning the block hash of block `X` is the `parentHash` of block `X+1`, the hash of block `X+1` is the `parentHash` of block `X+2`, and so on. If this linking correct until block `X+n` (i.e. the last finality header) then block `X` can be considered as final (Hint: as mentioned above Bitcoin uses a probabilistic finality, meaning a higher `n` increases the probability of being actual final). 
@@ -139,13 +133,10 @@ Hash: 00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7 (block #[
 
 Finality Headers:
 
-- **(1)** 
 ```
-00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c722 
-```
-*  **(2)** 
-```
-00e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb8784
+(1) 00e00020d7cd60cab00255bb13bbb023fd5d85daaaf389720a140000000000000000000040273a5828953c61554c98540f7b0ba8332e385b3e5b38f60679c95bca4df92921ff8d5ebc2013179c43c722 
+
+(2) 00e0ff7fc78d20fab2c28de35d00f7ec5fb269a63d597146d9b31000000000000000000052960bb1aa3c23581ab3c233a2ad911c9a943ff448216e7e8d9c7a969f4f349575ff8d5ebc201317b4bb8784
 ```
 
 ```
@@ -165,7 +156,7 @@ Necessary data to perform this proof:
 - Merkle proof (for this transaction)
 - Index (of this transaction)
 
-All transaction of a Bitcoin block are stored in a **merkle tree**. Every leaf node is labelled with with the hash of a transaction, and every non-eaf node is labelled with the hash of the labels of its two child nodes. This results in one single hash - the **merkle root** - which is part of the block header. Attempts to change or remove a leaf node after the block was mined (i.e. changing or removing a transaction) will not be possible since this will cause changes in the merkle root, thereby changes in the block header and therefore changes in the hash of this block. By checking the block header against the block hash such an attempt will be discovered.
+All transactions of a Bitcoin block are stored in a **merkle tree**. Every leaf node is labelled with with the hash of a transaction, and every non-leaf node is labelled with the hash of the labels of its two child nodes. This results in one single hash - the **merkle root** - which is part of the block header. Attempts to change or remove a leaf node after the block was mined (i.e. changing or removing a transaction) will not be possible since this will cause changes in the merkle root, thereby changes in the block header and therefore changes in the hash of this block. By checking the block header against the block hash such an attempt will be discovered.
 
 Having a verified block header and therefore a verified merkle root allows us to perform a merkle root proving the existence and correctness of a certain transaction.
 
@@ -174,7 +165,7 @@ The following example explains a merkle proof (for more details see [here](https
 ![](btc_merkleproof.png)
 
 In order to verify the existence and correctness of transaction [K] we use `sha256` to hash [K] twice to obtain H(K). For this example the merkle proof data will contain the hashes H(L), H(IJ), H(MNOP) and H(ABCDEFGH). These hashes can be used to calculate the merkle root as shown in the picture. The hash of the next level can be calculated by concatenating the two hashes of the level below and then hashing this hash with `sha256` twice.
-The index determines which of the hashes is on the right and which one on the left side for the concatenation (Hint: swaping the hashes will result in a completely different hash). When the calculated merkle root appears to be equal to the one contained by the block header we've hence proven the existence and correctness of transaction [K]. 
+The index determines which of the hashes is on the right and which one on the left side for the concatenation (Hint: the placement is important, since swaped hashes will result in a completely different hash). When the calculated merkle root appears to be equal to the one contained by the block header we've hence proven the existence and correctness of transaction [K]. 
 
 This can be done for every transaction of a block by simply hashing the transaction and then keep on hashing this result with the next hash from the merkle proof data. The last hash must match the merkle root. (Hint: obviously the merkle proof data will be different for different transactions).
 
@@ -186,6 +177,8 @@ Necessary data to perform this proof:
 - Block header
 - Coinbase transaction (first transaction of the block)
 - Merkle proof (for the coinbase transaction) 
+
+In comparison to Ethereum there is no block number in a [Bitcoin block header](bitcoin.html#bitcoin-block-header). Bitcoin uses the height of a block, which is the number of predecessors. The genesis block is at height 0 since there are no predecessors (the block with 100 predecessors is at height 100). Therefore, you need to know the complete Bitcoin blockchain to verify the height of a block (by counting the links back to the genesis block). Hence, actors that do not store the complete chain (like an Incubed client) are not able to verify the height of a block. To change that Gavin Andresen proposed a change to the Bitcoin protocol in 2012.
 
 > Bitcoin Improvement Proposal 34 (BIP-34) introduces an upgrade path for versioned transactions and blocks. A unique value is added to newly produced coinbase transactions, and blocks are updated to version 2. After block number 227,835 all blocks must include the block height in their coinbase transaction.
 
@@ -200,11 +193,11 @@ Coinbase transaction of block [624692](https://blockchair.com/bitcoin/transactio
 
 Decode:
 
-- `03`: first byte signals the length of the block number (push the following 3 bytes)
-- `348809`: the block number in big endian (convert to little endian)
-- `098834`: the block number in little endian (convert to decimal)
-- **`624692`**: the actual block number
-- `041f4e...` : the rest can be anything
+a) `03`: first byte signals the length of the block number (push the following 3 bytes) \
+b) `348809`: the block number in big endian (convert to little endian) \
+c) `098834`: the block number in little endian (convert to decimal) \
+d) **`624692`**: the actual block number \
+e) `041f4e...` : the rest can be anything
 
 2. Prove the existence and correctness of the coinbase transaction
 

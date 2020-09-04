@@ -2046,7 +2046,7 @@ Response:
 For bitcoin incubed follows the specification as defined in [https://bitcoincore.org/en/doc/0.18.0/](https://bitcoincore.org/en/doc/0.18.0/).
 Internally the in3-server will add proofs as part of the responses. The proof data differs between the methods. You will read which proof data will be provided and how the data can be used to prove the result for each method.
 
-Proofs will add a special `in3`-section to the response containing a `proof`- object. This object will contain parts of or all of the following properties:
+Proofs will add a special `in3`-section to the response containing a `proof`- object. This object will contain parts or all of the following properties:
 
 *  **block**
 *  **final**
@@ -2054,7 +2054,6 @@ Proofs will add a special `in3`-section to the response containing a `proof`- ob
 *  **merkleProof**
 *  **cbtx**
 *  **cbtxMerkleProof**
-
 
 
 ### btc_getblockheader
@@ -2194,7 +2193,7 @@ Returns
 - verbose `2`: an object representing the block with information about each transaction:
 
     - `...`: same output as `verbosity`=`1`
-    - `tx`: array of objects - The transactions in the format of the `getrawtransaction` RPC. `tx` result is different from `verbosity`=`1`
+    - `tx`: array of objects - The transactions in the format of the [getrawtransaction](rpc.html#btc_getrawtransaction)-RPC. `tx` result is different from `verbosity`=`1`
     - `...`: same output as `verbosity`=`1`
 
 
