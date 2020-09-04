@@ -184,7 +184,7 @@ In comparison to Ethereum there is no block number in a [Bitcoin block header](b
 
 For all blocks after block number 227,835 the block number can be proven as follows:
 
-1. Extract block number out of the coinbase transaction
+1.) Extract block number out of the coinbase transaction
 
 Coinbase transaction of block [624692](https://blockchair.com/bitcoin/transaction/02d8cdb103f50532e2f18d9d1f85c016468ee0294908d387e38f80b99410d893)
 ```
@@ -199,7 +199,7 @@ c) `098834`: the block number in little endian (convert to decimal) \
 d) **`624692`**: the actual block number \
 e) `041f4e...` : the rest can be anything
 
-2. Prove the existence and correctness of the coinbase transaction
+2.) Prove the existence and correctness of the coinbase transaction
 
 To trust the extracted block number it's necessary to verify the existence and correctness of the coinbase transaction. This can be done by performing a [merkle proof](bitcoin.html#transaction-proof-merkle-proof) using the provided block header and the merkle proof data.
 
