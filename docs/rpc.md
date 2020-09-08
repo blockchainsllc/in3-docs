@@ -241,7 +241,7 @@ Parameters:
 
 Returns:
 
-true if it was added or false if it already existed.
+the address of given key.
 
 Request:
 
@@ -259,7 +259,7 @@ Response:
 ```js
 {
   "id": 1,
-  "result": true,
+  "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
 }
 ```
 
