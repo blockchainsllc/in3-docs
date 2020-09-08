@@ -4159,7 +4159,7 @@ chain_id for btc
 chain_id for local chain 
 
 ```c
-#define CHAIN_ID_LOCAL 0xFFFF
+#define CHAIN_ID_LOCAL 0x11
 ```
 
 
@@ -4383,6 +4383,7 @@ The enum type contains the following values:
  **PLGN_ACT_NL_PICK_DATA**       0x80000  picks the data nodes
  **PLGN_ACT_NL_PICK_SIGNER**     0x100000 picks the signer nodes
  **PLGN_ACT_NL_PICK_FOLLOWUP**   0x200000 called after receiving a response in order to decide whether a update is needed.
+ **PLGN_ACT_LOG_ERROR**          0x400000 report an error
 ================================ ======== =========================================================================================================================================================
 ```
 
@@ -5219,7 +5220,7 @@ The stuct contains following fields:
 ```eval_rst
 ===================================== ======================== =========================================================================================================
 ``uint_fast8_t``                       **signers_length**      number or addresses
-``uint_fast16_t``                      **len**                 the number of requests
+``uint16_t``                           **len**                 the number of requests
 ``uint_fast16_t``                      **attempt**             the number of attempts
 `ctx_type_t <#ctx-type-t>`_            **type**                the type of the request
 `in3_ret_t <#in3-ret-t>`_              **verification_state**  state of the verification
@@ -5805,27 +5806,6 @@ arguments:
 returns: [`in3_node_weight_tNONULL , *`](#in3-node-weight-t)
 
 
-#### ctx_send_sub_request
-
-```c
-in3_ret_t ctx_send_sub_request(in3_ctx_t *parent, char *method, char *params, char *in3, d_token_t **result);
-```
-
-arguments:
-```eval_rst
-============================ ============ 
-`in3_ctx_t * <#in3-ctx-t>`_   **parent**  
-``char *``                    **method**  
-``char *``                    **params**  
-``char *``                    **in3**     
-`d_token_t ** <#d-token-t>`_  **result**  
-============================ ============ 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 ### plugin.h
 
 this file defines the plugin-contexts 
@@ -5856,6 +5836,19 @@ registers a plugin and uses the function name as plugin name
 #define vc_err (vc,msg) vc_set_error(vc, NULL)
 ```
 
+
+#### in3_signer_type_t
+
+defines the type of signer used 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = 
+ **SIGNER_ECDSA**    1 
+ **SIGNER_EIP1271**  2 
+==================== = 
+```
 
 #### d_signature_type_t
 
@@ -5910,10 +5903,11 @@ action context when retrieving the account of a signer.
 The stuct contains following fields:
 
 ```eval_rst
-=============================== ============= =================================================
-`in3_ctxstruct , * <#in3-ctx>`_  **ctx**      the context of the request in order report errors
-`address_t <#address-t>`_        **account**  the account to use for the signature
-=============================== ============= =================================================
+========================================= ================= =================================================
+`in3_ctxstruct , * <#in3-ctx>`_            **ctx**          the context of the request in order report errors
+`address_t <#address-t>`_                  **account**      the account to use for the signature
+`in3_signer_type_t <#in3-signer-type-t>`_  **signer_type**  the type of the signer used for this account.
+========================================= ================= =================================================
 ```
 
 #### in3_sign_prepare_ctx_t
@@ -5942,13 +5936,13 @@ This Context is passed to the signer-function.
 The stuct contains following fields:
 
 ```eval_rst
-=========================================== =============== ===========================================================
-``uint8_t``                                  **signature**  the resulting signature needs to be writte into these bytes
+=========================================== =============== =================================================
+`bytes_t <#bytes-t>`_                        **signature**  the resulting signature
 `d_signature_type_t <#d-signature-type-t>`_  **type**       the type of signature
 `in3_ctxstruct , * <#in3-ctx>`_              **ctx**        the context of the request in order report errors
 `bytes_t <#bytes-t>`_                        **message**    the message to sign
 `bytes_t <#bytes-t>`_                        **account**    the account to use for the signature
-=========================================== =============== ===========================================================
+=========================================== =============== =================================================
 ```
 
 #### in3_configure_ctx_t
@@ -6400,22 +6394,21 @@ arguments:
 returns: [`bytes_t`](#bytes-t)
 
 
-#### in3_sign_ctx_get_signature
+#### in3_sign_ctx_set_signature_hex
 
 ```c
-uint8_t* in3_sign_ctx_get_signature(in3_sign_ctx_t *ctx);
+void in3_sign_ctx_set_signature_hex(in3_sign_ctx_t *ctx, const char *signature);
 ```
 
 helper function to retrieve the signature from a in3_sign_ctx_t 
 
 arguments:
 ```eval_rst
-===================================== ========= ==================
-`in3_sign_ctx_t * <#in3-sign-ctx-t>`_  **ctx**  the signer context
-===================================== ========= ==================
+===================================== =============== ====================
+`in3_sign_ctx_t * <#in3-sign-ctx-t>`_  **ctx**        the signer context
+``const char *``                       **signature**  the signature in hex
+===================================== =============== ====================
 ```
-returns: `uint8_t *`
-
 
 #### create_sign_ctx
 
@@ -6671,6 +6664,24 @@ arguments:
 `bytes_t * <#bytes-t>`_  **a**  
 ======================= ======= 
 ```
+
+#### b_concat
+
+```c
+bytes_t b_concat(int cnt,...);
+```
+
+duplicates the content of bytes 
+
+arguments:
+```eval_rst
+======= ========= 
+``int``  **cnt**  
+``...``           
+======= ========= 
+```
+returns: [`bytes_t`](#bytes-t)
+
 
 #### b_dup
 
@@ -7248,6 +7259,8 @@ The stuct contains following fields:
 ``size_t``                   **allocated**  amount of tokens allocated result
 ``size_t``                   **len**        number of tokens in result
 ``size_t``                   **depth**      max depth of tokens in result
+``uint8_t *``                **keys**       
+``size_t``                   **keys_last**  
 =========================== =============== ============================================================
 ```
 
@@ -7531,6 +7544,24 @@ arguments:
 returns: `NONULL d_key_t`
 
 
+#### ikey
+
+```c
+d_key_t ikey(json_ctx_t *ctx, const char *name);
+```
+
+returnes the indexed key for the given name. 
+
+arguments:
+```eval_rst
+============================= ========== 
+`json_ctx_t * <#json-ctx-t>`_  **ctx**   
+``const char *``               **name**  
+============================= ========== 
+```
+returns: `d_key_t`
+
+
 #### d_get
 
 ```c
@@ -7675,6 +7706,23 @@ arguments:
 returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
 
 
+#### parse_json_indexed
+
+```c
+NONULL json_ctx_t* parse_json_indexed(const char *js);
+```
+
+parses json-data, which needs to be freed after usage! 
+
+arguments:
+```eval_rst
+================ ======== 
+``const char *``  **js**  
+================ ======== 
+```
+returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
+
+
 #### json_free
 
 ```c
@@ -7714,7 +7762,7 @@ returns: [`str_range_tNONULL `](#str-range-t)
 #### d_create_json
 
 ```c
-NONULL char* d_create_json(d_token_t *item);
+NONULL char* d_create_json(json_ctx_t *ctx, d_token_t *item);
 ```
 
 creates a json-string. 
@@ -7723,9 +7771,10 @@ It does not work for objects if the parsed data were binary!
 
 arguments:
 ```eval_rst
-=========================== ========== 
-`d_token_t * <#d-token-t>`_  **item**  
-=========================== ========== 
+============================= ========== 
+`json_ctx_t * <#json-ctx-t>`_  **ctx**   
+`d_token_t * <#d-token-t>`_    **item**  
+============================= ========== 
 ```
 returns: `NONULL char *`
 
@@ -7884,44 +7933,21 @@ returns: [`d_token_tNONULL , *`](#d-token-t)
 #### d_get_keystr
 
 ```c
-char* d_get_keystr(d_key_t k);
+char* d_get_keystr(json_ctx_t *json, d_key_t k);
 ```
 
 returns the string for a key. 
 
-This only works track_keynames was activated before! 
+This only works for index keys or known keys! 
 
 arguments:
 ```eval_rst
-=========== ======= 
-``d_key_t``  **k**  
-=========== ======= 
+============================= ========== 
+`json_ctx_t * <#json-ctx-t>`_  **json**  
+``d_key_t``                    **k**     
+============================= ========== 
 ```
 returns: `char *`
-
-
-#### d_track_keynames
-
-```c
-void d_track_keynames(uint8_t v);
-```
-
-activates the keyname-cache, which stores the string for the keys when parsing. 
-
-arguments:
-```eval_rst
-=========== ======= 
-``uint8_t``  **v**  
-=========== ======= 
-```
-
-#### d_clear_keynames
-
-```c
-void d_clear_keynames();
-```
-
-delete the cached keynames 
 
 
 #### key
@@ -8577,6 +8603,25 @@ The stuct contains following fields:
 ``size_t``  **len**       the current length of the string
 ========== ============== ====================================
 ```
+
+#### sb_stack
+
+```c
+static NONULL sb_t sb_stack(char *p);
+```
+
+creates a stringbuilder which is allocating any new memory, but uses an existing string and is used directly on the stack. 
+
+Since it will not grow the memory you need to pass a char* which allocated enough memory. 
+
+arguments:
+```eval_rst
+========== ======= 
+``char *``  **p**  
+========== ======= 
+```
+returns: [`sb_tNONULL `](#sb-t)
+
 
 #### sb_new
 
@@ -9555,6 +9600,24 @@ This header-file registers zksync api functions.
 
 File: [c/src/pay/zksync/zksync.h](https://github.com/slockit/in3-c/blob/master/c/src/pay/zksync/zksync.h)
 
+#### zk_msg_type
+
+The enum type contains the following values:
+
+```eval_rst
+================= = 
+ **ZK_TRANSFER**  5 
+ **ZK_WITHDRAW**  3 
+================= = 
+```
+
+#### zk_msg_type_t
+
+
+```c
+typedef enum zk_msg_type  zk_msg_type_t
+```
+
 #### in3_register_zksync
 
 ```c
@@ -9566,6 +9629,48 @@ arguments:
 =================== ======= 
 `in3_t * <#in3-t>`_  **c**  
 =================== ======= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_sign_transfer
+
+```c
+in3_ret_t zksync_sign_transfer(sb_t *sb, zksync_tx_data_t *data, in3_ctx_t *ctx, uint8_t *sync_key);
+```
+
+arguments:
+```eval_rst
+========================================= ============== 
+`sb_t * <#sb-t>`_                          **sb**        
+`zksync_tx_data_t * <#zksync-tx-data-t>`_  **data**      
+`in3_ctx_t * <#in3-ctx-t>`_                **ctx**       
+``uint8_t *``                              **sync_key**  
+========================================= ============== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_sign_change_pub_key
+
+```c
+in3_ret_t zksync_sign_change_pub_key(sb_t *sb, in3_ctx_t *ctx, uint8_t *sync_pub_key, uint32_t nonce, uint8_t *account, uint32_t account_id);
+```
+
+arguments:
+```eval_rst
+=========================== ================== 
+`sb_t * <#sb-t>`_            **sb**            
+`in3_ctx_t * <#in3-ctx-t>`_  **ctx**           
+``uint8_t *``                **sync_pub_key**  
+``uint32_t``                 **nonce**         
+``uint8_t *``                **account**       
+``uint32_t``                 **account_id**    
+=========================== ================== 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -9730,6 +9835,25 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### eth_register_pk_signer
+
+```c
+in3_ret_t eth_register_pk_signer(in3_t *in3);
+```
+
+registers pk signer as plugin so you can use config or in3_addKeys as rpc 
+
+arguments:
+```eval_rst
+=================== ========= 
+`in3_t * <#in3-t>`_  **in3**  
+=================== ========= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### eth_set_request_signer
 
 ```c
@@ -9750,27 +9874,10 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
-#### eth_register_request_signer
-
-```c
-in3_ret_t eth_register_request_signer(in3_t *in3);
-```
-
-arguments:
-```eval_rst
-=================== ========= 
-`in3_t * <#in3-t>`_  **in3**  
-=================== ========= 
-```
-returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
 #### eth_set_pk_signer_hex
 
 ```c
-uint8_t* eth_set_pk_signer_hex(in3_t *in3, char *key);
+void eth_set_pk_signer_hex(in3_t *in3, char *key);
 ```
 
 simply signer with one private key as hex. 
@@ -9784,8 +9891,6 @@ arguments:
 ``char *``           **key**  
 =================== ========= 
 ```
-returns: `uint8_t *`
-
 
 #### ec_sign_pk_hash
 
@@ -9926,6 +10031,50 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ```c
 in3_ret_t in3_register_http(in3_t *c);
+```
+
+registers http as a default transport. 
+
+arguments:
+```eval_rst
+=================== ======= 
+`in3_t * <#in3-t>`_  **c**  
+=================== ======= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+### in3_winhttp.h
+
+transport-handler using simple http. 
+
+File: [c/src/transport/winhttp/in3_winhttp.h](https://github.com/slockit/in3-c/blob/master/c/src/transport/winhttp/in3_winhttp.h)
+
+#### send_winhttp
+
+```c
+in3_ret_t send_winhttp(void *plugin_data, in3_plugin_act_t action, void *plugin_ctx);
+```
+
+arguments:
+```eval_rst
+======================================= ================= 
+``void *``                               **plugin_data**  
+`in3_plugin_act_t <#in3-plugin-act-t>`_  **action**       
+``void *``                               **plugin_ctx**   
+======================================= ================= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_register_winhttp
+
+```c
+in3_ret_t in3_register_winhttp(in3_t *c);
 ```
 
 registers http as a default transport. 
@@ -12277,14 +12426,14 @@ returns: `struct`
 #### chainspec_create_from_json
 
 ```c
-chainspec_t* chainspec_create_from_json(d_token_t *data);
+chainspec_t* chainspec_create_from_json(json_ctx_t *data);
 ```
 
 arguments:
 ```eval_rst
-=========================== ========== 
-`d_token_t * <#d-token-t>`_  **data**  
-=========================== ========== 
+============================= ========== 
+`json_ctx_t * <#json-ctx-t>`_  **data**  
+============================= ========== 
 ```
 returns: [`chainspec_t *`](#chainspec-t)
 
