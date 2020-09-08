@@ -62,12 +62,6 @@ The config params support the following properties :
 * **useHttp** :`bool` *(optional)*  - if true the client will try to use http instead of https.
     example: false
 
-* **maxBlockCache** :`uint32_t` *(optional)*  - number of number of blocks cached  in memory.
-    example: 100
-
-* **maxCodeCache** :`uint32_t` *(optional)*  - number of max bytes used to cache the code in memory.
-    example: 100000
-
 * **timeout** :`uint32_t` *(optional)*  - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection.
     example: 100000
 
