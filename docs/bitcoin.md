@@ -105,7 +105,8 @@ Assuming that a customer (Bob) runs a malicious Incubed node and the car randoml
 
 Bob would be able to use the car without having to pay for it, **but** performing such an attack (calculate a wrong block and 6 finality headers) is very expensive as shown above. And this is what is meant by *security in terms of $* - fooling the client in such a scenario is definitely not worth it (since paying the actual fees for the car would be a *far* less than the cost of performing such an attack). Hence, Incubed clients can trust in the correctness of a transaction (with a high probability) if the value is less than $1,150,260 and the server is able to provide 6 finality headers for the block that transaction is included. The higher the number of finality blocks, the higher the security (i.e. the higher the costs for an attack). The following figure shows the cost to mine *n* fake-blocks based on the numbers mentioned above.
 
-![Bitcoin Risk Calculation](btc_riskcalculation.png)
+![](btc_riskcalculation.png)
+
 
 
 ## Proofs
