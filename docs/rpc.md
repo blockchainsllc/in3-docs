@@ -50,7 +50,10 @@ The config params support the following properties :
 * **keepIn3** :`bool` *(optional)*  - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
     example: false
 
-* **key** :`bytes32` *(optional)*  - the client key to sign requests.
+* **key** :`bytes32` *(optional)*  - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
+
+* **pk** :`bytes32`|`bytes32[]` *(optional)*  - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
     example: 0x387a8233c96e1fc0ad5e284353276177af2186e7afa85296f106336e376669f7
 
 * **useBinary** :`bool` *(optional)*  - if true the client will use binary format.
@@ -58,12 +61,6 @@ The config params support the following properties :
 
 * **useHttp** :`bool` *(optional)*  - if true the client will try to use http instead of https.
     example: false
-
-* **maxBlockCache** :`uint32_t` *(optional)*  - number of number of blocks cached  in memory.
-    example: 100
-
-* **maxCodeCache** :`uint32_t` *(optional)*  - number of max bytes used to cache the code in memory.
-    example: 100000
 
 * **timeout** :`uint32_t` *(optional)*  - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection.
     example: 100000
@@ -83,6 +80,16 @@ The config params support the following properties :
 
 * **requestCount** :`uint8_t` - the number of request send when getting a first answer.
     example: 3
+
+* **btc** :`Object` *(optional)* - configuration for bitcoin-verification ( only available if build with `-DBTC=true`, which is on per default). The config may contains the following fields:
+
+    * **maxDAP** :`number`  - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets.
+    * **maxDiff** :`number`  - max increase (in percent) of the difference between targets when accepting new targets.
+
+* **zksync** :`Object` *(optional)* - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is off per default). The config may contains the following fields:
+
+    * **provider_url** :`string` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain)
+    * **account** :`address` *(optional)*  - the account to be used. if not specified, the first signer will be used.
 
 * **rpc** :`string` *(optional)*  - url of one or more rpc-endpoints to use. (list can be comma seperated)
 
@@ -218,6 +225,37 @@ Response:
 }
 ```
 
+### in3_addRawKey
+
+adds a raw private key as signer, which allows signing transactions.
+
+Parameters:
+
+1. `pk`: string - the 32byte long private key as hex string.
+
+Returns:
+
+the address of given key.
+
+Request:
+
+```js
+{
+    "method":"in3_addRawKey",
+    "params":[
+        "0x1234567890123456789012345678901234567890123456789012345678901234"]
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+}
+```
 
 ### in3_checksumAddress
 
@@ -2747,3 +2785,251 @@ This graph shows the usage of this method and visualizes the result from above. 
 
 ![](proofTarget.png)
  
+
+## zksync
+
+the zksync-plugin is able to handle operations to use [zksync](https://zksync.io/) like deposit transfer or withdraw. Also see the #in3-config on how to configure the zksync-server or account.
+
+Also in order to sign messages you need to set a signer!
+
+
+
+### zksync_contract_address
+
+params: none
+
+returns the contract address
+
+```sh
+in3 zksync_contract_address | jq
+```
+
+```json
+{
+  "govContract": "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01",
+  "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
+}
+```
+
+### zksync_tokens
+
+params: none
+
+returns the list of available tokens
+
+
+```sh
+in3 zksync_tokens | jq
+```
+
+```json
+{
+  "BAT": {
+    "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
+    "decimals": 18,
+    "id": 8,
+    "symbol": "BAT"
+  },
+  "BUSD": {
+    "address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
+    "decimals": 18,
+    "id": 6,
+    "symbol": "BUSD"
+  },
+  "DAI": {
+    "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+    "decimals": 18,
+    "id": 1,
+    "symbol": "DAI"
+  },
+  "ETH": {
+    "address": "0x0000000000000000000000000000000000000000",
+    "decimals": 18,
+    "id": 0,
+    "symbol": "ETH"
+  }
+}
+```
+
+
+### zksync_account_info
+
+params: 
+- address (optional, if the pk is set it will be taken from there)
+
+returns account_info from the server
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_info | jq
+```
+
+```json
+{
+  "address": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292",
+  "committed": {
+    "balances": {},
+    "nonce": 0,
+    "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+  },
+  "depositing": {
+    "balances": {}
+  },
+  "id": null,
+  "verified": {
+    "balances": {},
+    "nonce": 0,
+    "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+  }
+}
+```
+
+### zksync_tx_info
+
+params: 
+- the txHash
+
+returns the state or receipt of the the zksync-tx
+
+```sh
+in3 zksync_tx_info  "sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000" | jq
+```
+
+```json
+{
+  "block": null,
+  "executed": false,
+  "failReason": null,
+  "success": null
+}
+```
+
+### zksync_setKey
+
+params: none
+
+sets the signerkey based on the current pk
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_setKey 
+```
+
+```json
+"sync:e41d2489571d322189246dafa5ebde1f4699f498"
+```
+
+### zksync_ethop_info
+
+params: 
+- the opId
+
+returns the state or receipt of the the PriorityOperation
+
+### zksync_get_token_price
+
+params: 
+- the token-address
+
+returns current token-price
+
+```sh
+in3 zksync_get_token_price WBTC 
+```
+
+```json
+11320.002167
+```
+
+### zksync_get_tx_fee
+
+params: 
+- txType ( "Withdraw" or "Transfer" )
+- address
+- token 
+
+returns fee for a transaction
+
+```sh
+in3 zksync_get_tx_fee Transfer 0xabea9132b05a70803a4e85094fd0e1800777fbef BAT | jq
+```
+
+```json
+{
+  "feeType": "TransferToNew",
+  "gasFee": "47684047990828528",
+  "gasPriceWei": "116000000000",
+  "gasTxAmount": "350",
+  "totalFee": "66000000000000000",
+  "zkpFee": "18378682992117666"
+}
+```
+
+### zksync_syncKey
+
+params: none
+
+returns private key used for signing zksync-transactions
+
+
+### zksync_deposit
+
+params: (passed as array in this order or as array with one JSON-Object, with those props)
+- amount
+- token
+- approveDepositAmountForERC20
+- account (if not given it will be taken from the current signer)
+
+
+sends a deposit-transaction and returns the opId, which can be used to tradck progress.
+
+```sh
+in3 -pk <MY_PK> zksync_deposit 1000 WBTC false 
+```
+
+
+### zksync_transfer
+
+params: 
+- to
+- amount
+- token
+- account (if not given it will be taken from the current signer)
+
+sends a zksync-transaction and returns data including the transactionHash.
+
+
+```sh
+in3 -pk <MY_PK> zksync_transfer  0xabea9132b05a70803a4e85094fd0e1800777fbef 100 WBTC 
+```
+
+
+### zksync_withdraw
+
+params: 
+- ethAddress
+- amount
+- token
+- account (if not given it will be taken from the current signer)
+
+withdraws the amount to the given `ethAddress` for the given token.
+
+
+```sh
+in3 -pk <MY_PK> zksync_withdraw  0xabea9132b05a70803a4e85094fd0e1800777fbef 100 WBTC 
+```
+
+
+### zksync_emergencyWithdraw
+
+params: 
+- token
+
+withdraws all tokens for the specified token as a onchain-transaction. This is useful in case the zksync-server is offline or tries to be malicious.
+
+
+```sh
+in3 -pk <MY_PK> zksync_emergencyWithdraw WBTC 
+```
