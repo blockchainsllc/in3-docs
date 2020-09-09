@@ -59,6 +59,55 @@ target = targetmax / difficulty
 targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
 ```
 
+## Security Calculation
+
+How secure is the Incubed Bitcoin Verification?
+
+The highest risk is a situation, where a malicious node could provide a manipulated or fake block header (i.e. changing the data to gain benefits) and finality block headers which fullfill the rules but are not actually valid (i.e. not part of the longest chain / chain of fake-blocks). The client would trust this data in case he has no other information to check against. The following calculation outlines the security (in terms of $) when the client is requesting one of the newer blocks and 6 finality headers. This results in a total of 7 fake-blocks that an atacker has to calculate to fool the client. The calculation is based on assumptions and averages.
+
+Assume that the attacker has 10% of the total
+mining power. This would mean he needs around 100 minutes to mine 1 block (average block time of Bitcoin is 10 minutes) and around 700 minutes to mine 7 blocks. While mining fake-blocks, the attacker loses his chance of earning block rewards. Assuming that we would have been able to mine 7 blocks, with a current block reward of 6.25 BTC and $11,400 per Bitcoin at the time of writing:
+
+```
+7 * 6.25 BTC = 43.75 BTC
+
+43.75 BTC * ($11,400 / 1 BTC) = $498,750
+```
+
+Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others. [15]
+A new [Antminer S9](https://www.buybitcoinworldwide.com/mining/hardware/) with 14 TH/s can be bought for $3,000. This would mean an attacker has to pay $2,568,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
+
+Hashing power can also be rented online. Obviously nobody is offering to lend 12 EH/s of hashing power – but for this calculation we assume that an attacker is still able to rent this amount of hashing power. The website [nicehash.com](https://www.nicehash.com/marketplace) is offering 1 PH/s for 0.0098 BTC (for 24 hours).
+
+```
+1 PH/s = 0.0098 BTC
+
+12 EH/s = 117.6 BTC
+```
+
+Assuming it is possible to rent it for 700 minutes only (which would be 48.6% of one day).
+
+```
+117.6 BTC * 0.486 = 57.15 BTC
+
+57.15 BTC * ($11,400 / 1 BTC) = $651,510
+
+Total: $498,750 + $651,510 = $1,150,260
+```
+
+Therefore, 6 finality headers provide a security of estimated **$1,150,260** in total.
+
+> What does that mean for the client?
+
+A rental car is equipped with an Incubed client running on a microship to perform authorization checks and activate the ignition if necessary. The car is its own owner and it has a Bitcoin address to receive payments to rent itself to customers. Part of the authorization check is the verification of the existence and correctness of the payment (using the Incubed client). Therefore, a customers sends the hash of the payment transaction to the car to be authorized in case the transaction gets verified. 
+
+Assuming that a customer (Bob) runs a malicious Incubed node and the car randomly asks exactly this node for the verification of the transaction. Bob could fool the car by creating a fake-transaction in a fake-block. To prove the correctness of the fake-transaction, Bob needs to calculate a chain of fake-blocks as well (to prove the finality). In this case the car would authorize Bob because it was able to verify the transaction, even though the transaction is fake.
+
+Bob would be able to use the car without having to pay for it, **but** performing such an attack (calculate a wrong block and 6 finality headers) is very expensive as shown above. And this is what is meant by *security in terms of $* - fooling the client in such a scenario is definitely not worth it (since paying the actual fees for the car would be a *far* less than the cost of performing such an attack). Hence, Incubed clients can trust in the correctness of a transaction (with a high probability) if the value is less than $1,150,260 and the server is able to provide 6 finality headers for the block that transaction is included. The higher the number of finality blocks, the higher the security (i.e. the higher the costs for an attack). The following figure shows the cost to mine *n* fake-blocks based on the numbers mentioned above.
+
+![Bitcoin Risk Calculation](btc_riskcalculation.png)
+
+
 ## Proofs
 
 ### Target Proof
@@ -213,53 +262,6 @@ As mentioned above three things are required to perform this proof:
    = 12 * 32 bytes = 384 bytes
 
 Conclusion: a block number proof will be **764 bytes** on average (the size of this proof can be much smaller - but can also be much bigger - depending on the size of the coinbase transaction and the total amount of transaction)
-
-## Risk Calculation
-
-A malicious node could provide a modified block header (i.e. changing the data to gain benefits) and finality block headers which are valid but not actually valid (i.e. not part of the longest chain / chain of fake-blocks). The client would trust this data in case he has no other information to check against. The following calculation outlines the security (in terms of $) when the client is requesting one of the newer blocks and 6 finality headers. This results in a total of 7 fake-blocks that an atacker has to calculate to fool the client. The calculation is based on assumptions and averages.
-
-Assume that the attacker has 10% of the total
-mining power. This would mean he needs around 100 minutes to mine 1 block (average block time of Bitcoin is 10 minutes) and around 700 minutes to mine 7 blocks. While mining fake-blocks, the attacker loses his chance of earning block rewards. Assuming that we would have been able to mine 7 blocks, with a current block reward of 6.25 BTC and $11,400 per Bitcoin at the time of writing:
-
-```
-7 * 6.25 BTC = 43.75 BTC
-
-43.75 BTC * ($11,400 / 1 BTC) = $498,750
-```
-
-Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others. [15]
-A new [Antminer S9](https://www.buybitcoinworldwide.com/mining/hardware/) with 14 TH/s can be bought for $3,000. This would mean an attacker has to pay $2,568,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
-
-Hashing power can also be rented online. Obviously nobody is offering to lend 12 EH/s of hashing power – but for this calculation we assume that an attacker is still able to rent this amount of hashing power. The website [nicehash.com](https://www.nicehash.com/marketplace) is offering 1 PH/s for 0.0098 BTC (for 24 hours).
-
-```
-1 PH/s = 0.0098 BTC
-
-12 EH/s = 117.6 BTC
-```
-
-Assuming it is possible to rent it for 700 minutes only (which would be 48.6% of one day).
-
-```
-117.6 BTC * 0.486 = 57.15 BTC
-
-57.15 BTC * ($11,400 / 1 BTC) = $651,510
-
-Total: $498,750 + $651,510 = $1,150,260
-```
-
-Therefore, 6 finality headers provide a security of estimated **$1,150,260** in total.
-
-> What does that mean for the client?
-
-A rental car is equipped with an Incubed client running on a microship to perform authorization checks and activate the ignition if necessary. The car is its own owner and it has a Bitcoin address to receive payments to rent itself to customers. Part of the authorization check is the verification of the existence and correctness of the payment (using the Incubed client). Therefore, a customers sends the hash of the payment transaction to the car to be authorized in case the transaction gets verified. 
-
-Assuming that a customer (Bob) runs a malicious Incubed node and the car randomly asks exactly this node for the verification of the transaction. Bob could fool the car by creating a fake-transaction in a fake-block. To prove the correctness of the fake-transaction, Bob needs to calculate a chain of fake-blocks as well (to prove the finality). In this case the car would authorize Bob because it was able to verify the transaction, even though the transaction is fake.
-
-Bob would be able to use the car without having to pay for it, **but** performing such an attack (calculate a wrong block and 6 finality headers) is very expensive as shown above. And this is what is meant by *security in terms of $* - fooling the client in such a scenario is definitely not worth it (since paying the actual fees for the car would be a *far* less than the cost of performing such an attack). Hence, Incubed clients can trust in the correctness of a transaction (with a high probability) if the value is less than $1,150,260 and the server is able to provide 6 finality headers for the block that transaction is included. The higher the number of finality blocks, the higher the security (i.e. the higher the costs for an attack). The following figure shows the cost to mine *n* fake-blocks based on the numbers mentioned above.
-
-![Bitcoin Risk Calculation](btc_riskcalculation.png)
-
 
 ## Conviction
 
