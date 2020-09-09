@@ -32,8 +32,8 @@ Welcome to Incubed's documentation!
    :numbered:
 
    intro
-   poa
-   Ethereum-Verification-and-MerkleProof
+   ethereum
+   bitcoin
    incentivization
    decentralizing_services
    Threat-Model-for-Incubed
