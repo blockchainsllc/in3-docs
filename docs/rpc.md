@@ -1013,6 +1013,11 @@ See [net_version](https://eth.wiki/json-rpc/API#net_version) for spec.
 
 No proof returned, but the client must verify the result by comparing it to the used chainId.
 
+
+### eth_accounts
+
+returns a array of account-addresss the incubed client is able to sign with. In order to add keys, you can use [in3_addRawKey](#in3-addrawkey).
+
 ### eth_blockNumber
 
 Returns the number of the most recent block.
