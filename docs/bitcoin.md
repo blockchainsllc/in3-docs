@@ -74,7 +74,7 @@ mining power. This would mean he needs around 100 minutes to mine 1 block (avera
 43.75 BTC * ($11,400 / 1 BTC) = $498,750
 ```
 
-Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others. [15]
+Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others.
 A new [Antminer S9](https://www.buybitcoinworldwide.com/mining/hardware/) with 14 TH/s can be bought for $3,000. This would mean an attacker has to pay $2,568,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
 
 Hashing power can also be rented online. Obviously nobody is offering to lend 12 EH/s of hashing power – but for this calculation we assume that an attacker is still able to rent this amount of hashing power. The website [nicehash.com](https://www.nicehash.com/marketplace) is offering 1 PH/s for 0.0098 BTC (for 24 hours).
