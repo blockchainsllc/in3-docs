@@ -335,6 +335,67 @@ Response:
 ```
 
 
+### in3_toWei
+
+converts the given value into wei.
+
+Parameters:
+
+1. `value`: string or integer - the value, which may be floating number as string, like '0.9'
+2. `unit`: the unit of the value, which must be one of 
+    `wei`, 
+    `kwei`,
+    `Kwei`,
+    `babbage`,
+    `femtoether`,
+    `mwei`,
+    `Mwei`,
+    `lovelace`,
+    `picoether`,
+    `gwei`,
+    `Gwei`,
+    `shannon`,
+    `nanoether`,
+    `nano`,
+    `szabo`,
+    `microether`,
+    `micro`,
+    `finney`,
+    `milliether`,
+    `milli`,
+    `ether`,
+    `eth`,
+    `kether`,
+    `grand`,
+    `mether`,
+    `gether`,
+    `tether`
+
+
+Returns:
+
+the value in wei as hex.
+
+Request:
+
+```js
+{
+    "method":"in3_toWei",
+    "params":[
+         "20.0009123", "eth"
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": "0x01159183c4793db800",
+}
+```
+
 
 
 ### in3_pk2address
