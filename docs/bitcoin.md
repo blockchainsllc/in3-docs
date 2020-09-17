@@ -8,7 +8,7 @@ For the verification of Bitcoin we make use of the Simplified Payment Verificati
 
 > It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it. As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network.
 
-In contrast to SPV-clients an Incubed client does not keep a copy of all block headers, instead the client is stateless and only requests required block headers. We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. delivering a chain of fake-blocks). This does not really work for very old blocks. Beside the very low difficulty at this time, the miner has many years of time to pre-mine a wrong chain of blocks. Therefore, we are setting some hard-coded checkpoints of hashes of bygone blocks. Proving the correctness of old blocks can be achieved by checking the linking from the requested block to a certain checkpoint (the server needs to provide the corresponding data). The only way for an attacker to fool the client would be by finding a hash collision.
+In contrast to SPV-clients an Incubed client does not keep a copy of all block headers, instead the client is stateless and only requests required block headers. We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. delivering a chain of fake-blocks). This does not really work for very old blocks. Beside the very low difficulty at this time, the miner has many years of time to pre-mine a wrong chain of blocks. Therefore, a different approach is required which will be explained in [PreBIP34 Proof](bitcoin.html#prebip34-proof)
 
 ### Bitcoin Block Header
 
@@ -75,7 +75,7 @@ mining power. This would mean he needs around 100 minutes to mine 1 block (avera
 ```
 
 Furthermore, the attacker needs to achieve 10% of the mining power. With a current total hash rate of 120 EH/s, this would mean 12 EH/s. There are two options: buying the hardware or renting the mining power from others.
-A new [Antminer S9](https://www.buybitcoinworldwide.com/mining/hardware/) with 14 TH/s can be bought for $3,000. This would mean an attacker has to pay $2,568,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
+A new [Antminer S9](https://shop.bitmain.com/product/detail?pid=00020200306153650096S2W5mY1i0661) with 16 TH/s can be bought for ~$100. This would mean an attacker has to pay $75,000,000 to buy so many of these miners to reach 12 EH/s. The costs for electricity, storage room and cooling still needs to be added.
 
 Hashing power can also be rented online. Obviously nobody is offering to lend 12 EH/s of hashing power – but for this calculation we assume that an attacker is still able to rent this amount of hashing power. The website [nicehash.com](https://www.nicehash.com/marketplace) is offering 1 PH/s for 0.0098 BTC (for 24 hours).
 
@@ -232,6 +232,7 @@ In comparison to Ethereum there is no block number in a [Bitcoin block header](b
 
 > Bitcoin Improvement Proposal 34 (BIP-34) introduces an upgrade path for versioned transactions and blocks. A unique value is added to newly produced coinbase transactions, and blocks are updated to version 2. After block number 227,835 all blocks must include the block height in their coinbase transaction.
 
+
 For all blocks after block number 227,835 the block number can be proven as follows:
 
 1.) Extract block number out of the coinbase transaction
@@ -264,11 +265,56 @@ As mentioned above three things are required to perform this proof:
 
 Conclusion: a block number proof will be **764 bytes** on average (the size of this proof can be much smaller - but can also be much bigger - depending on the size of the coinbase transaction and the total amount of transaction)
 
+## PreBIP34 Proof
+
+As mentioned in the introduction, relying on the finality does not really work for very old blocks (old in this context always means before BIP34, block number < 227,836) due to the following problems:
+
+* **low difficulty** \
+   The total hash rate of the bitcoin network was around 1-10 TH/s in 2011, whereas today the total hash rate is around 130 EH/s and a single Antminer S9 is capable of running at 14 TH/s (which is more than the total hash rate back in 2011). Therefore, an attacker can easily mine a chain of fake-blocks with today's computing power and finality blocks provide almost no security. See [here](https://www.blockchain.com/charts/hash-rate) for the evolution of the total hash rate.
+
+* **missing BIP34** \
+   The verification of the block number is an important part of the verification of bitcoin data in general. Since the block number is not part of the block header in Bitcoin the client needs a different way to verify the block number to make sure that a requested block X really is block X. For every block after block number 227,835 the block number is part of the coinbase transaction due to BIP34. The verification described in [Block Number Proof](bitcoin.html#block-number-proof) obviosuly does not work for very old blocks (before the introduction of BIP34).
+
+The verification of blocks before BIP34 relies on hard-coded checkpoints of hashes of bygone blocks on the client-side. The server needs to provide the corresponding finality headers from a requested block up to the next checkpoint. By checking the linking the client is able to verify the existence and correctness of the requested block. The only way for an attacker to fool the client would be by finding a hash collision (find different inputs that produce the same hash) of a certain checkpoint (the attacker could provide a chain of fake-blocks and the client accepts it because he was able to verify the chain against a checkpoint). The client has the opportunity to decide whether he wants to verify old blocks or not. By turning on this option the checkpoints will be included in the client and the server will provide the corresponding finality headers in each request of old blocks.
+
+### Creation of the checkpoints
+
+The reason why we need checkpoints is that it is not feasable for the client to save every single hash from the genesis block up to the introduction of BIP34. The checkpoints are hashes of bygone blocks, and to save on space the checkpoints have a distance X. The larger this distance is, the smaller is the amount of checkpoints and the larger is the amount of necessary finality headers to reach a checkpoint (maximum X finality headers). Therefore, having a large distance requires less storage space to save the checkpoints BUT the amount of finality headers per request will be very big (resulting in a lot of data to transfer). The following graph should help to decide where the sweetspot is.
+
+GRAPH
+
+As you can see in the graph the distance of **200** is the sweetspot we were looking for. This means the record of checkpoints includes the hash of every 200th block of the Bitcoin blockchain starting with block 200 (storing the genesis block is not necessary since a checkpoint always has to be in the future of a requested block). It takes 32 bytes to store a block hash. To save on space we decided to store the first 16 bytes only - and to save even more space we removed the first 4 bytes of every hash because each hash started with at least 4 bytes of zeros (storing only 12 bytes is still very secure). The record of checkpoints needs a total of **13680 bytes**. Depending on the distance from a requested block to the next checkpoint a response will include a maximum of 199 finality headers which is a total of around *16 kB*.
+
+> Why is it necessary having checkpoints in the future (from the view of a requested block)? Why can a checkpoint not be in past to have a maximum distance of 100 (either forwards or backwards to the next checkpoint)?
+
+Simple answer: Since the hash of block X-1 is part of block X (not not vice versa) checking the links backward does not provide any security. An attacker can simply modify block X and refer to block X-1 (using the hash of block X-1 as the parent hash of block X). The attacker just have to solve the proof-of-work again for block X (which should not be too hard with the today's computing power and the low difficulty at that time). To verify that block X is correct the client always needs a chain of blocks **up to** the next checkpoint.
+
+### Security Calculation
+
+Although one checkpoint is only 12 bytes in total, it provides a security of 16 bytes because we know that the first 4 bytes are *always* zeros. An attacker has to test 2<sup>128</sup> possibilities to (propably) find a hash whose leading 16 bytes are equal to the checkpoint's.
+
+With a current total hash rate of 120 EH/s in the Bitcoin network:
+
+```
+2^128 = 3.4 * 10^38 possible hashes
+
+3.4 * 10^38 H / 120 EH/s = 2,835,686,391,007,820,529 s
+
+= 89,919,025,590 years
+```
+
+It would take up to **89,919,025,590** years if the whole bitcoin network with its total hash rate would try to find such a hash.
+
+
+> Does the security increase if the requested block is further away from a checkpoint?
+
+Slighlty - but actually not. The further away a requested block is from a checkpoint, the more proof-of-work has to be done. Due to the low difficulty in the early days of Bitcoin this is not a problem with the today's computing power. Solving the proof-of-work does not really have to be taken into account - because this is “nothing” compared to the many years to brute force a hash whose leading 16 bytes are equal to the checkpoint's. Therefore, the security does not really increase with a greater distance to a checkpoint.
+
 ## Conviction
 
 *Important: This concept is still in development and discussion and is not yet fully implemented.*
 
-Just as the Incubed Client can ask for signed blockhashes in Ethereum, he can do this in Bitcoin as well. The signed payload from the node will have to contain these data:
+Just as the Incubed Client can ask for signed block hashes in Ethereum, he can do this in Bitcoin as well. The signed payload from the node will have to contain these data:
 
 ```js
 bytes32 blockhash;

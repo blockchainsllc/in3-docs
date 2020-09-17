@@ -29,6 +29,8 @@ Requests without an `in3` property will also get a response without `in3`. This 
     - `'never`' : No proof will be delivered (default). Also no `in3`-property will be added to the response, but only the raw JSON-RPC response will be returned. 
     - `'proof`' : The proof will be created including a blockheader, but without any signed blockhashes.
 
+*  **preBIP34** `boolean` - Defines if the client wants to verify blocks before BIP34 (height < 227836). If true, the `proof`-section will include data to verify the existence and correctness of *old* blocks as well (before BIP34).
+
 *  **whiteList** `address` - If specified, the incubed server will respond with `lastWhiteList`, which will indicate the last block number of whitelist contract event.
 
 *  **signers** `string<address>[]` - A list of addresses (as 20bytes in hex) requested to sign the blockhash.    
