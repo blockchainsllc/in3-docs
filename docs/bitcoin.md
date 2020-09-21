@@ -283,6 +283,13 @@ The reason why we need checkpoints is that it is not feasable for the client to 
 
 ![](btc_sizedistance.png)
 
+```
+y: size in kB
+x: distance between checkpoints
+green: size of record of checkpoints
+red: size of finality headers per request (maximum)
+```
+
 As you can see in the graph the distance of **200** is the sweetspot we were looking for. This means the record of checkpoints includes the hash of every 200th block of the Bitcoin blockchain starting with block 200 (storing the genesis block is not necessary since a checkpoint always has to be in the future of a requested block). It takes 32 bytes to store a block hash. To save on space we decided to store the first 16 bytes only - and to save even more space we removed the first 4 bytes of every hash because each hash started with at least 4 bytes of zeros (storing only 12 bytes is still very secure). The record of checkpoints needs a total of **13680 bytes**. Depending on the distance from a requested block to the next checkpoint a response will include a maximum of 199 finality headers which is a total of around *16 kB*.
 
 > Why is it necessary having checkpoints in the future (from the view of a requested block)? Why can a checkpoint not be in past to have a maximum distance of 100 (either forwards or backwards to the next checkpoint)?
