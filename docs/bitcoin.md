@@ -285,7 +285,7 @@ The reason why we need checkpoints is that it is not feasable for the client to 
 
 ```
 y: size in kB
-x: distance between checkpoints
+x: distance between checkpoints (blocks)
 green: size of record of checkpoints
 red: size of finality headers per request (maximum)
 ```
