@@ -281,7 +281,7 @@ The verification of blocks before BIP34 relies on hard-coded checkpoints of hash
 
 The reason why we need checkpoints is that it is not feasable for the client to save every single hash from the genesis block up to the introduction of BIP34. The checkpoints are hashes of bygone blocks, and to save on space the checkpoints have a distance X. The larger this distance is, the smaller is the amount of checkpoints and the larger is the amount of necessary finality headers to reach a checkpoint (maximum X finality headers). Therefore, having a large distance requires less storage space to save the checkpoints BUT the amount of finality headers per request will be very big (resulting in a lot of data to transfer). The following graph should help to decide where the sweetspot is.
 
-GRAPH
+<img src="btc_sizedistance.png" width="700"/>
 
 As you can see in the graph the distance of **200** is the sweetspot we were looking for. This means the record of checkpoints includes the hash of every 200th block of the Bitcoin blockchain starting with block 200 (storing the genesis block is not necessary since a checkpoint always has to be in the future of a requested block). It takes 32 bytes to store a block hash. To save on space we decided to store the first 16 bytes only - and to save even more space we removed the first 4 bytes of every hash because each hash started with at least 4 bytes of zeros (storing only 12 bytes is still very secure). The record of checkpoints needs a total of **13680 bytes**. Depending on the distance from a requested block to the next checkpoint a response will include a maximum of 199 finality headers which is a total of around *16 kB*.
 
