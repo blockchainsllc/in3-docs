@@ -2148,7 +2148,7 @@ Response:
 ## btc
 
 For bitcoin incubed follows the specification as defined in [https://bitcoincore.org/en/doc/0.18.0/](https://bitcoincore.org/en/doc/0.18.0/).
-Internally the in3-server will add proofs as part of the responses. The proof data differs between the methods. You will read which proof data will be provided and how the data can be used to prove the result for each method.
+Internally the in3-server will add proofs as part of the responses. The proof data differs between the methods. You will read which proof data will be provided and how the data can be used to prove the result for each method. 
 
 Proofs will add a special `in3`-section to the response containing a `proof`- object. This object will contain parts or all of the following properties:
 
@@ -2171,6 +2171,7 @@ Parameters:
 2. `verbosity`        : (number or boolean, optional, default=1) 0 or false for the hex-encoded data, 1 or true for a json object
 3. `in3.finality`     : (number, required) defines the amount of finality headers
 4. `in3.verification` : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+5. `in3.preBIP34`     : (boolean, required) defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
 Returns:
@@ -2199,11 +2200,22 @@ Returns:
 
 The `proof`-object contains the following properties:
 
-- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
-- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+- for blocks before BIP34 (height < 227,836) and `in3.preBIP34` = false
 
-The finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). To verify the block number we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+
+- for blocks before BIP34 (height < 227,836) and `in3.preBIP34` = true
+
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - `height`: number - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227,836), *the value of `in3.preBIP34` does not matter*
+
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+    - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+
+Old blocks (height < 227,836) with `in3.preBIP34` disabled cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#prebip34-proof)). Old blocks with `in.preBIP34` enabled can be verified by performing a [preBIP34 proof](bitcoin.html#prebip34-proof). Verifying newer blocks requires multiple proofs. The finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). To verify the block number we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 **Example**
 
@@ -2218,6 +2230,7 @@ Request:
     "in3":{
         "finality":8,
         "verification":"proof"
+        "preBIP34": true
     }
 }
 ```
@@ -2268,6 +2281,7 @@ Parameters:
 2. `verbosity`          : (number or boolean, optional, default=true) 0 or false for hex-encoded data, 1 or true for a json object, and 2 for json object **with** transaction data
 3. `in3.finality`       : (number, required) defines the amount of finality headers
 4. `in3.verification`   : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+5. `in3.preBIP34`       : (boolean, required) defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 Returns
 
@@ -2303,11 +2317,22 @@ Returns
 
 The `proof`-object contains the following properties:
 
-- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
-- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
 
-The finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). To verify the block number we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
+
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - `height`: number - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
+
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+    - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proofing the correctness of the cbtx.
+
+Old blocks (height < 227,836) with `in3.preBIP34` disabled cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#prebip34-proof)). Old blocks with `in.preBIP34` enabled can be verified by performing a [preBIP34 proof](bitcoin.html#prebip34-proof). Verifying newer blocks requires multiple proofs. The finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). To verify the block number we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 **Example**
 
@@ -2321,7 +2346,8 @@ Request:
     "params":  ["00000000000000000000140a7289f3aada855dfd23b0bb13bb5502b0ca60cdd7", true],
     "in3":{
         "finality":8,
-        "verification":"proof"
+        "verification":"proof",
+        "preBIP34": true
     }
 }
 ```
@@ -2382,6 +2408,7 @@ Parameters:
 3. `blockhash`       : (string, optional) The block in which to look for the transaction
 4. `in3.finality`    : (number, required) defines the amount of finality headers
 5. `in3.verification`: (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+6. `in3.preBIP34`    : (boolean, required) defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 Returns:
 
@@ -2421,15 +2448,32 @@ Returns:
 
 The `proof`-object contains the following properties:
 
-- `block`: hex - a hex string with 80 bytes representing the blockheader
-- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `txIndex`: number - index of the transaction (`txIndex`=`0` for coinbase transaction, necessary to create/verify the merkle proof)
-- `merkleProof`: hex - the merkle proof of the requested transaction, proving the correctness of the transaction
-- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
-- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
+
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `txIndex`: number - index of the transaction (`txIndex`=`0` for coinbase transaction, necessary to create/verify the merkle proof)
+    - `merkleProof`: hex - the merkle proof of the requested transaction, proving the correctness of the transaction
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
+
+     - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - `txIndex`: number - index of the transaction (`txIndex`=`0` for coinbase transaction, necessary to create/verify the merkle proof)
+    - `merkleProof`: hex - the merkle proof of the requested transaction, proving the correctness of the transaction
+    - `height`: number - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
+
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `txIndex`: number - index of the transaction (`txIndex`=`0` for coinbase transaction, necessary to create/verify the merkle proof)
+    - `merkleProof`: hex - the merkle proof of the requested transaction, proving the correctness of the transaction
+    - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+    - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
 
 
-The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). By doing a [merkle proof](bitcoin.html#transaction-proof-merkle-proof) using the `txIndex`-field and the `merkleProof`-field the correctness of the requested transation can be proven. Furthermore we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). 
+Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#prebip34-proof) and relying on the merkle proof is only possible when the block is final). Transactions of old blocks with `in3.preBIP34` enabled can be verified by performing a [preBIP34 proof](bitcoin.html#prebip34-proof) and a [merkle proof](bitcoin.html#transaction-proof-merkle-proof). Verifying newer blocks requires multiple proofs. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). By doing a [merkle proof](bitcoin.html#transaction-proof-merkle-proof) using the `txIndex`-field and the `merkleProof`-field the correctness of the requested transation can be proven. Furthermore we are going to perform a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). 
 
 **Example**
 
@@ -2445,7 +2489,8 @@ Request:
                 "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"],
     "in3":{
         "finality":8,
-        "verification":"proof"
+        "verification":"proof",
+        "preBIP34": true
     }
 }
 ```
@@ -2682,6 +2727,7 @@ Parameters:
 Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
 2. `in3.finality`      : (number, required) defines the amount of finality headers
 3. `in3.verification`  : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+4. `in3.preBIP34`      : (boolean, required) defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
 Returns:
@@ -2690,17 +2736,29 @@ Returns:
 
 The `proof`-object contains the following properties:
 
-- `block`: hex - a hex string with 80 bytes representing the blockheader
-- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
-- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
 
-In case the client requests the diffictuly of a certain block (`blocknumber` is a certain number) the `block`-field will contain the block header of this block and the `final`-field the corresponding finality headers. In case the client requests the difficulty of the latest block the server is not able to prove the finality for this block (obviously there are no finality headers available yet). The server considers the latest block minus `in3.finality` as the latest block and returns its difficulty. For both cases the block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
+
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - `height`: number - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
+
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number)
+    - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+
+In case the client requests the diffictuly of a certain block (`blocknumber` is a certain number) the `block`-field will contain the block header of this block and the `final`-field the corresponding finality headers. For old blocks (height < 227,836) with `in3.preBIP34` disabled the result cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#prebip34-proof)). The result of old blocks with `in.preBIP34` enabled can be verified by performing a [preBIP34 proof](bitcoin.html#prebip34-proof). In case the client requests the difficulty of the latest block the server is not able to prove the finality for this block (obviously there are no finality headers available yet). The server considers the latest block minus `in3.finality` as the latest block and returns its difficulty. The result can be verified by performing multiple proof. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof).  Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field).
 
 The result itself (the difficulty) can be verified in two ways:
 - by converting the difficulty into a target and check whether the block hash is lower than the target (since we proved the finality we consider the block hash as verified)
-- by converting the difficulty and the bits (part of the block header) into a target and check if both targets are similar (they will not be equal since the target of the bits is not getting saved with full precision)
-
+- by converting the difficulty and the bits (part of the block header) into a target and check if both targets are similar (they will not be equal since the target of the bits is not getting saved with full precision - leading bytes are equal)
 
 **Example**
 
@@ -2714,7 +2772,8 @@ Request:
     "params": [631910],
     "in3":{
         "finality":8,
-        "verification":"proof"
+        "verification":"proof",
+        "preBIP34": true
     }
 }
 ```
@@ -2751,6 +2810,7 @@ Parameters:
 5. `limit`             : (string or number, optional) the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
 6. `in3.finality`      : (number, required) defines the amount of finality headers
 7. `in3.verification`  : (string, required) defines the kind of proof the client is asking for (must be `never` or `proof`)
+8. `in3.preBIP34`      : (boolean, required) defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 Hints:
 
@@ -2768,13 +2828,28 @@ Returns: A path of daps from the `verified_dap` to the `target_dap` which fulfil
 
 The `dap`-object contains the following properties:
 
-- `dap`: number - the numer of the difficulty adjustment period
-- `block`: hex - a hex string with 80 bytes representing the  (always the first block of a dap)
-- `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-- `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number) 
-- `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
 
-The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with `verified_dap`. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). This allows us to consider the target of the block header as verified. Therefore we have a verified target for this `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
+    - `dap`: number - the numer of the difficulty adjustment period
+    - `block`: hex - a hex string with 80 bytes representing the  (always the first block of a dap)
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
+
+    - `dap`: number - the numer of the difficulty adjustment period
+    - `block`: hex - a hex string with 80 bytes representing the blockheader
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - `height`: number - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
+
+    - `dap`: number - the numer of the difficulty adjustment period
+    - `block`: hex - a hex string with 80 bytes representing the  (always the first block of a dap)
+    - `final`: hex - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - `cbtx`:  hex - the serialized coinbase transaction of the block (this is needed to get the verified block number) 
+    - `cbtxMerkleProof`: hex - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+
+The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with the `verified_dap`. For old blocks (height < 227,836) with `in3.preBIP34` disabled the target cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#prebip34-proof)). For old blocks with `in.preBIP34` enabled the block header can be verified by performing a [preBIP34 proof](bitcoin.html#prebip34-proof). Verifying newer blocks requires multiple proofs. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). Having a verified block header allows us to consider the target of the block header as verified. Therefore, we have a verified target for the whole `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
 
 **Example**
 
@@ -2788,7 +2863,8 @@ Request:
     "params": [230,200,5,5,15],
     "in3":{
                 "finality" : 8,
-                "verification":"proof"
+                "verification":"proof",
+                "preBIP34": true
         }
 }
 ```
