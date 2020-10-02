@@ -63,6 +63,31 @@ targetmax = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
 
 How secure is the Incubed Bitcoin Verification?
 
+### Blocks Before 227,836 (BIP34)
+
+The verification of blocks before BIP34 relies on checkpoints as explained [here](bitcoin.hmtl#blocks-before-227,836-(BIP34)).
+
+Although one checkpoint is only 12 bytes in total, it provides a security of 16 bytes because we know that the first 4 bytes are *always* zeros. An attacker has to test 2<sup>128</sup> possibilities to (propably) find a hash whose leading 16 bytes are equal to the checkpoint's.
+
+With a current total hash rate of 120 EH/s in the Bitcoin network:
+
+```
+2^128 = 3.4 * 10^38 possible hashes
+
+3.4 * 10^38 H / 120 EH/s = 2,835,686,391,007,820,529 s
+
+= 89,919,025,590 years
+```
+
+It would take up to **89,919,025,590** years if the whole bitcoin network with its total hash rate would try to find such a hash.
+
+
+> Does the security increase if the requested block is further away from a checkpoint?
+
+Slighlty - but actually not. The further away a requested block is from a checkpoint, the more proof-of-work has to be done. Due to the low difficulty in the early days of Bitcoin this is not a problem with the today's computing power. Solving the proof-of-work does not really have to be taken into account - because this is “nothing” compared to the many years to brute force a hash whose leading 16 bytes are equal to the checkpoint's. Therefore, the security does not really increase with a greater distance to a checkpoint.
+
+### Blocks After 227,836 (BIP34)
+
 The highest risk is a situation, where a malicious node could provide a manipulated or fake block header (i.e. changing the data to gain benefits) and finality block headers which fullfill the rules but are not actually valid (i.e. not part of the longest chain / chain of fake-blocks). The client would trust this data in case he has no other information to check against. The following calculation outlines the security (in terms of $) when the client is requesting one of the newer blocks and 6 finality headers. This results in a total of 7 fake-blocks that an atacker has to calculate to fool the client. The calculation is based on assumptions and averages.
 
 Assume that the attacker has 10% of the total
@@ -265,7 +290,7 @@ As mentioned above three things are required to perform this proof:
 
 Conclusion: a block number proof will be **764 bytes** on average (the size of this proof can be much smaller - but can also be much bigger - depending on the size of the coinbase transaction and the total amount of transaction)
 
-### PreBIP34 Proof
+### Blocks Before 227,836 (BIP34)
 
 As mentioned in the introduction, relying on the finality does not really work for very old blocks (old in this context always means before BIP34, block number < 227,836) due to the following problems:
 
@@ -277,7 +302,7 @@ As mentioned in the introduction, relying on the finality does not really work f
 
 The verification of blocks before BIP34 relies on hard-coded checkpoints of hashes of bygone blocks on the client-side. The server needs to provide the corresponding finality headers from a requested block up to the next checkpoint. By checking the linking the client is able to verify the existence and correctness of the requested block. The only way for an attacker to fool the client would be by finding a hash collision (find different inputs that produce the same hash) of a certain checkpoint (the attacker could provide a chain of fake-blocks and the client accepts it because he was able to verify the chain against a checkpoint). The client has the opportunity to decide whether he wants to verify old blocks or not. By turning on this option the checkpoints will be included in the client and the server will provide the corresponding finality headers in each request of old blocks.
 
-#### Creation of the checkpoints
+**Creation of the checkpoints**
 
 The reason why we need checkpoints is that it is not feasable for the client to save every single hash from the genesis block up to the introduction of BIP34. The checkpoints are hashes of bygone blocks, and to save on space the checkpoints have a distance X. The larger this distance is, the smaller is the amount of checkpoints and the larger is the amount of necessary finality headers to reach a checkpoint (maximum X finality headers). Therefore, having a large distance requires less storage space to save the checkpoints BUT the amount of finality headers per request will be very big (resulting in a lot of data to transfer). The following graph should help to decide where the sweetspot is.
 
@@ -295,27 +320,6 @@ As you can see in the graph the distance of **200** is the sweetspot we were loo
 > Why is it necessary having checkpoints in the future (from the view of a requested block)? Why can a checkpoint not be in past to have a maximum distance of 100 (either forwards or backwards to the next checkpoint)?
 
 Simple answer: Since the hash of block X-1 is part of block X (not not vice versa) checking the links backward does not provide any security. An attacker can simply modify block X and refer to block X-1 (using the hash of block X-1 as the parent hash of block X). The attacker just have to solve the proof-of-work again for block X (which should not be too hard with the today's computing power and the low difficulty at that time). To verify that block X is correct the client always needs a chain of blocks **up to** the next checkpoint.
-
-#### Security Calculation
-
-Although one checkpoint is only 12 bytes in total, it provides a security of 16 bytes because we know that the first 4 bytes are *always* zeros. An attacker has to test 2<sup>128</sup> possibilities to (propably) find a hash whose leading 16 bytes are equal to the checkpoint's.
-
-With a current total hash rate of 120 EH/s in the Bitcoin network:
-
-```
-2^128 = 3.4 * 10^38 possible hashes
-
-3.4 * 10^38 H / 120 EH/s = 2,835,686,391,007,820,529 s
-
-= 89,919,025,590 years
-```
-
-It would take up to **89,919,025,590** years if the whole bitcoin network with its total hash rate would try to find such a hash.
-
-
-> Does the security increase if the requested block is further away from a checkpoint?
-
-Slighlty - but actually not. The further away a requested block is from a checkpoint, the more proof-of-work has to be done. Due to the low difficulty in the early days of Bitcoin this is not a problem with the today's computing power. Solving the proof-of-work does not really have to be taken into account - because this is “nothing” compared to the many years to brute force a hash whose leading 16 bytes are equal to the checkpoint's. Therefore, the security does not really increase with a greater distance to a checkpoint.
 
 ## Conviction
 
