@@ -3031,7 +3031,7 @@ returns: [`uint256_t`](#uint256-t)
 uint64_t eth_blockNumber(in3_t *in3);
 ```
 
-Returns the current price per gas in wei. 
+Returns the current blockNumber, if bn==0 an error occured and you should check eth_last_error() 
 
 arguments:
 ```eval_rst
@@ -3048,7 +3048,7 @@ returns: `uint64_t`
 uint64_t eth_gasPrice(in3_t *in3);
 ```
 
-Returns the current blockNumber, if bn==0 an error occured and you should check eth_last_error() 
+Returns the current price per gas in wei. 
 
 arguments:
 ```eval_rst
@@ -3594,6 +3594,27 @@ arguments:
 `eth_tx_receipt_t * <#eth-tx-receipt-t>`_  **txr**  
 ========================================= ========= 
 ```
+
+#### string_val_to_bytes
+
+```c
+int string_val_to_bytes(char *val, char *unit, bytes32_t target);
+```
+
+reades the string as hex or decimal and converts it into bytes. 
+
+the value may also contains a suffix as unit like '1.5eth` which will convert it into wei. the target-pointer must be at least as big as the strlen. The length of the bytes will be returned or a negative value in case of an error. 
+
+arguments:
+```eval_rst
+========================= ============ 
+``char *``                 **val**     
+``char *``                 **unit**    
+`bytes32_t <#bytes32-t>`_  **target**  
+========================= ============ 
+```
+returns: `int`
+
 
 #### in3_register_eth_api
 
@@ -4516,7 +4537,7 @@ The stuct contains following fields:
                                                                            
                                                                            time when nodelist must be updated (i.e. when reported last_block will be considered final)
 `address_t <#address-t>`_                        **node**                  node that reported the last_block which necessitated a nodeList update
-``struct in3_chain::@2 *``                       **nodelist_upd8_params**  
+``struct in3_chain::@7 *``                       **nodelist_upd8_params**  
 =============================================== ========================== ===========================================================================================
 ```
 
@@ -4635,6 +4656,7 @@ The stuct contains following fields:
 `in3_chain_t * <#in3-chain-t>`_                    **chains**                 chain spec and nodeList definitions
 `in3_filter_handler_t * <#in3-filter-handler-t>`_  **filters**                filter handler
 `in3_plugin_t * <#in3-plugin-t>`_                  **plugins**                list of registered plugins
+``uint32_t``                                       **id_count**               counter for use as JSON RPC id - incremented for every request
 ``void *``                                         **internal**               pointer to internal data
 ================================================= =========================== ================================================================================================================
 ```
@@ -5239,6 +5261,7 @@ The stuct contains following fields:
                                                                
                                                                if not NULL the data from this context need get finished first, before being able to resume this context.
 `in3_t * <#in3-t>`_                    **client**              reference to the client
+``uint32_t``                           **id**                  JSON RPC id of request at index 0.
 ===================================== ======================== =========================================================================================================
 ```
 
@@ -6579,6 +6602,40 @@ arguments:
 returns: [`bytes_tRETURNS_NONULL , *`](#bytes-t)
 
 
+#### b_get_data
+
+```c
+NONULL uint8_t* b_get_data(const bytes_t *b);
+```
+
+gets the data field from an input byte array 
+
+arguments:
+```eval_rst
+============================== ======= 
+`bytes_tconst , * <#bytes-t>`_  **b**  
+============================== ======= 
+```
+returns: `NONULL uint8_t *`
+
+
+#### b_get_len
+
+```c
+NONULL uint32_t b_get_len(const bytes_t *b);
+```
+
+gets the len field from an input byte array 
+
+arguments:
+```eval_rst
+============================== ======= 
+`bytes_tconst , * <#bytes-t>`_  **b**  
+============================== ======= 
+```
+returns: `NONULL uint32_t`
+
+
 #### b_print
 
 ```c
@@ -7762,7 +7819,7 @@ returns: [`str_range_tNONULL `](#str-range-t)
 #### d_create_json
 
 ```c
-NONULL char* d_create_json(json_ctx_t *ctx, d_token_t *item);
+char* d_create_json(json_ctx_t *ctx, d_token_t *item);
 ```
 
 creates a json-string. 
@@ -7776,7 +7833,7 @@ arguments:
 `d_token_t * <#d-token-t>`_    **item**  
 ============================= ========== 
 ```
-returns: `NONULL char *`
+returns: `char *`
 
 
 #### json_create
@@ -7838,7 +7895,7 @@ returns: [`d_token_tNONULL , *`](#d-token-t)
 #### json_create_string
 
 ```c
-NONULL d_token_t* json_create_string(json_ctx_t *jp, char *value);
+NONULL d_token_t* json_create_string(json_ctx_t *jp, char *value, int len);
 ```
 
 arguments:
@@ -7846,6 +7903,7 @@ arguments:
 ============================= =========== 
 `json_ctx_t * <#json-ctx-t>`_  **jp**     
 ``char *``                     **value**  
+``int``                        **len**    
 ============================= =========== 
 ```
 returns: [`d_token_tNONULL , *`](#d-token-t)
@@ -8865,6 +8923,40 @@ arguments:
 `bytes_t <#bytes-t>`_  **b**         
 ``unsigned int``       **fix_size**  
 ===================== ============== 
+```
+returns: [`sb_t *`](#sb-t)
+
+
+#### sb_print
+
+```c
+sb_t* sb_print(sb_t *sb, const char *fmt,...);
+```
+
+arguments:
+```eval_rst
+================= ========= 
+`sb_t * <#sb-t>`_  **sb**   
+``const char *``   **fmt**  
+``...``                     
+================= ========= 
+```
+returns: [`sb_t *`](#sb-t)
+
+
+#### sb_vprint
+
+```c
+sb_t* sb_vprint(sb_t *sb, const char *fmt, va_list args);
+```
+
+arguments:
+```eval_rst
+================= ========== 
+`sb_t * <#sb-t>`_  **sb**    
+``const char *``   **fmt**   
+``va_list``        **args**  
+================= ========== 
 ```
 returns: [`sb_t *`](#sb-t)
 
