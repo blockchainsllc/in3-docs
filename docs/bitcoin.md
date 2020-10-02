@@ -8,7 +8,7 @@ For the verification of Bitcoin we make use of the Simplified Payment Verificati
 
 > It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in. He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it. As such, the verification is reliable as long as honest nodes control the network, but is more vulnerable if the network is overpowered by an attacker. While network nodes can verify transactions for themselves, the simplified method can be fooled by an attacker's fabricated transactions for as long as the attacker can continue to overpower the network.
 
-In contrast to SPV-clients an Incubed client does not keep a copy of all block headers, instead the client is stateless and only requests required block headers. We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. delivering a chain of fake-blocks). This does not really work for very old blocks. Beside the very low difficulty at this time, the miner has many years of time to pre-mine a wrong chain of blocks. Therefore, a different approach is required which will be explained in [PreBIP34 Proof](bitcoin.html#prebip34-proof)
+In contrast to SPV-clients an Incubed client does not keep a copy of all block headers, instead the client is stateless and only requests required block headers. We are following a simple process: A client requests certain data, the server sends a response with proof data in adition to the actual result, the client verifies the result by using the proof data. We rely on the fact that it is extremly expensive to deliver a wrong block (wrong data) which still has following blocks referring the wrong block (i.e. delivering a chain of fake-blocks). This does not really work for very old blocks. Beside the very low difficulty at this time, the miner has many years of time to pre-mine a wrong chain of blocks. Therefore, a different approach is required which will be explained [here](bitcoin.html#id1)
 
 ### Bitcoin Block Header
 
@@ -65,7 +65,7 @@ How secure is the Incubed Bitcoin Verification?
 
 ### Blocks Before 227,836 (BIP34)
 
-The verification of blocks before BIP34 relies on checkpoints as explained [here](bitcoin.hmtl#blocks-before-227,836-(BIP34)).
+The verification of blocks before BIP34 relies on checkpoints as explained [here](bitcoin.hmtl#id1).
 
 Although one checkpoint is only 12 bytes in total, it provides a security of 16 bytes because we know that the first 4 bytes are *always* zeros. An attacker has to test 2<sup>128</sup> possibilities to (propably) find a hash whose leading 16 bytes are equal to the checkpoint's.
 
