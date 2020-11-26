@@ -222,8 +222,47 @@ If the selected validator is not available or does not respond, the client can s
 
 **Signed block-hash verification**
 
-Responses can be broadly classified into 3 categories - signed block-hashes, unsigned (deniable) errors and signed
+Such responses can be broadly classified into 3 categories - signed block-hashes, unsigned (deniable) errors and signed
 errors as shown below.
+```json
+{
+  "signatures": [
+    {
+      "blockHash": "0x3b1d2d185af8856ae03743b632ce1ed2c949e5d857870b7dae15f5b0601efff7",
+      "block": 3662142,
+      "r": "0x389656b8924ab3b0f05b5d618e14a6b561cc85023bde9a96f1b78487eb1872a4",
+      "s": "0x49c00342564b30e8b17488941aa3afde8bc85728d2a2814094c0afb7ce84c926",
+      "v": 28,
+      "msgHash": "0x2367ad2a1ff16e8af634f6e1062b0954f6898b5340d849b8b5b79bc936b57950"
+    },
+    {
+      "error": {
+        "message": "Internal Error",
+        "code": -32603,
+        "data": {
+          "address": "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+        }
+      }
+    },
+    {
+      "error": {
+        "message": "block is not final",
+        "code": -16001,
+        "data": {
+          "signedError": {
+            "r": "0xbf484c898764b35095d9f352b80d730d55a5be9ac7a6b76609756161ed2d55ed",
+            "s": "0x446530191b76833b74557732a840971f68b9de7bfe645fc0beb9b0d63f739c1c",
+            "v": 27,
+            "timestamp": 1605774047,
+            "block": 3662142,
+            "msgHash": "0x2367ad2a1ff16e8af634f6e1062b0954f6898b5340d849b8b5b79bc936b57950"
+          }
+        }
+      }
+    }
+  ]
+}
+```
 
 1. Verification begins by checking if we have previously verified the block-hash for the same block-number and if we
    have it cached in memory. If this is the case and if the block-hashes match, we simply return otherwise we return and
