@@ -300,6 +300,8 @@ errors as shown below.
    missing or is an error, we return but don't blacklist the responding node. Otherwise, the verification is compelete
    and we add this block-hash to the verified block-hash cache.
 
+![](blockhash-verification.png)
+
 **Proof**
 
 The validators only confirm that the block hash of the block from which the requested information originates is correct. The consistency of the returned response cannot be checked in this way.
