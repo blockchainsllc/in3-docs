@@ -296,8 +296,17 @@ errors as shown below.
    the signature with the message hash using ECDSA public key recovery. We keep note of verified responses by setting
    corresponding index for this signer node in a second bitmask.
 
-6. Henceforth, we can be certain that the signed error was indeed reported by a signer node, so we begin hadling them on
-   a case-by-case basic as described later.
+6. Henceforth, we can be certain that the signed error was indeed reported by a signer node, so we begin handling them on
+   a case-by-case basic. For example, `JSON_RPC_ERR_FINALITY` (i.e. code `-16001`) is returned by a signer node if its 
+   `minBlockHeight` is set such that it doesn't consider the block we're asking it to sign as final. 
+   This could only mean two things -
+   * The signer is indeed correct and the client disregarded the `min_block_height` setting for this node in the nodelist 
+    prop field. This is a client error and doesn't need to be handled.
+   * The signer is out-of-sync or is malicious and is trying to lie to us. In such cases, we could verify the following 
+    condition, if it is satisfied we know the signer lied so we can blacklist it ->
+    ```
+    (current_block > block_to_sign && current_block - block_to_sign >= min_blk_height)
+    ```
 
 7. Once we are done with verifying the individual responses, we have bitmasks indicating verified signed responses and
    errors. Using these, we mark all signer nodes whose responses are missing as `offline`. If even one response is
