@@ -253,9 +253,12 @@ errors as shown below.
             "r": "0xbf484c898764b35095d9f352b80d730d55a5be9ac7a6b76609756161ed2d55ed",
             "s": "0x446530191b76833b74557732a840971f68b9de7bfe645fc0beb9b0d63f739c1c",
             "v": 27,
-            "timestamp": 1605774047,
-            "block": 3662142,
             "msgHash": "0x2367ad2a1ff16e8af634f6e1062b0954f6898b5340d849b8b5b79bc936b57950"
+          },
+          "signedData": {
+            "timestamp": 1605774047,
+            "blocks": [3662142],
+            "currentBlock": 3662145
           }
         }
       }
@@ -285,10 +288,11 @@ errors as shown below.
 
 5. If the error is of the signed variety, we need to handle it according to the error type. First we validate that the
    error is not malformed (i.e. it has all required fields, namely `code`, `data.signedError`, `data.signedError.r`
-   , `data.signedError.s`, `data.signedError.v`, `data.signedError.block`, `data.signedError.timestamp`
-   and `data.signedError.msgHash`). Then we check if the `data.signedError.block` fields matches the block-header or
-   not. Now we calculate the message hash which is defined as the hash of the serialization of the `code` concatenated
-   with ordered field-wise serialization of non-signature fields in the `signedError` object. Now we proceed to verify
+   , `data.signedError.s`, `data.signedError.v`, `data.signedData.block`, `data.signedData.timestamp`
+   and `data.signedError.msgHash`). Then we check if the `data.signedData.block` fields matches the block-header or
+   not. Now we calculate the message hash which is defined as the `keccack` hash of the serialization of the absolute 
+   value of the `code` concatenated with field-wise serialization of all `signedData` fields in the same sequence in 
+   which they appear in the response. This hash is verified against `data.signedError.msgHash`. Now we proceed to verify
    the signature with the message hash using ECDSA public key recovery. We keep note of verified responses by setting
    corresponding index for this signer node in a second bitmask.
 
@@ -297,7 +301,7 @@ errors as shown below.
 
 7. Once we are done with verifying the individual responses, we have bitmasks indicating verified signed responses and
    errors. Using these, we mark all signer nodes whose responses are missing as `offline`. If even one response is
-   missing or is an error, we return but don't blacklist the responding node. Otherwise, the verification is compelete
+   missing or is an error, we return but don't blacklist the responding node. Otherwise, the verification is complete
    and we add this block-hash to the verified block-hash cache.
 
 ![](blockhash-verification.png)
