@@ -15,7 +15,6 @@ Welcome to Incubed's documentation!
    embedded
    rpc
    api-c
-   api-ts
    api-wasm
    api-python
    api-java
