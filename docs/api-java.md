@@ -497,12 +497,6 @@ use mainnet
 
 Type: static `final long`
 
-##### KOVAN
-
-use kovan testnet 
-
-Type: static `final long`
-
 ##### TOBALABA
 
 use tobalaba testnet 
@@ -518,12 +512,6 @@ Type: static `final long`
 ##### EWC
 
 use ewf chain 
-
-Type: static `final long`
-
-##### EVAN
-
-use evan testnet 
 
 Type: static `final long`
 

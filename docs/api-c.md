@@ -700,7 +700,6 @@ static void get_logs_api(in3_t* in3);
 int main() {
   // create new incubed client
   in3_t* in3    = in3_for_chain(CHAIN_ID_MAINNET);
-  in3->chain_id = CHAIN_ID_KOVAN;
 
   // get logs using raw RPC call
   get_logs_rpc(in3);
@@ -4112,39 +4111,12 @@ chain_id for mainnet
 ```
 
 
-#### CHAIN_ID_KOVAN
-
-chain_id for kovan 
-
-```c
-#define CHAIN_ID_KOVAN 0x2a
-```
-
-
-#### CHAIN_ID_TOBALABA
-
-chain_id for tobalaba 
-
-```c
-#define CHAIN_ID_TOBALABA 0x44d
-```
-
-
 #### CHAIN_ID_GOERLI
 
 chain_id for goerlii 
 
 ```c
 #define CHAIN_ID_GOERLI 0x5
-```
-
-
-#### CHAIN_ID_EVAN
-
-chain_id for evan 
-
-```c
-#define CHAIN_ID_EVAN 0x4b1
 ```
 
 
@@ -5926,11 +5898,12 @@ action context when retrieving the account of a signer.
 The stuct contains following fields:
 
 ```eval_rst
-========================================= ================= =================================================
-`in3_ctxstruct , * <#in3-ctx>`_            **ctx**          the context of the request in order report errors
-`address_t <#address-t>`_                  **account**      the account to use for the signature
-`in3_signer_type_t <#in3-signer-type-t>`_  **signer_type**  the type of the signer used for this account.
-========================================= ================= =================================================
+========================================= ================== =================================================
+`in3_ctxstruct , * <#in3-ctx>`_            **ctx**           the context of the request in order report errors
+``uint8_t *``                              **accounts**      the account to use for the signature
+``int``                                    **accounts_len**  number of accounts
+`in3_signer_type_t <#in3-signer-type-t>`_  **signer_type**   the type of the signer used for this account.
+========================================= ================== =================================================
 ```
 
 #### in3_sign_prepare_ctx_t
@@ -11059,6 +11032,15 @@ write success but consume all gas
 ```
 
 
+#### EVM_ERROR_MAX_CODE_SIZE_EXCEEDED
+
+tried to create a contract with code bigger than the maximum size limit 
+
+```c
+#define EVM_ERROR_MAX_CODE_SIZE_EXCEEDED -33
+```
+
+
 #### EVM_PROP_FRONTIER
 
 ```c
@@ -11105,6 +11087,24 @@ write success but consume all gas
 
 ```c
 #define EVM_PROP_STATIC 256
+```
+
+
+#### EVM_PROP_TXCREATE
+
+executing a creation transaction > 
+
+```c
+#define EVM_PROP_TXCREATE 512
+```
+
+
+#### EVM_PROP_CALL_DEPEND_ON_REFUND
+
+executing code that depends on subcall gas refund to succeed > 
+
+```c
+#define EVM_PROP_CALL_DEPEND_ON_REFUND 1024
 ```
 
 
