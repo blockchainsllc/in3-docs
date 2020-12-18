@@ -220,6 +220,101 @@ Since the network connection and bandwidth of a node is often better than that o
 
 If the selected validator is not available or does not respond, the client can specify several validators in the request, which are then contacted instead of the failed node. For example, if multiple nodes are involved in a conspiracy, the requested misbehaving node could only send the validation requests to the nodes that support the wrong response.
 
+**Signed block-hash verification**
+
+Such responses can be broadly classified into 3 categories - signed block-hashes, unsigned (deniable) errors and signed
+errors as shown below.
+```json
+{
+  "signatures": [
+    {
+      "blockHash": "0x3b1d2d185af8856ae03743b632ce1ed2c949e5d857870b7dae15f5b0601efff7",
+      "block": 3662142,
+      "r": "0x389656b8924ab3b0f05b5d618e14a6b561cc85023bde9a96f1b78487eb1872a4",
+      "s": "0x49c00342564b30e8b17488941aa3afde8bc85728d2a2814094c0afb7ce84c926",
+      "v": 28,
+      "msgHash": "0x2367ad2a1ff16e8af634f6e1062b0954f6898b5340d849b8b5b79bc936b57950"
+    },
+    {
+      "error": {
+        "message": "Internal Error",
+        "code": -32603,
+        "data": {
+          "address": "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+        }
+      }
+    },
+    {
+      "error": {
+        "message": "block is not final",
+        "code": -16001,
+        "data": {
+          "signedError": {
+            "r": "0xbf484c898764b35095d9f352b80d730d55a5be9ac7a6b76609756161ed2d55ed",
+            "s": "0x446530191b76833b74557732a840971f68b9de7bfe645fc0beb9b0d63f739c1c",
+            "v": 27,
+            "msgHash": "0x2367ad2a1ff16e8af634f6e1062b0954f6898b5340d849b8b5b79bc936b57950"
+          },
+          "signedData": {
+            "timestamp": 1605774047,
+            "blocks": [3662142],
+            "currentBlock": 3662145
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+1. Verification begins by checking if we have previously verified the block-hash for the same block-number and if we
+   have it cached in memory. If this is the case and if the block-hashes match, we simply return otherwise we return and
+   blacklist the responding node.
+
+2. We then serialize the block-hash, block-number and registry id (in that same order) and hash it to compute the
+   message hash. Note that the block-hash & block-number are obtained from the block-header while the registry id is
+   obtained by querying the nodelist implementation.
+
+3. Now, we verify each response in the `signatures` array. If the response is a signed block-hash, we validate it to
+   check whether or not it is well-formed (i.e. if it has all required fields, namely `blockHash`, `block`, `r`, `s`
+   , `v` and `msgHash`). Then we check if the `block` and `blockHash` fields match the block-header or not. If any of
+   these checks fails, we return and blacklist the responding node. Now we proceed to verify the signature with the hash
+   we calculated in Step 2 using ECDSA public key recovery. We keep note of verified responses by setting corresponding
+   index for this signer node in a bitmask.
+
+4. If the response happens to be an error, we determine whether it is a signed or unsigned error. If it is unsigned, we
+   defer handling until completion of verification of remaining signature and simply continue with the next response. In
+   general we treat all unsigned responses as an indication that the signer node is offline.
+
+5. If the error is of the signed variety, we need to handle it according to the error type. First we validate that the
+   error is not malformed (i.e. it has all required fields, namely `code`, `data.signedError`, `data.signedError.r`
+   , `data.signedError.s`, `data.signedError.v`, `data.signedData.block`, `data.signedData.timestamp`
+   and `data.signedError.msgHash`). Then we check if the `data.signedData.block` fields matches the block-header or
+   not. Now we calculate the message hash which is defined as the `keccack` hash of the serialization of the absolute 
+   value of the `code` concatenated with field-wise serialization of all `signedData` fields in the same sequence in 
+   which they appear in the response. This hash is verified against `data.signedError.msgHash`. Now we proceed to verify
+   the signature with the message hash using ECDSA public key recovery. We keep note of verified responses by setting
+   corresponding index for this signer node in a second bitmask.
+
+6. Henceforth, we can be certain that the signed error was indeed reported by a signer node, so we begin handling them on
+   a case-by-case basic. For example, `JSON_RPC_ERR_FINALITY` (i.e. code `-16001`) is returned by a signer node if its 
+   `minBlockHeight` is set such that it doesn't consider the block we're asking it to sign as final. 
+   This could only mean two things -
+   * The signer is indeed correct and the client disregarded the `min_block_height` setting for this node in the nodelist 
+    prop field. This is a client error and doesn't need to be handled.
+   * The signer is out-of-sync or is malicious and is trying to lie to us. In such cases, we could verify the following 
+    condition, if it is satisfied we know the signer lied so we can blacklist it ->
+    ```
+    (current_block > block_to_sign && current_block - block_to_sign >= min_blk_height)
+    ```
+
+7. Once we are done with verifying the individual responses, we have bitmasks indicating verified signed responses and
+   errors. Using these, we mark all signer nodes whose responses are missing as `offline`. If even one response is
+   missing or is an error, we return but don't blacklist the responding node. Otherwise, the verification is complete
+   and we add this block-hash to the verified block-hash cache.
+
+![](blockhash-verification.png)
+
 **Proof**
 
 The validators only confirm that the block hash of the block from which the requested information originates is correct. The consistency of the returned response cannot be checked in this way.
