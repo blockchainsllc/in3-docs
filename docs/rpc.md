@@ -3063,6 +3063,24 @@ in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksy
 "sync:e41d2489571d322189246dafa5ebde1f4699f498"
 ```
 
+
+### zksync_getPubKeyHash
+
+params: none
+
+returns the current PubKeyHash based on the pk set.
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_getPubKeyHash 
+```
+
+```json
+"sync:4dcd9bb4463121470c7232efb9ff23ec21398e58"
+```
+
+
 ### zksync_ethop_info
 
 params: 
