@@ -2160,7 +2160,7 @@ Proofs will add a special `in3`-section to the response containing a `proof`- ob
 *  **cbtxMerkleProof**
 
 
-### btc_getblockheader
+### getblockheader
 
 Returns data of block header for given block hash. The returned level of details depends on the argument verbosity.
 
@@ -2270,7 +2270,7 @@ Response:
 ```
 
 
-### btc_getblock
+### getblock
 
 Returns data of block for given block hash. The returned level of details depends on the argument verbosity.
 
@@ -2396,7 +2396,7 @@ Response:
 ```
 
 
-### btc_getrawtransaction
+### getrawtransaction
 
 Returns the raw transaction data. The returned level of details depends on the argument verbosity.
 
@@ -2588,7 +2588,7 @@ Response:
 ```
 
 
-### btc_getblockcount
+### getblockcount
 
 Returns the number of blocks in the longest blockchain.
 
@@ -2653,7 +2653,7 @@ Response:
 ```
 
 
-### btc_getbestblockhash
+### getbestblockhash
 
 Returns the hash of the best (tip) block in the longest blockchain.
 
@@ -2716,7 +2716,7 @@ Response:
 ```
 
 
-### btc_getdifficulty
+### getdifficulty
 
 Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 
@@ -2797,7 +2797,7 @@ Response:
 ```
 
 
-### btc_proofTarget
+### proofTarget
 
 Whenever the client is not able to trust the changes of the target (which is the case if a block can't be found in the verified target cache *and* the value of the target changed more than the client's limit `max_diff`) he will call this method. It will return additional proof data to verify the changes of the target on the side of the client. This is not a standard Bitcoin rpc-method like the other ones, but more like an internal method.
 
@@ -2934,6 +2934,8 @@ the zksync-plugin is able to handle operations to use [zksync](https://zksync.io
 
 Also in order to sign messages you need to set a signer!
 
+All zksync-methods can be used with `zksync_` or `zk_` prefix. 
+
 
 
 ### zksync_contract_address
@@ -3047,16 +3049,31 @@ in3 zksync_tx_info  "sync-tx:e41d2489571d322189246dafa5ebde1f4699f49800000000000
 }
 ```
 
-### zksync_setKey
+### zksync_set_key
 
 params: none
 
-sets the signerkey based on the current pk
+sets the signerkey based on the current pk or as configured in the config.
+You can specify the key by either
+- setting a signer ( the sync key will be derrived through a signature )
+- setting the seed directly ( `sync_key` in the config)
+- setting the `musig_pub_keys` to generate the pubKeyHash based on them
+- setting the `create2` options and the sync-key will generate the account based on the pubKeyHash
+
+
+we support 3 different signer types (`signer_type` in the `zksync` config) :
+
+1. `pk` - Simple Private Key
+    If a signer is set (for example by setting the pk), incubed will derrive the sync-key through a signature and use it
+2. `contract` - Contract Signature
+    In this case a preAuth-tx will be send on L1 using the signer. If this contract is a mutisig, you should make sure, you have set the account explicitly in the config and also activate the multisig-plugin, so the transaction will be send through the multisig.
+3. `create2` - Create2 based Contract
+    
 
 Example:
 
 ```sh
-in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_setKey 
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_set_key 
 ```
 
 ```json
@@ -3064,7 +3081,7 @@ in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksy
 ```
 
 
-### zksync_getPubKeyHash
+### zksync_pubkeyhash
 
 params: none
 
@@ -3073,12 +3090,94 @@ returns the current PubKeyHash based on the pk set.
 Example:
 
 ```sh
-in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_getPubKeyHash 
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkeyhash
 ```
 
 ```json
 "sync:4dcd9bb4463121470c7232efb9ff23ec21398e58"
 ```
+
+
+### zksync_pubkey
+
+params: none
+
+returns the current PubKey based on the pk set.
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkey 
+```
+
+```json
+"0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04"
+```
+
+
+
+### zksync_account_address
+
+params: none
+
+returns the address of the account used.
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_address 
+```
+
+```json
+"0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
+```
+
+
+### zksync_sign
+
+params: 
+    - message the message to sign
+
+returns the schnorr musig signature based on the current config. The return value are 96 bytes of signature:
+- `[0...32]` packed public key
+- `[32..64]` r-value
+- `[64..96]` s-value
+
+This also supports signing with multiple keys. In this case the configuration needs to sets the urls of the other keys, so the client can then excange all data needed in order to create the combined signature. when exchanging the data with other keys, all known data will be send using `zk_sign` as method, but instead of the raw message a object with those data will be passed.
+
+Example:
+
+```sh
+in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zk_sign 0xaabbccddeeff 
+0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
+```
+
+```json
+"0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
+```
+
+
+### zksync_verify
+
+params: 
+    - message which was signed
+    - the signature (96 bytes) 
+
+returns 0 or 1 depending on the successfull verification of the signature.
+
+if the `musig_pubkeys` are set it will also verify against the given public keys list. 
+
+Example:
+
+```sh
+in3 zk_verify 0xaabbccddeeff 0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
+> 1 
+```
+
+```json
+"0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
+```
+
 
 
 ### zksync_ethop_info
@@ -3127,7 +3226,7 @@ in3 zksync_get_tx_fee Transfer 0xabea9132b05a70803a4e85094fd0e1800777fbef BAT | 
 }
 ```
 
-### zksync_syncKey
+### zksync_sync_key
 
 params: none
 
@@ -3182,7 +3281,7 @@ in3 -pk <MY_PK> zksync_withdraw  0xabea9132b05a70803a4e85094fd0e1800777fbef 100 
 ```
 
 
-### zksync_emergencyWithdraw
+### zksync_emergency_withdraw
 
 params: 
 - token
@@ -3191,5 +3290,19 @@ withdraws all tokens for the specified token as a onchain-transaction. This is u
 
 
 ```sh
-in3 -pk <MY_PK> zksync_emergencyWithdraw WBTC 
+in3 -pk <MY_PK> zksync_emergency_withdraw WBTC 
+```
+
+
+### zksync_aggregate_pubkey
+
+params: 
+- concatinated packed publickeys of the signers
+
+calculate the public key based on multiple public keys signing together using schnorr musig signatures.
+
+```sh
+in3 zksync_aggregate_pubkey 0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409
+
+> 0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b
 ```
