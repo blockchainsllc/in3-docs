@@ -90,6 +90,16 @@ The config params support the following properties :
 
     * **provider_url** :`string` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain)
     * **account** :`address` *(optional)*  - the account to be used. if not specified, the first signer will be used.
+    * **sync_key** :`bytes` *(optional)*  - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+    * **main_contract** :`address` *(optional)*  - address of the main contract- If not specified it will be taken from the server.
+    * **signer_type** :`string` *(optional)*  - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section.
+    * **musig_pub_keys** :`bytes` *(optional)*  - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+    * **musig_urls** :`string[]` *(optional)*  - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+    * **create2** :`Object` *(optional)*  - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
+
+        * **creator** :`address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
+        * **saltarg** : `bytes32` - a salt-argument, which will be added to the pubkeyhash and create the create2-salt.
+        * **codehash** : `bytes32` - the hash of the actual deploy-tx including the constructor-arguments. 
 
 * **rpc** :`string` *(optional)*  - url of one or more rpc-endpoints to use. (list can be comma seperated)
 
