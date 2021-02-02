@@ -4427,8 +4427,6 @@ The stuct contains following fields:
 ``bool``                                 **blocked**   if true this node has been blocked for sending wrong responses
 ``uint_fast16_t``                        **index**     index within the nodelist, also used in the contract as key
 ``uint_fast16_t``                        **capacity**  the maximal capacity able to handle
-``uint32_t``                             **s**         The starting value.
-``uint32_t``                             **w**         weight value
 ``uint64_t``                             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
 `in3_node_props_t <#in3-node-props-t>`_  **props**     used to identify the capabilities of the node. 
                                                        
@@ -4922,6 +4920,8 @@ The stuct contains following fields:
 ```eval_rst
 ============================= ============= ===========================================================
 ``unsigned int``               **index**    index of the node in the nodelist
+``uint32_t``                   **s**        The starting value.
+``uint32_t``                   **w**        weight value
 ``char *``                     **url**      the url of the node
 `address_t <#address-t>`_      **address**  address of the server
 `weightstruct , * <#weight>`_  **next**     next in the linked-list or NULL if this is the last element

@@ -10,6 +10,34 @@ like
 ```sh
 java -cp in3.jar in3.IN3 eth_getBlockByNumber latest false
 ```
+## How to use IN3 in android project.
+
+1. clone [in3](https://github.com/blockchainsllc/in3.git) in your project (or use script to update it):
+
+```sh #!/usr/bin/env sh if [ -f in3/CMakeLists.txt ]; then cd in3 git pull cd .. else git clone [https://github.com/blockchainsllc/in3.git](https://github.com/blockchainsllc/in3.git) fi ```
+2. add the native-build section and the additional source-set in your `build.gradle` in the app-folder inside the `android`-section:
+
+```js externalNativeBuild { cmake { path file('in3/CMakeLists.txt') } } sourceSets { main.java.srcDirs += ['../in3/java/src'] } ```
+
+if you want to configure which modules should be included, you can also specify the `externalNativeBuild` in the ,defaultConfig,:` 
+
+```js
+defaultConfig {
+    externalNativeBuild {
+        cmake {
+            arguments "-DBTC=OFF", "-DZKSYNC=OFF"
+        }
+    }
+}
+```
+For possible options, see [https://in3.readthedocs.io/en/develop/api-c.html#cmake-options](https://in3.readthedocs.io/en/develop/api-c.html#cmake-options)
+
+Now you can use any Functions as defined here [https://in3.readthedocs.io/en/develop/api-java.html](https://in3.readthedocs.io/en/develop/api-java.html)
+
+Here is example how to use it:
+
+[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android) 
+
 ### Downloading
 
 The jar file can be downloaded from the latest release. [here](https://github.com/slockit/in3-c/releases).
@@ -40,61 +68,6 @@ You will find the `in3.jar` in the build/lib - folder.
 ### Android
 
 In order to use Incubed in android simply follow these steps:
-
-Step 1: Create a top-level CMakeLists.txt in android project inside app folder and link this to gradle. Follow the steps using this [guide](https://developer.android.com/studio/projects/gradle-external-native-builds) on howto link.
-
-The Content of the `CMakeLists.txt` should look like this:
-
-```sh
-cmake_minimum_required(VERSION 3.4.1)
-
-# turn off FAST_MATH in the evm.
-ADD_DEFINITIONS(-DIN3_MATH_LITE)
-
-# loop through the required module and cretae the build-folders
-foreach(module 
-  c/src/core 
-  c/src/verifier/eth1/nano 
-  c/src/verifier/eth1/evm 
-  c/src/verifier/eth1/basic 
-  c/src/verifier/eth1/full 
-  java/src
-  c/src/third-party/crypto 
-  c/src/third-party/tommath 
-  c/src/api/eth1)
-        file(MAKE_DIRECTORY in3-c/${module}/outputs)
-        add_subdirectory( in3-c/${module} in3-c/${module}/outputs )
-endforeach()
-```
-Step 2: clone [in3-c](https://github.com/slockit/in3-c.git) into the `app`-folder or use this script to clone and update in3:
-
-```sh
-#!/usr/bin/env sh
-
-#github-url for in3-c
-IN3_SRC=https://github.com/slockit/in3-c.git
-
-cd app
-
-# if it exists we only call git pull
-if [ -d in3-c ]; then
-    cd in3-c
-    git pull
-    cd ..
-else
-# if not we clone it
-    git clone $IN3_SRC
-fi
-
-
-# copy the java-sources to the main java path
-cp -r in3-c/java/src/in3 src/main/java/
-```
-Step 3: Use methods available in app/src/main/java/in3/IN3.java from android activity to access IN3 functions.
-
-Here is example how to use it:
-
-[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android) 
 
 
 
@@ -163,12 +136,10 @@ public class Configure {
     clientConfig.setProof(Proof.none);     // does not require proof (not recommended)
 
     // Setup the ChainConfiguration object for the nodes on a certain chain
-    ChainConfiguration chainConfiguration = new ChainConfiguration(Chain.GOERLI, clientConfig);
+    NodeRegistryConfiguration chainConfiguration = clientConfig.getNodeRegistry();
     chainConfiguration.setNeedsUpdate(false);
     chainConfiguration.setContract("0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f");
     chainConfiguration.setRegistryId("0x23d5345c5c13180a8080bd5ddbe7cde64683755dcce6e734d95b7b573845facb");
-
-    in3.setConfig(clientConfig);
 
     Block block = in3.getEth1API().getBlockByNumber(Block.LATEST, true);
     System.out.println(block.getHash());
@@ -485,12 +456,6 @@ arguments:
 
 Constants for Chain-specs. 
 
-##### MULTICHAIN
-
-support for multiple chains, a client can then switch between different chains (but consumes more memory) 
-
-Type: static `final long`
-
 ##### MAINNET
 
 use mainnet 
@@ -546,10 +511,36 @@ This is the main class creating the incubed client.
 
 The client can then be configured. 
 
-##### IN3
+##### forChain
 
- > public  IN3();
+create a Incubed client using the chain-config. 
 
+if chainId is Chain.MULTICHAIN, the client can later be switched between different chains, for all other chains, it will be initialized only with the chainspec for this one chain (safes memory) 
+
+ > public static [`IN3`](#class-in3) forChain([`long`](#class-long) chainId);
+
+arguments:
+```eval_rst
+======== ============= 
+``long``  **chainId**  
+======== ============= 
+```
+##### getVersion
+
+returns the current incubed version. 
+
+ > public static `native String` getVersion();
+
+##### main
+
+ > public static `void` main([`String[]`](#class-string[]) args);
+
+arguments:
+```eval_rst
+============ ========== 
+``String[]``  **args**  
+============ ========== 
+```
 ##### getConfig
 
 returns the current configuration. 
@@ -754,36 +745,6 @@ arguments:
 `BlockID[] <#class-blockid>`_  **blocks**            
 ``String[]``                   **dataNodeAdresses**  
 ============================= ====================== 
-```
-##### forChain
-
-create a Incubed client using the chain-config. 
-
-if chainId is Chain.MULTICHAIN, the client can later be switched between different chains, for all other chains, it will be initialized only with the chainspec for this one chain (safes memory) 
-
- > public static [`IN3`](#class-in3) forChain([`long`](#class-long) chainId);
-
-arguments:
-```eval_rst
-======== ============= 
-``long``  **chainId**  
-======== ============= 
-```
-##### getVersion
-
-returns the current incubed version. 
-
- > public static `native String` getVersion();
-
-##### main
-
- > public static `void` main([`String[]`](#class-string[]) args);
-
-arguments:
-```eval_rst
-============ ========== 
-``String[]``  **args**  
-============ ========== 
 ```
 
 #### class IN3DefaultTransport
@@ -1030,7 +991,7 @@ arguments:
 ```
 ##### getBlockHeaderBytes
 
-Retrieves the byte array representing teh serialized blockheader data. 
+Retrieves the byte array representing the serialized blockheader data. 
 
  > public `byte[]` getBlockHeaderBytes([`String`](#class-string) blockHash);
 
@@ -1448,118 +1409,22 @@ The script of the transaction.
 
 ## Package in3.config
 
-#### class ChainConfiguration
-
-Part of the configuration hierarchy for IN3 Client. 
-
-Holds the configuration a node group in a particular Chain. 
-
-##### nodesConfig
-
-Type: [`NodeConfigurationArrayList< , >`](#class-nodeconfiguration)
-
-##### ChainConfiguration
-
- > public  ChainConfiguration([`long`](#class-long) chain, [`ClientConfiguration`](#class-clientconfiguration) config);
-
-arguments:
-```eval_rst
-=================================================== ============ 
-``long``                                             **chain**   
-`ClientConfiguration <#class-clientconfiguration>`_  **config**  
-=================================================== ============ 
-```
-##### getChain
-
- > public `long` getChain();
-
-##### isNeedsUpdate
-
- > public `Boolean` isNeedsUpdate();
-
-##### setNeedsUpdate
-
- > public `void` setNeedsUpdate([`boolean`](#class-boolean) needsUpdate);
-
-arguments:
-```eval_rst
-=========== ================= 
-``boolean``  **needsUpdate**  
-=========== ================= 
-```
-##### getContract
-
- > public `String` getContract();
-
-##### setContract
-
- > public `void` setContract([`String`](#class-string) contract);
-
-arguments:
-```eval_rst
-========== ============== 
-``String``  **contract**  
-========== ============== 
-```
-##### getRegistryId
-
- > public `String` getRegistryId();
-
-##### setRegistryId
-
- > public `void` setRegistryId([`String`](#class-string) registryId);
-
-arguments:
-```eval_rst
-========== ================ 
-``String``  **registryId**  
-========== ================ 
-```
-##### getWhiteListContract
-
- > public `String` getWhiteListContract();
-
-##### setWhiteListContract
-
- > public `void` setWhiteListContract([`String`](#class-string) whiteListContract);
-
-arguments:
-```eval_rst
-========== ======================= 
-``String``  **whiteListContract**  
-========== ======================= 
-```
-##### getWhiteList
-
- > public `String[]` getWhiteList();
-
-##### setWhiteList
-
- > public `void` setWhiteList([`String[]`](#class-string[]) whiteList);
-
-arguments:
-```eval_rst
-============ =============== 
-``String[]``  **whiteList**  
-============ =============== 
-```
-##### toJSON
-
-generates a json-string based on the internal data. 
-
- > public `String` toJSON();
-
-##### toString
-
- > public `String` toString();
-
-
 #### class ClientConfiguration
 
 Configuration Object for Incubed Client. 
 
 It holds the state for the root of the configuration tree. Should be retrieved from the client instance as IN3::getConfig() 
 
+##### ClientConfiguration
+
+ > public  ClientConfiguration([`Object`](#class-object) json);
+
+arguments:
+```eval_rst
+========== ========== 
+``Object``  **json**  
+========== ========== 
+```
 ##### getRequestCount
 
  > public `Integer` getRequestCount();
@@ -1568,13 +1433,13 @@ It holds the state for the root of the configuration tree. Should be retrieved f
 
 sets the number of requests send when getting a first answer 
 
- > public `void` setRequestCount([`int`](#class-int) requestCount);
+ > public `void` setRequestCount([`Integer`](#class-integer) requestCount);
 
 arguments:
 ```eval_rst
-======= ================== 
-``int``  **requestCount**  
-======= ================== 
+=========== ================== 
+``Integer``  **requestCount**  
+=========== ================== 
 ```
 ##### isAutoUpdateList
 
@@ -1582,7 +1447,7 @@ arguments:
 
 ##### setAutoUpdateList
 
-activates the auto update.if true the nodelist will be automaticly updated if the lastBlock is newer 
+activates the auto update.if true the nodelist will be automatically updated if the lastBlock is newer 
 
  > public `void` setAutoUpdateList([`boolean`](#class-boolean) autoUpdateList);
 
@@ -1640,22 +1505,6 @@ arguments:
 ``int``  **signatureCount**  
 ======= ==================== 
 ```
-##### isStats
-
- > public `Boolean` isStats();
-
-##### setStats
-
-if true (default) the request will be counted as part of the regular stats, if not they are not shown as part of the dashboard. 
-
- > public `void` setStats([`boolean`](#class-boolean) stats);
-
-arguments:
-```eval_rst
-=========== =========== 
-``boolean``  **stats**  
-=========== =========== 
-```
 ##### getFinality
 
  > public `Integer` getFinality();
@@ -1694,15 +1543,15 @@ arguments:
 
 if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. 
 
-This is used only if no nodelist is availabkle from cache. 
+This is used only if no nodelist is available from cache. 
 
- > public `void` setBootWeights([`boolean`](#class-boolean) value);
+ > public `void` setBootWeights([`boolean`](#class-boolean) bootWeights);
 
 arguments:
 ```eval_rst
-=========== =========== 
-``boolean``  **value**  
-=========== =========== 
+=========== ================= 
+``boolean``  **bootWeights**  
+=========== ================= 
 ```
 ##### isKeepIn3
 
@@ -1798,6 +1647,10 @@ arguments:
 ``long``  **nodeLimit**  
 ======== =============== 
 ```
+##### getNodeRegistry
+
+ > public [`NodeRegistryConfiguration`](#class-noderegistryconfiguration) getNodeRegistry();
+
 ##### getReplaceLatestBlock
 
  > public `Integer` getReplaceLatestBlock();
@@ -1830,27 +1683,13 @@ arguments:
 ``String``  **rpc**  
 ========== ========= 
 ```
-##### getNodesConfig
-
- > public [`ChainConfigurationHashMap< Long, , >`](#class-chainconfiguration) getNodesConfig();
-
-##### setChainsConfig
-
- > public `void` setChainsConfig([`HashMap<`](#class-hashmap<) Long, [`ChainConfiguration`](#class-chainconfiguration) >);
-
-arguments:
-```eval_rst
-=================================================================== ================== 
-`ChainConfigurationHashMap< Long, , > <#class-chainconfiguration>`_  **chainsConfig**  
-=================================================================== ================== 
-```
-##### markAsSynced
-
- > public `void` markAsSynced();
-
 ##### isSynced
 
  > public `boolean` isSynced();
+
+##### markAsSynced
+
+ > public `void` markAsSynced();
 
 ##### toString
 
@@ -1871,13 +1710,13 @@ It represents the node of a nodelist.
 
 ##### NodeConfiguration
 
- > public  NodeConfiguration([`ChainConfiguration`](#class-chainconfiguration) config);
+ > public  NodeConfiguration([`NodeRegistryConfiguration`](#class-noderegistryconfiguration) parent);
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`ChainConfiguration <#class-chainconfiguration>`_  **config**  
-================================================= ============ 
+=============================================================== ============ 
+`NodeRegistryConfiguration <#class-noderegistryconfiguration>`_  **parent**  
+=============================================================== ============ 
 ```
 ##### getUrl
 
@@ -1925,6 +1764,119 @@ arguments:
 
  > public `String` toString();
 
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
+##### markAsSynced
+
+ > public `void` markAsSynced();
+
+##### isSynced
+
+ > public `boolean` isSynced();
+
+
+#### class NodeRegistryConfiguration
+
+Part of the configuration hierarchy for IN3 Client. 
+
+Holds the configuration a node group in a particular Chain. 
+
+##### isNeedsUpdate
+
+ > public `Boolean` isNeedsUpdate();
+
+##### setNeedsUpdate
+
+ > public `void` setNeedsUpdate([`boolean`](#class-boolean) needsUpdate);
+
+arguments:
+```eval_rst
+=========== ================= 
+``boolean``  **needsUpdate**  
+=========== ================= 
+```
+##### getContract
+
+ > public `String` getContract();
+
+##### setContract
+
+ > public `void` setContract([`String`](#class-string) contract);
+
+arguments:
+```eval_rst
+========== ============== 
+``String``  **contract**  
+========== ============== 
+```
+##### getRegistryId
+
+ > public `String` getRegistryId();
+
+##### setRegistryId
+
+ > public `void` setRegistryId([`String`](#class-string) registryId);
+
+arguments:
+```eval_rst
+========== ================ 
+``String``  **registryId**  
+========== ================ 
+```
+##### getWhiteListContract
+
+ > public `String` getWhiteListContract();
+
+##### setWhiteListContract
+
+ > public `void` setWhiteListContract([`String`](#class-string) whiteListContract);
+
+arguments:
+```eval_rst
+========== ======================= 
+``String``  **whiteListContract**  
+========== ======================= 
+```
+##### getWhiteList
+
+ > public `String[]` getWhiteList();
+
+##### setWhiteList
+
+ > public `void` setWhiteList([`String[]`](#class-string[]) whiteList);
+
+arguments:
+```eval_rst
+============ =============== 
+``String[]``  **whiteList**  
+============ =============== 
+```
+##### toJSON
+
+generates a json-string based on the internal data. 
+
+ > public `String` toJSON();
+
+##### isSynced
+
+ > public `boolean` isSynced();
+
+##### markAsSynced
+
+ > public `void` markAsSynced();
+
+##### getNodesConfiguration
+
+ > public [`NodeConfiguration[]`](#class-nodeconfiguration) getNodesConfiguration();
+
+##### toString
+
+ > public `String` toString();
+
 
 #### interface Configuration
 
@@ -1935,6 +1887,14 @@ an Interface class, which is able to generate a JSON-String.
 generates a json-string based on the internal data. 
 
  > public `String` toJSON();
+
+##### markAsSynced
+
+ > public `void` markAsSynced();
+
+##### isSynced
+
+ > public `boolean` isSynced();
 
 
 ## Package in3.eth1
@@ -3370,6 +3330,23 @@ This function will be called from the JNI-Iterface.
 
 Internal use only! 
 
+ > public `void` put([`String`](#class-string) key, [`Object`](#class-object) val);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the key
+``Object``  **val**  the value object
+========== ========= ================
+```
+##### put
+
+adds values. 
+
+This function will be called from the JNI-Iterface.
+
+Internal use only! 
+
  > public `void` put([`int`](#class-int) key, [`Object`](#class-object) val);
 
 arguments:
@@ -3379,6 +3356,22 @@ arguments:
 ``Object``  **val**  the value object
 ========== ========= ===================
 ```
+##### getBoolean
+
+returns the property as boolean 
+
+ > public `boolean` getBoolean([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `boolean` : the boolean value 
+
+
+
 ##### getLong
 
 returns the property as long 
@@ -3392,6 +3385,38 @@ arguments:
 ========== ========= ================
 ```
 returns: `long` : the long value 
+
+
+
+##### getObject
+
+returns the property as BigInteger 
+
+ > public `Object` getObject([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `Object` : the BigInteger value 
+
+
+
+##### getInteger
+
+returns the property as BigInteger 
+
+ > public `Integer` getInteger([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `Integer` : the BigInteger value 
 
 
 
@@ -3496,6 +3521,16 @@ arguments:
 ##### asInt
 
  > public static `int` asInt([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asBoolean
+
+ > public static `boolean` asBoolean([`Object`](#class-object) o);
 
 arguments:
 ```eval_rst
