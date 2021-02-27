@@ -28,7 +28,14 @@ Usage
                   :full: Full verification
 
 -np            Short for ``-p none``.
+-a             max number of attempts before giving up (default 5).
 -s, -signs     Number of signatures to use when verifying.
+-rc            number of request per try (default 1)
+-ns            no stats if set requests will not be part of the official metrics and considered a service request
+-md            specifies the minimum Deposit of a node in order to be selected as a signer
+-eth           converts the result (as wei) to ether.
+-f             finality - number of blocks on top of the current one.
+-path          the HD wallet derivation path . We can pass in simplified way as hex string  i.e [44,60,00,00,00] => 0x2c3c000000
 -b, -block     The block number to use when making calls. Could be either ``latest`` (default), ``earliest``, or a hex number.
 -l, -latest    replaces ``latest`` with latest BlockNumber - the number of blocks given.
 -pk            The path to the private key as keystore file.
@@ -41,6 +48,7 @@ Usage
                This can be a file path, a 0x-hexvalue, or ``-`` to read it from standard input. If a method signature is given with the data, they will be combined and used as constructor arguments when deploying.
                
 -gas           The gas limit to use when sending transactions (default: 100000).
+-gas_price     the gas price to use when sending transactions. (default: use eth_gasPrice)
 -value         The value to send when conducting a transaction. Can be a hex value or a float/integer with the suffix ``eth`` or ``wei`` like ``1.8eth`` (default: 0).
 -w, -wait      If given, ``eth_sendTransaction`` or ``eth_sendRawTransaction`` will not only return the transaction hash after sending but also wait until the transaction is mined and returned to the transaction receipt.
 -json          If given, the result will be returned as JSON, which is especially important for ``eth_call``, which results in complex structres.
@@ -49,6 +57,15 @@ Usage
 -q             quiet. no warnings or log to stderr.
 -ri            Reads the response from standard input instead of sending the request, allowing for offline use cases.
 -ro            Writes the raw response from the node to standard output.
+-kin3          if kin3 is specified, the response including in3-section is returned.
+-bw            initialize with weights from boot nodes.
+-tr            runs test request when showing in3_weights 
+-thr           runs test request including health-check when showing in3_weights 
+-fi            reads a prerecorded request from the filepath and executes it with the recorded data. (great for debugging) 
+-fo            records a request and writes the reproducable data in a file (including all cache-data, timestamps ...) 
+-nl            a coma seperated list of urls (or address:url) to be used as fixed nodelist
+-bn            a coma seperated list of urls (or address:url) to be used as boot nodes
+-os            only sign, don't send the raw Transaction
 
 Install
 #######
