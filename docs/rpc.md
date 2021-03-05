@@ -59,6 +59,9 @@ The config params support the following properties :
 * **useBinary** :`bool` *(optional)*  - if true the client will use binary format.
     example: false
 
+* **experimental** :`bool` *(optional)*  - if true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
+    example: false
+
 * **useHttp** :`bool` *(optional)*  - if true the client will try to use http instead of https.
     example: false
 
@@ -2157,6 +2160,9 @@ Response:
 
 ## btc
 
+*Important: This feature is still experimental and not considered stable yet. In order to use it, you need to set the experimental-flag (-x on the comandline or `"experimental":true`!*
+
+
 For bitcoin incubed follows the specification as defined in [https://bitcoincore.org/en/doc/0.18.0/](https://bitcoincore.org/en/doc/0.18.0/).
 Internally the in3-server will add proofs as part of the responses. The proof data differs between the methods. You will read which proof data will be provided and how the data can be used to prove the result for each method. 
 
@@ -2939,6 +2945,8 @@ This graph shows the usage of this method and visualizes the result from above. 
  
 
 ## zksync
+
+*Important: This feature is still experimental and not considered stable yet. In order to use it, you need to set the experimental-flag (-x on the comandline or `"experimental":true`!*
 
 the zksync-plugin is able to handle operations to use [zksync](https://zksync.io/) like deposit transfer or withdraw. Also see the #in3-config on how to configure the zksync-server or account.
 

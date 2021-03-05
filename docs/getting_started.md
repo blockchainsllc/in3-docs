@@ -31,6 +31,26 @@ Incubed can be used in different ways:
 
 Other languages will be supported soon (or simply use the shared library directly).
 
+## Command-line Tool
+
+Based on the C implementation, we build a powerful command-line utility, which executes a JSON-RPC request and only delivers the result. This can be used within Bash scripts:
+
+```sh
+#
+CURRENT_BLOCK = `in3 eth_blockNumber`
+
+# or to send a transaction
+in3 -pk my_key_file.json send -to mycontract.ens -value 0.2eth
+
+# or call a function in a contract
+DAO_PROPOSALS=`in3 call -to 0xbb9bc244d798123fde783fcc1c72d3bb8c189413 "numberOfProposals():uint"`
+
+# or compile - deploy - and use the address in one line
+DEPLOYED_ADDRESS=`solc --bin ServerRegistry.sol | in3 -gas 5000000 -pk my_private_key.json -d - -w send | jq -r .contractAddress`
+
+```
+
+More details and examples See [CMD](api-cmd.html)
 ## TypeScript/JavaScript
 
 Installing Incubed is as easy as installing any other module:
@@ -192,6 +212,28 @@ public class HelloIN3 {
 
 More details See [API Java](api-java.html)
 
+## Python
+
+Python works nice with native code written in C, so we build the python in a way to make it feel natural for python developers:
+
+```sh
+pip install in3
+```
+
+And use incubed in your code:
+
+```python
+import in3
+
+in3_client = in3.Client()
+# Sends a request to the Incubed Network, that in turn will collect proofs from the Ethereum client,
+# attest and sign the response, then send back to the client, that will verify signatures and proofs.
+block_number = in3_client.eth.block_number()
+print(block_number) # Mainnet's block number
+```
+
+More details See [API Python](api-python.html)
+
 ## DotNet
 
 The .NET implementation is registered on nuget and ships with binaries for all supported platforms. Just install
@@ -244,23 +286,6 @@ namespace SendTransaction
 ```
 
 More details See [API DotNet](api-dotnet.html)
-
-## Command-line Tool
-
-Based on the C implementation, a command-line utility is built, which executes a JSON-RPC request and only delivers the result. This can be used within Bash scripts:
-
-```
-CURRENT_BLOCK = `in3 -c kovan eth_blockNumber`
-
-# or to send a transaction
-
-in3 -pk my_key_file.json send -to mycontract.ens -value 0.2eth
-
-in3 -pk my_key_file.json send -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -gas 1000000  "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
-
-```
-
-More details and examples See [CMD](api-cmd.html)
 
 ## Supported Chains
 

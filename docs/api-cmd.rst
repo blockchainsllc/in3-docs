@@ -68,6 +68,7 @@ Usage
 -nl            a coma seperated list of urls (or address:url) to be used as fixed nodelist
 -bn            a coma seperated list of urls (or address:url) to be used as boot nodes
 -os            only sign, don't send the raw Transaction
+-x             Allow usage of experimental features. This option is required if you want to use experimental features.
 
 Install
 #######
