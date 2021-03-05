@@ -24,12 +24,12 @@ else
     git clone https://github.com/blockchainsllc/in3.git
 fi
 ```
-2. add the native-build section and the additional source-set in your `build.gradle` in the app-folder inside the `android`-section:
+1. add the native-build section and the additional source-set in your `build.gradle` in the app-folder inside the `android`-section:
 
 ```js
 externalNativeBuild {
     cmake {
-        path file('in3/CMakeLists.txt')
+        path file('../in3/CMakeLists.txt')
     }
 }
 sourceSets {
@@ -53,20 +53,20 @@ Now you can use any Functions as defined here [https://in3.readthedocs.io/en/dev
 
 Here is example how to use it:
 
-[https://github.com/slockit/in3-example-android](https://github.com/slockit/in3-example-android) 
+[https://github.com/blockchainsllc/in3-example-android](https://github.com/blockchainsllc/in3-example-android) 
 
 ### Downloading
 
-The jar file can be downloaded from the latest release. [here](https://github.com/slockit/in3-c/releases).
+The jar file can be downloaded from the latest release. [here](https://github.com/blockchainsllc/in3/releases).
 
-Alternatively, If you wish to download Incubed using the maven package manager, add this to your pom.xml 
+Alternatively, If you wish to download Incubed using the maven package manager, add this to your pom.xml
 
 ```c
 <dependency>
   <groupId>it.slock</groupId>
   <artifactId>in3</artifactId>
   <version>2.21</version>
-</dependency> 
+</dependency>
 ```
 After which, install in3 with `mvn install`.
 
@@ -93,7 +93,7 @@ In order to use Incubed in android simply follow these steps:
 
 ### CallFunction
 
-source : [in3-c/java/examples/CallFunction.java](https://github.com/slockit/in3-c/blob/master/java/examples/CallFunction.java)
+source : [in3-c/java/examples/CallFunction.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/CallFunction.java)
 
 Calling Functions of Contracts
 
@@ -125,7 +125,7 @@ public class CallFunction {
 ```
 ### Configure
 
-source : [in3-c/java/examples/Configure.java](https://github.com/slockit/in3-c/blob/master/java/examples/Configure.java)
+source : [in3-c/java/examples/Configure.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/Configure.java)
 
 Changing the default configuration
 
@@ -165,7 +165,7 @@ public class Configure {
 ```
 ### GetBalance
 
-source : [in3-c/java/examples/GetBalance.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBalance.java)
+source : [in3-c/java/examples/GetBalance.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/GetBalance.java)
 
 getting the Balance with or without API
 
@@ -200,7 +200,7 @@ public class GetBalance {
 ```
 ### GetBlockAPI
 
-source : [in3-c/java/examples/GetBlockAPI.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockAPI.java)
+source : [in3-c/java/examples/GetBlockAPI.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/GetBlockAPI.java)
 
 getting a block with API
 
@@ -237,7 +237,7 @@ public class GetBlockAPI {
 ```
 ### GetBlockRPC
 
-source : [in3-c/java/examples/GetBlockRPC.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetBlockRPC.java)
+source : [in3-c/java/examples/GetBlockRPC.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/GetBlockRPC.java)
 
 getting a block without API
 
@@ -264,7 +264,7 @@ public class GetBlockRPC {
 ```
 ### GetTransaction
 
-source : [in3-c/java/examples/GetTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransaction.java)
+source : [in3-c/java/examples/GetTransaction.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/GetTransaction.java)
 
 getting a Transaction with or without API
 
@@ -300,7 +300,7 @@ public class GetTransaction {
 ```
 ### GetTransactionReceipt
 
-source : [in3-c/java/examples/GetTransactionReceipt.java](https://github.com/slockit/in3-c/blob/master/java/examples/GetTransactionReceipt.java)
+source : [in3-c/java/examples/GetTransactionReceipt.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/GetTransactionReceipt.java)
 
 getting a TransactionReceipt with or without API
 
@@ -336,7 +336,7 @@ public class GetTransactionReceipt {
 ```
 ### SendTransaction
 
-source : [in3-c/java/examples/SendTransaction.java](https://github.com/slockit/in3-c/blob/master/java/examples/SendTransaction.java)
+source : [in3-c/java/examples/SendTransaction.java](https://github.com/blockchainsllc/in3/blob/master/java/examples/SendTransaction.java)
 
 Sending Transactions
 
@@ -590,6 +590,12 @@ gets the ipfs-api
 
  > public [`in3.ipfs.API`](#class-in3.ipfs.api) getIpfs();
 
+##### getZksync
+
+gets the zksync-api 
+
+ > public [`in3.zksync.API`](#class-in3.zksync.api) getZksync();
+
 ##### getBtcAPI
 
 gets the btc-api 
@@ -636,15 +642,15 @@ This allows to fetch the result of the incubed in a different way.
 
 arguments:
 ```eval_rst
-================ ================== 
-``IN3Transport``  **newTransport**  
-================ ================== 
+===================================== ================== 
+`IN3Transport <#class-in3transport>`_  **newTransport**  
+===================================== ================== 
 ```
 ##### getTransport
 
 returns the current transport implementation. 
 
- > public `IN3Transport` getTransport();
+ > public [`IN3Transport`](#class-in3transport) getTransport();
 
 ##### getChainId
 
@@ -768,13 +774,15 @@ arguments:
 
 ##### handle
 
- > public `byte[][]` handle([`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload);
+ > public `byte[][]` handle([`String`](#class-string) method, [`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload, [`String[]`](#class-string[]) headers);
 
 arguments:
 ```eval_rst
 ============ ============= 
+``String``    **method**   
 ``String[]``  **urls**     
 ``byte[]``    **payload**  
+``String[]``  **headers**  
 ============ ============= 
 ```
 
@@ -940,13 +948,15 @@ The enum type contains the following values:
 
 ##### handle
 
- > public `byte[][]` handle([`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload);
+ > public `byte[][]` handle([`String`](#class-string) method, [`String[]`](#class-string[]) urls, [`byte[]`](#class-byte[]) payload, [`String[]`](#class-string[]) headers);
 
 arguments:
 ```eval_rst
 ============ ============= 
+``String``    **method**   
 ``String[]``  **urls**     
 ``byte[]``    **payload**  
+``String[]``  **headers**  
 ============ ============= 
 ```
 
@@ -1597,6 +1607,20 @@ arguments:
 =========== ============= 
 ``boolean``  **useHttp**  
 =========== ============= 
+```
+##### isExperimental
+
+ > public `Boolean` isExperimental();
+
+##### setExperimental
+
+ > public `void` setExperimental([`boolean`](#class-boolean) val);
+
+arguments:
+```eval_rst
+=========== ========= 
+``boolean``  **val**  
+=========== ========= 
 ```
 ##### getTimeout
 
@@ -3623,7 +3647,7 @@ a simple Storage Provider storing the cache in the temp-folder.
 
 returns a item from cache () 
 
- > public `byte[]` getItem([`String`](#class-string) key);
+ > public `synchronized byte[]` getItem([`String`](#class-string) key);
 
 arguments:
 ```eval_rst
@@ -3631,7 +3655,7 @@ arguments:
 ``String``  **key**  the key for the item
 ========== ========= ====================
 ```
-returns: `byte[]` : the bytes or null if not found. 
+returns: `synchronized byte[]` : the bytes or null if not found. 
 
 
 
@@ -3639,7 +3663,7 @@ returns: `byte[]` : the bytes or null if not found.
 
 stores a item in the cache. 
 
- > public `void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
+ > public `synchronized void` setItem([`String`](#class-string) key, [`byte[]`](#class-byte[]) content);
 
 arguments:
 ```eval_rst
@@ -3653,6 +3677,37 @@ arguments:
 clear the cache. 
 
  > public `boolean` clear();
+
+
+#### class TransportException
+
+Exception to be thrown in case of failed request. 
+
+##### TransportException
+
+constrcutor 
+
+ > public  TransportException([`String`](#class-string) message, [`int`](#class-int) status, [`int`](#class-int) index);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **message**  
+``int``     **status**   
+``int``     **index**    
+========== ============= 
+```
+##### getIndex
+
+ > public `int` getIndex();
+
+##### getStatus
+
+the http-status 
+
+ > public `int` getStatus();
+
+returns: `int` : 
 
 
 #### enum SignatureType
@@ -3752,5 +3807,496 @@ arguments:
 clear the cache. 
 
  > public `boolean` clear();
+
+
+## Package in3.zksync
+
+#### class API
+
+API for handling ZKSYNC transactions. 
+
+##### API
+
+creates a zksync.API using the given incubed instance. 
+
+ > public  API([`IN3`](#class-in3) in3);
+
+arguments:
+```eval_rst
+=================== ========= 
+`IN3 <#class-in3>`_  **in3**  
+=================== ========= 
+```
+##### getContractAddress
+
+the address of the zksync contract. 
+
+ > public `String` getContractAddress();
+
+##### getTokens
+
+the available tokens. 
+
+ > public [`Token[]`](#class-token) getTokens();
+
+##### getAccountInfo
+
+returns the current balance, nonce and key for the given account. 
+
+if address is null, the current configured Account will be used. 
+
+ > public [`Account`](#class-account) getAccountInfo([`String`](#class-string) address);
+
+arguments:
+```eval_rst
+========== ============= 
+``String``  **address**  
+========== ============= 
+```
+##### getTransactionInfo
+
+the Transaction State. 
+
+ > public [`Tx`](#class-tx) getTransactionInfo([`String`](#class-string) txid);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **txid**  
+========== ========== 
+```
+##### getEthOpInfo
+
+the EthOp State. 
+
+(State of a deposit or emergencyWithdraw - Transaction ) 
+
+ > public [`EthOp`](#class-ethop) getEthOpInfo([`String`](#class-string) txid);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **txid**  
+========== ========== 
+```
+##### setKey
+
+sets the sync keys and returns the confirmed pubkeyhash 
+
+ > public `String` setKey([`String`](#class-string) token);
+
+arguments:
+```eval_rst
+========== =========== 
+``String``  **token**  
+========== =========== 
+```
+##### getPubKeyHash
+
+returns the pubkeyhash based on the current config. 
+
+ > public `String` getPubKeyHash();
+
+##### getPubKey
+
+returns the public key based on the current config. 
+
+ > public `String` getPubKey();
+
+##### getSyncKey
+
+returns the private key based on the current config. 
+
+ > public `String` getSyncKey();
+
+##### getAccountAddress
+
+returns the address of the account based on the current config. 
+
+ > public `String` getAccountAddress();
+
+##### sign
+
+signs the data and returns a musig schnorr signature. 
+
+ > public `String` sign([`byte[]`](#class-byte[]) message);
+
+arguments:
+```eval_rst
+========== ============= 
+``byte[]``  **message**  
+========== ============= 
+```
+##### verify
+
+signs the data and returns a musig schnorr signature. 
+
+ > public `boolean` verify([`byte[]`](#class-byte[]) message, [`String`](#class-string) signature);
+
+arguments:
+```eval_rst
+========== =============== 
+``byte[]``  **message**    
+``String``  **signature**  
+========== =============== 
+```
+##### getTxFee
+
+calculates the current tx fees for the specified 
+
+ > public [`TxFee`](#class-txfee) getTxFee([`String`](#class-string) txType, [`String`](#class-string) toAddress, [`String`](#class-string) token);
+
+arguments:
+```eval_rst
+========== =============== 
+``String``  **txType**     
+``String``  **toAddress**  
+``String``  **token**      
+========== =============== 
+```
+##### deposit
+
+sends the specified amount of tokens to the zksync contract as deposit for the specified amount (or null if this the same as send) returns the ethopId 
+
+ > public `String` deposit([`BigInteger`](#class-biginteger) amount, [`String`](#class-string) token, [`boolean`](#class-boolean) approveDepositAmountForERC20, [`String`](#class-string) account);
+
+arguments:
+```eval_rst
+============== ================================== 
+``BigInteger``  **amount**                        
+``String``      **token**                         
+``boolean``     **approveDepositAmountForERC20**  
+``String``      **account**                       
+============== ================================== 
+```
+##### transfer
+
+transfers the specified amount of tokens in L2 returns the txid 
+
+ > public `String` transfer([`String`](#class-string) toAddress, [`BigInteger`](#class-biginteger) amount, [`String`](#class-string) token, [`String`](#class-string) fromAccount);
+
+arguments:
+```eval_rst
+============== ================= 
+``String``      **toAddress**    
+``BigInteger``  **amount**       
+``String``      **token**        
+``String``      **fromAccount**  
+============== ================= 
+```
+##### withdraw
+
+withdraw the specified amount of tokens to L1 returns the txid 
+
+ > public `String` withdraw([`String`](#class-string) toAddress, [`BigInteger`](#class-biginteger) amount, [`String`](#class-string) token, [`String`](#class-string) fromAccount);
+
+arguments:
+```eval_rst
+============== ================= 
+``String``      **toAddress**    
+``BigInteger``  **amount**       
+``String``      **token**        
+``String``      **fromAccount**  
+============== ================= 
+```
+##### emergencyWithdraw
+
+withdraw all tokens from L2 to L1. 
+
+returns the txId 
+
+ > public `String` emergencyWithdraw([`String`](#class-string) token);
+
+arguments:
+```eval_rst
+========== =========== 
+``String``  **token**  
+========== =========== 
+```
+##### aggregatePubkey
+
+aggregate the pubKey to one pubKeys for signing together as musig Schnorr signatures. 
+
+ > public `String` aggregatePubkey([`String[]`](#class-string[]) pubKeys);
+
+arguments:
+```eval_rst
+============ ============= 
+``String[]``  **pubKeys**  
+============ ============= 
+```
+
+#### class Account
+
+A ZKSync Account. 
+
+##### asAccount
+
+ > public static [`Account`](#class-account) asAccount([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asAccounts
+
+ > public static [`Account[]`](#class-account) asAccounts([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getAddress
+
+The address of the Account. 
+
+ > public `String` getAddress();
+
+##### getId
+
+id or null if it is not assigned yet. 
+
+ > public `Integer` getId();
+
+##### getCommited
+
+the commited state 
+
+ > public [`AccountState`](#class-accountstate) getCommited();
+
+##### getDepositing
+
+the pending depositing state 
+
+ > public [`AccountState`](#class-accountstate) getDepositing();
+
+##### getVerified
+
+the verified state 
+
+ > public [`AccountState`](#class-accountstate) getVerified();
+
+
+#### class AccountState
+
+A ZKSync AccountState. 
+
+##### asAccountState
+
+ > public static [`AccountState`](#class-accountstate) asAccountState([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getNonce
+
+The nonce or TransactionCount. 
+
+ > public `Integer` getNonce();
+
+##### getPubKeyHash
+
+the assigned pubkeyhash. 
+
+ > public `String` getPubKeyHash();
+
+##### getBalance
+
+the balance of the specified token (or null) 
+
+ > public `BigInteger` getBalance([`String`](#class-string) token);
+
+arguments:
+```eval_rst
+========== =========== 
+``String``  **token**  
+========== =========== 
+```
+
+#### class EthOp
+
+A ZKSync EthOperation. 
+
+##### asEthOp
+
+ > public static [`EthOp`](#class-ethop) asEthOp([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### isExecuted
+
+returns true, if the operation was executed 
+
+ > public `boolean` isExecuted();
+
+##### getBlockNumber
+
+returns the BlockNumber or null if it was not executed. 
+
+ > public `Long` getBlockNumber();
+
+##### isCommitted
+
+returns true if the operation is commited in L2 
+
+ > public `boolean` isCommitted();
+
+##### isVerified
+
+returns true if the operation is verified in L1 
+
+ > public `boolean` isVerified();
+
+
+#### class Token
+
+A ZKSync Token. 
+
+##### asToken
+
+ > public static [`Token`](#class-token) asToken([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### asTokens
+
+ > public static [`Token[]`](#class-token) asTokens([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getAddress
+
+The token-address if the String. 
+
+ > public `String` getAddress();
+
+##### getDecimals
+
+The decimals or number of digits after the comma. 
+
+ > public `int` getDecimals();
+
+##### getId
+
+id 
+
+ > public `int` getId();
+
+##### getSize
+
+The Symbol. 
+
+ > public `String` getSize();
+
+
+#### class Tx
+
+A ZKSync Tx. 
+
+##### asTx
+
+ > public static [`Tx`](#class-tx) asTx([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getBlock
+
+The Block-number or null. 
+
+ > public `Long` getBlock();
+
+##### isExecuted
+
+true if the tx was executed. 
+
+ > public `boolean` isExecuted();
+
+##### getId
+
+the reason in case the tx failed. 
+
+ > public `String` getId();
+
+##### isSuccess
+
+if the transaction was executed, this will indicate the success. 
+
+(or null) 
+
+ > public `Boolean` isSuccess();
+
+
+#### class TxFee
+
+A ZKSync TxFee. 
+
+##### asTxFee
+
+ > public static [`TxFee`](#class-txfee) asTxFee([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
+##### getFeeType
+
+the type of fee. 
+
+ > public `String` getFeeType();
+
+##### getGasFee
+
+The fee paid for gas costs. 
+
+ > public `long` getGasFee();
+
+##### getGasPriceWei
+
+The gas Price in Wei. 
+
+ > public `long` getGasPriceWei();
+
+##### getGasTxAmount
+
+The fee for the amount. 
+
+ > public `long` getGasTxAmount();
+
+##### getTotalFee
+
+The total amoiunt of fee to be paid for the tx. 
+
+ > public `long` getTotalFee();
+
+##### getZkpFee
+
+The zkp fee. 
+
+ > public `long` getZkpFee();
 
 

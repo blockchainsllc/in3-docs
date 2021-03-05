@@ -20,8 +20,12 @@ cat ../c/in3-core/dotnet/docs/api-dotnet.md  ../c/in3-core/dotnet/docs/examples.
 echo "\n## Index\n" >> docs/api-dotnet.md
 tail -n +5 ../c/in3-core/dotnet/In3/bin/Release/IN3.md | sed 's/| Name | Type.*//' | sed 's/| ----.*//' |  sed 's/| \(.*\) |\(.*\)|\(.*\)|/- \2 **\1** - \3/' | sed 's/##### Summary//' | sed 's/##### Namespace//' | sed 's/# /## /'  >> docs/api-dotnet.md
 echo "### updating PYTHON - API"
+cd ../c/in3-core/python
+./generate_docs.sh
+cd ../../../doc
 cp ../c/in3-core/python/docs/documentation.md docs/api-python.md
 
+echo "### buildomg WASM - API"
 cd ../c/in3-core/build
 rm -rf *
 source ~/ws/tools/emsdk/emsdk_env.sh > /dev/null

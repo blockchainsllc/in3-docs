@@ -3,7 +3,7 @@
 
 ## Overview
 
-The C implementation of the Incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules that should be combined. This allows us to only generate the code needed and reduce requirements for flash and memory.
+ The C implementation of the Incubed client is prepared and optimized to run on small embedded devices. Because each device is different, we prepare different modules that should be combined. This allows us to only generate the code needed and reduce requirements for flash and memory.
 
 ### Why C?
 
@@ -396,7 +396,7 @@ Default-Value: `-DZKSYNC=OFF`
 
 ### btc_transaction
 
-source : [in3-c/c/examples/btc_transaction.c](https://github.com/slockit/in3-c/blob/master/c/examples/btc_transaction.c)
+source : [in3-c/c/examples/btc_transaction.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/btc_transaction.c)
 
 checking a Bitcoin transaction data
 
@@ -438,7 +438,7 @@ int main() {
 ```
 ### call_a_function
 
-source : [in3-c/c/examples/call_a_function.c](https://github.com/slockit/in3-c/blob/master/c/examples/call_a_function.c)
+source : [in3-c/c/examples/call_a_function.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/call_a_function.c)
 
 This example shows how to call functions on a smart contract eiither directly or using the api to encode the arguments
 
@@ -547,7 +547,7 @@ in3_ret_t call_func_api(in3_t* c, address_t contract) {
 ```
 ### get_balance
 
-source : [in3-c/c/examples/get_balance.c](https://github.com/slockit/in3-c/blob/master/c/examples/get_balance.c)
+source : [in3-c/c/examples/get_balance.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/get_balance.c)
 
 get the Balance with the API and also as direct RPC-call
 
@@ -613,7 +613,7 @@ void get_balance_api(in3_t* in3) {
 ```
 ### get_block
 
-source : [in3-c/c/examples/get_block.c](https://github.com/slockit/in3-c/blob/master/c/examples/get_block.c)
+source : [in3-c/c/examples/get_block.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/get_block.c)
 
 using the basic-module to get and verify a Block with the API and also as direct RPC-call
 
@@ -681,7 +681,7 @@ void get_block_api(in3_t* in3) {
 ```
 ### get_logs
 
-source : [in3-c/c/examples/get_logs.c](https://github.com/slockit/in3-c/blob/master/c/examples/get_logs.c)
+source : [in3-c/c/examples/get_logs.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/get_logs.c)
 
 fetching events and verify them with eth_getLogs
 
@@ -781,7 +781,7 @@ void get_logs_api(in3_t* in3) {
 ```
 ### get_transaction
 
-source : [in3-c/c/examples/get_transaction.c](https://github.com/slockit/in3-c/blob/master/c/examples/get_transaction.c)
+source : [in3-c/c/examples/get_transaction.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/get_transaction.c)
 
 checking the transaction data
 
@@ -852,7 +852,7 @@ void get_tx_api(in3_t* in3) {
 ```
 ### get_transaction_receipt
 
-source : [in3-c/c/examples/get_transaction_receipt.c](https://github.com/slockit/in3-c/blob/master/c/examples/get_transaction_receipt.c)
+source : [in3-c/c/examples/get_transaction_receipt.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/get_transaction_receipt.c)
 
 validating the result or receipt of an transaction
 
@@ -924,7 +924,7 @@ void get_tx_receipt_api(in3_t* in3) {
 ```
 ### ipfs_put_get
 
-source : [in3-c/c/examples/ipfs_put_get.c](https://github.com/slockit/in3-c/blob/master/c/examples/ipfs_put_get.c)
+source : [in3-c/c/examples/ipfs_put_get.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/ipfs_put_get.c)
 
 using the IPFS module
 
@@ -1008,7 +1008,7 @@ int main() {
 ```
 ### ledger_sign
 
-source : [in3-c/c/examples/ledger_sign.c](https://github.com/slockit/in3-c/blob/master/c/examples/ledger_sign.c)
+source : [in3-c/c/examples/ledger_sign.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/ledger_sign.c)
 
 ```c
 #include <in3/client.h>  // the core client
@@ -1062,7 +1062,7 @@ void send_tx_api(in3_t* in3) {
 ```
 ### send_transaction
 
-source : [in3-c/c/examples/send_transaction.c](https://github.com/slockit/in3-c/blob/master/c/examples/send_transaction.c)
+source : [in3-c/c/examples/send_transaction.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/send_transaction.c)
 
 sending a transaction including signing it with a private key
 
@@ -1152,7 +1152,7 @@ void send_tx_api(in3_t* in3) {
 ```
 ### usn_device
 
-source : [in3-c/c/examples/usn_device.c](https://github.com/slockit/in3-c/blob/master/c/examples/usn_device.c)
+source : [in3-c/c/examples/usn_device.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/usn_device.c)
 
 a example how to watch usn events and act upon it.
 
@@ -1181,16 +1181,13 @@ static int handle_booking(usn_event_t* ev) {
 
 int main(int argc, char* argv[]) {
   // create new incubed client
-  in3_t* c = in3_for_chain(CHAIN_ID_MAINNET);
-
-  // switch to goerli
-  c->chain_id = 0x5;
+  in3_t* c = in3_for_chain(CHAIN_ID_GOERLI);
 
   // setting up a usn-device-config
   usn_device_conf_t usn;
   usn.booking_handler    = handle_booking;                                          // this is the handler, which is called for each rent/return or start/stop
   usn.c                  = c;                                                       // the incubed client
-  usn.chain_id           = c->chain_id;                                             // the chain_id
+  usn.chain_id           = c->chain.chain_id;                                       // the chain_id
   usn.devices            = NULL;                                                    // this will contain the list of devices supported
   usn.len_devices        = 0;                                                       // and length of this list
   usn.now                = 0;                                                       // the current timestamp
@@ -1221,7 +1218,7 @@ int main(int argc, char* argv[]) {
 ```
 ### usn_rent
 
-source : [in3-c/c/examples/usn_rent.c](https://github.com/slockit/in3-c/blob/master/c/examples/usn_rent.c)
+source : [in3-c/c/examples/usn_rent.c](https://github.com/blockchainsllc/in3/blob/master/c/examples/usn_rent.c)
 
 how to send a rent transaction to a usn contract usinig the usn-api.
 
@@ -1319,7 +1316,7 @@ The core of incubed is the processing of json-rpc requests by fetching data from
 
 ### the statemachine
 
-Each request is represented internally by the `in3_ctx_t` -struct. This context is responsible for trying to find a verifyable answer to the request and acts as a statemachine.
+Each request is represented internally by the `in3_req_t` -struct. This context is responsible for trying to find a verifyable answer to the request and acts as a statemachine.
 
 ```eval_rst
 .. graphviz::
@@ -1330,29 +1327,29 @@ Each request is represented internally by the `in3_ctx_t` -struct. This context 
         rankdir = TB;
     
         RPC[label="RPC-Request"]
-        CTX[label="in3_ctx_t"]
+        CTX[label="in3_req_t"]
     
         sign[label="sign",color=lightgrey, style=""]
         request[label="fetch http",color=lightgrey, style=""]
     
-        exec[ label="in3_ctx_exec_state()",color=lightgrey, style="", shape=ellipse ]
-        free[label="ctx_free()",color=lightgrey, style=""]
+        exec[ label="in3_req_exec_state()",color=lightgrey, style="", shape=ellipse ]
+        free[label="req_free()",color=lightgrey, style=""]
     
         waiting[label="need input"]
     
     
-        RPC -> CTX [label="ctx_new()"]
+        RPC -> CTX [label="req_new()"]
         CTX -> exec
     
     
-        exec -> error [label="CTX_ERROR"]
-        exec -> response[label="CTX_SUCCESS"]
-        exec -> waiting[label="CTX_WAITING_TO_SEND"]
-        exec -> request[label="CTX_WAITING_FOR_RESPONSE"]
+        exec -> error [label="REQ_ERROR"]
+        exec -> response[label="REQ_SUCCESS"]
+        exec -> waiting[label="REQ_WAITING_TO_SEND"]
+        exec -> request[label="REQ_WAITING_FOR_RESPONSE"]
     
     
-        waiting -> sign[label=CT_SIGN]
-        waiting -> request[label=CT_RPC] 
+        waiting -> sign[label=RT_SIGN]
+        waiting -> request[label=RT_RPC] 
     
         sign -> exec [label="in3_ctx_add_response()"]
         request -> exec[label="in3_ctx_add_response()"]
@@ -1372,37 +1369,37 @@ Each request is represented internally by the `in3_ctx_t` -struct. This context 
 ```
 In order to process a request we follow these steps.
 
-1. `ctx_new` which creates a new context by parsing a JSON-RPC request.
-2. `in3_ctx_exec_state` this will try to process the state and returns the new state, which will be one of he following:
+1. `req_new` which creates a new context by parsing a JSON-RPC request.
+2. `in3_req_exec_state` this will try to process the state and returns the new state, which will be one of he following:
 
-- `CTX_SUCCESS` - we have a response
-- `CTX_ERROR` - we stop because of an unrecoverable error
-- `CTX_WAITING_TO_SEND` - we need input and need to send out a request. By calling `in3_create_request()` the ctx will switch to the state to `CTX_WAITING_FOR_RESPONSE` until all the needed responses are repoorted. While it is possible to fetch all responses and add them before calling `in3_ctx_exec_state()`, but it would be more efficient if can send all requests out, but then create a response-queue and set one response add a time so we can return as soon as we have the first verifiable response.
-- `CTX_WAITING_FOR_RESPONSE` - the request has been send, but no verifieable response is available. Once the next (or more) responses have been added, we call `in3_ctx_exec_state()` again, which will verify all available responses. If we could verify it, we have a respoonse, if not we may either wait for more responses ( in case we send out multiple requests -> `CTX_WAITING_FOR_RESPONSE` ) or we send out new requests (`CTX_WAITING_TO_SEND`)
+- `REQ_SUCCESS` - we have a response
+- `REQ_ERROR` - we stop because of an unrecoverable error
+- `REQ_WAITING_TO_SEND` - we need input and need to send out a request. By calling `in3_create_request()` the ctx will switch to the state to `REQ_WAITING_FOR_RESPONSE` until all the needed responses are repoorted. While it is possible to fetch all responses and add them before calling `in3_req_exec_state()`, but it would be more efficient if can send all requests out, but then create a response-queue and set one response add a time so we can return as soon as we have the first verifiable response.
+- `REQ_WAITING_FOR_RESPONSE` - the request has been send, but no verifieable response is available. Once the next (or more) responses have been added, we call `in3_req_exec_state()` again, which will verify all available responses. If we could verify it, we have a respoonse, if not we may either wait for more responses ( in case we send out multiple requests -> `REQ_WAITING_FOR_RESPONSE` ) or we send out new requests (`REQ_WAITING_TO_SEND`)
 
-the `in3_send_ctx`-function will executly this:
+the `in3_send_req`-function will executly this:
 
 ```c
-in3_ret_t in3_send_ctx(in3_ctx_t* ctx) {
+in3_ret_t in3_send_req(in3_req_t* ctx) {
   ctx_req_transports_t transports = {0};
   while (true) {
-    switch (in3_ctx_exec_state(ctx)) {
-      case CTX_ERROR:
-      case CTX_SUCCESS:
+    switch (in3_req_exec_state(ctx)) {
+      case REQ_ERROR:
+      case REQ_SUCCESS:
         transport_cleanup(ctx, &transports, true);
         return ctx->verification_state;
 
-      case CTX_WAITING_FOR_RESPONSE:
+      case REQ_WAITING_FOR_RESPONSE:
         in3_handle_rpc_next(ctx, &transports);
         break;
 
-      case CTX_WAITING_TO_SEND: {
-        in3_ctx_t* last = in3_ctx_last_waiting(ctx);
+      case REQ_WAITING_TO_SEND: {
+        in3_req_t* last = in3_req_last_waiting(ctx);
         switch (last->type) {
-          case CT_SIGN:
+          case RT_SIGN:
             in3_handle_sign(last);
             break;
-          case CT_RPC:
+          case RT_RPC:
             in3_handle_rpc(last, &transports);
         }
       }
@@ -1410,9 +1407,9 @@ in3_ret_t in3_send_ctx(in3_ctx_t* ctx) {
   }
 }
 ```
-### sync calls with in3_send_ctx
+### sync calls with in3_send_req
 
-This statemachine can be used to process requests synchronously or asynchronously. The `in3_send_ctx` function, which is used in most convinience-functions will do this synchronously. In order to get user input it relies on 2 callback-functions:
+This statemachine can be used to process requests synchronously or asynchronously. The `in3_send_req` function, which is used in most convinience-functions will do this synchronously. In order to get user input it relies on 2 callback-functions:
 
 - to sign : [`in3_signer_t`](#in3-signer-t) struct including its callback function is set in the `in3_t` configuration.
 - to fetch data : a [in3_transport_send](#in3-transport-send) function-pointer will be set in the `in3_t` configuration.
@@ -1421,7 +1418,7 @@ This statemachine can be used to process requests synchronously or asynchronousl
 
 For signing the client expects a [`in3_signer_t`](#in3-signer-t) struct to be set. Setting should be done by using the [`in3_set_signer()`](#in3-set-signer) function. This function expects 3 arguments (after the client config itself):
 
-- `sign` - this is a function pointer to actual signing-function. Whenever the incubed client needs a signature it will prepare a signing context [`in3_sign_ctx_t`](#in3-sign-ctx-t), which holds all relevant data, like message and the address for signing. The result will always be a signature which you need to copy into the `signature`-field of this context. The return value must signal the success of the execution. While `IN3_OK` represents success, `IN3_WAITING`can be used to indicate that we need to execute again since there may be a sub-request that needs to finished up before being able to sign. In case of an error [`ctx_set_error`](#ctx-set-error) should be used to report the details of the error including returning the `IN3_E...` as error-code.
+- `sign` - this is a function pointer to actual signing-function. Whenever the incubed client needs a signature it will prepare a signing context [`in3_sign_ctx_t`](#in3-sign-ctx-t), which holds all relevant data, like message and the address for signing. The result will always be a signature which you need to copy into the `signature`-field of this context. The return value must signal the success of the execution. While `IN3_OK` represents success, `IN3_WAITING`can be used to indicate that we need to execute again since there may be a sub-request that needs to finished up before being able to sign. In case of an error [`req_set_error`](#ctx-set-error) should be used to report the details of the error including returning the `IN3_E...` as error-code.
 - `prepare_tx`- this function is optional and gives you a chance to change the data before signing. For example signing with a mutisig would need to do manipulate the data and also the target in order to redirect it to the multisig contract.
 - `wallet` - this is a optional `void*` which will be set in the signing context. It can be used to point to any data structure you may need in order to sign.
 
@@ -1446,7 +1443,7 @@ The pk-signer uses the wallet-pointer to point to the raw 32 bytes private key a
 
 #### transport
 
-The transport function is a function-pointer set in the client configuration (`in3_t`) which will be used in the `in3_send_ctx()` function whenever data are required to get from the network. the function will get a [`request_t`](#request-t) object as argument.
+The transport function is a function-pointer set in the client configuration (`in3_t`) which will be used in the `in3_send_req()` function whenever data are required to get from the network. the function will get a [`request_t`](#request-t) object as argument.
 
 The main responsibility of this function is to fetch the requested data and the call [`in3_ctx_add_response`](#in3-ctx-add-response) to report this to the context. if the request only sends one request to one url, this is all you have to do. But if the user uses a configuration of `request_count` >1, the `request` object will contain a list of multiples urls. In this case transport function still has 3 options to accomplish this:
 
@@ -1457,7 +1454,7 @@ The main responsibility of this function is to fetch the requested data and the 
 - `cptr` - a custom `void*` which can be set in the first call pointing to recources you may need to continue in the subsequent calls.
 - `action` - This value is enum ( [`#in3_req_action_t`](#in3-req-action-t) ), which indicates these current state
 
-So only if you need to continue your call later, because you don't want to and can't set all the responses yet, you need set the `cptr` to a non NULL value. And only in this case `in3_send_ctx()` will follow this process with these states:
+So only if you need to continue your call later, because you don't want to and can't set all the responses yet, you need set the `cptr` to a non NULL value. And only in this case `in3_send_req()` will follow this process with these states:
 
 ```eval_rst
 .. graphviz::
@@ -1498,21 +1495,21 @@ async sendRequest(rpc) {
           // execute and fetch the new state ( in this case the ctx_execute-function will return the status including the created request as json)
           const state = JSON.parse(call_string('ctx_execute', r))
           switch (state.status) {
-              // CTX_ERROR
+              // REQ_ERROR
               case 'error':
                   throw new Error(state.error || 'Unknown error')
 
-              // CTX_SUCCESS
+              // REQ_SUCCESS
               case 'ok':
                   return state.result
 
-              // CTX_WAITING_FOR_RESPONSE
+              // REQ_WAITING_FOR_RESPONSE
               case 'waiting':
                   // await the promise for the next response ( the state.request contains the context-pointer to know which queue)
                   await getNextResponse(responses, state.request)
                   break
 
-              // CTX_WAITING_TO_SEND
+              // REQ_WAITING_TO_SEND
               case 'request': {
                   // the request already contains the type, urls and payload.
                   const req = state.request
@@ -1592,7 +1589,7 @@ All plugins are stored in a linked list and when we want to trigger a specific a
 - `IN3_OK` - the plugin handled it and it was succesful
 - `IN3_WAITING` - the plugin handled the action, but is waiting for more data, which happens in a sub context added. As soon as this was resolved, the plugin will be called again.
 - `IN3_EIGNORE` - the plugin did **NOT** handle the action and we should continue with the other plugins.
-- `IN3_E...` - the plugin did handle it, but raised a error and returned the error-code. In addition you should always use the current `in3_ctx_t`to report a detailed error-message (using `ctx_set_error()`)
+- `IN3_E...` - the plugin did handle it, but raised a error and returned the error-code. In addition you should always use the current `in3_req_t`to report a detailed error-message (using `req_set_error()`)
 
 ### Lifecycle
 
@@ -1610,16 +1607,16 @@ For Transport implementations you should always register for those 3 `PLGN_ACT_T
 
 Send will be triggered only if the request is executed synchron, whenever a new request needs to be send out. This request may contain multiple urls, but the same payload.
 
-`arguments` : `in3_request_t*` - a request-object holding the following data:
+`arguments` : `in3_http_request_t*` - a request-object holding the following data:
 
 ```c
-typedef struct in3_request {
+typedef struct in3_http_request {
   char*           payload;  // the payload to send 
   char**          urls;     // array of urls 
   uint_fast16_t   urls_len; // number of urls 
-  in3_ctx_t*      ctx;      // the current context 
+  in3_req_t*      ctx;      // the current context 
   void*           cptr;     // a custom ptr to hold information during 
-} in3_request_t;
+} in3_http_request_t;
 ```
 It is expected that a plugin will send out http-requests to each (iterating until `urls_len`) url from `urls` with the `payload`. if the payload is NULL or empty the request is a `GET`-request. Otherwise, the plugin must use send it with HTTP-Header `Content-Type: application/json` and attach the `payload`.
 
@@ -1632,7 +1629,7 @@ in3_ret_t transport_handle(void* custom_data, in3_plugin, in3_plugin_act_t actio
   switch (action) {
 
     case PLGN_ACT_TRANSPORT_SEND: {
-      in3_request_t* req = arguments; // cast it to in3_request_t* 
+      in3_http_request_t* req = arguments; // cast it to in3_http_request_t* 
 
       // init the cptr
       in3_curl_t* c = _malloc(sizeof(in3_curl_t));
@@ -1667,13 +1664,13 @@ This will only triggered if the previously triggered `PLGN_ACT_TRANSPORT_SEND`
 - if the responses were not all set yet.
 - if a `cptr` was set
 
-`arguments` : `in3_request_t*` - a request-object holding the data. ( the payload and urls may not be set!)
+`arguments` : `in3_http_request_t*` - a request-object holding the data. ( the payload and urls may not be set!)
 
 The plugin needs to wait until the first response was received ( or runs into a timeout). To report, please use `in3_req_add_response()``
 
 ```c
 void in3_req_add_response(
-    in3_request_t* req,      //  the the request 
+    in3_http_request_t* req,      //  the the request 
     int            index,    //  the index of the url, since this request could go out to many urls 
     bool           is_error, //  if true this will be reported as error. the message should then be the error-message 
     const char*    data,     //  the data or the the string of the response
@@ -1695,7 +1692,7 @@ in3_req_add_response(request, index, true, "Timeout waiting for a response", -1,
 
 If a previous `PLGN_ACT_TRANSPORT_SEND` has set a `cptr` this will be triggered in order to clean up memory.
 
-`arguments` : `in3_request_t*` - a request-object holding the data. ( the payload and urls may not be set!)
+`arguments` : `in3_http_request_t*` - a request-object holding the data. ( the payload and urls may not be set!)
 
 ### Signing
 
@@ -1711,7 +1708,7 @@ This action is triggered as a request to sign data.
 typedef struct sign_ctx {
   uint8_t            signature[65]; // the resulting signature needs to be writte into these bytes 
   d_signature_type_t type;          // the type of signature
-  in3_ctx_t*         ctx;           // the context of the request in order report errors 
+  in3_req_t*         ctx;           // the context of the request in order report errors 
   bytes_t            message;       // the message to sign
   bytes_t            account;       // the account to use for the signature  (if set)
 } in3_sign_ctx_t;
@@ -1787,7 +1784,7 @@ if we are about to sign data and need to know the address of the account abnout 
 
 ```c
 typedef struct sign_account_ctx {
-  in3_ctx_t* ctx;     // the context of the request in order report errors 
+  in3_req_t* ctx;     // the context of the request in order report errors 
   address_t  account; // the account to use for the signature 
 } in3_sign_account_ctx_t;
 ```
@@ -1827,7 +1824,7 @@ The Prepare-action is triggered before signing and gives a plugin the chance to 
 
 ```c
 typedef struct sign_prepare_ctx {
-  struct in3_ctx* ctx;     // the context of the request in order report errors 
+  struct in3_req* ctx;     // the context of the request in order report errors 
   address_t       account; // the account to use for the signature 
   bytes_t         old_tx;  // the data to sign 
   bytes_t         new_tx;  // the new data to be set 
@@ -1839,9 +1836,9 @@ the tx-data will be in a form ready to sign, which means those are rlp-encoded d
 In order to decode the data you must use rlp.h:
 
 ```c
-#define decode(data,index,dst,msg) if (rlp_decode_in_list(data, index, dst) != 1) return ctx_set_error(ctx, "invalid" msg "in txdata", IN3_EINVAL);
+#define decode(data,index,dst,msg) if (rlp_decode_in_list(data, index, dst) != 1) return req_set_error(ctx, "invalid" msg "in txdata", IN3_EINVAL);
 
-in3_ret_t decode_tx(in3_ctx_t* ctx, bytes_t raw, tx_data_t* result) {
+in3_ret_t decode_tx(in3_req_t* ctx, bytes_t raw, tx_data_t* result) {
   decode(&raw, 0, &result->nonce    , "nonce");
   decode(&raw, 1, &result->gas_price, "gas_price");
   decode(&raw, 2, &result->gas      , "gas");
@@ -1864,7 +1861,7 @@ Triggered for each rpc-request in order to give plugins a chance to directly han
 
 ```c
 typedef struct {
-  in3_ctx_t*       ctx;      // Request context. 
+  in3_req_t*       ctx;      // Request context. 
   d_token_t*       request;  // request 
   in3_response_t** response; // the response which a prehandle-method should set
 } in3_rpc_handle_ctx_t;
@@ -1874,7 +1871,7 @@ the steps to add a new custom rpc-method will be the following.
 1. get the method and params:
 
 ```c
-char* method      = d_get_stringk(rpc->request, K_METHOD);
+char* method      = d_get_string(rpc->request, K_METHOD);
 d_token_t* params = d_get(rpc->request, K_PARAMS);
 ```
 1. check if you can handle it
@@ -1897,7 +1894,7 @@ return in3_rpc_handle_finish(rpc);
 1. In case of an error, simply set the error in the context, with the right message and error-code:
 
 ```c
-if (d_len(params)<1) return ctx_set_error(rpc->ctx, "Not enough parameters", IN3_EINVAL);
+if (d_len(params)<1) return req_set_error(rpc->ctx, "Not enough parameters", IN3_EINVAL);
 ```
 If the reequest needs additional subrequests, you need to follow the pattern of sending a request asynchron in a state machine:
 
@@ -1906,25 +1903,25 @@ If the reequest needs additional subrequests, you need to follow the pattern of 
 uint64_t  nonce =0;
 
 // check if a request is already existing
-in3_ctx_t* ctx = ctx_find_required(rpc->ctx, "eth_getTransactionCount");
+in3_req_t* ctx = req_find_required(rpc->ctx, "eth_getTransactionCount");
 if (ctx) {
   // found one - so we check if it is ready.
-  switch (in3_ctx_state(ctx)) {
+  switch (in3_req_state(ctx)) {
     // in case of an error, we report it back to the parent context
-    case CTX_ERROR:
-      return ctx_set_error(rpc->ctx, ctx->error, IN3_EUNKNOWN);
+    case REQ_ERROR:
+      return req_set_error(rpc->ctx, ctx->error, IN3_EUNKNOWN);
     // if we are still waiting, we stop here and report it.
-    case CTX_WAITING_FOR_RESPONSE:
-    case CTX_WAITING_TO_SEND:
+    case REQ_WAITING_FOR_RESPONSE:
+    case REQ_WAITING_TO_SEND:
       return IN3_WAITING;
 
     // if it is useable, we can now handle the result.
-    case CTX_SUCCESS: {
+    case REQ_SUCCESS: {
       // check if the response contains a error.
-      TRY(ctx_check_response_error(ctx, 0))
+      TRY(req_check_response_error(ctx, 0))
 
       // read the nonce
-      nonce = d_get_longk(ctx->responses[0], K_RESULT);
+      nonce = d_get_long(ctx->responses[0], K_RESULT);
     }
   }
 }
@@ -1937,7 +1934,7 @@ else {
   // create it
   sprintf(req, "{\"method\":\"eth_getTransactionCount\",\"jsonrpc\":\"2.0\",\"id\":1,\"params\":[\"%s\",\"latest\"]}", account_hex_string);
   // and add the request context to the parent.
-  return ctx_add_required(parent, ctx_new(parent->client, req));
+  return req_add_required(parent, req_new(parent->client, req));
 }
 
 // continue here and use the nonce....
@@ -1954,13 +1951,13 @@ static in3_ret_t handle_intern(void* pdata, in3_plugin_act_t action, void* args)
   swtch (action) {
     case PLGN_ACT_RPC_HANDLE: {
       // get method and params
-      char*                 method  = d_get_stringk(rpc->request, K_METHOD);
+      char*                 method  = d_get_string(rpc->request, K_METHOD);
       d_token_t*            params  = d_get(rpc->request, K_PARAMS);
 
       // do we support it?
       if (strcmp(method, "web3_sha3") == 0) {
         // check the params
-        if (!params || d_len(params) != 1) return ctx_set_error(rpc->ctx, "invalid params", IN3_EINVAL);
+        if (!params || d_len(params) != 1) return req_set_error(rpc->ctx, "invalid params", IN3_EINVAL);
         bytes32_t hash;
         // hash the first param
         keccak(d_to_bytes(d_get_at(params,0)), hash);
@@ -1989,7 +1986,7 @@ This plugin reprresents a verifier. It will be triggered after we have received 
 
 ```c
 typedef struct {
-  in3_ctx_t*   ctx;                   // Request context. 
+  in3_req_t*   ctx;                   // Request context. 
   in3_chain_t* chain;                 // the chain definition. 
   d_token_t*   result;                // the result to verify 
   d_token_t*   request;               // the request sent. 
@@ -2012,11 +2009,11 @@ in3_ret_t in3_verify_ipfs(void* pdata, in3_plugin_act_t action, void* args) {
 
 
   in3_vctx_t* vc     = args;
-  char*       method = d_get_stringk(vc->request, K_METHOD);
+  char*       method = d_get_string(vc->request, K_METHOD);
   d_token_t*  params = d_get(vc->request, K_PARAMS);
 
   // did we ask for proof?
-  if (in3_ctx_get_proof(vc->ctx, vc->index) == PROOF_NONE) return IN3_OK;
+  if (in3_req_get_proof(vc->ctx, vc->index) == PROOF_NONE) return IN3_OK;
 
   // do we have a result? if not it is a vaslid error-response
   if (!vc->result)
@@ -2047,7 +2044,7 @@ This action will be triggered whenever there is something worth putting in a cac
 
 ```c
 typedef struct in3_cache_ctx {
-  in3_ctx_t* ctx;     // the request context  
+  in3_req_t* ctx;     // the request context  
   char*      key;     // the key to fetch 
   bytes_t*   content; // the content to set 
 } in3_cache_ctx_t;
@@ -2089,7 +2086,7 @@ This action will be triggered whenever we access the cache in order to get value
 
 ```c
 typedef struct in3_cache_ctx {
-  in3_ctx_t* ctx;     // the request context  
+  in3_req_t* ctx;     // the request context  
   char*      key;     // the key to fetch 
   bytes_t*   content; // the content to set 
 } in3_cache_ctx_t;
@@ -2228,7 +2225,7 @@ this will be triggered in order to sign a request. It will provide a request_has
 
 ```c
 typedef struct {
-  in3_ctx_t* ctx;           
+  in3_req_t* ctx;           
   d_token_t* request;       
   bytes32_t  request_hash;  
   uint8_t    signature[65]; 
@@ -2390,7 +2387,7 @@ ethereum_apdu_client.h : It contains APIs to integrate ledger nano device with E
 
 ### btc_api.h
 
-BTC API.
+BTC API. 
 
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
@@ -2737,7 +2734,7 @@ returns: [`btc_block_txdata_t *`](#btc-block-txdata-t)
 
 ### eth_api.h
 
-Ethereum API.
+Ethereum API. 
 
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
@@ -3636,7 +3633,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### ipfs_api.h
 
-IPFS API.
+IPFS API. 
 
 This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
 
@@ -3684,7 +3681,7 @@ returns: [`bytes_t *`](#bytes-t)
 
 ### usn_api.h
 
-USN API.
+USN API. 
 
 This header-file defines easy to use function, which are verifying USN-Messages. 
 
@@ -3901,7 +3898,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### api_utils.h
 
-Ethereum API utils.
+Ethereum API utils. 
 
 This header-file helper utils for use with API modules. 
 
@@ -4156,15 +4153,6 @@ default replace_latest_block
 ```
 
 
-#### in3_node_props_init (np)
-
-Initializer for in3_node_props_t. 
-
-```c
-#define in3_node_props_init (np) *(np) = 0
-```
-
-
 #### PLGN_ACT_LIFECYCLE
 
 ```c
@@ -4236,10 +4224,9 @@ in3_set_storage_handler(c, storage_get_item, storage_set_item, storage_clear, NU
 #### assert_in3 (c)
 
 ```c
-#define assert_in3 (c) assert(c);                                           \
+#define assert_in3 (c)   assert(c);                                           \
   assert((c)->chain.chain_id);                         \
   assert((c)->plugins);                                \
-  assert((c)->request_count > 0);                      \
   assert((c)->max_attempts > 0);                       \
   assert((c)->proof >= 0 && (c)->proof <= PROOF_FULL); \
   assert((c)->proof >= 0 && (c)->proof <= PROOF_FULL);
@@ -4282,25 +4269,6 @@ The enum type contains the following values:
 ==================== = ==================================================
 ```
 
-#### in3_node_props_type_t
-
-The enum type contains the following values:
-
-```eval_rst
-================================ ===== ========================================================================================================================
- **NODE_PROP_PROOF**             0x1   filter out nodes which are providing no proof
- **NODE_PROP_MULTICHAIN**        0x2   filter out nodes other then which have capability of the same RPC endpoint may also accept requests for different chains
- **NODE_PROP_ARCHIVE**           0x4   filter out non-archive supporting nodes
- **NODE_PROP_HTTP**              0x8   filter out non-http nodes
- **NODE_PROP_BINARY**            0x10  filter out nodes that don't support binary encoding
- **NODE_PROP_ONION**             0x20  filter out non-onion nodes
- **NODE_PROP_SIGNER**            0x40  filter out non-signer nodes
- **NODE_PROP_DATA**              0x80  filter out non-data provider nodes
- **NODE_PROP_STATS**             0x100 filter out nodes that do not provide stats
- **NODE_PROP_MIN_BLOCK_HEIGHT**  0x400 filter out nodes that will sign blocks with lower min block height than specified
-================================ ===== ========================================================================================================================
-```
-
 #### in3_flags_type_t
 
 a list of flags defining the behavior of the incubed client. 
@@ -4310,43 +4278,17 @@ They should be used as bitmask for the flags-property.
 The enum type contains the following values:
 
 ```eval_rst
-============================ ==== =============================================================================================
- **FLAGS_KEEP_IN3**          0x1  the in3-section with the proof will also returned
- **FLAGS_AUTO_UPDATE_LIST**  0x2  the nodelist will be automatically updated if the last_block is newer
- **FLAGS_INCLUDE_CODE**      0x4  the code is included when sending eth_call-requests
- **FLAGS_BINARY**            0x8  the client will use binary format
- **FLAGS_HTTP**              0x10 the client will try to use http instead of https
- **FLAGS_STATS**             0x20 nodes will keep track of the stats (default=true)
- **FLAGS_NODE_LIST_NO_SIG**  0x40 nodelist update request will not automatically ask for signatures and proof
- **FLAGS_BOOT_WEIGHTS**      0x80 if true the client will initialize the first weights from the nodelist given by the nodelist.
-============================ ==== =============================================================================================
-```
-
-#### in3_node_attr_type_t
-
-a list of node attributes (mostly used internally) 
-
-The enum type contains the following values:
-
-```eval_rst
-====================== = =========================================================================
- **ATTR_WHITELISTED**  1 indicates if node exists in whiteList
- **ATTR_BOOT_NODE**    2 used to avoid filtering manually added nodes before first nodeList update
-====================== = =========================================================================
-```
-
-#### in3_filter_type_t
-
-Filter type used internally when managing filters. 
-
-The enum type contains the following values:
-
-```eval_rst
-==================== = ============================
- **FILTER_EVENT**    0 Event filter.
- **FILTER_BLOCK**    1 Block filter.
- **FILTER_PENDING**  2 Pending filter (Unsupported)
-==================== = ============================
+============================== ===== =============================================================================================
+ **FLAGS_KEEP_IN3**            0x1   the in3-section with the proof will also returned
+ **FLAGS_AUTO_UPDATE_LIST**    0x2   the nodelist will be automatically updated if the last_block is newer
+ **FLAGS_INCLUDE_CODE**        0x4   the code is included when sending eth_call-requests
+ **FLAGS_BINARY**              0x8   the client will use binary format
+ **FLAGS_HTTP**                0x10  the client will try to use http instead of https
+ **FLAGS_STATS**               0x20  nodes will keep track of the stats (default=true)
+ **FLAGS_NODE_LIST_NO_SIG**    0x40  nodelist update request will not automatically ask for signatures and proof
+ **FLAGS_BOOT_WEIGHTS**        0x80  if true the client will initialize the first weights from the nodelist given by the nodelist.
+ **FLAGS_ALLOW_EXPERIMENTAL**  0x100 if true the client will support experimental features.
+============================== ===== =============================================================================================
 ```
 
 #### in3_plugin_act_t
@@ -4357,7 +4299,9 @@ The enum type contains the following values:
 
 ```eval_rst
 ================================ ========= ==========================================================================================================================================================
- **PLGN_ACT_INIT**               0x1       initialize plugin - use for allocating/setting-up internal resources
+ **PLGN_ACT_INIT**               0x1       initialize plugin - use for allocating/setting-up internal resources . 
+                                           
+                                           Plugins will be initialized before first used. The plgn_ctx will be the first request ctx in3_req_t
  **PLGN_ACT_TERM**               0x2       terminate plugin - use for releasing internal resources and cleanup.
  **PLGN_ACT_TRANSPORT_SEND**     0x4       sends out a request - the transport plugin will receive a request_t as plgn_ctx, it may set a cptr which will be passed back when fetching more responses.
  **PLGN_ACT_TRANSPORT_RECEIVE**  0x8       fetch next response - the transport plugin will receive a request_t as plgn_ctx, which contains a cptr if set previously
@@ -4383,10 +4327,10 @@ The enum type contains the following values:
  **PLGN_ACT_PAY_HANDLE**         0x20000   handles the payment
  **PLGN_ACT_PAY_SIGN_REQ**       0x40000   signs a request
  **PLGN_ACT_LOG_ERROR**          0x80000   report an error
- **PLGN_ACT_NL_PICK**            0x100000  picks the data nodes, plgn_ctx will be a pointer to in3_ctx_t
- **PLGN_ACT_NL_PICK_FOLLOWUP**   0x200000  called after receiving a response in order to decide whether a update is needed, plgn_ctx will be a pointer to in3_ctx_t
+ **PLGN_ACT_NL_PICK**            0x100000  picks the data nodes, plgn_ctx will be a pointer to in3_req_t
+ **PLGN_ACT_NL_PICK_FOLLOWUP**   0x200000  called after receiving a response in order to decide whether a update is needed, plgn_ctx will be a pointer to in3_req_t
  **PLGN_ACT_NL_BLACKLIST**       0x400000  blacklist a particular node in the nodelist, plgn_ctx will be a pointer to the node's address.
- **PLGN_ACT_NL_FAILABLE**        0x800000  handle fail-able request, plgn_ctx will be a pointer to in3_ctx_t
+ **PLGN_ACT_NL_FAILABLE**        0x800000  handle fail-able request, plgn_ctx will be a pointer to in3_req_t
  **PLGN_ACT_NL_OFFLINE**         0x1000000 mark a particular node in the nodelist as offline, plgn_ctx will be a pointer to in3_nl_offline_ctx_t.
  **PLGN_ACT_CHAIN_CHANGE**       0x2000000 chain id change event, called after setting new chain id
  **PLGN_ACT_GET_DATA**           0x4000000 get access to plugin data as a void ptr
@@ -4410,67 +4354,6 @@ Node capabilities.
 
 ```c
 typedef uint64_t in3_node_props_t
-```
-
-#### in3_node_t
-
-incubed node-configuration. 
-
-These information are read from the Registry contract and stored in this struct representing a server or node. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-======================================= ============== ================================================================================================
-`address_t <#address-t>`_                **address**   address of the server
-``bool``                                 **blocked**   if true this node has been blocked for sending wrong responses
-``uint_fast16_t``                        **index**     index within the nodelist, also used in the contract as key
-``uint_fast16_t``                        **capacity**  the maximal capacity able to handle
-``uint64_t``                             **deposit**   the deposit stored in the registry contract, which this would lose if it sends a wrong blockhash
-`in3_node_props_t <#in3-node-props-t>`_  **props**     used to identify the capabilities of the node. 
-                                                       
-                                                       See in3_node_props_type_t in nodelist.h
-``char *``                               **url**       the url of the node
-``uint_fast8_t``                         **attrs**     bitmask of internal attributes
-======================================= ============== ================================================================================================
-```
-
-#### in3_node_weight_t
-
-Weight or reputation of a node. 
-
-Based on the past performance of the node a weight is calculated given faster nodes a higher weight and chance when selecting the next node from the nodelist. These weights will also be stored in the cache (if available) 
-
-
-The stuct contains following fields:
-
-```eval_rst
-============ ========================= ========================================
-``uint32_t``  **response_count**       counter for responses
-``uint32_t``  **total_response_time**  total of all response times
-``uint64_t``  **blacklisted_until**    if >0 this node is blacklisted until k. 
-                                       
-                                       k is a unix timestamp
-============ ========================= ========================================
-```
-
-#### in3_whitelist_t
-
-defines a whitelist structure used for the nodelist. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-========================= ================== =================================================================================================================
-``bool``                   **needs_update**  if true the nodelist should be updated and will trigger a `in3_nodeList`-request before the next request is send.
-``uint64_t``               **last_block**    last blocknumber the whiteList was updated, which is used to detect changed in the whitelist
-`address_t <#address-t>`_  **contract**      address of whiteList contract. 
-                                             
-                                             If specified, whiteList is always auto-updated and manual whiteList is overridden
-`bytes_t <#bytes-t>`_      **addresses**     serialized list of node addresses that constitute the whiteList
-========================= ================== =================================================================================================================
 ```
 
 #### in3_verified_hash_t
@@ -4503,63 +4386,6 @@ The stuct contains following fields:
 `in3_chain_type_t <#in3-chain-type-t>`_          **type**             chain-type
 `in3_verified_hash_t * <#in3-verified-hash-t>`_  **verified_hashes**  contains the list of already verified blockhashes
 =============================================== ===================== =========================================================================
-```
-
-#### in3_t
-
-Incubed Configuration. 
-
-This struct holds the configuration and also point to internal resources such as filters or chain configs. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-================================================= =========================== ================================================================================================================
-``uint8_t``                                        **request_count**          the number of request send when getting a first answer
-``uint8_t``                                        **signature_count**        the number of signatures used to proof the blockhash.
-``uint8_t``                                        **replace_latest_block**   if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
-``uint_fast8_t``                                   **flags**                  a bit mask with flags defining the behavior of the incubed client. 
-                                                                              
-                                                                              See the FLAG...-defines
-``uint16_t``                                       **node_limit**             the limit of nodes to store in the client.
-``uint16_t``                                       **finality**               the number of signatures in percent required for the request
-``uint_fast16_t``                                  **max_attempts**           the max number of attempts before giving up
-``uint_fast16_t``                                  **max_verified_hashes**    max number of verified hashes to cache (actual number may temporarily exceed this value due to pending requests)
-``uint_fast16_t``                                  **alloc_verified_hashes**  number of currently allocated verified hashes
-``uint_fast16_t``                                  **pending**                number of pending requests created with this instance
-``uint32_t``                                       **cache_timeout**          number of seconds requests can be cached.
-``uint32_t``                                       **timeout**                specifies the number of milliseconds before the request times out. 
-                                                                              
-                                                                              increasing may be helpful if the device uses a slow connection.
-``uint32_t``                                       **id_count**               counter for use as JSON RPC id - incremented for every request
-``in3_plugin_supp_acts_t``                         **plugin_acts**            bitmask of supported actions of all plugins registered with this client
-`in3_proof_t <#in3-proof-t>`_                      **proof**                  the type of proof used
-``uint64_t``                                       **min_deposit**            min stake of the server. 
-                                                                              
-                                                                              Only nodes owning at least this amount will be chosen.
-`in3_node_props_t <#in3-node-props-t>`_            **node_props**             used to identify the capabilities of the node.
-`in3_chain_t <#in3-chain-t>`_                      **chain**                  chain spec and nodeList definitions
-`in3_filter_handler_t * <#in3-filter-handler-t>`_  **filters**                filter handler
-`in3_plugin_t * <#in3-plugin-t>`_                  **plugins**                list of registered plugins
-================================================= =========================== ================================================================================================================
-```
-
-#### in3_filter_t
-
-
-The stuct contains following fields:
-
-```eval_rst
-========================================= ==================== ==========================================================
-``bool``                                   **is_first_usage**  if true the filter was not used previously
-`in3_filter_type_t <#in3-filter-type-t>`_  **type**            filter type: (event, block or pending)
-``uint64_t``                               **last_block**      block no. 
-                                                               
-                                                               when filter was created OR eth_getFilterChanges was called
-``char *``                                 **options**         associated filter options
-``void(*``                                 **release**         method to release owned resources
-========================================= ==================== ==========================================================
 ```
 
 #### in3_plugin_t
@@ -4606,18 +4432,37 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 typedef uint32_t in3_plugin_supp_acts_t
 ```
 
-#### in3_filter_handler_t
+#### in3_t
 
-Handler which is added to client config in order to handle filter. 
+Incubed Configuration. 
+
+This struct holds the configuration and also point to internal resources such as filters or chain configs. 
 
 
 The stuct contains following fields:
 
 ```eval_rst
-================================== =========== ================
-`in3_filter_t ** <#in3-filter-t>`_  **array**  
-``size_t``                          **count**  array of filters
-================================== =========== ================
+================================= =========================== ================================================================================================================
+``uint8_t``                        **signature_count**        the number of signatures used to proof the blockhash.
+``uint8_t``                        **replace_latest_block**   if specified, the blocknumber *latest* will be replaced by blockNumber- specified value
+``uint_fast16_t``                  **flags**                  a bit mask with flags defining the behavior of the incubed client. 
+                                                              
+                                                              See the FLAG...-defines
+``uint16_t``                       **finality**               the number of signatures in percent required for the request
+``uint_fast16_t``                  **max_attempts**           the max number of attempts before giving up
+``uint_fast16_t``                  **max_verified_hashes**    max number of verified hashes to cache (actual number may temporarily exceed this value due to pending requests)
+``uint_fast16_t``                  **alloc_verified_hashes**  number of currently allocated verified hashes
+``uint_fast16_t``                  **pending**                number of pending requests created with this instance
+``uint32_t``                       **cache_timeout**          number of seconds requests can be cached.
+``uint32_t``                       **timeout**                specifies the number of milliseconds before the request times out. 
+                                                              
+                                                              increasing may be helpful if the device uses a slow connection.
+``uint32_t``                       **id_count**               counter for use as JSON RPC id - incremented for every request
+``in3_plugin_supp_acts_t``         **plugin_acts**            bitmask of supported actions of all plugins registered with this client
+`in3_proof_t <#in3-proof-t>`_      **proof**                  the type of proof used
+`in3_chain_t <#in3-chain-t>`_      **chain**                  chain spec and nodeList definitions
+`in3_plugin_t * <#in3-plugin-t>`_  **plugins**                list of registered plugins
+================================= =========================== ================================================================================================================
 ```
 
 #### plgn_register
@@ -4632,72 +4477,6 @@ typedef in3_ret_t(* plgn_register) (in3_t *c)
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_node_props_set
-
-```c
-NONULL void in3_node_props_set(in3_node_props_t *node_props, in3_node_props_type_t type, uint8_t value);
-```
-
-setter method for interacting with in3_node_props_t. 
-
-arguments:
-```eval_rst
-================================================= ================ ===================================
-`in3_node_props_t * <#in3-node-props-t>`_          **node_props**  pointer to the properties to change
-`in3_node_props_type_t <#in3-node-props-type-t>`_  **type**        key or type of the property
-``uint8_t``                                        **value**       value to set
-================================================= ================ ===================================
-```
-returns: `NONULL void`
-
-
-#### in3_node_props_get
-
-```c
-static uint32_t in3_node_props_get(in3_node_props_t np, in3_node_props_type_t t);
-```
-
-returns the value of the specified property-type. 
-
-< the value to extract 
-
-
-
-
-arguments:
-```eval_rst
-================================================= ======== =====================
-`in3_node_props_t <#in3-node-props-t>`_            **np**  property to read from
-`in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
-================================================= ======== =====================
-```
-returns: `uint32_t` : value as a number 
-
-
-
-
-#### in3_node_props_matches
-
-```c
-static bool in3_node_props_matches(in3_node_props_t np, in3_node_props_type_t t);
-```
-
-checks if the given type is set in the properties 
-
-< the value to extract
-
-arguments:
-```eval_rst
-================================================= ======== =====================
-`in3_node_props_t <#in3-node-props-t>`_            **np**  property to read from
-`in3_node_props_type_t <#in3-node-props-type-t>`_  **t**   
-================================================= ======== =====================
-```
-returns: `bool` : true if set 
-
-
 
 
 #### in3_for_chain_default
@@ -4725,13 +4504,13 @@ sends a request and stores the result in the provided buffer
 
 arguments:
 ```eval_rst
-=================== ============ =====================================================================================================================================================
-`in3_t * <#in3-t>`_  **c**       the pointer to the incubed client config.
-``const char *``     **method**  the name of the rpc-function to call.
-``const char *``     **params**  docs for input parameter v.
-``char **``          **result**  pointer to string which will be set if the request was successful. This will hold the result as json-rpc-string. (make sure you free this after use!)
-``char **``          **error**   pointer to a string containing the error-message. (make sure you free it after use!)
-=================== ============ =====================================================================================================================================================
+=================== ============ ==========================================================================================================================================================
+`in3_t * <#in3-t>`_  **c**       [in] the pointer to the incubed client config.
+``const char *``     **method**  [in] the name of the rpc-function to call.
+``const char *``     **params**  [in] docs for input parameter v.
+``char **``          **result**  [in] pointer to string which will be set if the request was successful. This will hold the result as json-rpc-string. (make sure you free this after use!)
+``char **``          **error**   [in] pointer to a string containing the error-message. (make sure you free it after use!)
+=================== ============ ==========================================================================================================================================================
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -4748,12 +4527,12 @@ sends a request and stores the result in the provided buffer, this method will a
 
 arguments:
 ```eval_rst
-=================== ============= =====================================================================================================================================================
-`in3_t * <#in3-t>`_  **c**        the pointer to the incubed client config.
-``const char *``     **request**  the rpc request including method and params.
-``char **``          **result**   pointer to string which will be set if the request was successful. This will hold the result as json-rpc-string. (make sure you free this after use!)
-``char **``          **error**    pointer to a string containing the error-message. (make sure you free it after use!)
-=================== ============= =====================================================================================================================================================
+=================== ============= ==========================================================================================================================================================
+`in3_t * <#in3-t>`_  **c**        [in] the pointer to the incubed client config.
+``const char *``     **request**  [in] the rpc request including method and params.
+``char **``          **result**   [in] pointer to string which will be set if the request was successful. This will hold the result as json-rpc-string. (make sure you free this after use!)
+``char **``          **error**    [in] pointer to a string containing the error-message. (make sure you free it after use!)
+=================== ============= ==========================================================================================================================================================
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -4772,10 +4551,10 @@ in case of an error, the error-property of the result will be set. This function
 
 arguments:
 ```eval_rst
-=================== ========= =========================================
-`in3_t * <#in3-t>`_  **c**    the pointer to the incubed client config.
-``char *``           **req**  the request as rpc.
-=================== ========= =========================================
+=================== ========= ==============================================
+`in3_t * <#in3-t>`_  **c**    [in] the pointer to the incubed client config.
+``char *``           **req**  [in] the request as rpc.
+=================== ========= ==============================================
 ```
 returns: `NONULL char *`
 
@@ -4790,12 +4569,12 @@ registers a new chain or replaces a existing (but keeps the nodelist)
 
 arguments:
 ```eval_rst
-======================================= ============== =========================================
-`in3_t * <#in3-t>`_                      **client**    the pointer to the incubed client config.
-`chain_id_t <#chain-id-t>`_              **chain_id**  the chain id.
-`in3_chain_type_t <#in3-chain-type-t>`_  **type**      the verification type of the chain.
-``uint8_t``                              **version**   the chain version.
-======================================= ============== =========================================
+======================================= ============== ==============================================
+`in3_t * <#in3-t>`_                      **client**    [in] the pointer to the incubed client config.
+`chain_id_t <#chain-id-t>`_              **chain_id**  [in] the chain id.
+`in3_chain_type_t <#in3-chain-type-t>`_  **type**      [in] the verification type of the chain.
+``uint8_t``                              **version**   [in] the chain version.
+======================================= ============== ==============================================
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -4812,9 +4591,9 @@ frees the references of the client
 
 arguments:
 ```eval_rst
-=================== ======= =================================================
-`in3_t * <#in3-t>`_  **a**  the pointer to the incubed client config to free.
-=================== ======= =================================================
+=================== ======= ======================================================
+`in3_t * <#in3-t>`_  **a**  [in] the pointer to the incubed client config to free.
+=================== ======= ======================================================
 ```
 returns: `NONULL void`
 
@@ -4858,660 +4637,6 @@ arguments:
 returns: `NONULL char *`
 
 
-### context.h
-
-Request Context. This is used for each request holding request and response-pointers but also controls the execution process. 
-
-File: [c/src/core/client/context.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/context.h)
-
-#### ctx_type
-
-type of the request context, 
-
-The enum type contains the following values:
-
-```eval_rst
-============= = ============================================================
- **CT_RPC**   0 a json-rpc request, which needs to be send to a incubed node
- **CT_SIGN**  1 a sign request
-============= = ============================================================
-```
-
-#### state
-
-The current state of the context. 
-
-you can check this state after each execute-call. 
-
-The enum type contains the following values:
-
-```eval_rst
-============================== == ==========================================================
- **CTX_SUCCESS**               0  The ctx has a verified result.
- **CTX_WAITING_TO_SEND**       1  the request has not been sent yet
- **CTX_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
- **CTX_ERROR**                 -1 the request has a error
-============================== == ==========================================================
-```
-
-#### ctx_type_t
-
-type of the request context, 
-
-
-The enum type contains the following values:
-
-```eval_rst
-============= = ============================================================
- **CT_RPC**   0 a json-rpc request, which needs to be send to a incubed node
- **CT_SIGN**  1 a sign request
-============= = ============================================================
-```
-
-#### node_match_t
-
-the weight of a certain node as linked list. 
-
-This will be used when picking the nodes to send the request to. A linked list of these structs desribe the result. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-============================= ============= ===========================================================
-``unsigned int``               **index**    index of the node in the nodelist
-``uint32_t``                   **s**        The starting value.
-``uint32_t``                   **w**        weight value
-``char *``                     **url**      the url of the node
-`address_t <#address-t>`_      **address**  address of the server
-`weightstruct , * <#weight>`_  **next**     next in the linked-list or NULL if this is the last element
-============================= ============= ===========================================================
-```
-
-#### in3_response_t
-
-response-object. 
-
-if the error has a length>0 the response will be rejected 
-
-
-The stuct contains following fields:
-
-```eval_rst
-========================= =========== =================================================================
-``uint32_t``               **time**   measured time (in ms) which will be used for ajusting the weights
-`in3_ret_t <#in3-ret-t>`_  **state**  the state of the response
-`sb_t <#sb-t>`_            **data**   a stringbuilder to add the result
-========================= =========== =================================================================
-```
-
-#### in3_ctx_t
-
-The Request config. 
-
-This is generated for each request and represents the current state. it holds the state until the request is finished and must be freed afterwards. 
-
-
-The stuct contains following fields:
-
-```eval_rst
-===================================== ======================== =========================================================================================================
-``uint_fast8_t``                       **signers_length**      number or addresses
-``uint16_t``                           **len**                 the number of requests
-``uint_fast16_t``                      **attempt**             the number of attempts
-``uint32_t``                           **id**                  JSON RPC id of request at index 0.
-`ctx_type_t <#ctx-type-t>`_            **type**                the type of the request
-`in3_ret_t <#in3-ret-t>`_              **verification_state**  state of the verification
-``char *``                             **error**               in case of an error this will hold the message, if not it points to `NULL`
-`json_ctx_t * <#json-ctx-t>`_          **request_context**     the result of the json-parser for the request.
-`json_ctx_t * <#json-ctx-t>`_          **response_context**    the result of the json-parser for the response.
-`d_token_t ** <#d-token-t>`_           **requests**            references to the tokens representring the requests
-`d_token_t ** <#d-token-t>`_           **responses**           references to the tokens representring the parsed responses
-`in3_response_t * <#in3-response-t>`_  **raw_response**        the raw response-data, which should be verified.
-``uint8_t *``                          **signers**             the addresses of servers requested to sign the blockhash
-`node_match_t * <#node-match-t>`_      **nodes**               selected nodes to process the request, which are stored as linked list.
-`cache_entry_t * <#cache-entry-t>`_    **cache**               optional cache-entries. 
-                                                               
-                                                               These entries will be freed when cleaning up the context.
-`in3_ctxstruct , * <#in3-ctx>`_        **required**            pointer to the next required context. 
-                                                               
-                                                               if not NULL the data from this context need get finished first, before being able to resume this context.
-`in3_t * <#in3-t>`_                    **client**              reference to the client
-===================================== ======================== =========================================================================================================
-```
-
-#### in3_ctx_state_t
-
-The current state of the context. 
-
-you can check this state after each execute-call. 
-
-
-The enum type contains the following values:
-
-```eval_rst
-============================== == ==========================================================
- **CTX_SUCCESS**               0  The ctx has a verified result.
- **CTX_WAITING_TO_SEND**       1  the request has not been sent yet
- **CTX_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
- **CTX_ERROR**                 -1 the request has a error
-============================== == ==========================================================
-```
-
-#### ctx_new
-
-```c
-NONULL in3_ctx_t* ctx_new(in3_t *client, const char *req_data);
-```
-
-creates a new context. 
-
-the request data will be parsed and represented in the context. calling this function will only parse the request data, but not send anything yet.
-
-*Important*: the req_data will not be cloned but used during the execution. The caller of the this function is also responsible for freeing this string afterwards. 
-
-arguments:
-```eval_rst
-=================== ============== ===============================
-`in3_t * <#in3-t>`_  **client**    the client-config.
-``const char *``     **req_data**  the rpc-request as json string.
-=================== ============== ===============================
-```
-returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
-
-
-#### in3_send_ctx
-
-```c
-NONULL in3_ret_t in3_send_ctx(in3_ctx_t *ctx);
-```
-
-sends a previously created context to nodes and verifies it. 
-
-The execution happens within the same thread, thich mean it will be blocked until the response ha beedn received and verified. In order to handle calls asynchronously, you need to call the `in3_ctx_execute` function and provide the data as needed. 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_ctx_last_waiting
-
-```c
-NONULL in3_ctx_t* in3_ctx_last_waiting(in3_ctx_t *ctx);
-```
-
-finds the last waiting request-context. 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
-
-
-#### in3_ctx_exec_state
-
-```c
-NONULL in3_ctx_state_t in3_ctx_exec_state(in3_ctx_t *ctx);
-```
-
-executes the context and returns its state. 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_ctx_state_tNONULL `](#in3-ctx-state-t)
-
-
-#### in3_ctx_execute
-
-```c
-NONULL in3_ret_t in3_ctx_execute(in3_ctx_t *ctx);
-```
-
-execute the context, but stops whenever data are required. 
-
-This function should be used in order to call data in a asyncronous way, since this function will not use the transport-function to actually send it.
-
-The caller is responsible for delivering the required responses. After calling you need to check the return-value:
-
-- IN3_WAITING : provide the required data and then call in3_ctx_execute again.
-- IN3_OK : success, we have a result.
-- any other status = error
-
-```eval_rst
-.. graphviz::
-
-       digraph G {
-     node[fontname="Helvetica",   shape=Box, color=lightblue, style=filled ]
-      edge[fontname="Helvetica",   style=solid,  fontsize=8 , color=grey]
-      rankdir = LR;
-    
-      RPC[label="RPC-Request"]
-      CTX[label="in3_ctx_t"]
-    
-      sign[label="sign data",color=lightgrey, style=""]
-      request[label="fetch data",color=lightgrey, style=""]
-    
-      exec[ label="in3_ctx_execute()",color=lightgrey, style="", shape=circle ]
-      free[label="ctx_free()",color=lightgrey, style=""]
-    
-    
-      RPC -> CTX [label="ctx_new()"]
-      CTX -> exec
-    
-    
-      exec -> error [label="IN3_..."]
-      exec -> response[label="IN3_OK"]
-      exec -> waiting[label="IN3_WAITING"]
-    
-      waiting -> sign[label=CT_SIGN]
-      waiting -> request[label=CT_RPC] 
-    
-      sign -> exec [label="in3_ctx_add_response()"]
-      request -> exec[label="in3_ctx_add_response()"]
-    
-      response -> free
-      error->free
-    
-    
-     { rank = same; exec, sign, request }
-    
-    
-    
-    }
-    
-```
-Here is a example how to use this function:
-
-```c
- in3_ret_t in3_send_ctx(in3_ctx_t* ctx) {
-  in3_ret_t ret;
-  // execute the context and store the return value.
-  // if the return value is 0 == IN3_OK, it was successful and we return,
-  // if not, we keep on executing
-  while ((ret = in3_ctx_execute(ctx))) {
-    // error we stop here, because this means we got an error
-    if (ret != IN3_WAITING) return ret;
-
-    // handle subcontexts first, if they have not been finished
-    while (ctx->required && in3_ctx_state(ctx->required) != CTX_SUCCESS) {
-      // exxecute them, and return the status if still waiting or error
-      if ((ret = in3_send_ctx(ctx->required))) return ret;
-
-      // recheck in order to prepare the request.
-      // if it is not waiting, then it we cannot do much, becaus it will an error or successfull.
-      if ((ret = in3_ctx_execute(ctx)) != IN3_WAITING) return ret;
-    }
-
-    // only if there is no response yet...
-    if (!ctx->raw_response) {
-
-      // what kind of request do we need to provide?
-      switch (ctx->type) {
-
-        // RPC-request to send to the nodes
-        case CT_RPC: {
-
-            // build the request
-            in3_request_t* request = in3_create_request(ctx);
-
-            // here we use the transport, but you can also try to fetch the data in any other way.
-            ctx->client->transport(request);
-
-            // clean up
-            request_free(request);
-            break;
-        }
-
-        // this is a request to sign a transaction
-        case CT_SIGN: {
-            // read the data to sign from the request
-            d_token_t* params = d_get(ctx->requests[0], K_PARAMS);
-            // the data to sign
-            bytes_t    data   = d_to_bytes(d_get_at(params, 0));
-            // the account to sign with
-            bytes_t    from   = d_to_bytes(d_get_at(params, 1));
-
-            // prepare the response
-            ctx->raw_response = _malloc(sizeof(in3_response_t));
-            sb_init(&ctx->raw_response[0].error);
-            sb_init(&ctx->raw_response[0].result);
-
-            // data for the signature 
-            uint8_t sig[65];
-            // use the signer to create the signature
-            ret = ctx->client->signer->sign(ctx, SIGN_EC_HASH, data, from, sig);
-            // if it fails we report this as error
-            if (ret < 0) return ctx_set_error(ctx, ctx->raw_response->error.data, ret);
-            // otherwise we simply add the raw 65 bytes to the response.
-            sb_add_range(&ctx->raw_response->result, (char*) sig, 0, 65);
-        }
-      }
-    }
-  }
-  // done...
-  return ret;
-}
-```
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_ctx_state
-
-```c
-NONULL in3_ctx_state_t in3_ctx_state(in3_ctx_t *ctx);
-```
-
-returns the current state of the context. 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`in3_ctx_state_tNONULL `](#in3-ctx-state-t)
-
-
-#### ctx_get_error_data
-
-```c
-char* ctx_get_error_data(in3_ctx_t *ctx);
-```
-
-returns the error of the context. 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: `char *`
-
-
-#### ctx_get_response_data
-
-```c
-char* ctx_get_response_data(in3_ctx_t *ctx);
-```
-
-returns json response for that context 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: `char *`
-
-
-#### ctx_get_type
-
-```c
-NONULL ctx_type_t ctx_get_type(in3_ctx_t *ctx);
-```
-
-returns the type of the request 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: [`ctx_type_tNONULL `](#ctx-type-t)
-
-
-#### ctx_free
-
-```c
-NONULL void ctx_free(in3_ctx_t *ctx);
-```
-
-frees all resources allocated during the request. 
-
-But this will not free the request string passed when creating the context! 
-
-arguments:
-```eval_rst
-=========================== ========= ====================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the request context.
-=========================== ========= ====================
-```
-returns: `NONULL void`
-
-
-#### ctx_add_required
-
-```c
-NONULL in3_ret_t ctx_add_required(in3_ctx_t *parent, in3_ctx_t *ctx);
-```
-
-adds a new context as a requirment. 
-
-Whenever a verifier needs more data and wants to send a request, we should create the request and add it as dependency and stop.
-
-If the function is called again, we need to search and see if the required status is now useable.
-
-Here is an example of how to use it:
-
-```c
-in3_ret_t get_from_nodes(in3_ctx_t* parent, char* method, char* params, bytes_t* dst) {
-  // check if the method is already existing
-  in3_ctx_t* ctx = ctx_find_required(parent, method);
-  if (ctx) {
-    // found one - so we check if it is useable.
-    switch (in3_ctx_state(ctx)) {
-      // in case of an error, we report it back to the parent context
-      case CTX_ERROR:
-        return ctx_set_error(parent, ctx->error, IN3_EUNKNOWN);
-      // if we are still waiting, we stop here and report it.
-      case CTX_WAITING_FOR_REQUIRED_CTX:
-      case CTX_WAITING_FOR_RESPONSE:
-        return IN3_WAITING;
-
-      // if it is useable, we can now handle the result.
-      case CTX_SUCCESS: {
-        d_token_t* r = d_get(ctx->responses[0], K_RESULT);
-        if (r) {
-          // we have a result, so write it back to the dst
-          *dst = d_to_bytes(r);
-          return IN3_OK;
-        } else
-          // or check the error and report it
-          return ctx_check_response_error(parent, 0);
-      }
-    }
-  }
-
-  // no required context found yet, so we create one:
-
-  // since this is a subrequest it will be freed when the parent is freed.
-  // allocate memory for the request-string
-  char* req = _malloc(strlen(method) + strlen(params) + 200);
-  // create it
-  sprintf(req, "{\"method\":\"%s\",\"jsonrpc\":\"2.0\",\"id\":1,\"params\":%s}", method, params);
-  // and add the request context to the parent.
-  return ctx_add_required(parent, ctx_new(parent->client, req));
-}
-```
-arguments:
-```eval_rst
-=========================== ============ ===============================
-`in3_ctx_t * <#in3-ctx-t>`_  **parent**  the current request context.
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the new request context to add.
-=========================== ============ ===============================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### ctx_find_required
-
-```c
-NONULL in3_ctx_t* ctx_find_required(const in3_ctx_t *parent, const char *method);
-```
-
-searches within the required request contextes for one with the given method. 
-
-This method is used internaly to find a previously added context. 
-
-arguments:
-```eval_rst
-================================== ============ ==============================
-`in3_ctx_tconst , * <#in3-ctx-t>`_  **parent**  the current request context.
-``const char *``                    **method**  the method of the rpc-request.
-================================== ============ ==============================
-```
-returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
-
-
-#### ctx_remove_required
-
-```c
-NONULL in3_ret_t ctx_remove_required(in3_ctx_t *parent, in3_ctx_t *ctx, bool rec);
-```
-
-removes a required context after usage. 
-
-removing will also call free_ctx to free resources. 
-
-arguments:
-```eval_rst
-=========================== ============ =============================================
-`in3_ctx_t * <#in3-ctx-t>`_  **parent**  the current request context.
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the request context to remove.
-``bool``                     **rec**     if true all sub contexts will aösp be removed
-=========================== ============ =============================================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### ctx_check_response_error
-
-```c
-NONULL in3_ret_t ctx_check_response_error(in3_ctx_t *c, int i);
-```
-
-check if the response contains a error-property and reports this as error in the context. 
-
-arguments:
-```eval_rst
-=========================== ======= ============================================================================
-`in3_ctx_t * <#in3-ctx-t>`_  **c**  the current request context.
-``int``                      **i**  the index of the request to check (if this is a batch-request, otherwise 0).
-=========================== ======= ============================================================================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### ctx_get_error
-
-```c
-NONULL in3_ret_t ctx_get_error(in3_ctx_t *ctx, int id);
-```
-
-determins the errorcode for the given request. 
-
-arguments:
-```eval_rst
-=========================== ========= ============================================================================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current request context.
-``int``                      **id**   the index of the request to check (if this is a batch-request, otherwise 0).
-=========================== ========= ============================================================================
-```
-returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
-
-*Please make sure you check if it was successfull (`==IN3_OK`)*
-
-
-#### in3_client_rpc_ctx_raw
-
-```c
-NONULL in3_ctx_t* in3_client_rpc_ctx_raw(in3_t *c, const char *request);
-```
-
-sends a request and returns a context used to access the result or errors. 
-
-This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
-
-arguments:
-```eval_rst
-=================== ============= ==================
-`in3_t * <#in3-t>`_  **c**        the client config.
-``const char *``     **request**  rpc request.
-=================== ============= ==================
-```
-returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
-
-
-#### in3_client_rpc_ctx
-
-```c
-NONULL in3_ctx_t* in3_client_rpc_ctx(in3_t *c, const char *method, const char *params);
-```
-
-sends a request and returns a context used to access the result or errors. 
-
-This context *MUST* be freed with ctx_free(ctx) after usage to release the resources. 
-
-arguments:
-```eval_rst
-=================== ============ ===================
-`in3_t * <#in3-t>`_  **c**       the clientt config.
-``const char *``     **method**  rpc method.
-``const char *``     **params**  params as string.
-=================== ============ ===================
-```
-returns: [`in3_ctx_tNONULL , *`](#in3-ctx-t)
-
-
-#### in3_ctx_get_proof
-
-```c
-NONULL in3_proof_t in3_ctx_get_proof(in3_ctx_t *ctx, int i);
-```
-
-determines the proof as set in the request. 
-
-arguments:
-```eval_rst
-=========================== ========= =============================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current request.
-``int``                      **i**    the index within the request.
-=========================== ========= =============================
-```
-returns: [`in3_proof_tNONULL `](#in3-proof-t)
-
-
 ### plugin.h
 
 this file defines the plugin-contexts 
@@ -5523,7 +4648,7 @@ File: [c/src/core/client/plugin.h](https://github.com/slockit/in3-c/blob/master/
 checks if a plugin for specified action is registered with the client 
 
 ```c
-#define in3_plugin_is_registered (client,action) ((client)->plugin_acts & (action))
+#define in3_plugin_is_registered (client,action) (((client)->plugin_acts & (action)) == (action))
 ```
 
 
@@ -5583,7 +4708,21 @@ The enum type contains the following values:
 ================================== = 
 ```
 
-#### in3_request_t
+#### in3_req_header_t
+
+optional request headers 
+
+
+The stuct contains following fields:
+
+```eval_rst
+============================================= =========== ======================
+``char *``                                     **value**  the value
+`in3_req_headerstruct , * <#in3-req-header>`_  **next**   pointer to next header
+============================================= =========== ======================
+```
+
+#### in3_http_request_t
 
 request-object. 
 
@@ -5593,21 +4732,24 @@ represents a RPC-request
 The stuct contains following fields:
 
 ```eval_rst
-=============================== ============== =================================================
-``char *``                       **payload**   the payload to send
-``char **``                      **urls**      array of urls
-``uint_fast16_t``                **urls_len**  number of urls
-`in3_ctxstruct , * <#in3-ctx>`_  **ctx**       the current context
-``void *``                       **cptr**      a custom ptr to hold information during
-``uint32_t``                     **wait**      time in ms to wait before sending out the request
-=============================== ============== =================================================
+========================================= ================= =======================================================
+``char *``                                 **method**       the http-method to be used
+``char *``                                 **payload**      the payload to send
+``char **``                                **urls**         array of urls
+``uint_fast16_t``                          **urls_len**     number of urls
+``uint32_t``                               **payload_len**  length of the payload in bytes.
+`in3_reqstruct , * <#in3-req>`_            **req**          the current context
+``void *``                                 **cptr**         a custom ptr to hold information during
+``uint32_t``                               **wait**         time in ms to wait before sending out the request
+`in3_req_header_t * <#in3-req-header-t>`_  **headers**      optional additional headers to be send with the request
+========================================= ================= =======================================================
 ```
 
 #### in3_transport_legacy
 
 
 ```c
-typedef in3_ret_t(* in3_transport_legacy) (in3_request_t *request)
+typedef in3_ret_t(* in3_transport_legacy) (in3_http_request_t *request)
 ```
 
 returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -5624,7 +4766,7 @@ The stuct contains following fields:
 
 ```eval_rst
 ========================================= ================== =================================================
-`in3_ctxstruct , * <#in3-ctx>`_            **ctx**           the context of the request in order report errors
+`in3_reqstruct , * <#in3-req>`_            **req**           the context of the request in order report errors
 ``uint8_t *``                              **accounts**      the account to use for the signature
 ``int``                                    **accounts_len**  number of accounts
 `in3_signer_type_t <#in3-signer-type-t>`_  **signer_type**   the type of the signer used for this account.
@@ -5640,7 +4782,7 @@ The stuct contains following fields:
 
 ```eval_rst
 =============================== ============= =================================================
-`in3_ctxstruct , * <#in3-ctx>`_  **ctx**      the context of the request in order report errors
+`in3_reqstruct , * <#in3-req>`_  **req**      the context of the request in order report errors
 `address_t <#address-t>`_        **account**  the account to use for the signature
 `bytes_t <#bytes-t>`_            **old_tx**   
 `bytes_t <#bytes-t>`_            **new_tx**   
@@ -5660,7 +4802,7 @@ The stuct contains following fields:
 =========================================== =============== =================================================
 `bytes_t <#bytes-t>`_                        **signature**  the resulting signature
 `d_signature_type_t <#d-signature-type-t>`_  **type**       the type of signature
-`in3_ctxstruct , * <#in3-ctx>`_              **ctx**        the context of the request in order report errors
+`in3_reqstruct , * <#in3-req>`_              **req**        the context of the request in order report errors
 `bytes_t <#bytes-t>`_                        **message**    the message to sign
 `bytes_t <#bytes-t>`_                        **account**    the account to use for the signature
 =========================================== =============== =================================================
@@ -5739,7 +4881,7 @@ The stuct contains following fields:
 
 ```eval_rst
 =========================== ============= ===================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**      the request context
+`in3_req_t * <#in3-req-t>`_  **req**      the request context
 ``char *``                   **key**      the key to fetch
 `bytes_t * <#bytes-t>`_      **content**  the content to set
 =========================== ============= ===================
@@ -5809,17 +4951,17 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_plugin_execute_first
 
 ```c
-in3_ret_t in3_plugin_execute_first(in3_ctx_t *ctx, in3_plugin_act_t action, void *plugin_ctx);
+in3_ret_t in3_plugin_execute_first(in3_req_t *req, in3_plugin_act_t action, void *plugin_ctx);
 ```
 
 executes all plugin actions one-by-one, stops when a plugin returns anything other than IN3_EIGNORE. 
 
-returns IN3_EPLGN_NONE if no plugin was able to handle specified action, otherwise returns IN3_OK plugin errors are reported via the in3_ctx_t 
+returns IN3_EPLGN_NONE if no plugin was able to handle specified action, otherwise returns IN3_OK plugin errors are reported via the in3_req_t 
 
 arguments:
 ```eval_rst
 ======================================= ================ 
-`in3_ctx_t * <#in3-ctx-t>`_              **ctx**         
+`in3_req_t * <#in3-req-t>`_              **req**         
 `in3_plugin_act_t <#in3-plugin-act-t>`_  **action**      
 ``void *``                               **plugin_ctx**  
 ======================================= ================ 
@@ -5832,7 +4974,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### in3_plugin_execute_first_or_none
 
 ```c
-in3_ret_t in3_plugin_execute_first_or_none(in3_ctx_t *ctx, in3_plugin_act_t action, void *plugin_ctx);
+in3_ret_t in3_plugin_execute_first_or_none(in3_req_t *req, in3_plugin_act_t action, void *plugin_ctx);
 ```
 
 same as in3_plugin_execute_first(), but returns IN3_OK even if no plugin could handle specified action 
@@ -5840,7 +4982,7 @@ same as in3_plugin_execute_first(), but returns IN3_OK even if no plugin could h
 arguments:
 ```eval_rst
 ======================================= ================ 
-`in3_ctx_t * <#in3-ctx-t>`_              **ctx**         
+`in3_req_t * <#in3-req-t>`_              **req**         
 `in3_plugin_act_t <#in3-plugin-act-t>`_  **action**      
 ``void *``                               **plugin_ctx**  
 ======================================= ================ 
@@ -5967,16 +5109,85 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### in3_get_request_payload
 
 ```c
-char* in3_get_request_payload(in3_request_t *request);
+char* in3_get_request_payload(in3_http_request_t *request);
 ```
 
-getter to retrieve the payload from a in3_request_t struct 
+getter to retrieve the payload from a in3_http_request_t struct 
 
 arguments:
 ```eval_rst
-=================================== ============= ==============
-`in3_request_t * <#in3-request-t>`_  **request**  request struct
-=================================== ============= ==============
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
+```
+returns: `char *`
+
+
+#### in3_get_request_payload_len
+
+```c
+uint32_t in3_get_request_payload_len(in3_http_request_t *request);
+```
+
+getter to retrieve the length of the payload from a in3_http_request_t struct 
+
+arguments:
+```eval_rst
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
+```
+returns: `uint32_t`
+
+
+#### in3_get_request_headers_len
+
+```c
+int in3_get_request_headers_len(in3_http_request_t *request);
+```
+
+getter to retrieve the urls list length from a in3_http_request_t struct 
+
+arguments:
+```eval_rst
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
+```
+returns: `int`
+
+
+#### in3_get_request_headers_at
+
+```c
+char* in3_get_request_headers_at(in3_http_request_t *request, int index);
+```
+
+getter to retrieve the urls list length from a in3_http_request_t struct 
+
+arguments:
+```eval_rst
+============================================= ============= =======================
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+``int``                                        **index**    the inde xof the header
+============================================= ============= =======================
+```
+returns: `char *`
+
+
+#### in3_get_request_method
+
+```c
+char* in3_get_request_method(in3_http_request_t *request);
+```
+
+getter to retrieve the http-method from a in3_http_request_t struct 
+
+arguments:
+```eval_rst
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
 ```
 returns: `char *`
 
@@ -5984,16 +5195,16 @@ returns: `char *`
 #### in3_get_request_urls
 
 ```c
-char** in3_get_request_urls(in3_request_t *request);
+char** in3_get_request_urls(in3_http_request_t *request);
 ```
 
-getter to retrieve the urls list from a in3_request_t struct 
+getter to retrieve the urls list from a in3_http_request_t struct 
 
 arguments:
 ```eval_rst
-=================================== ============= ==============
-`in3_request_t * <#in3-request-t>`_  **request**  request struct
-=================================== ============= ==============
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
 ```
 returns: `char **`
 
@@ -6001,16 +5212,16 @@ returns: `char **`
 #### in3_get_request_urls_len
 
 ```c
-int in3_get_request_urls_len(in3_request_t *request);
+int in3_get_request_urls_len(in3_http_request_t *request);
 ```
 
-getter to retrieve the urls list length from a in3_request_t struct 
+getter to retrieve the urls list length from a in3_http_request_t struct 
 
 arguments:
 ```eval_rst
-=================================== ============= ==============
-`in3_request_t * <#in3-request-t>`_  **request**  request struct
-=================================== ============= ==============
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
 ```
 returns: `int`
 
@@ -6018,16 +5229,16 @@ returns: `int`
 #### in3_get_request_timeout
 
 ```c
-uint32_t in3_get_request_timeout(in3_request_t *request);
+uint32_t in3_get_request_timeout(in3_http_request_t *request);
 ```
 
-getter to retrieve the urls list length from a in3_request_t struct 
+getter to retrieve the urls list length from a in3_http_request_t struct 
 
 arguments:
 ```eval_rst
-=================================== ============= ==============
-`in3_request_t * <#in3-request-t>`_  **request**  request struct
-=================================== ============= ==============
+============================================= ============= ==============
+`in3_http_request_t * <#in3-http-request-t>`_  **request**  request struct
+============================================= ============= ==============
 ```
 returns: `uint32_t`
 
@@ -6035,7 +5246,7 @@ returns: `uint32_t`
 #### in3_req_add_response
 
 ```c
-NONULL void in3_req_add_response(in3_request_t *req, int index, bool is_error, const char *data, int data_len, uint32_t time);
+NONULL void in3_req_add_response(in3_http_request_t *req, int index, int error, const char *data, int data_len, uint32_t time);
 ```
 
 adds a response for a request-object. 
@@ -6044,14 +5255,14 @@ This function should be used in the transport-function to set the response.
 
 arguments:
 ```eval_rst
-=================================== ============== ================================================================================================
-`in3_request_t * <#in3-request-t>`_  **req**       the the request
-``int``                              **index**     the index of the url, since this request could go out to many urls
-``bool``                             **is_error**  if true this will be reported as error. the message should then be the error-message
-``const char *``                     **data**      the data or the the string
-``int``                              **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
-``uint32_t``                         **time**      the time this request took in ms or 0 if not possible (it will be used to calculate the weights)
-=================================== ============== ================================================================================================
+============================================= ============== ================================================================================================
+`in3_http_request_t * <#in3-http-request-t>`_  **req**       [in]the the request
+``int``                                        **index**     [in] the index of the url, since this request could go out to many urls
+``int``                                        **error**     [in] if <0 this will be reported as error. the message should then be the error-message
+``const char *``                               **data**      the data or the the string
+``int``                                        **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
+``uint32_t``                                   **time**      the time this request took in ms or 0 if not possible (it will be used to calculate the weights)
+============================================= ============== ================================================================================================
 ```
 returns: `NONULL void`
 
@@ -6059,7 +5270,7 @@ returns: `NONULL void`
 #### in3_ctx_add_response
 
 ```c
-NONULL void in3_ctx_add_response(in3_ctx_t *ctx, int index, bool is_error, const char *data, int data_len, uint32_t time);
+NONULL void in3_ctx_add_response(in3_req_t *req, int index, int error, const char *data, int data_len, uint32_t time);
 ```
 
 adds a response to a context. 
@@ -6069,9 +5280,9 @@ This function should be used in the transport-function to set the response.
 arguments:
 ```eval_rst
 =========================== ============== ================================================================================================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**       the current context
-``int``                      **index**     the index of the url, since this request could go out to many urls
-``bool``                     **is_error**  if true this will be reported as error. the message should then be the error-message
+`in3_req_t * <#in3-req-t>`_  **req**       [in]the current context
+``int``                      **index**     [in] the index of the url, since this request could go out to many urls
+``int``                      **error**     [in] if <0 this will be reported as error. the message should then be the error-message
 ``const char *``             **data**      the data or the the string
 ``int``                      **data_len**  the length of the data or the the string (use -1 if data is a null terminated string)
 ``uint32_t``                 **time**      the time this request took in ms or 0 if not possible (it will be used to calculate the weights)
@@ -6152,16 +5363,16 @@ arguments:
 #### create_sign_ctx
 
 ```c
-NONULL in3_sign_ctx_t* create_sign_ctx(in3_ctx_t *ctx);
+NONULL in3_sign_ctx_t* create_sign_ctx(in3_req_t *req);
 ```
 
 creates a signer ctx to be used for async signing. 
 
 arguments:
 ```eval_rst
-=========================== ========= ===============
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the rpc context
-=========================== ========= ===============
+=========================== ========= ====================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the rpc context
+=========================== ========= ====================
 ```
 returns: [`in3_sign_ctx_tNONULL , *`](#in3-sign-ctx-t)
 
@@ -6205,6 +5416,662 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+### request.h
+
+Request Context. 
+
+This is used for each request holding request and response-pointers but also controls the execution process. 
+
+File: [c/src/core/client/request.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/request.h)
+
+#### ctx_type
+
+type of the request context, 
+
+The enum type contains the following values:
+
+```eval_rst
+============= = ============================================================
+ **RT_RPC**   0 a json-rpc request, which needs to be send to a incubed node
+ **RT_SIGN**  1 a sign request
+============= = ============================================================
+```
+
+#### state
+
+The current state of the context. 
+
+you can check this state after each execute-call. 
+
+The enum type contains the following values:
+
+```eval_rst
+============================== == ==========================================================
+ **REQ_SUCCESS**               0  The ctx has a verified result.
+ **REQ_WAITING_TO_SEND**       1  the request has not been sent yet
+ **REQ_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
+ **REQ_ERROR**                 -1 the request has a error
+============================== == ==========================================================
+```
+
+#### req_type_t
+
+type of the request context, 
+
+
+The enum type contains the following values:
+
+```eval_rst
+============= = ============================================================
+ **RT_RPC**   0 a json-rpc request, which needs to be send to a incubed node
+ **RT_SIGN**  1 a sign request
+============= = ============================================================
+```
+
+#### node_match_t
+
+the weight of a certain node as linked list. 
+
+This will be used when picking the nodes to send the request to. A linked list of these structs desribe the result. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+============================= ============= ===========================================================
+``unsigned int``               **index**    index of the node in the nodelist
+``uint32_t``                   **s**        The starting value.
+``uint32_t``                   **w**        weight value
+``char *``                     **url**      the url of the node
+`address_t <#address-t>`_      **address**  address of the server
+`weightstruct , * <#weight>`_  **next**     next in the linked-list or NULL if this is the last element
+============================= ============= ===========================================================
+```
+
+#### in3_response_t
+
+response-object. 
+
+if the error has a length>0 the response will be rejected 
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================= =========== =================================================================
+``uint32_t``               **time**   measured time (in ms) which will be used for ajusting the weights
+`in3_ret_t <#in3-ret-t>`_  **state**  the state of the response
+`sb_t <#sb-t>`_            **data**   a stringbuilder to add the result
+========================= =========== =================================================================
+```
+
+#### in3_req_t
+
+The Request config. 
+
+This is generated for each request and represents the current state. it holds the state until the request is finished and must be freed afterwards. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+===================================== ======================== =========================================================================================================
+``uint_fast8_t``                       **signers_length**      number or addresses
+``uint_fast16_t``                      **len**                 the number of requests
+``uint_fast16_t``                      **attempt**             the number of attempts
+``uint32_t``                           **id**                  JSON RPC id of request at index 0.
+`req_type_t <#req-type-t>`_            **type**                the type of the request
+`in3_ret_t <#in3-ret-t>`_              **verification_state**  state of the verification
+``char *``                             **error**               in case of an error this will hold the message, if not it points to `NULL`
+`json_ctx_t * <#json-ctx-t>`_          **request_context**     the result of the json-parser for the request.
+`json_ctx_t * <#json-ctx-t>`_          **response_context**    the result of the json-parser for the response.
+`d_token_t ** <#d-token-t>`_           **requests**            references to the tokens representring the requests
+`d_token_t ** <#d-token-t>`_           **responses**           references to the tokens representring the parsed responses
+`in3_response_t * <#in3-response-t>`_  **raw_response**        the raw response-data, which should be verified.
+``uint8_t *``                          **signers**             the addresses of servers requested to sign the blockhash
+`node_match_t * <#node-match-t>`_      **nodes**               selected nodes to process the request, which are stored as linked list.
+`cache_entry_t * <#cache-entry-t>`_    **cache**               optional cache-entries. 
+                                                               
+                                                               These entries will be freed when cleaning up the context.
+`in3_reqstruct , * <#in3-req>`_        **required**            pointer to the next required context. 
+                                                               
+                                                               if not NULL the data from this context need get finished first, before being able to resume this context.
+`in3_t * <#in3-t>`_                    **client**              reference to the client
+===================================== ======================== =========================================================================================================
+```
+
+#### in3_req_state_t
+
+The current state of the context. 
+
+you can check this state after each execute-call. 
+
+
+The enum type contains the following values:
+
+```eval_rst
+============================== == ==========================================================
+ **REQ_SUCCESS**               0  The ctx has a verified result.
+ **REQ_WAITING_TO_SEND**       1  the request has not been sent yet
+ **REQ_WAITING_FOR_RESPONSE**  2  the request is sent but not all of the response are set ()
+ **REQ_ERROR**                 -1 the request has a error
+============================== == ==========================================================
+```
+
+#### req_new
+
+```c
+NONULL in3_req_t* req_new(in3_t *client, const char *req_data);
+```
+
+creates a new request. 
+
+the request data will be parsed and represented in the context. calling this function will only parse the request data, but not send anything yet.
+
+*Important*: the req_data will not be cloned but used during the execution. The caller of the this function is also responsible for freeing this string afterwards. 
+
+arguments:
+```eval_rst
+=================== ============== ====================================
+`in3_t * <#in3-t>`_  **client**    [in] the client-config.
+``const char *``     **req_data**  [in] the rpc-request as json string.
+=================== ============== ====================================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
+#### in3_send_req
+
+```c
+NONULL in3_ret_t in3_send_req(in3_req_t *req);
+```
+
+sends a previously created request to nodes and verifies it. 
+
+The execution happens within the same thread, thich mean it will be blocked until the response ha beedn received and verified. In order to handle calls asynchronously, you need to call the `in3_req_execute` function and provide the data as needed. 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_req_last_waiting
+
+```c
+NONULL in3_req_t* in3_req_last_waiting(in3_req_t *req);
+```
+
+finds the last waiting request-context. 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
+#### in3_req_exec_state
+
+```c
+NONULL in3_req_state_t in3_req_exec_state(in3_req_t *req);
+```
+
+executes the request and returns its state. 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`in3_req_state_tNONULL `](#in3-req-state-t)
+
+
+#### in3_req_execute
+
+```c
+NONULL in3_ret_t in3_req_execute(in3_req_t *req);
+```
+
+execute the context, but stops whenever data are required. 
+
+This function should be used in order to call data in a asyncronous way, since this function will not use the transport-function to actually send it.
+
+The caller is responsible for delivering the required responses. After calling you need to check the return-value:
+
+- IN3_WAITING : provide the required data and then call in3_req_execute again.
+- IN3_OK : success, we have a result.
+- any other status = error
+
+```eval_rst
+.. graphviz::
+
+       digraph G {
+     node[fontname="Helvetica",   shape=Box, color=lightblue, style=filled ]
+      edge[fontname="Helvetica",   style=solid,  fontsize=8 , color=grey]
+      rankdir = LR;
+    
+      RPC[label="RPC-Request"]
+      CTX[label="in3_req_t"]
+    
+      sign[label="sign data",color=lightgrey, style=""]
+      request[label="fetch data",color=lightgrey, style=""]
+    
+      exec[ label="in3_req_execute()",color=lightgrey, style="", shape=circle ]
+      free[label="req_free()",color=lightgrey, style=""]
+    
+    
+      RPC -> CTX [label="req_new()"]
+      CTX -> exec
+    
+    
+      exec -> error [label="IN3_..."]
+      exec -> response[label="IN3_OK"]
+      exec -> waiting[label="IN3_WAITING"]
+    
+      waiting -> sign[label=RT_SIGN]
+      waiting -> request[label=RT_RPC] 
+    
+      sign -> exec [label="in3_ctx_add_response()"]
+      request -> exec[label="in3_ctx_add_response()"]
+    
+      response -> free
+      error->free
+    
+    
+     { rank = same; exec, sign, request }
+    
+    
+    
+    }
+    
+```
+Here is a example how to use this function:
+
+```c
+ in3_ret_t in3_send_req(in3_req_t* req) {
+  in3_ret_t ret;
+  // execute the context and store the return value.
+  // if the return value is 0 == IN3_OK, it was successful and we return,
+  // if not, we keep on executing
+  while ((ret = in3_req_execute(ctx))) {
+    // error we stop here, because this means we got an error
+    if (ret != IN3_WAITING) return ret;
+
+    // handle subcontexts first, if they have not been finished
+    while (ctx->required && in3_req_state(ctx->required) != REQ_SUCCESS) {
+      // exxecute them, and return the status if still waiting or error
+      if ((ret = in3_send_req(ctx->required))) return ret;
+
+      // recheck in order to prepare the request.
+      // if it is not waiting, then it we cannot do much, becaus it will an error or successfull.
+      if ((ret = in3_req_execute(ctx)) != IN3_WAITING) return ret;
+    }
+
+    // only if there is no response yet...
+    if (!ctx->raw_response) {
+
+      // what kind of request do we need to provide?
+      switch (ctx->type) {
+
+        // RPC-request to send to the nodes
+        case RT_RPC: {
+
+            // build the request
+            in3_http_request_t* request = in3_create_request(ctx);
+
+            // here we use the transport, but you can also try to fetch the data in any other way.
+            ctx->client->transport(request);
+
+            // clean up
+            request_free(request);
+            break;
+        }
+
+        // this is a request to sign a transaction
+        case RT_SIGN: {
+            // read the data to sign from the request
+            d_token_t* params = d_get(ctx->requests[0], K_PARAMS);
+            // the data to sign
+            bytes_t    data   = d_to_bytes(d_get_at(params, 0));
+            // the account to sign with
+            bytes_t    from   = d_to_bytes(d_get_at(params, 1));
+
+            // prepare the response
+            ctx->raw_response = _malloc(sizeof(in3_response_t));
+            sb_init(&ctx->raw_response[0].error);
+            sb_init(&ctx->raw_response[0].result);
+
+            // data for the signature 
+            uint8_t sig[65];
+            // use the signer to create the signature
+            ret = ctx->client->signer->sign(ctx, SIGN_EC_HASH, data, from, sig);
+            // if it fails we report this as error
+            if (ret < 0) return req_set_error(ctx, ctx->raw_response->error.data, ret);
+            // otherwise we simply add the raw 65 bytes to the response.
+            sb_add_range(&ctx->raw_response->result, (char*) sig, 0, 65);
+        }
+      }
+    }
+  }
+  // done...
+  return ret;
+}
+```
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_req_state
+
+```c
+NONULL in3_req_state_t in3_req_state(in3_req_t *req);
+```
+
+returns the current state of the context. 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`in3_req_state_tNONULL `](#in3-req-state-t)
+
+
+#### req_get_error_data
+
+```c
+char* req_get_error_data(in3_req_t *req);
+```
+
+returns the error of the context. 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: `char *`
+
+
+#### req_get_response_data
+
+```c
+char* req_get_response_data(in3_req_t *req);
+```
+
+returns json response for that context 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: `char *`
+
+
+#### req_get_type
+
+```c
+NONULL req_type_t req_get_type(in3_req_t *req);
+```
+
+returns the type of the request 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: [`req_type_tNONULL `](#req-type-t)
+
+
+#### req_free
+
+```c
+NONULL void req_free(in3_req_t *req);
+```
+
+frees all resources allocated during the request. 
+
+But this will not free the request string passed when creating the context! 
+
+arguments:
+```eval_rst
+=========================== ========= =========================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the request context.
+=========================== ========= =========================
+```
+returns: `NONULL void`
+
+
+#### req_add_required
+
+```c
+NONULL in3_ret_t req_add_required(in3_req_t *parent, in3_req_t *req);
+```
+
+adds a new context as a requirment. 
+
+Whenever a verifier needs more data and wants to send a request, we should create the request and add it as dependency and stop.
+
+If the function is called again, we need to search and see if the required status is now useable.
+
+Here is an example of how to use it:
+
+```c
+in3_ret_t get_from_nodes(in3_req_t* parent, char* method, char* params, bytes_t* dst) {
+  // check if the method is already existing
+  in3_req_t* req = req_find_required(parent, method);
+  if (ctx) {
+    // found one - so we check if it is useable.
+    switch (in3_req_state(ctx)) {
+      // in case of an error, we report it back to the parent context
+      case REQ_ERROR:
+        return req_set_error(parent, ctx->error, IN3_EUNKNOWN);
+      // if we are still waiting, we stop here and report it.
+      case CTX_WAITING_FOR_REQUIRED_CTX:
+      case REQ_WAITING_FOR_RESPONSE:
+        return IN3_WAITING;
+
+      // if it is useable, we can now handle the result.
+      case REQ_SUCCESS: {
+        d_token_t* r = d_get(ctx->responses[0], K_RESULT);
+        if (r) {
+          // we have a result, so write it back to the dst
+          *dst = d_to_bytes(r);
+          return IN3_OK;
+        } else
+          // or check the error and report it
+          return req_check_response_error(parent, 0);
+      }
+    }
+  }
+
+  // no required context found yet, so we create one:
+
+  // since this is a subrequest it will be freed when the parent is freed.
+  // allocate memory for the request-string
+  char* req = _malloc(strlen(method) + strlen(params) + 200);
+  // create it
+  sprintf(req, "{\"method\":\"%s\",\"jsonrpc\":\"2.0\",\"id\":1,\"params\":%s}", method, params);
+  // and add the request context to the parent.
+  return req_add_required(parent, req_new(parent->client, req));
+}
+```
+arguments:
+```eval_rst
+=========================== ============ ====================================
+`in3_req_t * <#in3-req-t>`_  **parent**  [in] the current request context.
+`in3_req_t * <#in3-req-t>`_  **req**     [in] the new request context to add.
+=========================== ============ ====================================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### req_find_required
+
+```c
+NONULL in3_req_t* req_find_required(const in3_req_t *parent, const char *method);
+```
+
+searches within the required request contextes for one with the given method. 
+
+This method is used internaly to find a previously added context. 
+
+arguments:
+```eval_rst
+================================== ============ ===================================
+`in3_req_tconst , * <#in3-req-t>`_  **parent**  [in] the current request context.
+``const char *``                    **method**  [in] the method of the rpc-request.
+================================== ============ ===================================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
+#### req_remove_required
+
+```c
+NONULL in3_ret_t req_remove_required(in3_req_t *parent, in3_req_t *req, bool rec);
+```
+
+removes a required context after usage. 
+
+removing will also call free_ctx to free resources. 
+
+arguments:
+```eval_rst
+=========================== ============ ==================================================
+`in3_req_t * <#in3-req-t>`_  **parent**  [in] the current request context.
+`in3_req_t * <#in3-req-t>`_  **req**     [in] the request context to remove.
+``bool``                     **rec**     [in] if true all sub contexts will aösp be removed
+=========================== ============ ==================================================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### req_check_response_error
+
+```c
+NONULL in3_ret_t req_check_response_error(in3_req_t *c, int i);
+```
+
+check if the response contains a error-property and reports this as error in the context. 
+
+arguments:
+```eval_rst
+=========================== ======= =================================================================================
+`in3_req_t * <#in3-req-t>`_  **c**  [in] the current request context.
+``int``                      **i**  [in] the index of the request to check (if this is a batch-request, otherwise 0).
+=========================== ======= =================================================================================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### req_get_error
+
+```c
+NONULL in3_ret_t req_get_error(in3_req_t *req, int id);
+```
+
+determins the errorcode for the given request. 
+
+arguments:
+```eval_rst
+=========================== ========= =================================================================================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the current request context.
+``int``                      **id**   [in] the index of the request to check (if this is a batch-request, otherwise 0).
+=========================== ========= =================================================================================
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_client_rpc_ctx_raw
+
+```c
+NONULL in3_req_t* in3_client_rpc_ctx_raw(in3_t *c, const char *request);
+```
+
+sends a request and returns a context used to access the result or errors. 
+
+This context *MUST* be freed with req_free(ctx) after usage to release the resources. 
+
+arguments:
+```eval_rst
+=================== ============= =======================
+`in3_t * <#in3-t>`_  **c**        [in] the client config.
+``const char *``     **request**  [in] rpc request.
+=================== ============= =======================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
+#### in3_client_rpc_ctx
+
+```c
+NONULL in3_req_t* in3_client_rpc_ctx(in3_t *c, const char *method, const char *params);
+```
+
+sends a request and returns a context used to access the result or errors. 
+
+This context *MUST* be freed with req_free(ctx) after usage to release the resources. 
+
+arguments:
+```eval_rst
+=================== ============ ========================
+`in3_t * <#in3-t>`_  **c**       [in] the clientt config.
+``const char *``     **method**  [in] rpc method.
+``const char *``     **params**  [in] params as string.
+=================== ============ ========================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
+#### in3_req_get_proof
+
+```c
+NONULL in3_proof_t in3_req_get_proof(in3_req_t *req, int i);
+```
+
+determines the proof as set in the request. 
+
+arguments:
+```eval_rst
+=========================== ========= ==================================
+`in3_req_t * <#in3-req-t>`_  **req**  [in] the current request.
+``int``                      **i**    [in] the index within the request.
+=========================== ========= ==================================
+```
+returns: [`in3_proof_tNONULL `](#in3-proof-t)
+
+
 ### bytes.h
 
 util helper on byte arrays. 
@@ -6230,7 +6097,7 @@ creates a new bytes_builder with a initial size of 32 bytes
 #### bb_read_next (_bb_,_iptr_,_vptr_)
 
 ```c
-#define bb_read_next (_bb_,_iptr_,_vptr_) do {                                          \
+#define bb_read_next (_bb_,_iptr_,_vptr_)   do {                                          \
     size_t _l_ = sizeof(*_vptr_);               \
     bb_readl((_bb_), *(_iptr_), (_vptr_), _l_); \
     *(_iptr_) += _l_;                           \
@@ -6256,6 +6123,20 @@ creates a new bytes_builder with a initial size of 32 bytes
 
 ```c
 #define b_readl (_b_,_i_,_vptr_,_l_) memcpy(_vptr_, (_b_)->data + (_i_), (_l_))
+```
+
+
+#### b_to_stack (d)
+
+converts bytes from heap to stack 
+
+```c
+#define b_to_stack (d)   {                                \
+    bytes_t o = d;                 \
+    d.data    = alloca(d.len);     \
+    memcpy(d.data, o.data, o.len); \
+    _free(o.data);                 \
+  }
 ```
 
 
@@ -6925,7 +6806,7 @@ returns: `NONULL void`
 
 ### data.h
 
-json-parser.
+json-parser. 
 
 The parser can read from :
 
@@ -7756,10 +7637,10 @@ arguments:
 returns: `NONULL d_key_t`
 
 
-#### d_get_stringk
+#### d_get_string
 
 ```c
-static char* d_get_stringk(d_token_t *r, d_key_t k);
+static char* d_get_string(d_token_t *r, d_key_t k);
 ```
 
 reads token of a property as string. 
@@ -7769,24 +7650,6 @@ arguments:
 =========================== ======= 
 `d_token_t * <#d-token-t>`_  **r**  
 ``d_key_t``                  **k**  
-=========================== ======= 
-```
-returns: `char *`
-
-
-#### d_get_string
-
-```c
-static char* d_get_string(d_token_t *r, char *k);
-```
-
-reads token of a property as string. 
-
-arguments:
-```eval_rst
-=========================== ======= 
-`d_token_t * <#d-token-t>`_  **r**  
-``char *``                   **k**  
 =========================== ======= 
 ```
 returns: `char *`
@@ -7810,10 +7673,10 @@ arguments:
 returns: `char *`
 
 
-#### d_get_intk
+#### d_get_int
 
 ```c
-static int32_t d_get_intk(d_token_t *r, d_key_t k);
+static int32_t d_get_int(d_token_t *r, d_key_t k);
 ```
 
 reads token of a property as int. 
@@ -7828,10 +7691,10 @@ arguments:
 returns: `int32_t`
 
 
-#### d_get_intkd
+#### d_get_intd
 
 ```c
-static int32_t d_get_intkd(d_token_t *r, d_key_t k, uint32_t d);
+static int32_t d_get_intd(d_token_t *r, d_key_t k, uint32_t d);
 ```
 
 reads token of a property as int. 
@@ -7842,24 +7705,6 @@ arguments:
 `d_token_t * <#d-token-t>`_  **r**  
 ``d_key_t``                  **k**  
 ``uint32_t``                 **d**  
-=========================== ======= 
-```
-returns: `int32_t`
-
-
-#### d_get_int
-
-```c
-static int32_t d_get_int(d_token_t *r, char *k);
-```
-
-reads token of a property as int. 
-
-arguments:
-```eval_rst
-=========================== ======= 
-`d_token_t * <#d-token-t>`_  **r**  
-``char *``                   **k**  
 =========================== ======= 
 ```
 returns: `int32_t`
@@ -7883,10 +7728,10 @@ arguments:
 returns: `int32_t`
 
 
-#### d_get_longk
+#### d_get_long
 
 ```c
-static uint64_t d_get_longk(d_token_t *r, d_key_t k);
+static uint64_t d_get_long(d_token_t *r, d_key_t k);
 ```
 
 reads token of a property as long. 
@@ -7901,10 +7746,10 @@ arguments:
 returns: `uint64_t`
 
 
-#### d_get_longkd
+#### d_get_longd
 
 ```c
-static uint64_t d_get_longkd(d_token_t *r, d_key_t k, uint64_t d);
+static uint64_t d_get_longd(d_token_t *r, d_key_t k, uint64_t d);
 ```
 
 reads token of a property as long. 
@@ -7915,24 +7760,6 @@ arguments:
 `d_token_t * <#d-token-t>`_  **r**  
 ``d_key_t``                  **k**  
 ``uint64_t``                 **d**  
-=========================== ======= 
-```
-returns: `uint64_t`
-
-
-#### d_get_long
-
-```c
-static uint64_t d_get_long(d_token_t *r, char *k);
-```
-
-reads token of a property as long. 
-
-arguments:
-```eval_rst
-=========================== ======= 
-`d_token_t * <#d-token-t>`_  **r**  
-``char *``                   **k**  
 =========================== ======= 
 ```
 returns: `uint64_t`
@@ -7956,10 +7783,10 @@ arguments:
 returns: `uint64_t`
 
 
-#### d_get_bytesk
+#### d_get_bytes
 
 ```c
-static bytes_t* d_get_bytesk(d_token_t *r, d_key_t k);
+static bytes_t* d_get_bytes(d_token_t *r, d_key_t k);
 ```
 
 reads token of a property as bytes. 
@@ -7969,24 +7796,6 @@ arguments:
 =========================== ======= 
 `d_token_t * <#d-token-t>`_  **r**  
 ``d_key_t``                  **k**  
-=========================== ======= 
-```
-returns: [`bytes_t *`](#bytes-t)
-
-
-#### d_get_bytes
-
-```c
-static bytes_t* d_get_bytes(d_token_t *r, char *k);
-```
-
-reads token of a property as bytes. 
-
-arguments:
-```eval_rst
-=========================== ======= 
-`d_token_t * <#d-token-t>`_  **r**  
-``char *``                   **k**  
 =========================== ======= 
 ```
 returns: [`bytes_t *`](#bytes-t)
@@ -8117,7 +7926,7 @@ logs a debug-message without the filename
 #### EXPECT (cond,exit)
 
 ```c
-#define EXPECT (cond,exit) do {                     \
+#define EXPECT (cond,exit)   do {                     \
     if (!(cond))           \
       exit;                \
   } while (0)
@@ -8127,7 +7936,7 @@ logs a debug-message without the filename
 #### EXPECT_CFG (cond,err)
 
 ```c
-#define EXPECT_CFG (cond,err) EXPECT(cond, { \
+#define EXPECT_CFG (cond,err)   EXPECT(cond, { \
   res = malloc(strlen(err) + 1);             \
   if (res) strcpy(res, err);                 \
   goto cleanup;                              \
@@ -8251,6 +8060,83 @@ logs a debug-message without the filename
 
 ```c
 #define EXPECT_TOK_KEY_HEXSTR (token) EXPECT_TOK(token, is_hex_str(d_get_keystr(json, (token)->key)), "expected hex str")
+```
+
+
+#### CHECK_PARAMS_LEN (ctx,params,len)
+
+```c
+#define CHECK_PARAMS_LEN (ctx,params,len)   if (d_type(params) != T_ARRAY || d_len(params) < len) return req_set_error(ctx, "arguments need to be a array with at least " #len " arguments", IN3_EINVAL);
+```
+
+
+#### CHECK_PARAM_TYPE (ctx,params,index,type)
+
+```c
+#define CHECK_PARAM_TYPE (ctx,params,index,type)   if (d_type(d_get_at(params, index)) != type) return req_set_error(ctx, "argument at index " #index " must be a " #type, IN3_EINVAL);
+```
+
+
+#### CHECK_PARAM_NUMBER (ctx,params,index)
+
+```c
+#define CHECK_PARAM_NUMBER (ctx,params,index)   switch (d_type(d_get_at(params, index))) {                                                         \
+    case T_INTEGER:                                                                                  \
+    case T_BYTES: break;                                                                             \
+    default: return req_set_error(ctx, "argument at index " #index " must be a number", IN3_EINVAL); \
+  }
+```
+
+
+#### CHECK_PARAM_ADDRESS (ctx,params,index)
+
+```c
+#define CHECK_PARAM_ADDRESS (ctx,params,index)   {                                                                                                                                              \
+    const d_token_t* val = d_get_at(params, index);                                                                                              \
+    if (d_type(val) != T_BYTES || val->len != 20) return req_set_error(ctx, "argument at index " #index " must be a valid address", IN3_EINVAL); \
+  }
+```
+
+
+#### CHECK_PARAM_LEN (ctx,params,index,len)
+
+```c
+#define CHECK_PARAM_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) != len) return req_set_error(ctx, "argument at index " #index " must have a length of " #len, IN3_EINVAL);
+```
+
+
+#### CHECK_PARAM_MAX_LEN (ctx,params,index,len)
+
+```c
+#define CHECK_PARAM_MAX_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) > len) return req_set_error(ctx, "argument at index " #index " must be smaller than " #len, IN3_EINVAL);
+```
+
+
+#### CHECK_PARAM_MIN_LEN (ctx,params,index,len)
+
+```c
+#define CHECK_PARAM_MIN_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) < len) return req_set_error(ctx, "argument at index " #index " must be at least " #len, IN3_EINVAL);
+```
+
+
+#### CHECK_PARAM (ctx,params,index,cond)
+
+```c
+#define CHECK_PARAM (ctx,params,index,cond)   {                                                                                                       \
+    const d_token_t* val = d_get_at(params, index);                                                       \
+    if (!(cond)) return req_set_error(ctx, "argument at index " #index " must match " #cond, IN3_EINVAL); \
+  }
+```
+
+
+#### TRY_RPC (name,fn)
+
+used for exeuting a function based on the name. 
+
+This macro will return if the name matches. 
+
+```c
+#define TRY_RPC (name,fn)   if (strcmp(ctx->method, name) == 0) return fn;
 ```
 
 
@@ -8430,7 +8316,7 @@ Optional types must be defined prior to usage (e.g.
 DEFINE_OPTIONAL_T(int)) Use OPTIONAL_T_UNDEFINED(t) & OPTIONAL_T_VALUE(t, v) for easy initialization (rvalues) 
 
 ```c
-#define DEFINE_OPTIONAL_T (t) typedef struct {           \
+#define DEFINE_OPTIONAL_T (t)   typedef struct {           \
     t    value;              \
     bool defined;            \
   } OPTIONAL_T(t)
@@ -8464,34 +8350,49 @@ All values (except IN3_OK) indicate an error. IN3_WAITING may be treated like an
 The enum type contains the following values:
 
 ```eval_rst
-=========================== === ==================================================================
- **IN3_OK**                 0   Success.
- **IN3_EUNKNOWN**           -1  Unknown error - usually accompanied with specific error msg.
- **IN3_ENOMEM**             -2  No memory.
- **IN3_ENOTSUP**            -3  Not supported.
- **IN3_EINVAL**             -4  Invalid value.
- **IN3_EFIND**              -5  Not found.
- **IN3_ECONFIG**            -6  Invalid config.
- **IN3_ELIMIT**             -7  Limit reached.
- **IN3_EVERS**              -8  Version mismatch.
- **IN3_EINVALDT**           -9  Data invalid, eg. 
-                                
-                                invalid/incomplete JSON
- **IN3_EPASS**              -10 Wrong password.
- **IN3_ERPC**               -11 RPC error (i.e. 
-                                
-                                in3_ctx_t::error set)
- **IN3_ERPCNRES**           -12 RPC no response.
- **IN3_EUSNURL**            -13 USN URL parse error.
- **IN3_ETRANS**             -14 Transport error.
- **IN3_ERANGE**             -15 Not in range.
- **IN3_WAITING**            -16 the process can not be finished since we are waiting for responses
- **IN3_EIGNORE**            -17 Ignorable error.
- **IN3_EPAYMENT_REQUIRED**  -18 payment required
- **IN3_ENODEVICE**          -19 harware wallet device not connected
- **IN3_EAPDU**              -20 error in hardware wallet communication
- **IN3_EPLGN_NONE**         -21 no plugin could handle specified action
-=========================== === ==================================================================
+================================= ==== ==================================================================
+ **IN3_OK**                       0    Success.
+ **IN3_EUNKNOWN**                 -1   Unknown error - usually accompanied with specific error msg.
+ **IN3_ENOMEM**                   -2   No memory.
+ **IN3_ENOTSUP**                  -3   Not supported.
+ **IN3_EINVAL**                   -4   Invalid value.
+ **IN3_EFIND**                    -5   Not found.
+ **IN3_ECONFIG**                  -6   Invalid config.
+ **IN3_ELIMIT**                   -7   Limit reached.
+ **IN3_EVERS**                    -8   Version mismatch.
+ **IN3_EINVALDT**                 -9   Data invalid, eg. 
+                                       
+                                       invalid/incomplete JSON
+ **IN3_EPASS**                    -10  Wrong password.
+ **IN3_ERPC**                     -11  RPC error (i.e. 
+                                       
+                                       in3_req_t::error set)
+ **IN3_ERPCNRES**                 -12  RPC no response.
+ **IN3_EUSNURL**                  -13  USN URL parse error.
+ **IN3_ETRANS**                   -14  Transport error.
+ **IN3_ERANGE**                   -15  Not in range.
+ **IN3_WAITING**                  -16  the process can not be finished since we are waiting for responses
+ **IN3_EIGNORE**                  -17  Ignorable error.
+ **IN3_EPAYMENT_REQUIRED**        -18  payment required
+ **IN3_ENODEVICE**                -19  harware wallet device not connected
+ **IN3_EAPDU**                    -20  error in hardware wallet communication
+ **IN3_EPLGN_NONE**               -21  no plugin could handle specified action
+ **IN3_HTTP_BAD_REQUEST**         -400 Bad Request.
+ **IN3_HTTP_UNAUTHORIZED**        -401 Unauthorized.
+ **IN3_HTTP_PAYMENT_REQUIRED**    -402 Unauthorized.
+ **IN3_HTTP_FORBIDDEN**           -403 Forbidden.
+ **IN3_HTTP_NOT_FOUND**           -404 not found
+ **IN3_HTTP_M_NOT_ALLOWED**       -405 method not allowed
+ **IN3_HTTP_NOT_ACCEPTABLE**      -406 Not acceptable.
+ **IN3_HTTP_PROX_AUTH_REQUIRED**  -407 Proxy Authentification required.
+ **IN3_HTTP_TIMEOUT**             -408 Request timeout.
+ **IN3_HTTP_CONFLICT**            -409 conflict
+ **IN3_HTTP_GONE**                -410 gone
+ **IN3_HTTP_INTERNAL_ERROR**      -500 Internal Server Error.
+ **IN3_HTTP_NOT_IMPLEMENTED**     -501 not implemented
+ **IN3_HTTP_BAD_GATEWAY**         -502 Bad Gateway.
+ **IN3_HTTP_UNAVAILABLE**         -503 service unavailable
+================================= ==== ==================================================================
 ```
 
 #### in3_errmsg
@@ -8524,11 +8425,12 @@ File: [c/src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/c/
 The enum type contains the following values:
 
 ```eval_rst
-============================== === ===============================================
- **CACHE_PROP_MUST_FREE**      0x1 indicates the content must be freed
- **CACHE_PROP_SRC_REQ**        0x2 the value holds the src-request
- **CACHE_PROP_ONLY_EXTERNAL**  0x4 should only be freed if the context is external
-============================== === ===============================================
+============================== ==== ===============================================
+ **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
+ **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
+ **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
+ **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
+============================== ==== ===============================================
 ```
 
 #### cache_props_t
@@ -8537,11 +8439,12 @@ The enum type contains the following values:
 The enum type contains the following values:
 
 ```eval_rst
-============================== === ===============================================
- **CACHE_PROP_MUST_FREE**      0x1 indicates the content must be freed
- **CACHE_PROP_SRC_REQ**        0x2 the value holds the src-request
- **CACHE_PROP_ONLY_EXTERNAL**  0x4 should only be freed if the context is external
-============================== === ===============================================
+============================== ==== ===============================================
+ **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
+ **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
+ **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
+ **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
+============================== ==== ===============================================
 ```
 
 #### cache_entry_t
@@ -8981,7 +8884,7 @@ File: [c/src/core/util/utils.h](https://github.com/slockit/in3-c/blob/master/c/s
 simple swap macro for integral types 
 
 ```c
-#define SWAP (a,b) {                \
+#define SWAP (a,b)   {                \
     void* p = a;   \
     a       = b;   \
     b       = p;   \
@@ -9052,8 +8955,10 @@ usage - to concatenate a const with a string at compile time -> define SOME_CONS
 
 changes to pointer (a) and it length (l) to remove leading 0 bytes. 
 
+it will reduce it to max len=1 
+
 ```c
-#define optimize_len (a,l) while (l > 1 && *a == 0) { \
+#define optimize_len (a,l)   while (l > 1 && *a == 0) { \
     l--;                     \
     a++;                     \
   }
@@ -9067,7 +8972,7 @@ executes the expression and expects the return value to be a int indicating the 
 if the return value is negative it will stop and return this value otherwise continue. 
 
 ```c
-#define TRY (exp) {                        \
+#define TRY (exp)   {                        \
     int _r = (exp);        \
     if (_r < 0) return _r; \
   }
@@ -9081,10 +8986,27 @@ executes the expression and expects the return value to be a int indicating the 
 if the return value is negative it will stop and return this value otherwise continue. 
 
 ```c
-#define TRY_FINAL (exp,final) {                           \
+#define TRY_FINAL (exp,final)   {                           \
     int _r = (exp);           \
     final;                    \
     if (_r < 0) return _r;    \
+  }
+```
+
+
+#### TRY_CATCH (exp,catch)
+
+executes the expression and expects the return value to be a int indicating the error. 
+
+if the return value is negative it will stop and return this value otherwise continue. 
+
+```c
+#define TRY_CATCH (exp,catch)   {                           \
+    int _r = (exp);           \
+    if (_r < 0) {             \
+      catch;                  \
+      return _r;              \
+    }                         \
   }
 ```
 
@@ -9096,7 +9018,7 @@ executes the expression and expects value to equal val.
 if not it will return IN3_EINVAL 
 
 ```c
-#define EXPECT_EQ (exp,val) if ((exp) != val) return IN3_EINVAL;
+#define EXPECT_EQ (exp,val)   if ((exp) != val) return IN3_EINVAL;
 ```
 
 
@@ -9107,7 +9029,7 @@ executes the expression and expects the return value to be a int indicating the 
 the return value will be set to a existing variable (var). if the return value is negative it will stop and return this value otherwise continue. 
 
 ```c
-#define TRY_SET (var,exp) {                          \
+#define TRY_SET (var,exp)   {                          \
     var = (exp);             \
     if (var < 0) return var; \
   }
@@ -9121,10 +9043,24 @@ executes the expression and expects the return value to be a int indicating the 
 if the return value is negative it will stop and jump (goto) to a marked position "clean". it also expects a previously declared variable "in3_ret_t res". 
 
 ```c
-#define TRY_GOTO (exp) {                          \
+#define TRY_GOTO (exp)   {                          \
     res = (exp);             \
     if (res < 0) goto clean; \
   }
+```
+
+
+#### INIT_LOCK (NAME)
+
+```c
+#define INIT_LOCK (NAME)   {}
+```
+
+
+#### LOCK (NAME,code)
+
+```c
+#define LOCK (NAME,code)   { code }
 ```
 
 
@@ -9174,7 +9110,7 @@ typedef void(* srand_func) (unsigned int s)
 uint64_t bytes_to_long(const uint8_t *data, int len);
 ```
 
-converts the bytes to a unsigned long (at least the last max len bytes) 
+converts the bytes to a unsigned long (at least the last max len bytes). 
 
 arguments:
 ```eval_rst
@@ -9228,7 +9164,9 @@ returns: `uint64_t`
 uint8_t hexchar_to_int(char c);
 ```
 
-converts a hexchar to byte (4bit) 
+converts a hexchar to byte (4bit). 
+
+In case of a nonhex char 0xff will be returned. 
 
 arguments:
 ```eval_rst
@@ -9237,27 +9175,6 @@ arguments:
 ======== ======= 
 ```
 returns: `uint8_t`
-
-
-#### u64_to_str
-
-```c
-const char* u64_to_str(uint64_t value, char *pBuf, int szBuf);
-```
-
-converts a uint64_t to string (char*); buffer-size min. 
-
-21 bytes 
-
-arguments:
-```eval_rst
-============ =========== 
-``uint64_t``  **value**  
-``char *``    **pBuf**   
-``int``       **szBuf**  
-============ =========== 
-```
-returns: `const char *`
 
 
 #### hex_to_bytes
@@ -9317,23 +9234,6 @@ arguments:
 returns: `int`
 
 
-#### sha3
-
-```c
-bytes_t* sha3(const bytes_t *data);
-```
-
-hashes the bytes and creates a new bytes_t 
-
-arguments:
-```eval_rst
-============================== ========== 
-`bytes_tconst , * <#bytes-t>`_  **data**  
-============================== ========== 
-```
-returns: [`bytes_t *`](#bytes-t)
-
-
 #### keccak
 
 ```c
@@ -9358,7 +9258,7 @@ returns: `int`
 void long_to_bytes(uint64_t val, uint8_t *dst);
 ```
 
-converts a long to 8 bytes 
+converts a a uin64_t to 8 bytes written to dst using big endian 
 
 arguments:
 ```eval_rst
@@ -9374,7 +9274,7 @@ arguments:
 void int_to_bytes(uint32_t val, uint8_t *dst);
 ```
 
-converts a int to 4 bytes 
+converts a unsigned int to 4 bytes written to dst using big endian 
 
 arguments:
 ```eval_rst
@@ -9390,7 +9290,9 @@ arguments:
 char* _strdupn(const char *src, int len);
 ```
 
-duplicate the string 
+duplicate the string. 
+
+A len=-1 will determine the len with strlen. 
 
 arguments:
 ```eval_rst
@@ -9501,6 +9403,8 @@ char* str_remove_html(char *data);
 
 remove all html-tags in the text. 
 
+This function will modify the orifinal data and return the same pointer as the input. 
+
 arguments:
 ```eval_rst
 ========== ========== 
@@ -9526,6 +9430,8 @@ returns: `uint64_t`
 ```c
 static bool memiszero(uint8_t *ptr, size_t l);
 ```
+
+returns true if all pytes (specified by l) of pts have a value of zero. 
 
 arguments:
 ```eval_rst
@@ -9650,6 +9556,54 @@ arguments:
 returns: `int64_t`
 
 
+## Module init 
+
+
+
+
+### in3_init.h
+
+IN3 init module for auto initializing verifiers and transport based on build config. 
+
+File: [c/src/init/in3_init.h](https://github.com/slockit/in3-c/blob/master/c/src/init/in3_init.h)
+
+#### in3_for_chain (chain_id)
+
+```c
+#define in3_for_chain (chain_id) in3_for_chain_auto_init(chain_id)
+```
+
+
+#### in3_init
+
+```c
+void in3_init();
+```
+
+Global initialization for the in3 lib. 
+
+Note: This function is not MT-safe and is expected to be called early during during program startup (i.e. in main()) before other threads are spawned. 
+
+
+#### in3_for_chain_auto_init
+
+```c
+in3_t* in3_for_chain_auto_init(chain_id_t chain_id);
+```
+
+Auto-init fallback for easy client initialization meant for single-threaded apps. 
+
+This function automatically calls `in3_init()` before calling `in3_for_chain_default()`. To enable this feature, make sure you include this header file (i.e. `in3_init.h`) before `client.h`. Doing so will replace the call to `in3_for_chain()` with this function. 
+
+arguments:
+```eval_rst
+=========================== ============== 
+`chain_id_t <#chain-id-t>`_  **chain_id**  
+=========================== ============== 
+```
+returns: [`in3_t *`](#in3-t)
+
+
 ## Module pay 
 
 
@@ -9657,7 +9611,7 @@ returns: `int64_t`
 
 ### pay_eth.h
 
-USN API.
+USN API. 
 
 This header-file defines easy to use function, which are verifying USN-Messages. 
 
@@ -9736,7 +9690,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### zksync.h
 
-ZKSync API.
+ZKSync API. 
 
 This header-file registers zksync api functions. 
 
@@ -9835,7 +9789,7 @@ a musig session to create a combined signature
 The stuct contains following fields:
 
 ```eval_rst
-================================================= ====================== ================================
+================================================= ====================== ========================================================
 ``uint64_t``                                       **id**                identifier of a current session
 `bytes32_t <#bytes32-t>`_                          **seed**              a random seed used
 `bytes_t <#bytes-t>`_                              **pub_keys**          the seesion id
@@ -9845,8 +9799,58 @@ The stuct contains following fields:
 `bytes_t <#bytes-t>`_                              **commitments**       all commits
 `bytes_t <#bytes-t>`_                              **signature_shares**  all signatures shares
 ``void *``                                         **signer**            handle for the signer
+``char *``                                         **proof_data**        the proof needed by the server to verify. 
+                                                                         
+                                                                         This is created by the client and checked in the server.
 `zk_musig_sessionstruct , * <#zk-musig-session>`_  **next**              next session
-================================================= ====================== ================================
+================================================= ====================== ========================================================
+```
+
+#### zksync_config_t
+
+internal configuration-object 
+
+
+The stuct contains following fields:
+
+```eval_rst
+============================================= ========================= ================================================================================
+``char *``                                     **provider_url**         url of the zksync-server
+``uint8_t *``                                  **account**              address of the account
+``uint8_t *``                                  **main_contract**        address of the main zksync contract
+``uint8_t *``                                  **gov_contract**         address of the government contract
+``uint64_t``                                   **account_id**           the id of the account as used in the messages
+``uint64_t``                                   **nonce**                the current nonce
+`address_t <#address-t>`_                      **pub_key_hash_set**     the pub_key_hash as set in the account
+`address_t <#address-t>`_                      **pub_key_hash_pk**      the pub_key_hash based on the sync_key
+`bytes32_t <#bytes32-t>`_                      **pub_key**              the pub_key
+``uint16_t``                                   **token_len**            number of tokens in the tokenlist
+`bytes32_t <#bytes32-t>`_                      **sync_key**             the raw key to sign with
+`zksync_token_t * <#zksync-token-t>`_          **tokens**               the token-list
+`zk_sign_type_t <#zk-sign-type-t>`_            **sign_type**            the signature-type to use
+``uint32_t``                                   **version**              zksync version
+`zk_create2_t * <#zk-create2-t>`_              **create2**              create2 args
+`bytes_t <#bytes-t>`_                          **musig_pub_keys**       the public keys of all participants of a schnorr musig signature
+`zk_musig_session_t * <#zk-musig-session-t>`_  **musig_sessions**       linked list of open musig sessions
+``char **``                                    **musig_urls**           urls to get signatureshares, the order must be in the same order as the pub_keys
+`pay_criteriastruct , * <#pay-criteria>`_      **incentive**            incentive payment configuration
+``char *``                                     **proof_verify_method**  the rpc-method used to verify the proof before creating a signature
+``char *``                                     **proof_create_method**  the rpc-method used to create the proof before creating a signature
+============================================= ========================= ================================================================================
+```
+
+#### pay_criteria_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+===================================== ================================ =========================================================
+``uint_fast32_t``                      **payed_nodes**                 max number of nodes payed at the same time
+``uint64_t``                           **max_price_per_hundred_igas**  the max price per 100 gas units to accept a payment offer
+``char *``                             **token**                       token-name
+`zksync_config_t <#zksync-config-t>`_  **config**                      the account configuration
+===================================== ================================ =========================================================
 ```
 
 #### in3_register_zksync
@@ -9871,18 +9875,17 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_set_key
 
 ```c
-NONULL in3_ret_t zksync_set_key(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, d_token_t *params);
+NONULL in3_ret_t zksync_set_key(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
 ```
 
 sets a PubKeyHash for the current Account 
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`zksync_config_t * <#zksync-config-t>`_            **conf**    
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
-`d_token_t * <#d-token-t>`_                        **params**  
-================================================= ============ 
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -9892,19 +9895,18 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_transfer
 
 ```c
-NONULL in3_ret_t zksync_transfer(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, d_token_t *params, zk_msg_type_t type);
+NONULL in3_ret_t zksync_transfer(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, zk_msg_type_t type);
 ```
 
 sends a transfer transaction in Layer 2 
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`zksync_config_t * <#zksync-config-t>`_            **conf**    
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
-`d_token_t * <#d-token-t>`_                        **params**  
-`zk_msg_type_t <#zk-msg-type-t>`_                  **type**    
-================================================= ============ 
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+`zk_msg_type_t <#zk-msg-type-t>`_                  **type**  
+================================================= ========== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -9914,18 +9916,17 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_deposit
 
 ```c
-NONULL in3_ret_t zksync_deposit(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, d_token_t *params);
+NONULL in3_ret_t zksync_deposit(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
 ```
 
 sends a deposit transaction in Layer 1 
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`zksync_config_t * <#zksync-config-t>`_            **conf**    
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
-`d_token_t * <#d-token-t>`_                        **params**  
-================================================= ============ 
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -9935,18 +9936,17 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_emergency_withdraw
 
 ```c
-NONULL in3_ret_t zksync_emergency_withdraw(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, d_token_t *params);
+NONULL in3_ret_t zksync_emergency_withdraw(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
 ```
 
 sends a emergency withdraw transaction in Layer 1 
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`zksync_config_t * <#zksync-config-t>`_            **conf**    
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
-`d_token_t * <#d-token-t>`_                        **params**  
-================================================= ============ 
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -9956,7 +9956,7 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_sign_transfer
 
 ```c
-NONULL in3_ret_t zksync_sign_transfer(sb_t *sb, zksync_tx_data_t *data, in3_ctx_t *ctx, zksync_config_t *conf);
+NONULL in3_ret_t zksync_sign_transfer(sb_t *sb, zksync_tx_data_t *data, in3_req_t *req, zksync_config_t *conf);
 ```
 
 creates message data and signs a transfer-message 
@@ -9966,7 +9966,7 @@ arguments:
 ========================================= ========== 
 `sb_t * <#sb-t>`_                          **sb**    
 `zksync_tx_data_t * <#zksync-tx-data-t>`_  **data**  
-`in3_ctx_t * <#in3-ctx-t>`_                **ctx**   
+`in3_req_t * <#in3-req-t>`_                **req**   
 `zksync_config_t * <#zksync-config-t>`_    **conf**  
 ========================================= ========== 
 ```
@@ -9978,7 +9978,7 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_sign_change_pub_key
 
 ```c
-NONULL in3_ret_t zksync_sign_change_pub_key(sb_t *sb, in3_ctx_t *ctx, uint8_t *sync_pub_key, uint32_t nonce, zksync_config_t *conf, zk_fee_t fee, zksync_token_t *token);
+NONULL in3_ret_t zksync_sign_change_pub_key(sb_t *sb, in3_req_t *req, uint8_t *sync_pub_key, uint32_t nonce, zksync_config_t *conf, zk_fee_t fee, zksync_token_t *token);
 ```
 
 creates message data and signs a change_pub_key-message 
@@ -9987,7 +9987,7 @@ arguments:
 ```eval_rst
 ======================================= ================== 
 `sb_t * <#sb-t>`_                        **sb**            
-`in3_ctx_t * <#in3-ctx-t>`_              **ctx**           
+`in3_req_t * <#in3-req-t>`_              **req**           
 ``uint8_t *``                            **sync_pub_key**  
 ``uint32_t``                             **nonce**         
 `zksync_config_t * <#zksync-config-t>`_  **conf**          
@@ -10003,16 +10003,15 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_musig_sign
 
 ```c
-in3_ret_t zksync_musig_sign(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, d_token_t *params);
+in3_ret_t zksync_musig_sign(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
 ```
 
 arguments:
 ```eval_rst
-================================================= ============ 
-`zksync_config_t * <#zksync-config-t>`_            **conf**    
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
-`d_token_t * <#d-token-t>`_                        **params**  
-================================================= ============ 
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -10037,7 +10036,7 @@ returns: [`zk_musig_session_t *`](#zk-musig-session-t)
 #### zksync_sign
 
 ```c
-in3_ret_t zksync_sign(zksync_config_t *conf, bytes_t msg, in3_ctx_t *ctx, uint8_t *sig);
+in3_ret_t zksync_sign(zksync_config_t *conf, bytes_t msg, in3_req_t *req, uint8_t *sig);
 ```
 
 arguments:
@@ -10045,9 +10044,81 @@ arguments:
 ======================================= ========== 
 `zksync_config_t * <#zksync-config-t>`_  **conf**  
 `bytes_t <#bytes-t>`_                    **msg**   
-`in3_ctx_t * <#in3-ctx-t>`_              **ctx**   
+`in3_req_t * <#in3-req-t>`_              **req**   
 ``uint8_t *``                            **sig**   
 ======================================= ========== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_check_payment
+
+```c
+in3_ret_t zksync_check_payment(zksync_config_t *conf, in3_pay_followup_ctx_t *ctx);
+```
+
+arguments:
+```eval_rst
+===================================================== ========== 
+`zksync_config_t * <#zksync-config-t>`_                **conf**  
+`in3_pay_followup_ctx_t * <#in3-pay-followup-ctx-t>`_  **ctx**   
+===================================================== ========== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_add_payload
+
+```c
+in3_ret_t zksync_add_payload(in3_pay_payload_ctx_t *ctx);
+```
+
+arguments:
+```eval_rst
+=================================================== ========= 
+`in3_pay_payload_ctx_t * <#in3-pay-payload-ctx-t>`_  **ctx**  
+=================================================== ========= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### update_nodelist_from_cache
+
+```c
+in3_ret_t update_nodelist_from_cache(in3_req_t *req, unsigned int nodelen);
+```
+
+arguments:
+```eval_rst
+=========================== ============= 
+`in3_req_t * <#in3-req-t>`_  **req**      
+``unsigned int``             **nodelen**  
+=========================== ============= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### handle_zksync
+
+```c
+in3_ret_t handle_zksync(void *conf, in3_plugin_act_t action, void *arg);
+```
+
+arguments:
+```eval_rst
+======================================= ============ 
+``void *``                               **conf**    
+`in3_plugin_act_t <#in3-plugin-act-t>`_  **action**  
+``void *``                               **arg**     
+======================================= ============ 
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -10503,6 +10574,68 @@ Ethereum Nanon verification.
 
 File: [c/src/verifier/eth1/basic/eth_basic.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/eth_basic.h)
 
+#### in3_filter_type_t
+
+Filter type used internally when managing filters. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ============================
+ **FILTER_EVENT**    0 Event filter.
+ **FILTER_BLOCK**    1 Block filter.
+ **FILTER_PENDING**  2 Pending filter (Unsupported)
+==================== = ============================
+```
+
+#### in3_filter_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+========================================= ==================== ==========================================================
+``bool``                                   **is_first_usage**  if true the filter was not used previously
+`in3_filter_type_t <#in3-filter-type-t>`_  **type**            filter type: (event, block or pending)
+``uint64_t``                               **last_block**      block no. 
+                                                               
+                                                               when filter was created OR eth_getFilterChanges was called
+``char *``                                 **options**         associated filter options
+``void(*``                                 **release**         method to release owned resources
+========================================= ==================== ==========================================================
+```
+
+#### in3_filter_handler_t
+
+Handler which is added to client config in order to handle filter. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+================================== =========== ================
+`in3_filter_t ** <#in3-filter-t>`_  **array**  
+``size_t``                          **count**  array of filters
+================================== =========== ================
+```
+
+#### eth_basic_get_filters
+
+```c
+in3_filter_handler_t* eth_basic_get_filters(in3_t *c);
+```
+
+returns the filters 
+
+arguments:
+```eval_rst
+=================== ======= 
+`in3_t * <#in3-t>`_  **c**  
+=================== ======= 
+```
+returns: [`in3_filter_handler_t *`](#in3-filter-handler-t)
+
+
 #### eth_verify_tx_values
 
 ```c
@@ -10668,7 +10801,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_prepare_unsigned_tx
 
 ```c
-in3_ret_t eth_prepare_unsigned_tx(d_token_t *tx, in3_ctx_t *ctx, bytes_t *dst);
+in3_ret_t eth_prepare_unsigned_tx(d_token_t *tx, in3_req_t *req, bytes_t *dst);
 ```
 
 prepares a transaction and writes the data to the dst-bytes. 
@@ -10679,7 +10812,7 @@ arguments:
 ```eval_rst
 =========================== ========= ======================================
 `d_token_t * <#d-token-t>`_  **tx**   a json-token desribing the transaction
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current context
+`in3_req_t * <#in3-req-t>`_  **req**  the current context
 `bytes_t * <#bytes-t>`_      **dst**  the bytes to write the result to.
 =========================== ========= ======================================
 ```
@@ -10691,7 +10824,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_sign_raw_tx
 
 ```c
-in3_ret_t eth_sign_raw_tx(bytes_t raw_tx, in3_ctx_t *ctx, address_t from, bytes_t *dst);
+in3_ret_t eth_sign_raw_tx(bytes_t raw_tx, in3_req_t *req, address_t from, bytes_t *dst);
 ```
 
 signs a unsigned raw transaction and writes the raw data to the dst-bytes. 
@@ -10702,7 +10835,7 @@ arguments:
 ```eval_rst
 =========================== ============ =======================================
 `bytes_t <#bytes-t>`_        **raw_tx**  the unsigned raw transaction to sign
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**     the current context
+`in3_req_t * <#in3-req-t>`_  **req**     the current context
 `address_t <#address-t>`_    **from**    the address of the account to sign with
 `bytes_t * <#bytes-t>`_      **dst**     the bytes to write the result to.
 =========================== ============ =======================================
@@ -10715,7 +10848,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### handle_eth_sendTransaction
 
 ```c
-in3_ret_t handle_eth_sendTransaction(in3_ctx_t *ctx, d_token_t *req);
+in3_ret_t handle_eth_sendTransaction(in3_req_t *req, d_token_t *req_data);
 ```
 
 expects a req-object for a transaction and converts it into a sendRawTransaction after signing. 
@@ -10724,10 +10857,10 @@ expects a req-object for a transaction and converts it into a sendRawTransaction
 
 arguments:
 ```eval_rst
-=========================== ========= ===================
-`in3_ctx_t * <#in3-ctx-t>`_  **ctx**  the current context
-`d_token_t * <#d-token-t>`_  **req**  the request
-=========================== ========= ===================
+=========================== ============== ===================
+`in3_req_t * <#in3-req-t>`_  **req**       the current context
+`d_token_t * <#d-token-t>`_  **req_data**  the request
+=========================== ============== ===================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -10754,7 +10887,7 @@ returns: `RETURNS_NONULL NONULL char *`
 
 ### trie.h
 
-Patricia Merkle Tree Imnpl 
+Patricia Merkle Tree Imnpl. 
 
 File: [c/src/verifier/eth1/basic/trie.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/basic/trie.h)
 
@@ -12690,7 +12823,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 
 ### chainspec.h
 
-Ethereum chain specification 
+Ethereum chain specification. 
 
 File: [c/src/verifier/eth1/nano/chainspec.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/eth1/nano/chainspec.h)
 
@@ -13160,7 +13293,7 @@ returns: `NONULL int`
 
 ### rlp.h
 
-RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ethereum/wiki/wiki/RLP).
+RLP-En/Decoding as described in the [Ethereum RLP-Spec](https://github.com/ethereum/wiki/wiki/RLP). 
 
 This decoding works without allocating new memory. 
 
@@ -13343,7 +13476,7 @@ arguments:
 
 ### serialize.h
 
-serialization of ETH-Objects.
+serialization of ETH-Objects. 
 
 This incoming tokens will represent their values as properties based on [JSON-RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC). 
 
@@ -13583,49 +13716,6 @@ arguments:
 returns: `int` : 0 if added -1 if the value could not be handled. 
 
 
-
-
-### in3_init.h
-
-IN3 init module for auto initializing verifiers and transport based on build config. 
-
-File: [c/src/verifier/in3_init.h](https://github.com/slockit/in3-c/blob/master/c/src/verifier/in3_init.h)
-
-#### in3_for_chain (chain_id)
-
-```c
-#define in3_for_chain (chain_id) in3_for_chain_auto_init(chain_id)
-```
-
-
-#### in3_init
-
-```c
-void in3_init();
-```
-
-Global initialization for the in3 lib. 
-
-Note: This function is not MT-safe and is expected to be called early during during program startup (i.e. in main()) before other threads are spawned. 
-
-
-#### in3_for_chain_auto_init
-
-```c
-in3_t* in3_for_chain_auto_init(chain_id_t chain_id);
-```
-
-Auto-init fallback for easy client initialization meant for single-threaded apps. 
-
-This function automatically calls `in3_init()` before calling `in3_for_chain_default()`. To enable this feature, make sure you include this header file (i.e. `in3_init.h`) before `client.h`. Doing so will replace the call to `in3_for_chain()` with this function. 
-
-arguments:
-```eval_rst
-=========================== ============== 
-`chain_id_t <#chain-id-t>`_  **chain_id**  
-=========================== ============== 
-```
-returns: [`in3_t *`](#in3-t)
 
 
 ### ipfs.h

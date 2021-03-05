@@ -3061,7 +3061,7 @@ in3 zksync_tx_info  "sync-tx:e41d2489571d322189246dafa5ebde1f4699f49800000000000
 
 ### zksync_set_key
 
-params: none
+params: 
 
 sets the signerkey based on the current pk or as configured in the config.
 You can specify the key by either
@@ -3093,9 +3093,11 @@ in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksy
 
 ### zksync_pubkeyhash
 
-params: none
+params: 
+  - optional: the packed public key to hash ( if given the hash is build based on the given hash, otherwise the hash is based on the config)
 
-returns the current PubKeyHash based on the pk set.
+
+returns the current PubKeyHash based on the configuration set.
 
 Example:
 
@@ -3112,7 +3114,8 @@ in3  -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksy
 
 params: none
 
-returns the current PubKey based on the pk set.
+returns the current packed PubKey based on the config set.
+If the config contains public keys for musig-signatures, the keys will be aggregated, otherwise the pubkey will be derrived from the signing key set.
 
 Example:
 

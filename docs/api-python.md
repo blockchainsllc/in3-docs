@@ -2,14 +2,15 @@
 
 ## Python Incubed client
 
-This library is based on the [C version of Incubed](http://github.com/slockit/in3-c), which limits the compatibility for Cython, so please contribute by compiling it to your own platform and sending us a pull-request!
+
+This library is based on the [C version of Incubed](http://github.com/blockchainsllc/in3), which limits the compatibility for Cython, so please contribute by compiling it to your own platform and sending us a pull-request!
 
 Go to our [readthedocs](https://in3.readthedocs.io/) page for more.
 
 ### Quickstart
 
-#### Install with pip 
- 
+#### Install with pip
+
 ```shell script
 pip install in3
 ```
@@ -20,55 +21,59 @@ pip install in3
 import in3
 
 in3_client = in3.Client()
-# Sends a request to the Incubed Network, that in turn will collect proofs from the Ethereum client, 
-# attest and sign the response, then send back to the client, that will verify signatures and proofs. 
+# Sends a request to the Incubed Network, that in turn will collect proofs from the Ethereum client,
+# attest and sign the response, then send back to the client, that will verify signatures and proofs.
 block_number = in3_client.eth.block_number()
 print(block_number) # Mainnet's block number
 
-in3_client  # incubed network api 
+in3_client  # incubed network api
 in3_client.eth  # ethereum api
-in3_client.account  # ethereum account api
-in3_client.contract  # ethereum smart-contract api
+in3_client.eth.account  # ethereum account api
+in3_client.eth.contract  # ethereum smart-contract api
 ```
 
 #### Developing & Tests
+
 Install dev dependencies, IDEs should automatically recognize interpreter if done like this.
+
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
 Compile local libraries and run tests. Make sure you have cmake installed.
+
 ```bash
 ./buidl_libs.sh
 ```
 
 #### Index
+
 Explanation of this source code architecture and how it is organized. For more on design-patterns see [here](http://geekswithblogs.net/joycsharp/archive/2012/02/19/design-patterns-for-model.aspx) or on [Martin Fowler's](https://martinfowler.com/eaaCatalog/) Catalog of Patterns of Enterprise Application Architecture.
 
-- **in3.__init__.py**: Library entry point, imports organization. Standard for any pipy package.
+- **in3.**init**.py**: Library entry point, imports organization. Standard for any pipy package.
 - **in3.client**: Incubed Client and API.
 - **in3.model**: MVC Model classes for the Incubed client module domain.
 - **in3.transport**: HTTP Transport function and error handling.
 - **in3.wallet**: WiP - Wallet API.
-- **in3.exception**: Custom exceptions. 
+- **in3.exception**: Custom exceptions.
 - **in3.eth**: Ethereum module.
 - **in3.eth.api**: Ethereum API.
 - **in3.eth.account**: Ethereum accounts.
 - **in3.eth.contract**: Ethereum smart-contracts API.
 - **in3.eth.model**: MVC Model classes for the Ethereum client module domain. Manages serialization.
 - **in3.eth.factory**: Ethereum Object Factory. Manages deserialization.
-- **in3.libin3**: Module for the libin3 runtime. Libin3 is written in C and can be found [here](https://github.com/slockit/in3-c).
+- **in3.libin3**: Module for the libin3 runtime. Libin3 is written in C and can be found [here](https://github.com/blockchainsllc/in3).
 - **in3.libin3.shared**: Native shared libraries for multiple operating systems and platforms.
 - **in3.libin3.enum**: Enumerations mapping C definitions to python.
 - **in3.libin3.lib_loader**: Bindings using Ctypes.
-- **in3.libin3.runtime**: Runtime object, bridging the remote procedure calls to the libin3 instances. 
-
+- **in3.libin3.runtime**: Runtime object, bridging the remote procedure calls to the libin3 instances.
 ## Examples
 
 ### connect_to_ethereum
 
-source : [in3-c/python/examples/connect_to_ethereum.py](https://github.com/slockit/in3-c/blob/master/python/examples/connect_to_ethereum.py)
+source : [in3-c/python/examples/connect_to_ethereum.py](https://github.com/blockchainsllc/in3/blob/master/python/examples/connect_to_ethereum.py)
 
 
 
@@ -113,7 +118,7 @@ Gas Price: 4610612736 Wei
 
 ### incubed_network
 
-source : [in3-c/python/examples/incubed_network.py](https://github.com/slockit/in3-c/blob/master/python/examples/incubed_network.py)
+source : [in3-c/python/examples/incubed_network.py](https://github.com/blockchainsllc/in3/blob/master/python/examples/incubed_network.py)
 
 
 
@@ -202,7 +207,7 @@ Nodes Registered:
 
 ### resolve_eth_names
 
-source : [in3-c/python/examples/resolve_eth_names.py](https://github.com/slockit/in3-c/blob/master/python/examples/resolve_eth_names.py)
+source : [in3-c/python/examples/resolve_eth_names.py](https://github.com/blockchainsllc/in3/blob/master/python/examples/resolve_eth_names.py)
 
 
 
@@ -243,7 +248,7 @@ Owner for depraz.eth @ mainnet: 0x6fa33809667a99a805b610c49ee2042863b1bb83
 
 ### send_transaction
 
-source : [in3-c/python/examples/send_transaction.py](https://github.com/slockit/in3-c/blob/master/python/examples/send_transaction.py)
+source : [in3-c/python/examples/send_transaction.py](https://github.com/blockchainsllc/in3/blob/master/python/examples/send_transaction.py)
 
 
 
@@ -337,7 +342,7 @@ Mined on block 2615346 used 21000 GWei.
 
 ### smart_contract
 
-source : [in3-c/python/examples/smart_contract.py](https://github.com/slockit/in3-c/blob/master/python/examples/smart_contract.py)
+source : [in3-c/python/examples/smart_contract.py](https://github.com/blockchainsllc/in3/blob/master/python/examples/smart_contract.py)
 
 
 
@@ -435,8 +440,9 @@ python example.py
 Client(self,
 chain: str = 'mainnet',
 in3_config: ClientConfig = None,
+transport=<function https_transport at 0x10b08d5e0>,
 cache_enabled: bool = True,
-transport=<function https_transport at 0x1025bdf80>)
+test_instance: bool = False)
 ```
 
 Incubed network client. Connect to the blockchain via a list of bootnodes, then gets the latest list of nodes in
@@ -445,10 +451,11 @@ Once with the latest list at hand, the client can request any other on-chain inf
 
 **Arguments**:
 
-- `chain` _str_ - Ethereum chain to connect to. Defaults to mainnet. Options: 'mainnet', 'kovan', 'goerli', 'ewc'.
+- `chain` _str_ - Ethereum chain to connect to. Defaults to mainnet. Options: 'mainnet', 'goerli', 'ewc', 'btc', 'ipfs'.
 - `in3_config` _ClientConfig or str_ - (optional) Configuration for the client. If not provided, default is loaded.
-- `cache_enabled` _bool_ - False will disable local storage caching.
 - `transport` _function_ - Transport function for custom request routing. Defaults to https.
+- `cache_enabled` _bool_ - False will disable local storage caching.
+- `test_instance` _bool_ - True will create a test instance of IN3. HIGH SECURITY RISK - USE FOR TESTS ONLY.
   
 
 #### refresh_node_list
@@ -561,6 +568,7 @@ response_keep_proof: bool = None,
 transport_binary_format: bool = None,
 transport_ignore_tls: bool = None,
 boot_weights: bool = None,
+experimental: bool = None,
 in3_registry: dict = None)
 ```
 
@@ -594,6 +602,7 @@ The verification policy enforces an extra step of security, adding a financial s
 - `transport_binary_format` - If true, the client will communicate with the server using a binary payload instead of json.
 - `transport_ignore_tls` - The client usually verify https tls certificates. To communicate over insecure http, turn this on.
 - `boot_weights` _bool_ - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache.
+- `experimental` _bool_ - if true the client allows features marked as experimental to be used.
 - `in3_registry` _dict_ - In3 Registry Smart Contract configuration data
   
 
@@ -1212,7 +1221,11 @@ Encapsulates low-level rpc calls into a comprehensive runtime.
 
 ### In3Runtime
 ```python
-In3Runtime(self, chain_id: int, cache_enabled: bool, transport_fn)
+In3Runtime(self,
+chain_id: int,
+transport_fn,
+cache_enabled: bool = True,
+deterministic_node_sel: bool = False)
 ```
 
 Instantiate libin3 and frees it when garbage collected.
@@ -1220,8 +1233,9 @@ Instantiate libin3 and frees it when garbage collected.
 **Arguments**:
 
 - `chain_id` _int_ - Chain-id based on EIP-155. Default is 0x1 for Ethereum mainNet.
-- `cache_enabled` _bool_ - False will disable local storage cache.
 - `transport_fn` - Transport function to handle the HTTP Incubed Network requests.
+- `cache_enabled` _bool_ - False will disable local storage cache.
+- `deterministic_node_sel` _bool_ - True will make node selection deterministic.
   
 
 ### in3.libin3.rpc_api
@@ -1231,8 +1245,10 @@ Load libin3 shared library for the current system, map function ABI, sets in3 ne
 
 #### libin3_new
 ```python
-libin3_new(chain_id: int, cache_enabled: bool,
-transport_fn: <function CFUNCTYPE at 0x1028ea320>)
+libin3_new(chain_id: int,
+transport_fn,
+cache_enabled: bool = True,
+deterministic_node_sel: bool = False)
 ```
 
 Instantiate new In3 Client instance.
@@ -1240,9 +1256,9 @@ Instantiate new In3 Client instance.
 **Arguments**:
 
 - `chain_id` _int_ - Chain id as integer
+- `transport_fn` - (c.CFUNCTYPE)Transport plugin function for the in3 network requests
 - `cache_enabled` _bool_ - False will disable local storage cache.
-- `transport_fn` - Transport function for the in3 network requests
-- `storage_fn` - Cache Storage function for node list and requests caching
+- `deterministic_node_sel` - (bool): True will enable in3 node selection to be deterministic
 
 **Returns**:
 
@@ -1319,4 +1335,29 @@ C Bytes struct
 **Returns**:
 
 - `ptr_addr` - address of the instance of this struct
+  
+
+#### libin3_register_plugin
+```python
+libin3_register_plugin(instance: int,
+actions: PluginAction,
+action_fn: <function CFUNCTYPE at 0x10af97b80>,
+data=None,
+replace_old=True)
+```
+
+Registers a plugin. Plugins are extension modules that can perform custom actions like sign transactions,
+transport it, select nodes from the in3 network, and more.
+
+**Arguments**:
+
+- `instance` - In3 instance
+- `actions` - Bit mask of actions the plugin can perform
+- `action_fn` - Function that will handle the plugin calls according to actions
+- `data` - Context data the plugin needs to know to operate
+- `replace_old` - Replace old registered action handlers for defined actions
+
+**Returns**:
+
+- `in3_rpc_error_code` - OK will return 0.
   
