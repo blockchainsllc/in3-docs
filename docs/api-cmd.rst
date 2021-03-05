@@ -4,6 +4,8 @@ API Reference CMD
 
 Incubed can be used as a command-line utility or as a tool in Bash scripts. This tool will execute a JSON-RPC request and write the result to standard output.
 
+If you want to read more about it this might a short blogpost : https://blog.slock.it/blockchain-in-a-shell-45b6626dc2c0 .
+
 Usage
 #####
 
@@ -308,6 +310,13 @@ If you want autocompletion, simply add these lines to your `.bashrc` or `.bash_p
    
    _IN3_WORDS=`in3 autocompletelist`
    complete -W "$_IN3_WORDS" in3
+
+if you are using zshell, you can install the more advanced version of it
+
+.. code-block:: sh
+   
+   curl https://raw.githubusercontent.com/blockchainsllc/in3/master/scripts/_in3.sh > /usr/local/share/zsh/site-functions/_in3.sh
+
 
 Function Signatures
 ###################

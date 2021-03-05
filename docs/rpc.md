@@ -1114,7 +1114,7 @@ The `eth_getBlockBy...` methods return the Block-Data. In this case, all we need
 
 The verification is then done by simply creating the blockhash and comparing this to the signed one.
 
-The blockhash is calculated by [serializing the blockdata](https://github.com/slockit/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
+The blockhash is calculated by [serializing the blockdata](https://github.com/blockchainsllc/in3/blob/master/src/util/serialize.ts#L120) with [rlp](https://github.com/ethereum/wiki/wiki/RLP) and hashing it:
 
 ```js
 blockHeader = rlp.encode([

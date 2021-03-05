@@ -157,7 +157,7 @@ The client sets a limit in his configuration regarding the maximum change of the
 This approach uses signatures of Incubed nodes to verify the target.
 
 Since the target is part of the block header we just have to be very sure that the block header is correct - which leads us to a correct target. The client fetches the node list and chooses n nodes which will provide signature. Afterwards he sends a `getblockheader`-request (also containing the addresses of the selected nodes) to a random provider node. This node asks the signatures nodes to sign his result (the block header). The response will include the block header itself and all the signatures as well. The client can verify all signatures by using the node list and therefore verifying the actual result (a verified block header and therefore a verified target). The incentivation for the nodes to act honest is their deposit which they will loose in case they act malicious.
-(see [here](https://github.com/slockit/in3/blob/master/in3_image.png) for more details of this process)
+(see [here](https://github.com/blockchainsllc/in3/blob/master/in3_image.png) for more details of this process)
 
 The amount of signatures nodes n should be chosen with the 
 [Risk Calculation](Threat-Model-for-Incubed.html#risk-calculation) in mind.

@@ -4,24 +4,29 @@ Incubed can be used in different ways:
 
 ```eval_rst
 
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Stack                 | Size                 | Code Base                           | Use Case                                                                                    |
-+=======================+======================+=====================================+=============================================================================================+
-| TS/JS                 | 2.7 MB (browserified)| TypeScript                          | Web application (client in the browser) or mobile application                               |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| TS/JS/WASM            | 470 kB               | C - (WASM)                          | Web application (client in the browser) or mobile application                               |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| C/C++                 | 200 KB               | C                                   | IoT devices can be integrated nicely on many micro controllers                              |
-|                       |                      |                                     | (like Zephyr-supported boards (https://docs.zephyrproject.org/latest/boards/index.html))    |
-|                       |                      |                                     | or any other C/C++ application                                                              |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Java                  | 705 KB               | C                                   | Java implementation of a native wrapper                                                     |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Docker                | 2.6 MB               | C                                   | For replacing existing clients with this docker and connecting to Incubed via localhost:8545|
-|                       |                      |                                     | without needing to change the architecture                                                  |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
-| Bash                  | 400 KB               | C                                   | The command-line tool can be used directly as executable within Bash script or on the shell |
-+-----------------------+----------------------+-------------------------------------+---------------------------------------------------------------------------------------------+
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| Stack                 | Size                 | Use Case                                                                                    |
++=======================+======================+=============================================================================================+
+| TS/JS/WASM            | 486 kB               | JS client based on WASM or asm.js for Web, nodejs or mobile application                     |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| C/C++                 | 128 KB (minimal)     | IoT devices can be integrated nicely on many micro controllers                              |
+|                       |                      | (like Zephyr-supported boards (https://docs.zephyrproject.org/latest/boards/index.html))    |
+|                       |                      | or any other C/C++ application                                                              |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| Rust                  | 2.6MB                | Rust crates based on bindgen                                                                |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| Java                  | 705 KB               | Java implementation of a JNI wrapper for native android or other java applications          |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| Python                | 4MB                  | Multi PLatform Python Bindings wrapping native incubed core                                 |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| .NET                  | 705 KB               | .NET implementation of a native wrapper for all supported platforms                         |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| Docker                | 40 MB                | For replacing existing clients with this docker and connecting to Incubed via localhost:8545|
+|                       |                      | without needing to change the architecture                                                  |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
+| CMD                   | 400 KB               | The command-line tool can be used directly as executable within Bash script or on the shell |
+|                       |                      | it can execute all methods eiterh as argument or from stdin                                 |
++-----------------------+----------------------+---------------------------------------------------------------------------------------------+
 ```
 
 Other languages will be supported soon (or simply use the shared library directly).
@@ -36,7 +41,7 @@ npm install --save in3
 
 ### As Provider in Web3
 
-The Incubed client also implements the provider interface used in the Web3 library and can be used directly.
+The Incubed client also implements the provider interface used in the Web3 library and can be used directly without the need to refactor or change the code of your application.
 
 ```js
 // import in3-Module
@@ -59,9 +64,9 @@ const block = await web.eth.getBlockByNumber('latest')
 
 ### Direct API
 
-Incubed includes a light API, allowing the ability to not only use all RPC methods in a type-safe way but also sign transactions and call functions of a contract without the Web3 library.
+Incubed includes a API, allowing the ability to not only use all RPC methods in a type-safe way but also sign transactions and call functions of a contract without the Web3 library.
 
-For more details, see the [API doc](https://github.com/slockit/in3/blob/master/docs/api.md#type-api).
+For more details, see the [API doc](api-wasm.html#type-ethapi).
 
 ```js
 
@@ -92,6 +97,8 @@ const receipt = await in3.eth.sendTransaction({
 ...
 ```
 
+More details See [API TS/JS](api-wasm.html)
+
 ## As Docker Container
 
 To start Incubed as a standalone client (allowing other non-JS applications to connect to it), you can start the container as the following:
@@ -103,37 +110,27 @@ docker run -d -p 8545:8545  slockit/in3:latest -port 8545
 
 ## C Implementation
 
-*The C implementation will be released soon!*
+For embedded Devices or other C/C++ Application using the C-Code directly is the best option. It also gives you the flexibility to only include what you need by using CMake-Flags to configure the included features.
 
 ```c
-#include <in3/client.h>    // the core client
+#include <in3/in3_init.h>  // the core client file with all the plugins activated
 #include <in3/eth_api.h>   // wrapper for easier use
-#include <in3/eth_basic.h> // use the basic module
-#include <in3/in3_curl.h>  // transport implementation
 
 #include <inttypes.h>
 #include <stdio.h>
 
 int main(int argc, char* argv[]) {
 
-  // register a chain-verifier for basic Ethereum-Support, which is enough to verify blocks
-  // this needs to be called only once
-  in3_register_eth_basic();
-
-  // use curl as the default for sending out requests
-  // this needs to be called only once.
-  in3_register_curl();
-
   // create new incubed client
-  in3_t* in3 = in3_new();
+  in3_t* in3 = in3_for_chain(CHAIN_ID_MAINNET);
 
   // the b lock we want to get
   uint64_t block_number = 8432424;
 
-  // get the latest block without the transaction details
+  // get the specified block without the transaction details
   eth_block_t* block = eth_getBlockByNumber(in3, block_number, false);
 
-  // if the result is null there was an error an we can get the latest error message from eth_lat_error()
+  // if the result is null there was an error an we can get the latest error message from eth_last_error()
   if (!block)
     printf("error getting the block : %s\n", eth_last_error());
   else {
@@ -145,14 +142,14 @@ int main(int argc, char* argv[]) {
   in3_free(in3);
 }
 
-
 ```
 
-More details coming soon...
+
+More details See [API C](api-c.html)
 
 ## Java
 
-The Java implementation uses a wrapper of the C implemenation. This is why you need to make sure the libin3.so, in3.dll, or libin3.dylib can be found in the java.library.path. For example:
+The Java implementation uses a wrapper of the C implemenation. The deployed jar-file includes all the binaries for all platforms and is all you need.
 
 ```
 java -cp in3.jar:. HelloIN3.class
@@ -193,6 +190,61 @@ public class HelloIN3 {
 }
 ```
 
+More details See [API Java](api-java.html)
+
+## DotNet
+
+The .NET implementation is registered on nuget and ships with binaries for all supported platforms. Just install
+
+```sh
+dotnet add package Blockchains.In3
+```
+
+And use incubed in your code:
+
+```cs
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using In3;
+using In3.Crypto;
+using In3.Eth1;
+
+namespace SendTransaction
+{
+    public class Program
+    {
+        static async Task Main()
+        {
+            // create a client on a testnet
+            IN3 goerliClient = IN3.ForChain(Chain.Goerli);
+
+            string myPrivateKey = "0x0829B3C639A3A8F2226C8057F100128D4F7AE8102C92048BA6DE38CF4D3BC6F1";
+            string receivingAddress = "0x6FA33809667A99A805b610C49EE2042863b1bb83";
+
+            // Get the wallet, which is the default signer.
+            SimpleWallet myAccountWallet = (SimpleWallet)goerliClient.Signer;
+
+            // add your account to the wallet
+            string myAccount = myAccountWallet.AddRawKey(myPrivateKey);
+
+            // Create the transaction request
+            TransactionRequest tx = new TransactionRequest();
+            tx.To = receivingAddress;
+            tx.From = myAccount;
+            tx.Value = 300;
+
+            // and send it
+            string transactionHash = await goerliClient.Eth1.SendTransaction(tx);
+            Console.Out.WriteLine($"Transaction {transactionHash} sent, See Details on https://goerli.etherscan.io/tx/{transactionHash}.");
+
+        }
+    }
+}
+```
+
+More details See [API DotNet](api-dotnet.html)
+
 ## Command-line Tool
 
 Based on the C implementation, a command-line utility is built, which executes a JSON-RPC request and only delivers the result. This can be used within Bash scripts:
@@ -200,13 +252,15 @@ Based on the C implementation, a command-line utility is built, which executes a
 ```
 CURRENT_BLOCK = `in3 -c kovan eth_blockNumber`
 
-#or to send a transaction
+# or to send a transaction
 
-in3 -pk my_key_file.json send -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -value 0.2eth
+in3 -pk my_key_file.json send -to mycontract.ens -value 0.2eth
 
 in3 -pk my_key_file.json send -to 0x27a37a1210df14f7e058393d026e2fb53b7cf8c1 -gas 1000000  "registerServer(string,uint256)" "https://in3.slock.it/kovan1" 0xFF
 
 ```
+
+More details and examples See [CMD](api-cmd.html)
 
 ## Supported Chains
 
@@ -214,95 +268,62 @@ Currently, Incubed is deployed on the following chains:
 
 ### Mainnet
 
-Registry-legacy: [0x2736D225f85740f42D17987100dc8d58e9e16252](https://eth.slock.it/#/main/0x2736D225f85740f42D17987100dc8d58e9e16252)    
-
-Registry: [0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5](https://eth.slock.it/#/main/0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5) 
+Registry-contract: [0x6c095a05764a23156efd9d603eada144a9b1af33](https://etherscan.io/address/0x6c095a05764a23156efd9d603eada144a9b1af33#code)    
 
 ChainId: 0x1 (alias `mainnet`)        
 
-Status: [https://in3.slock.it?n=mainnet](https://in3.slock.it?n=mainnet)    
+current NodeList: [https://in3-v2.slock.it/mainnet/nd-3/api/in3_nodeList](https://in3-v2.slock.it/mainnet/nd-3/api/in3_nodeList) 
 
-NodeList: [https://in3.slock.it/mainnet/nd-3](https://in3.slock.it/mainnet/nd-3/api/in3_nodeList) 
+### Görli (Testnet)
 
-### Kovan
-
-Registry-legacy: [0x27a37a1210df14f7e058393d026e2fb53b7cf8c1](https://eth.slock.it/#/kovan/0x27a37a1210df14f7e058393d026e2fb53b7cf8c1)    
-
-Registry: [0x33f55122c21cc87b539e7003f7ab16229bc3af69](https://eth.slock.it/#/kovan/0x33f55122c21cc87b539e7003f7ab16229bc3af69)    
-
-ChainId: 0x2a (alias `kovan`)    
-
-Status: [https://in3.slock.it?n=kovan](https://in3.slock.it?n=kovan)    
-
-NodeList: [https://in3.slock.it/kovan/nd-3](https://in3.slock.it/kovan/nd-3/api/in3_nodeList) 
-
-
-### Evan
-
-Registry: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/evan/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
-
-ChainId: 0x4b1 (alias `evan`)    
-
-Status: [https://in3.slock.it?n=evan](https://in3.slock.it?n=evan)    
-
-NodeList: [https://in3.slock.it/evan/nd-3](https://in3.slock.it/evan/nd-3/api/in3_nodeList) 
-
-### Görli
-
-Registry-legacy: [0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e](https://eth.slock.it/#/goerli/0x85613723dB1Bc29f332A37EeF10b61F8a4225c7e)    
-
-Registry: [0xfea298b288d232a256ae0ad5941e5c890b1db691](https://eth.slock.it/#/goerli/0xfea298b288d232a256ae0ad5941e5c890b1db691)    
+Registry Contract: [0x635cccc1db6fc9e3b029814720595092affba12f](https://goerli.etherscan.io/address/0x635cccc1db6fc9e3b029814720595092affba12f)    
 
 ChainId: 0x5 (alias `goerli`)    
 
-Status: [https://in3.slock.it?n=goerli](https://in3.slock.it?n=goerli)    
+NodeList: [https://in3-v2.slock.it/goerli/nd-3/api/in3_nodeList](https://in3-v2.slock.it/goerli/nd-3/api/in3_nodeList) 
 
-NodeList: [https://in3.slock.it/goerli/nd-3](https://in3.slock.it/goerli/nd-3/api/in3_nodeList) 
+
+### EWC (Energy Web Chain)
+
+Registry Contract: [0x638428ebaa190c6c6331a3a02f3b8c5d8310986b](https://explorer.energyweb.org/address/0x638428ebaa190c6c6331a3a02f3b8c5d8310986b/logs)    
+
+ChainId: 0xf6 (alias `ewc`)
+
+NodeList: [https://in3-v2.slock.it/ewc/nd-3/api/in3_nodeList](https://in3-v2.slock.it/ewc/nd-3/api/in3_nodeList) 
+
 
 ### IPFS
 
-Registry: [0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9](https://eth.slock.it/#/kovan/0xf0fb87f4757c77ea3416afe87f36acaa0496c7e9)    
+Registry: [0xcb61736de539acfa0ee97bc6bbf9108ef906c88c](https://etherscan.io/address/0xcb61736de539acfa0ee97bc6bbf9108ef906c88c)    
 
 ChainId: 0x7d0 (alias `ipfs`)    
 
-Status: [https://in3.slock.it?n=ipfs](https://in3.slock.it?n=ipfs)    
+NodeList: [https://in3-v2.slock.it/ipfs/nd-3/api/in3_nodeList](https://in3-v2.slock.it/ipfs/nd-3/api/in3_nodeList) 
 
-NodeList: [https://in3.slock.it/ipfs/nd-3](https://in3.slock.it/ipfs/nd-3/api/in3_nodeList) 
+
+### BTC
+*(currently experimental)*
+
+Registry: [0xc3845e55756db9990ea06de9ea73dc99769f6c7f](https://etherscan.io/address/0xc3845e55756db9990ea06de9ea73dc99769f6c7f)    
+
+ChainId: 0x7d0 (alias `ipfs`)    
+
+NodeList: [https://in3-v2.slock.it/ipfs/nd-3/api/in3_nodeList](https://in3-v2.slock.it/ipfs/nd-3/api/in3_nodeList) 
 
 ## Registering an Incubed Node
 
-If you want to participate in this network and also register a node, you need to send a transaction to the registry contract, calling `registerServer(string _url, uint _props)`.
+If you want to participate in this network and also register a node (or even want to setup incubed nodes in your private chain), you need the following:
 
-ABI of the registry:
+1. deployed registry-contracts (See the addressesd or above or deploy those [contracts](https://github.com/blockchainsllc/in3-contracts) )
+2. for each node you want to add make sure you have a synced geth, nethermind or openethereum client running.
+3. for each node run the `in3-node` which connects to the ethereum-node and register this url with the signer address by sending a transaction to the registry contract, calling `registerNode(string _url, uint _props, uint64 _weight, uint _deposit)`.
 
-```js
-[{"constant":true,"inputs":[],"name":"totalServers","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_serverIndex","type":"uint256"},{"name":"_props","type":"uint256"}],"name":"updateServer","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_url","type":"string"},{"name":"_props","type":"uint256"}],"name":"registerServer","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"servers","outputs":[{"name":"url","type":"string"},{"name":"owner","type":"address"},{"name":"deposit","type":"uint256"},{"name":"props","type":"uint256"},{"name":"unregisterTime","type":"uint128"},{"name":"unregisterDeposit","type":"uint128"},{"name":"unregisterCaller","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_serverIndex","type":"uint256"}],"name":"cancelUnregisteringServer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_serverIndex","type":"uint256"},{"name":"_blockhash","type":"bytes32"},{"name":"_blocknumber","type":"uint256"},{"name":"_v","type":"uint8"},{"name":"_r","type":"bytes32"},{"name":"_s","type":"bytes32"}],"name":"convict","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_serverIndex","type":"uint256"}],"name":"calcUnregisterDeposit","outputs":[{"name":"","type":"uint128"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_serverIndex","type":"uint256"}],"name":"confirmUnregisteringServer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_serverIndex","type":"uint256"}],"name":"requestUnregisteringServer","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"url","type":"string"},{"indexed":false,"name":"props","type":"uint256"},{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"deposit","type":"uint256"}],"name":"LogServerRegistered","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"url","type":"string"},{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"caller","type":"address"}],"name":"LogServerUnregisterRequested","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"url","type":"string"},{"indexed":false,"name":"owner","type":"address"}],"name":"LogServerUnregisterCanceled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"url","type":"string"},{"indexed":false,"name":"owner","type":"address"}],"name":"LogServerConvicted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"url","type":"string"},{"indexed":false,"name":"owner","type":"address"}],"name":"LogServerRemoved","type":"event"}]
-```
+For more details on how this is done See
 
-To run an Incubed node, you simply use docker-compose:
+- [Setting up a node](incubed_from_vps.html)
+- [API Reference Node](api-node-server.html)
+- [The Registry Contracts](api-solidity.html)
 
-```yaml
-version: '2'
-services:
-  incubed-server:
-    image: slockit/in3-server:latest
-    volumes:
-    - $PWD/keys:/secure                                     # directory where the private key is stored
-    ports:
-    - 8500:8500/tcp                                         # open the port 8500 to be accessed by the public
-    command:
-    - --privateKey=/secure/myKey.json                       # internal path to the key
-    - --privateKeyPassphrase=dummy                          # passphrase to unlock the key
-    - --chain=0x1                                           # chain (Kovan)
-    - --rpcUrl=http://incubed-parity:8545                   # URL of the Kovan client
-    - --registry=0xFdb0eA8AB08212A1fFfDB35aFacf37C3857083ca # URL of the Incubed registry
-    - --autoRegistry-url=http://in3.server:8500             # check or register this node for this URL
-    - --autoRegistry-deposit=2                              # deposit to use when registering
+or simply use our [setup-tool](https://in3-setup.slock.it/), which helps you generate the docker-compose file and will manage the registry-transactions.
 
-  incubed-parity:
-    image: slockit/parity-in3:v2.2                          # parity-image with the getProof-function implemented
-    command:
-    - --auto-update=none                                    # do not automatically update the client
-    - --pruning=archive 
-    - --pruning-memory=30000                                # limit storage
-```
+
