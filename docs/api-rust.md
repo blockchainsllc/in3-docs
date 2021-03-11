@@ -26,6 +26,8 @@ edition = "2018"
 [dependencies]
 in3 = "0.1.8"
 futures-executor = "0.3.5"
+async-std = "1.5.0"
+serde_json = "1.0"
 ```
 
 Let's begin with the ‘hello-world’ equivalent of the Ethereum JSON-RPC API - eth_blockNumber. This call returns the number of the most recent block in the blockchain. Here’s the complete program:
@@ -144,4 +146,4 @@ In3 crate can be found in [crates.io/crates/in3](https://crates.io/crates/in3)
 
 
 ### Api Documentation
-Api reference information can be found in [docs.rs/in3/0.0.2/in3](https://docs.rs/in3/0.0.2/in3)
+Api reference information can be found in [docs.rs/in3/](https://docs.rs/in3/
