@@ -24,7 +24,7 @@ authors = ["reader@medium.com"]
 edition = "2018"
 
 [dependencies]
-in3 = "1.0.0"
+in3 = "0.1.8"
 futures-executor = "0.3.5"
 ```
 
