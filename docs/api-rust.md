@@ -61,15 +61,16 @@ A complete list of supported functions can be found on the in3-rs crate document
 ##### Get an Ethereum block by number
 
 ```
-
 use async_std::task;
 use in3::prelude::*;
+use in3::eth1::*;
+
 
 fn main() {
     // configure client and API
     let mut eth_api = Api::new(Client::new(chain::MAINNET));
     // get latest block
-    let block: Block = block_on(eth_api.get_block_by_number(BlockNumber::Latest, false))?;
+    let block: Block = task::block_on(eth_api.get_block_by_number(BlockNumber::Latest, false)).unwrap();
     println!("Block => {:?}", block);
 }
 ```
@@ -82,6 +83,8 @@ In this case, we are reading the number of nodes that are registered in the IN3 
 ```
 use async_std::task;
 use in3::prelude::*;
+use in3::eth1::*;
+
 fn main() {
     // configure client and API
     let mut eth_api = Api::new(Client::new(chain::MAINNET));
@@ -113,13 +116,17 @@ fn main() {
 ##### Store a string in IPFS
 IPFS is a protocol and peer-to-peer network for storing and sharing data in a distributed file system.
 ```
+use async_std::task;
+use in3::ipfs::*;
+use in3::prelude::*;
+
 fn main() {
     let mut ipfs_api = Api::new(Client::new(chain::IPFS));
     //`put` is an asynchrous request (due to the internal C library). Therefore to block execution
     //we use async_std's block_on function
     match task::block_on(ipfs_api.put("incubed meets rust".as_bytes().into())) {
         Ok(res) => println!("The hash is {:?}", res),
-        Err(err) => println!("Failed with error: {}", err),
+        Err(err) => println!("Failed with error: {:?}", err),
     }
 }
 ```
