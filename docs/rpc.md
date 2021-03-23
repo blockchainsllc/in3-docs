@@ -519,6 +519,81 @@ Response:
    }
 }
 ```
+### in3_prepareTx
+
+prepares a Transaction by filling the unspecified values and returens the unsigned raw Transaction.
+
+Parameters:
+
+1. `tx`: object -  the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+
+Returns:
+
+the unsigned raw transaction as hex.
+
+Request:
+
+
+```js
+{
+    "method":"in3_prepareTx",
+    "params":[
+        {
+            "to":"0x63f666a23cbd135a91187499b5cc51d589c302a0", 
+            "value":"0x100000000", 
+            "from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f" 
+        }
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result": "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080"
+}
+```
+
+
+
+### in3_signTx
+
+signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can be used in `eth_sendRawTransaction` to publish and broadcast the transaction.
+
+Parameters:
+
+1. 'tx' :hex - the raw unsigned transactiondata
+2. 'from': address - a parameter specifying the account to sign
+
+Returns:
+
+the raw transaction with signature.
+
+
+Request:
+
+```js
+{
+    "method":"in3_signTx",
+    "params":[
+        "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080",
+        "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+    ]
+}
+```
+
+Response:
+
+```js
+{
+  "id": 1,
+  "result":
+     "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+}
+```
+
 
 ### in3_signData
 
@@ -1071,13 +1146,20 @@ See [web3_clientversion](https://eth.wiki/json-rpc/API#web3_clientversion) for s
 No proof or verification possible.
 
 
+### keccak
 ### web3_sha3
 
 Returns Keccak-256 (not the standardized SHA3-256) of the given data.
 
 See [web3_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
 
-No proof returned, but the client must verify the result by hashing the request data itself.
+No proof needed, since the client will execute this locally. 
+
+### sha256
+
+Returns sha-256 of the given data.
+
+No proof needed, since the client will execute this locally. 
 
 ### net_version
 
@@ -1258,6 +1340,8 @@ Requests requiring proof for blocks will return a proof of type `blockProof`.  D
 - `uncles`: a array of blockheaders of the uncles of the block. This is only needed if the number of uncles are requested.
 
 
+### eth_getTransactionByBlockHashAndIndex
+### eth_getTransactionByBlockNumberAndIndex
 ### eth_getTransactionByHash
 
 return the transaction data.
