@@ -3712,6 +3712,45 @@ the raw signed transaction
 }
 ```
 
+### in3_createKey
+
+
+Generates 32 random bytes.
+If /dev/urandom is available it will be used and should generate a secure random number.
+If not the number should not be considered sceure or used in production.
+
+
+*Parameters:*
+
+1. **seed** : `bytes` *(optional)* - the seed. If given the result will be deterministic.
+
+
+*Returns:*
+
+the 32byte random data
+
+*Example:*
+
+```sh
+> in3 in3_createKey 
+0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_createKey",
+  "params": []
+}
+
+//---- Response -----
+
+{
+  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+}
+```
+
 ### keccak
 
 
