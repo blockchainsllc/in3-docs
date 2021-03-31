@@ -13,6 +13,7 @@ Welcome to Incubed's documentation!
    milestones
    benchmarkSummary
    embedded
+   config
    rpc
    api-c
    api-wasm

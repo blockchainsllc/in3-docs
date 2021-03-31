@@ -24,6 +24,192 @@ Proofs will add a special `in3`-section to the response containing a `proof`- ob
 *  **cbtxMerkleProof**
 
 
+### btc_proofTarget
+
+
+Whenever the client is not able to trust the changes of the target (which is the case if a block can't be found in the verified target cache *and* the value of the target changed more than the client's limit `max_diff`) he will call this method. It will return additional proof data to verify the changes of the target on the side of the client. This is not a standard Bitcoin rpc-method like the other ones, but more like an internal method.
+
+*Parameters:*
+
+1. **target_dap** : `uint` - the number of the difficulty adjustment period (dap) we are looking for
+
+
+2. **verified_dap** : `uint` - the number of the closest already verified dap
+
+
+3. **max_diff** : `uint` - the maximum target difference between 2 verified daps
+
+
+4. **max_dap** : `uint` - the maximum amount of daps between 2 verified daps
+
+
+5. **limit** : `uint` *(optional)* - the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
+
+
+The following in3-configuration will have an impact on the result:
+
+
+* **finality** : `uint` - defines the amount of finality headers
+
+
+* **verification** : `string` - defines the kind of proof the client is asking for (must be `never` or `proof`)
+
+
+* **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
+
+
+
+Hints:
+
+- difference between `target_dap` and `verified_dap` should be greater than `1`
+- `target_dap` and `verified_dap` have to be greater than `0`
+- `limit` will be set to `40` internaly when the parameter is equal to `0` or greater than `40`
+- `max_dap` can't be equal to `0`
+- `max_diff` equal to `0` means no tolerance regarding the change of the target - the path will contain every dap between `target_dap` and `verified_dap` (under consideration of `limit`)
+- total possible amount of finality headers (`in3.finaliy` \* `limit`) can't be greater than `1000`
+- changes of a target will always be accepted if it decreased from one dap to another (i.e. difficulty to mine a block increased)
+- in case a dap that we want to verify next (i.e. add it to the path) is only 1 dap apart from a verified dap (i.e. `verified_dap` or latest dap of the path) *but* not within the given limit (`max_diff`) it will still be added to the path (since we can't do even smaller steps)
+
+This graph shows the usage of this method and visualizes the result from above. The client is not able to trust the changes of the target due to his limits (`max_diff` and `max_dap`). This method provides a path of daps in which the limits are fulfilled from dap to another. The client is going to trust the target of the target dap since he is able to perform a step by step verification of the target by using the path of daps.
+
+![](proofTarget.png)
+
+
+*Returns:*
+
+A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data.
+
+*Proof:*
+
+Each `dap`-object contains the following properties:
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
+
+    - **dap** - the numer of the difficulty adjustment period
+    - **block** - a hex string with 80 bytes representing the  (always the first block of a dap)
+    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+
+- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
+
+    - **dap** - the numer of the difficulty adjustment period
+    - **block** - a hex string with 80 bytes representing the blockheader
+    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
+    - **height** - the height of the block (block number)
+
+- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
+
+    - **dap** - the numer of the difficulty adjustment period
+    - **block** - a hex string with 80 bytes representing the  (always the first block of a dap)
+    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
+    - **cbtx** - the serialized coinbase transaction of the block (this is needed to get the verified block number) 
+    - **cbtxMerkleProof** - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
+
+The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with the `verified_dap`. For old blocks (height < 227,836) with `in3.preBIP34` disabled the target cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#id1)). For old blocks with `in.preBIP34` enabled the block header can be verified by performing a [preBIP34 proof](bitcoin.html#id1). Verifying newer blocks requires multiple proofs. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). Having a verified block header allows us to consider the target of the block header as verified. Therefore, we have a verified target for the whole `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
+
+
+*Example:*
+
+```sh
+> in3 -x -c btc -f 8 btc_proofTarget 230 200 5 5 15 | jq
+[
+  {
+    "dap": 205,
+    "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
+    "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
+    "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
+    "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
+  },
+  {
+    "dap": 210,
+    "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
+    "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
+    "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
+    "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
+  },
+  {
+    "dap": 215,
+    "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
+    "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
+    "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
+    "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
+  },
+  {
+    "dap": 220,
+    "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
+    "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
+    "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
+    "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
+  },
+  {
+    "dap": 225,
+    "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
+    "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
+    "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
+    "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
+  }
+]
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "btc_proofTarget",
+  "params": [
+    230,
+    200,
+    5,
+    5,
+    15
+  ],
+  "in3": {
+    "verification": "proof"
+  }
+}
+
+//---- Response -----
+
+{
+  "result": [
+    {
+      "dap": 205,
+      "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
+      "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
+      "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
+      "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
+    },
+    {
+      "dap": 210,
+      "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
+      "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
+      "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
+      "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
+    },
+    {
+      "dap": 215,
+      "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
+      "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
+      "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
+      "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
+    },
+    {
+      "dap": 220,
+      "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
+      "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
+      "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
+      "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
+    },
+    {
+      "dap": 225,
+      "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
+      "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
+      "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
+      "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
+    }
+  ]
+}
+```
+
 ### getbestblockhash
 
 
@@ -41,7 +227,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
 
 
 *Returns:* `bytes32`
@@ -115,7 +300,6 @@ Returns data of block for given block hash. The returned level of details depend
 2. **verbosity** : `uint` - 0 or false for hex-encoded data, 1 or true for a json object, and 2 for json object **with** transaction data
 
 
-
 The following in3-configuration will have an impact on the result:
 
 
@@ -126,7 +310,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
 
 
 *Returns:* `object`
@@ -389,7 +572,6 @@ The following in3-configuration will have an impact on the result:
 * **verification** : `string` - defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
-
 *Returns:* `uint`
 
 the current blockheight
@@ -462,7 +644,6 @@ Returns data of block header for given block hash. The returned level of details
 2. **verbosity** : `uint` - 0 or false for the hex-encoded data, 1 or true for a json object
 
 
-
 The following in3-configuration will have an impact on the result:
 
 
@@ -470,7 +651,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
 
 
 *Returns:* `object`
@@ -647,7 +827,6 @@ Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 1. **blocknumber** - Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
 
 
-
 The following in3-configuration will have an impact on the result:
 
 
@@ -658,7 +837,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
 
 
 *Returns:*
@@ -763,7 +941,6 @@ Returns the raw transaction data. The returned level of details depends on the a
 3. **blockhash** : `bytes32` *(optional)* - The block in which to look for the transaction
 
 
-
 The following in3-configuration will have an impact on the result:
 
 
@@ -774,7 +951,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
 
 
 *Returns:* `btctransaction`
@@ -1096,194 +1272,6 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
 }
 ```
 
-### in3_proofTarget
-
-
-Whenever the client is not able to trust the changes of the target (which is the case if a block can't be found in the verified target cache *and* the value of the target changed more than the client's limit `max_diff`) he will call this method. It will return additional proof data to verify the changes of the target on the side of the client. This is not a standard Bitcoin rpc-method like the other ones, but more like an internal method.
-
-*Parameters:*
-
-1. **target_dap** : `uint` - the number of the difficulty adjustment period (dap) we are looking for
-
-
-2. **verified_dap** : `uint` - the number of the closest already verified dap
-
-
-3. **max_diff** : `uint` - the maximum target difference between 2 verified daps
-
-
-4. **max_dap** : `uint` - the maximum amount of daps between 2 verified daps
-
-
-5. **limit** : `uint` *(optional)* - the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
-
-
-
-The following in3-configuration will have an impact on the result:
-
-
-* **finality** : `uint` - defines the amount of finality headers
-
-
-* **verification** : `string` - defines the kind of proof the client is asking for (must be `never` or `proof`)
-
-
-* **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
-
-
-
-Hints:
-
-- difference between `target_dap` and `verified_dap` should be greater than `1`
-- `target_dap` and `verified_dap` have to be greater than `0`
-- `limit` will be set to `40` internaly when the parameter is equal to `0` or greater than `40`
-- `max_dap` can't be equal to `0`
-- `max_diff` equal to `0` means no tolerance regarding the change of the target - the path will contain every dap between `target_dap` and `verified_dap` (under consideration of `limit`)
-- total possible amount of finality headers (`in3.finaliy` \* `limit`) can't be greater than `1000`
-- changes of a target will always be accepted if it decreased from one dap to another (i.e. difficulty to mine a block increased)
-- in case a dap that we want to verify next (i.e. add it to the path) is only 1 dap apart from a verified dap (i.e. `verified_dap` or latest dap of the path) *but* not within the given limit (`max_diff`) it will still be added to the path (since we can't do even smaller steps)
-
-This graph shows the usage of this method and visualizes the result from above. The client is not able to trust the changes of the target due to his limits (`max_diff` and `max_dap`). This method provides a path of daps in which the limits are fulfilled from dap to another. The client is going to trust the target of the target dap since he is able to perform a step by step verification of the target by using the path of daps.
-
-![](proofTarget.png)
-
-
-*Returns:*
-
-A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data.
-
-*Proof:*
-
-Each `dap`-object contains the following properties:
-
-- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = false
-
-    - **dap** - the numer of the difficulty adjustment period
-    - **block** - a hex string with 80 bytes representing the  (always the first block of a dap)
-    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-
-- for blocks before BIP34 (height < 227836) and `in3.preBIP34` = true
-
-    - **dap** - the numer of the difficulty adjustment period
-    - **block** - a hex string with 80 bytes representing the blockheader
-    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated up to the next checkpoint (maximum of 200 finality headers, since the distance between checkpoints = 200)
-    - **height** - the height of the block (block number)
-
-- for blocks after BIP34 (height >= 227836), *the value of `in3.preBIP34` does not matter*
-
-    - **dap** - the numer of the difficulty adjustment period
-    - **block** - a hex string with 80 bytes representing the  (always the first block of a dap)
-    - **final** - the finality headers, which are hexcoded bytes of the following headers (80 bytes each) concatenated, the number depends on the requested finality (`finality`-property in the `in3`-section of the request)
-    - **cbtx** - the serialized coinbase transaction of the block (this is needed to get the verified block number) 
-    - **cbtxMerkleProof** - the merkle proof of the coinbase transaction, proving the correctness of the `cbtx`
-
-The goal is to verify the target of the `target_dap`. We will use the daps of the result to verify the target step by step starting with the `verified_dap`. For old blocks (height < 227,836) with `in3.preBIP34` disabled the target cannot be verified (proving the finality does not provide any security as explained in [preBIP34 proof](bitcoin.html#id1)). For old blocks with `in.preBIP34` enabled the block header can be verified by performing a [preBIP34 proof](bitcoin.html#id1). Verifying newer blocks requires multiple proofs. The block header from the `block`-field and the finality headers from the `final`-field will be used to perform a [finality proof](bitcoin.html#finality-proof). Having a verified block header allows us to consider the target of the block header as verified. Therefore, we have a verified target for the whole `dap`. Having a verified block header (and therefore a verified merkle root) enables the possibility of a [block number proof](bitcoin.html#block-number-proof) using the coinbase transaction (`cbtx`-field) and the [merkle proof](bitcoin.html#transaction-proof-merkle-proof) for the coinbase transaction (`cbtxMerkleProof`-field). This proof is needed to verify the dap number (`dap`). Having a verified dap number allows us to verify the mapping between the target and the dap number.
-
-
-*Example:*
-
-```sh
-> in3 -x -c btc -f 8 in3_proofTarget 230 200 5 5 15 | jq
-[
-  {
-    "dap": 205,
-    "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
-    "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
-    "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
-    "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
-  },
-  {
-    "dap": 210,
-    "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
-    "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
-    "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
-    "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
-  },
-  {
-    "dap": 215,
-    "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
-    "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
-    "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
-    "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
-  },
-  {
-    "dap": 220,
-    "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
-    "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
-    "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
-    "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
-  },
-  {
-    "dap": 225,
-    "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
-    "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
-    "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
-    "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
-  }
-]
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_proofTarget",
-  "params": [
-    230,
-    200,
-    5,
-    5,
-    15
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
-
-//---- Response -----
-
-{
-  "result": [
-    {
-      "dap": 205,
-      "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
-      "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
-      "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
-      "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
-    },
-    {
-      "dap": 210,
-      "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
-      "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
-      "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
-      "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
-    },
-    {
-      "dap": 215,
-      "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
-      "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
-      "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
-      "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
-    },
-    {
-      "dap": 220,
-      "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
-      "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
-      "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
-      "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
-    },
-    {
-      "dap": 225,
-      "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
-      "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
-      "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
-      "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
-    }
-  ]
-}
-```
-
 ## eth
 
 
@@ -1387,7 +1375,6 @@ The tx object supports the following properties :
 
 
 2. **block** : `uint | string` - the blockNumber or one of `latest`, `earliest`or `pending`
-
 
 
 *Returns:*
@@ -1638,7 +1625,6 @@ The tx object supports the following properties :
 2. **block** : `uint | string` - the blockNumber or one of `latest`, `earliest`or `pending`
 
 
-
 *Returns:*
 
 the amount of gass needed.
@@ -1661,7 +1647,6 @@ gets the balance of an account for a given block
 
 
 2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
-
 
 
 *Returns:*
@@ -1744,7 +1729,6 @@ See [eth_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for s
 
 
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
-
 
 
 *Returns:* `blockdata`
@@ -1938,7 +1922,6 @@ See [eth_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) f
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
 
 
-
 *Proof:*
 
 The `eth_getBlockBy...` methods return the Block-Data. 
@@ -2108,7 +2091,6 @@ returns the number of transactions. For Spec, see [eth_getBlockTransactionCountB
 1. **blockHash** : `bytes32` - the blockHash of the block
 
 
-
 *Returns:*
 
 the number of transactions in the block
@@ -2128,7 +2110,6 @@ returns the number of transactions. For Spec, see [eth_getBlockTransactionCountB
 *Parameters:*
 
 1. **blockNumber** : `uint` - the blockNumber of the block
-
 
 
 *Returns:*
@@ -2153,7 +2134,6 @@ gets the code of a given contract
 
 
 2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
-
 
 
 *Returns:*
@@ -2249,7 +2229,6 @@ The filter object supports the following properties :
 
 
 
-
 *Proof:*
 
 Since logs or events are based on the TransactionReceipts, the only way to prove them is by proving the TransactionReceipt each event belongs to.
@@ -2338,7 +2317,6 @@ gets the storage value of a given key
 
 
 3. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
-
 
 
 *Returns:*
@@ -2585,7 +2563,6 @@ See JSON-RPC-Spec for [eth_getTransactionByBlockHashAndIndex](https://eth.wiki/j
 2. **index** : `uint` - the transactionIndex
 
 
-
 *Returns:* `transactiondata`
 
 the transactiondata or `null` if it does not exist
@@ -2733,7 +2710,6 @@ See JSON-RPC-Spec for [eth_getTransactionByBlockNumberAndIndex](https://eth.wiki
 2. **index** : `uint` - the transactionIndex
 
 
-
 *Returns:* `transactiondata`
 
 the transactiondata or `null` if it does not exist
@@ -2876,7 +2852,6 @@ See JSON-RPC-Spec for [eth_getTransactionByHash](https://eth.wiki/json-rpc/API#e
 *Parameters:*
 
 1. **txHash** : `bytes32` - the transactionHash of the transaction.
-
 
 
 *Returns:* `transactiondata`
@@ -3084,7 +3059,6 @@ gets the nonce or number of transaction sent from this account at a given block
 2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
 
 
-
 *Returns:*
 
 the nonce
@@ -3159,7 +3133,6 @@ The Receipt of a Transaction. For Details, see [eth_getTransactionReceipt](https
 *Parameters:*
 
 1. **txHash** : `bytes32` - the transactionHash
-
 
 
 *Returns:* `transactionReceipt`
@@ -3423,7 +3396,6 @@ returns the number of uncles. For Spec, see [eth_getUncleCountByBlockHash](https
 1. **blockHash** : `bytes32` - the blockHash of the block
 
 
-
 *Returns:*
 
 the number of uncles
@@ -3443,7 +3415,6 @@ returns the number of uncles. For Spec, see [eth_getUncleCountByBlockNumber](htt
 *Parameters:*
 
 1. **blockNumber** : `uint` - the blockNumber of the block
-
 
 
 *Returns:*
@@ -3470,7 +3441,6 @@ sends or broadcasts a prviously signed raw transaction. See [eth_sendRawTransact
 *Parameters:*
 
 1. **tx** : `bytes` - the raw signed transactiondata to send
-
 
 
 *Returns:* `bytes32`
@@ -3507,7 +3477,6 @@ The tx object supports the following properties :
 
     * **data** : `bytes` *(optional)* - the data-section of the transaction
     
-
 
 
 
@@ -3549,7 +3518,6 @@ The tx object supports the following properties :
 
     * **data** : `bytes` *(optional)* - the data-section of the transaction
     
-
 
 
 
@@ -3647,7 +3615,6 @@ For the address to sign a signer must be registered.
 2. **message** : `bytes` - the message to sign
 
 
-
 *Returns:*
 
 the signature (65 bytes) for the given message.
@@ -3707,7 +3674,6 @@ The tx object supports the following properties :
 
     * **data** : `bytes` *(optional)* - the data-section of the transaction
     
-
 
 
 
@@ -3776,7 +3742,6 @@ No proof needed, since the client will execute this locally.
 1. **data** : `bytes` - data to hash
 
 
-
 *Returns:*
 
 the 32byte hash of the data
@@ -3829,7 +3794,6 @@ No proof needed, since the client will execute this locally.
 *Parameters:*
 
 1. **data** : `bytes` - data to hash
-
 
 
 *Returns:*
@@ -3921,7 +3885,6 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 2. **data** : `hex` - the data to decode (usually the result of a eth_call)
 
 
-
 *Returns:* `array`
 
 a array (if more then one arguments in the result-type) or the the value after decodeing.
@@ -3970,7 +3933,6 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 2. **params** : `array` - a array of arguments. the number of arguments must match the arguments in the signature.
 
 
-
 *Returns:* `hex`
 
 the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
@@ -4010,7 +3972,6 @@ adds a raw private key as signer, which allows signing transactions.
 *Parameters:*
 
 1. **pk** : `bytes32` - the 32byte long private key as hex string.
-
 
 
 *Returns:* `address`
@@ -4087,7 +4048,6 @@ Will convert an upper or lowercase Ethereum address to a checksum address.  (See
 2. **useChainId** : `bool` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
 
 
-
 *Returns:*
 
 the address-string using the upper/lowercase hex characters.
@@ -4127,7 +4087,16 @@ changes the configuration of a client. The configuration is passed as the first 
 1. **config** : `object` - a Object with config-params.
 The config object supports the following properties :
 
-    * **chainId** : `uint | string` *(optional)* - the chainId or the name of a known chain (`mainnet`,`goerli`,`ewc`,`btc` or `ipfs`). It defines the nodelist to connect to. (default: `"mainnet"`)
+    * **chainId** : `uint | string` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
+    Possible Values are:
+
+        - `mainnet` : Mainnet Chain
+        - `goerli` : Goerli Testnet
+        - `ewc` : Energy WebFoundation
+        - `btc` : Bitcoin
+        - `ipfs` : ipfs
+        - `local` : local-chain
+
 
         *Example* : chainId: "goerli"
     
@@ -4152,6 +4121,9 @@ The config object supports the following properties :
         *Example* : keepIn3: true
     
 
+    * **stats** : `bool` *(optional)* - if true, requests sent will be used for stats. (default: `true`)
+    
+
     * **useBinary** : `bool` *(optional)* - if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore.
 
         *Example* : useBinary: true
@@ -4167,7 +4139,13 @@ The config object supports the following properties :
         *Example* : timeout: 100000
     
 
-    * **proof** : `string (none,standard,full)` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
+    * **proof** : `string` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
+    Possible Values are:
+
+        - `0` : none
+        - `1` : standard
+        - `2` : full
+
 
         *Example* : proof: "none"
     
@@ -4178,8 +4156,6 @@ The config object supports the following properties :
     
 
     * **autoUpdateList** : `bool` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. (default: `true`)
-
-        *Example* : autoUpdateList: true
     
 
     * **signatureCount** : `uint` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
@@ -4198,6 +4174,8 @@ The config object supports the following properties :
     
 
     * **minDeposit** : `uint` *(optional)* - min stake of the server. Only nodes owning at least this amount will be chosen.
+
+        *Example* : minDeposit: 10000000
     
 
     * **nodeProps** : `uint` *(optional)* - used to identify the capabilities of the node.
@@ -4211,6 +4189,8 @@ The config object supports the following properties :
     
 
     * **rpc** : `string` *(optional)* - url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off.
+
+        *Example* : rpc: "http://loalhost:8545"
     
 
     * **nodes** : `object` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
@@ -4260,7 +4240,7 @@ The nodeList object supports the following properties :
         
 
 
-        *Example* : nodes: {"0x1":{"nodeList":[]}}
+        *Example* : nodes: {"contract":"0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f","nodeList":[{"address":"0x45d45e6ff99e6c34a235d263965910298985fcfe","url":"https://in3-v2.slock.it/mainnet/nd-1","props":"0xFFFF"}]}
     
 
     * **zksync** : `object` - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is on per default).
@@ -4279,6 +4259,12 @@ The zksync object supports the following properties :
         
 
         * **signer_type** : `string` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
+        Possible Values are:
+
+            - `pk` : Private matching the account is used ( for EOA)
+            - `contract` : Contract Signature  based EIP 1271
+            - `create2` : create2 optionas are used
+
         
 
         * **musig_pub_keys** : `bytes` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
@@ -4301,6 +4287,8 @@ The create2 object supports the following properties :
 
         
 
+
+        *Example* : zksync: [{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"contract"},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"create2","create2":{"creator":"0x6487c3ae644703c1f07527c18fe5569592654bcb","saltarg":"0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12","codehash":"0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"}},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","signer_type":"pk","musig_pub_keys":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","sync_key":"0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734","musig_urls":[null,"https://approver.service.com"]}]
     
 
     * **key** : `bytes32` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
@@ -4326,8 +4314,9 @@ The btc object supports the following properties :
             *Example* : maxDiff: 5
         
 
-    
 
+        *Example* : btc: {"maxDAP":30,"maxDiff":5}
+    
 
 
 
@@ -4338,7 +4327,7 @@ an boolean confirming that the config has changed.
 *Example:*
 
 ```sh
-> in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"0x1":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}}'
+> in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
 true
 ```
 
@@ -4353,20 +4342,18 @@ true
       "maxAttempts": 4,
       "nodeLimit": 10,
       "nodes": {
-        "0x1": {
-          "nodeList": [
-            {
-              "address": "0x1234567890123456789012345678901234567890",
-              "url": "https://mybootnode-A.com",
-              "props": "0xFFFF"
-            },
-            {
-              "address": "0x1234567890123456789012345678901234567890",
-              "url": "https://mybootnode-B.com",
-              "props": "0xFFFF"
-            }
-          ]
-        }
+        "nodeList": [
+          {
+            "address": "0x1234567890123456789012345678901234567890",
+            "url": "https://mybootnode-A.com",
+            "props": "0xFFFF"
+          },
+          {
+            "address": "0x1234567890123456789012345678901234567890",
+            "url": "https://mybootnode-B.com",
+            "props": "0xFFFF"
+          }
+        ]
       }
     }
   ]
@@ -4390,7 +4377,6 @@ decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition]
 
 
 2. **passphrase** : `string` - the password to decrypt it.
-
 
 
 *Returns:*
@@ -4457,7 +4443,6 @@ extracts the public key and address from signature.
 3. **sigtype** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
 
 
-
 *Returns:* `object`
 
 the extracted public key and address
@@ -4519,7 +4504,6 @@ For Javascript implementations, a [library](https://www.npmjs.com/package/idna-u
 2. **field** : `string` *(optional)* - the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain) (default: `"addr"`)
 
 
-
 *Returns:*
 
 the value of the specified field
@@ -4567,7 +4551,6 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 3. **digits** : `uint` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
 
 
-
 *Returns:*
 
 the value as string.
@@ -4612,7 +4595,6 @@ fetches and verifies the nodeList from a node
 
 
 3. **addresses** : `address[]` *(optional)* - a optional array of addresses of signers the nodeList must include.
-
 
 
 *Returns:* `object`
@@ -4906,7 +4888,6 @@ extracts the address from a private key.
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
 
 
-
 *Returns:*
 
 the address
@@ -4943,7 +4924,6 @@ extracts the public key from a private key.
 *Parameters:*
 
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
-
 
 
 *Returns:*
@@ -5007,7 +4987,6 @@ The tx object supports the following properties :
 
 
 
-
 *Returns:*
 
 the unsigned raw transaction as hex.
@@ -5061,7 +5040,6 @@ The blocks object supports the following properties :
 
     * **hash** : `bytes32` *(optional)* - the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
     
-
 
 
 
@@ -5150,7 +5128,6 @@ signs the given data.
 3. **msgType** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
 
 
-
 *Returns:* `object`
 
 the signature
@@ -5229,7 +5206,6 @@ signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can b
 2. **from** : `address` - the account to sign
 
 
-
 *Returns:*
 
 the raw transaction with signature.
@@ -5274,7 +5250,6 @@ converts the given value into wei.
 2. **unit** : `string` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
 
 
-
 *Returns:*
 
 the value in wei as hex.
@@ -5312,7 +5287,6 @@ Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired f
 *Parameters:*
 
 1. **address** : `address` - address of whitelist contract
-
 
 
 *Returns:* `object`
@@ -5510,7 +5484,6 @@ Fetches the data for a requested ipfs-hash. If the node is not able to resolve t
 2. **encoding** : `string` - the encoding used for the response. ( `hex` , `base64` or `utf8`)
 
 
-
 *Returns:*
 
 the content matching the requested hash encoded in the defined encoding.
@@ -5561,7 +5534,6 @@ Even if the node stores the content there is no gurantee it will do it forever.
 
 
 2. **encoding** : `string` - the encoding used for the request. ( `hex` , `base64` or `utf8`)
-
 
 
 *Returns:*
@@ -5646,7 +5618,6 @@ returns account_info from the server
 *Parameters:*
 
 1. **address** : `address` *(optional)* - the account-address. if not specified, the client will try to use its own address based on the signer config.
-
 
 
 *Returns:* `object`
@@ -5777,7 +5748,6 @@ calculate the public key based on multiple public keys signing together using sc
 1. **pubkeys** : `bytes` - concatinated packed publickeys of the signers. the length of the bytes must be `num_keys * 32`
 
 
-
 *Returns:* `bytes32`
 
 the compact public Key
@@ -5873,7 +5843,6 @@ sends a deposit-transaction and returns the opId, which can be used to tradck pr
 4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-
 *Returns:* `uint`
 
 the opId. You can use `zksync_ethop_info` to follow the state-changes.
@@ -5911,7 +5880,6 @@ withdraws all tokens for the specified token as a onchain-transaction. This is u
 *Parameters:*
 
 1. **token** : `string` - the token as symbol or address
-
 
 
 *Returns:* `transactionReceipt`
@@ -6080,7 +6048,6 @@ returns the state or receipt of the the PriorityOperation
 1. **opId** : `uint` - the opId of a layer-operstion (like depositing)
 
 
-
 ### zksync_get_token_price
 
 
@@ -6089,7 +6056,6 @@ returns current token-price
 *Parameters:*
 
 1. **token** : `string` - Symbol or address of the token
-
 
 
 *Returns:* `float`
@@ -6134,7 +6100,6 @@ calculates the fees for a transaction.
 
 
 3. **token** : `string` - the symbol or address of the token to pay
-
 
 
 *Returns:* `object`
@@ -6248,7 +6213,6 @@ returns the current PubKeyHash based on the configuration set.
 1. **pubKey** : `bytes32` *(optional)* - the packed public key to hash ( if given the hash is build based on the given hash, otherwise the hash is based on the config)
 
 
-
 *Returns:* `address`
 
 the pubKeyHash
@@ -6300,7 +6264,6 @@ we support 3 different signer types (`signer_type` in the `zksync` config) :
 1. **token** : `string` - the token to pay the gas (either the symbol or the address)
 
 
-
 *Returns:* `address`
 
 the pubKeyHash, if it was executed successfully
@@ -6341,7 +6304,6 @@ when exchanging the data with other keys, all known data will be send using `zk_
 *Parameters:*
 
 1. **message** : `bytes` - the message to sign
-
 
 
 *Returns:* `bytes96`
@@ -6526,7 +6488,6 @@ sends a zksync-transaction and returns data including the transactionHash.
 4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-
 *Returns:* `bytes32`
 
 the transactionHash. use `zksync_tx_info` to check the progress.
@@ -6565,7 +6526,6 @@ returns the state or receipt of the the zksync-tx
 *Parameters:*
 
 1. **tx** : `bytes32` - the txHash of the send tx
-
 
 
 *Returns:* `object`
@@ -6637,7 +6597,6 @@ if the `musig_pubkeys` are set it will also verify against the given public keys
 2. **signature** : `bytes96` - the signature (96 bytes)
 
 
-
 *Returns:* `uint`
 
 1 if the signature(which contains the pubkey as the first 32bytes) matches the message.
@@ -6686,7 +6645,6 @@ withdraws the amount to the given `ethAddress` for the given token.
 4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-
 *Returns:* `bytes32`
 
 the transactionHash. use `zksync_tx_info` to check the progress.
@@ -6717,3 +6675,13 @@ the transactionHash. use `zksync_tx_info` to check the progress.
 }
 ```
 
+The verifiedHashes object supports the following properties :
+
+The nodeList object supports the following properties :
+
+The create2 object supports the following properties :
+
+
+    *Example* : maxDAP: 10
+
+    *Example* : maxDiff: 5
