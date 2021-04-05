@@ -3612,6 +3612,25 @@ arguments:
 returns: `int`
 
 
+#### bytes_to_string_val
+
+```c
+char* bytes_to_string_val(bytes_t wei, int exp, int digits);
+```
+
+converts the bytes value to a decimal string 
+
+arguments:
+```eval_rst
+===================== ============ 
+`bytes_t <#bytes-t>`_  **wei**     
+``int``                **exp**     
+``int``                **digits**  
+===================== ============ 
+```
+returns: `char *`
+
+
 #### in3_register_eth_api
 
 ```c
@@ -5580,6 +5599,26 @@ arguments:
 returns: [`in3_req_tNONULL , *`](#in3-req-t)
 
 
+#### req_new_clone
+
+```c
+NONULL in3_req_t* req_new_clone(in3_t *client, const char *req_data);
+```
+
+creates a new request but clones the request-data. 
+
+the request data will be parsed and represented in the context. calling this function will only parse the request data, but not send anything yet. 
+
+arguments:
+```eval_rst
+=================== ============== ====================================
+`in3_t * <#in3-t>`_  **client**    [in] the client-config.
+``const char *``     **req_data**  [in] the rpc-request as json string.
+=================== ============== ====================================
+```
+returns: [`in3_req_tNONULL , *`](#in3-req-t)
+
+
 #### in3_send_req
 
 ```c
@@ -5828,6 +5867,26 @@ arguments:
 returns: `char *`
 
 
+#### req_get_result_json
+
+```c
+char* req_get_result_json(in3_req_t *ctx, int index);
+```
+
+returns the result or NULL in case of an error for that context. 
+
+The result must be freed! 
+
+arguments:
+```eval_rst
+=========================== =========== 
+`in3_req_t * <#in3-req-t>`_  **ctx**    
+``int``                      **index**  
+=========================== =========== 
+```
+returns: `char *`
+
+
 #### req_get_type
 
 ```c
@@ -5881,7 +5940,7 @@ Here is an example of how to use it:
 ```c
 in3_ret_t get_from_nodes(in3_req_t* parent, char* method, char* params, bytes_t* dst) {
   // check if the method is already existing
-  in3_req_t* req = req_find_required(parent, method);
+  in3_req_t* req = req_find_required(parent, method, NULL);
   if (ctx) {
     // found one - so we check if it is useable.
     switch (in3_req_state(ctx)) {
@@ -5933,7 +5992,7 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### req_find_required
 
 ```c
-NONULL in3_req_t* req_find_required(const in3_req_t *parent, const char *method);
+in3_req_t* req_find_required(const in3_req_t *parent, const char *method, const char *param_query);
 ```
 
 searches within the required request contextes for one with the given method. 
@@ -5942,12 +6001,13 @@ This method is used internaly to find a previously added context.
 
 arguments:
 ```eval_rst
-================================== ============ ===================================
-`in3_req_tconst , * <#in3-req-t>`_  **parent**  [in] the current request context.
-``const char *``                    **method**  [in] the method of the rpc-request.
-================================== ============ ===================================
+================================== ================= ==========================================
+`in3_req_tconst , * <#in3-req-t>`_  **parent**       [in] the current request context.
+``const char *``                    **method**       [in] the method of the rpc-request.
+``const char *``                    **param_query**  [in] a optional string within thew params.
+================================== ================= ==========================================
 ```
-returns: [`in3_req_tNONULL , *`](#in3-req-t)
+returns: [`in3_req_t *`](#in3-req-t)
 
 
 #### req_remove_required
@@ -6804,6 +6864,22 @@ arguments:
 returns: `NONULL void`
 
 
+#### b_compare
+
+```c
+static int b_compare(bytes_t a, bytes_t b);
+```
+
+arguments:
+```eval_rst
+===================== ======= 
+`bytes_t <#bytes-t>`_  **a**  
+`bytes_t <#bytes-t>`_  **b**  
+===================== ======= 
+```
+returns: `int`
+
+
 ### data.h
 
 json-parser. 
@@ -7542,7 +7618,7 @@ returns: [`d_token_tNONULL , *`](#d-token-t)
 #### json_create_object
 
 ```c
-NONULL d_token_t* json_create_object(json_ctx_t *jp);
+NONULL int json_create_object(json_ctx_t *jp);
 ```
 
 arguments:
@@ -7551,13 +7627,13 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **jp**  
 ============================= ======== 
 ```
-returns: [`d_token_tNONULL , *`](#d-token-t)
+returns: `NONULL int`
 
 
 #### json_create_array
 
 ```c
-NONULL d_token_t* json_create_array(json_ctx_t *jp);
+NONULL int json_create_array(json_ctx_t *jp);
 ```
 
 arguments:
@@ -7566,40 +7642,42 @@ arguments:
 `json_ctx_t * <#json-ctx-t>`_  **jp**  
 ============================= ======== 
 ```
-returns: [`d_token_tNONULL , *`](#d-token-t)
+returns: `NONULL int`
 
 
 #### json_object_add_prop
 
 ```c
-NONULL d_token_t* json_object_add_prop(d_token_t *object, d_key_t key, d_token_t *value);
+NONULL void json_object_add_prop(json_ctx_t *jp, int ob_index, d_key_t key, d_token_t *value);
 ```
 
 arguments:
 ```eval_rst
-=========================== ============ 
-`d_token_t * <#d-token-t>`_  **object**  
-``d_key_t``                  **key**     
-`d_token_t * <#d-token-t>`_  **value**   
-=========================== ============ 
+============================= ============== 
+`json_ctx_t * <#json-ctx-t>`_  **jp**        
+``int``                        **ob_index**  
+``d_key_t``                    **key**       
+`d_token_t * <#d-token-t>`_    **value**     
+============================= ============== 
 ```
-returns: [`d_token_tNONULL , *`](#d-token-t)
+returns: `NONULL void`
 
 
 #### json_array_add_value
 
 ```c
-NONULL d_token_t* json_array_add_value(d_token_t *object, d_token_t *value);
+NONULL void json_array_add_value(json_ctx_t *jp, int parent_index, d_token_t *value);
 ```
 
 arguments:
 ```eval_rst
-=========================== ============ 
-`d_token_t * <#d-token-t>`_  **object**  
-`d_token_t * <#d-token-t>`_  **value**   
-=========================== ============ 
+============================= ================== 
+`json_ctx_t * <#json-ctx-t>`_  **jp**            
+``int``                        **parent_index**  
+`d_token_t * <#d-token-t>`_    **value**         
+============================= ================== 
 ```
-returns: [`d_token_tNONULL , *`](#d-token-t)
+returns: `NONULL void`
 
 
 #### d_get_keystr
@@ -8140,6 +8218,24 @@ This macro will return if the name matches.
 ```
 
 
+#### VERIFY_RPC (name)
+
+used in if-conditions and returns true if the vc->method mathes the name. 
+
+It is also used as marker. 
+
+```c
+#define VERIFY_RPC (name) (strcmp(vc->method, name) == 0)
+```
+
+
+#### CONFIG_KEY (name)
+
+```c
+#define CONFIG_KEY (name) key(name)
+```
+
+
 #### msg_dump
 
 ```c
@@ -8425,12 +8521,13 @@ File: [c/src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/c/
 The enum type contains the following values:
 
 ```eval_rst
-============================== ==== ===============================================
+============================== ==== ==============================================================
  **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
  **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
  **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
+ **CACHE_PROP_JSON**           0x8  indicates the content is a json_ctxt and must be freed as such
  **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
-============================== ==== ===============================================
+============================== ==== ==============================================================
 ```
 
 #### cache_props_t
@@ -8439,12 +8536,13 @@ The enum type contains the following values:
 The enum type contains the following values:
 
 ```eval_rst
-============================== ==== ===============================================
+============================== ==== ==============================================================
  **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
  **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
  **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
+ **CACHE_PROP_JSON**           0x8  indicates the content is a json_ctxt and must be freed as such
  **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
-============================== ==== ===============================================
+============================== ==== ==============================================================
 ```
 
 #### cache_entry_t
@@ -8782,7 +8880,7 @@ returns: [`sb_tNONULL , *`](#sb-t)
 #### sb_add_int
 
 ```c
-NONULL sb_t* sb_add_int(sb_t *sb, uint64_t val);
+NONULL sb_t* sb_add_int(sb_t *sb, int64_t val);
 ```
 
 adds a numeric value to the stringbuilder 
@@ -8791,7 +8889,7 @@ arguments:
 ```eval_rst
 ================= ========= 
 `sb_t * <#sb-t>`_  **sb**   
-``uint64_t``       **val**  
+``int64_t``        **val**  
 ================= ========= 
 ```
 returns: [`sb_tNONULL , *`](#sb-t)
@@ -8817,7 +8915,7 @@ returns: `NONULL char *`
 #### sb_add_rawbytes
 
 ```c
-sb_t* sb_add_rawbytes(sb_t *sb, char *prefix, bytes_t b, unsigned int fix_size);
+sb_t* sb_add_rawbytes(sb_t *sb, char *prefix, bytes_t b, int fix_size);
 ```
 
 arguments:
@@ -8826,7 +8924,7 @@ arguments:
 `sb_t * <#sb-t>`_      **sb**        
 ``char *``             **prefix**    
 `bytes_t <#bytes-t>`_  **b**         
-``unsigned int``       **fix_size**  
+``int``                **fix_size**  
 ===================== ============== 
 ```
 returns: [`sb_t *`](#sb-t)
@@ -9555,6 +9653,23 @@ arguments:
 ```
 returns: `int64_t`
 
+
+#### b256_add
+
+```c
+void b256_add(bytes32_t a, uint8_t *b, wlen_t len_b);
+```
+
+simple add function, which adds the bytes (b) to a 
+
+arguments:
+```eval_rst
+========================= =========== 
+`bytes32_t <#bytes32-t>`_  **a**      
+``uint8_t *``              **b**      
+`wlen_t <#wlen-t>`_        **len_b**  
+========================= =========== 
+```
 
 ## Module init 
 
@@ -10867,6 +10982,17 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### empty_hash
+
+```c
+const uint8_t* empty_hash();
+```
+
+returns a pointer to 32 bytes marking a empty hash (keccakc(0x)) 
+
+returns: `const uint8_t *`
+
+
 #### eth_wallet_sign
 
 ```c
@@ -11857,11 +11983,12 @@ The stuct contains following fields:
 The stuct contains following fields:
 
 ```eval_rst
-========================= ============ 
-`bytes_t <#bytes-t>`_      **topics**  
-`bytes_t <#bytes-t>`_      **data**    
-`logsstruct , * <#logs>`_  **next**    
-========================= ============ 
+========================= ============= 
+`bytes_t <#bytes-t>`_      **topics**   
+`bytes_t <#bytes-t>`_      **data**     
+`address_t <#address-t>`_  **address**  
+`logsstruct , * <#logs>`_  **next**     
+========================= ============= 
 ```
 
 #### account_t
@@ -12159,25 +12286,26 @@ returns: `int`
 #### evm_call
 
 ```c
-int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, uint64_t chain_id, bytes_t **result);
+int evm_call(void *vc, uint8_t address[20], uint8_t *value, wlen_t l_value, uint8_t *data, uint32_t l_data, uint8_t caller[20], uint64_t gas, uint64_t chain_id, bytes_t **result, json_ctx_t *receipt);
 ```
 
 run a evm-call 
 
 arguments:
 ```eval_rst
-======================== ============== 
-``void *``                **vc**        
-``uint8_t``               **address**   
-``uint8_t *``             **value**     
-`wlen_t <#wlen-t>`_       **l_value**   
-``uint8_t *``             **data**      
-``uint32_t``              **l_data**    
-``uint8_t``               **caller**    
-``uint64_t``              **gas**       
-``uint64_t``              **chain_id**  
-`bytes_t ** <#bytes-t>`_  **result**    
-======================== ============== 
+============================= ============== 
+``void *``                     **vc**        
+``uint8_t``                    **address**   
+``uint8_t *``                  **value**     
+`wlen_t <#wlen-t>`_            **l_value**   
+``uint8_t *``                  **data**      
+``uint32_t``                   **l_data**    
+``uint8_t``                    **caller**    
+``uint64_t``                   **gas**       
+``uint64_t``                   **chain_id**  
+`bytes_t ** <#bytes-t>`_       **result**    
+`json_ctx_t * <#json-ctx-t>`_  **receipt**   
+============================= ============== 
 ```
 returns: `int`
 

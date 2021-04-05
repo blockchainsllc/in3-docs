@@ -9,7 +9,7 @@ When creating a new Incubed Instance you can configure it. The Configuration dep
 
 the chainId or the name of a known chain. It defines the nodelist to connect to. *This config is optional.* (default: `"mainnet"`)
 
- Type: `uint | string`
+ Type: `string | uint`
 
 Possible Values are:
 
@@ -208,9 +208,9 @@ if true the nodes should send a proof of the response. If set to none, verificat
 
 Possible Values are:
 
-- `0` : none
-- `1` : standard
-- `2` : full
+- `none` : no proof will be generated or verfiied. This also works with standard rpc-endpoints.
+- `standard` : Stanbdard Proof means all important properties are verfiied
+- `full` : In addition to standard, also some rarly needed properties are verfied, like uncles. But this causes a bigger payload.
 
 
 *Example:*

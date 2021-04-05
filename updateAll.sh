@@ -3,10 +3,27 @@ if [ ! -e node_modules/.bin/slockit-doxygen ]
 then
    npm install slockit-generator
 fi
-cd ../c/in3-core/build
+cd ../c/in3-core/scripts
+echo "update rpc-docu"
+node build_rpc_docu.js ../../../doc/docs 
+
+echo "update swift"
+cd ../build
+rm -rf *
+MACOSX_DEPLOYMENT_TARGET=10.15 cmake -DCMAKE_BUILD_TYPE=release -DTRANSPORTS=false -DUSE_CURL=false  -DCMD=false .. && make -j 8 && rm -f lib/libin3.dylib
+cd ../swift
+swift doc generate . --module-name In3
+rm -rf .build/documentation/_* .build/documentation/Home.md ".build/documentation/allTests().md"
+cat docs/*.md > ../../../doc/docs/api-swift.md
+for f in `ls .build/documentation/*.md | sort -V`; do 
+   sed 's/^## .*//' $f | sed 's/^### /#### /' | sed 's/^# /### /' >> ../../../doc/docs/api-swift.md          
+done;
+
+
+echo "generate python"
+cd ../build
 rm -rf *
 cmake -DTEST=false -DBUILD_DOC=true -DJAVA=true -DZKSYNC=true -DBTC=true -DIPFS=true -DCMAKE_BUILD_TYPE=DEBUG .. && make -j8
-echo "generate python"
 cd ../python
 ./generate_docs.sh || true
 
@@ -42,3 +59,4 @@ node_modules/.bin/typedoc --includeDeclarations --ignoreCompilerErrors --readme 
 cat  doc.json | node_modules/.bin/slockit-docu index.d slockit/in3-c/blob/master/wasm/src "$PRE_DOC" >  ../../../../doc/docs/api-wasm.md
 
 rm -rf doc.json node_modules
+

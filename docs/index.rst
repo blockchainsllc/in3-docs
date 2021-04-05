@@ -21,6 +21,7 @@ Welcome to Incubed's documentation!
    api-java
    api-dotnet
    api-rust
+   api-swift
    api-cmd
    api-node-server
    api-solidity

@@ -1600,7 +1600,7 @@ Returns:
 ### Type AccountAPI
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1404)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1416)
 
 
 The Account API
@@ -1614,7 +1614,7 @@ adds a private key to sign with.
 This method returns address of the pk 
 
 ```eval_rst
-``Promise<string>`` `add <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1411>`_ (
+``string`` `add <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1423>`_ (
       pk:``string`` | `BufferType <#type-buffertype>`_ )
 ```
 
@@ -1633,7 +1633,214 @@ Parameters:
 
 Returns: 
 ```eval_rst
-``Promise<string>``
+``string``
+```
+
+
+
+#### addKeyStore()
+
+
+adds a key from a JSON Keystore file as defined in the Web3 Secret Storage Definition . This method returns address of the pk. 
+
+```eval_rst
+`String <#type-string>`_  `addKeyStore <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1437>`_ (
+      keystore:``any``,
+      passphrase:``string``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | keystore
+       - | ``any``
+       - | the keystore data
+     * - | passphrase
+       - | ``string``
+       - | the passphrase
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`String <#type-string>`_ 
+```
+
+
+
+#### decryptKeystore()
+
+
+decrypts a JSON Keystore file as defined in the Web3 Secret Storage Definition . The result is the raw private key. 
+
+```eval_rst
+`BufferType <#type-buffertype>`_  `decryptKeystore <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1430>`_ (
+      keystore:``any``,
+      passphrase:``string``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | keystore
+       - | ``any``
+       - | the keystore data
+     * - | passphrase
+       - | ``string``
+       - | the passphrase
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`BufferType <#type-buffertype>`_ 
+```
+
+
+
+#### ecrecover()
+
+
+recovers a ecdsa signature. 
+
+```eval_rst
+ `ecrecover <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1445>`_ (
+      msg:``string`` | `BufferType <#type-buffertype>`_ ,
+      sig:``string`` | `BufferType <#type-buffertype>`_ ,
+      msgtype:``'eth_sign'`` | ``'raw'`` | ``'hash'``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | msg
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the message
+     * - | sig
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the signature (must be 65bytes in hex or Buffer)
+     * - | msgtype
+       - | ``'eth_sign'`` | ``'raw'`` | ``'hash'``
+       - | the type (raw : the message must be hashed first (default), 'hash' the message is already a 32byte hash, 'eth_sign' - the message will be hashed with EthereumSignedMessage-Prefix)
+         | 
+
+```
+
+
+
+
+#### prepareTx()
+
+
+prepares a Transaction by creating a unsigned raw transaction. 
+
+```eval_rst
+`Promise<BufferType> <#type-buffertype>`_  `prepareTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1471>`_ (
+      tx:`TxRequest <#type-txrequest>`_ )
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | tx
+       - | `TxRequest <#type-txrequest>`_ 
+       - | the tx parameter
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`Promise<BufferType> <#type-buffertype>`_ 
+```
+
+
+
+#### signData()
+
+
+creates a signature with a previously registered signer based on the data 
+
+```eval_rst
+`Promise<Signature> <#type-signature>`_  `signData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1456>`_ (
+      msg:``string`` | `BufferType <#type-buffertype>`_ ,
+      account:``string`` | `BufferType <#type-buffertype>`_ ,
+      msgtype:``'eth_sign'`` | ``'raw'`` | ``'hash'``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | msg
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the message to sign
+     * - | account
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the address of the account ( if null, the first available account is used ). If the account is a 32byte hex or buffer, it it will be used as raw private key.
+     * - | msgtype
+       - | ``'eth_sign'`` | ``'raw'`` | ``'hash'``
+       - | the type (raw : the message must be hashed first (default), 'hash' the message is already a 32byte hash, 'eth_sign' - the message will be hashed with EthereumSignedMessage-Prefix)
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`Promise<Signature> <#type-signature>`_ 
+```
+
+
+
+#### signRawTx()
+
+
+creates a signature with a previously registered signer based on the data 
+
+```eval_rst
+`Promise<BufferType> <#type-buffertype>`_  `signRawTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1465>`_ (
+      msg:``string`` | `BufferType <#type-buffertype>`_ ,
+      account:``string`` | `BufferType <#type-buffertype>`_ ,
+      msgtype:``'eth_sign'`` | ``'raw'`` | ``'hash'``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | msg
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the message to sign
+     * - | account
+       - | ``string`` | `BufferType <#type-buffertype>`_ 
+       - | the address of the account ( if null, the first available account is used ). If the account is a 32byte hex or buffer, it it will be used as raw private key.
+     * - | msgtype
+       - | ``'eth_sign'`` | ``'raw'`` | ``'hash'``
+       - | the type (raw : the message must be hashed first (default), 'hash' the message is already a 32byte hash, 'eth_sign' - the message will be hashed with EthereumSignedMessage-Prefix)
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`Promise<BufferType> <#type-buffertype>`_ 
 ```
 
 
@@ -1641,7 +1848,7 @@ Returns:
 ### Type BTCBlock
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1963)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2033)
 
 
 a full Block including the transactions
@@ -1650,52 +1857,52 @@ a full Block including the transactions
   .. list-table::
      :widths: auto
 
-     * - | `bits <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1949>`_
+     * - | `bits <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2019>`_
        - | ``string``
        - | bits (target) for the block as hex 
-     * - | `chainwork <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1953>`_
+     * - | `chainwork <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2023>`_
        - | ``string``
        - | total amount of work since genesis 
-     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1933>`_
+     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2003>`_
        - | ``number``
        - | number of confirmations or blocks mined on top of the containing block 
-     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1951>`_
+     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2021>`_
        - | ``number``
        - | difficulty of the block 
-     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1931>`_
+     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2001>`_
        - | ``string``
        - | the hash of the blockheader 
-     * - | `height <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1935>`_
+     * - | `height <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2005>`_
        - | ``number``
        - | block number 
-     * - | `mediantime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1945>`_
+     * - | `mediantime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2015>`_
        - | ``string``
        - | unix timestamp in seconds since 1970 
-     * - | `merkleroot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1941>`_
+     * - | `merkleroot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2011>`_
        - | ``string``
        - | merkle root of the trie of all transactions in the block 
-     * - | `nTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1955>`_
+     * - | `nTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2025>`_
        - | ``number``
        - | number of transactions in the block 
-     * - | `nextblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1959>`_
+     * - | `nextblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2029>`_
        - | ``string``
        - | hash of the next blockheader 
-     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1947>`_
+     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2017>`_
        - | ``number``
        - | nonce-field of the block 
-     * - | `previousblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1957>`_
+     * - | `previousblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2027>`_
        - | ``string``
        - | hash of the parent blockheader 
-     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1943>`_
+     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2013>`_
        - | ``string``
        - | unix timestamp in seconds since 1970 
-     * - | `tx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1965>`_
+     * - | `tx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2035>`_
        - | `T <#type-t>`_  []
        - | the transactions 
-     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1937>`_
+     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2007>`_
        - | ``number``
        - | used version 
-     * - | `versionHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1939>`_
+     * - | `versionHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2009>`_
        - | ``string``
        - | version as hex 
 
@@ -1705,7 +1912,7 @@ a full Block including the transactions
 ### Type BTCBlockHeader
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1929)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1999)
 
 
 a Block header
@@ -1714,49 +1921,49 @@ a Block header
   .. list-table::
      :widths: auto
 
-     * - | `bits <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1949>`_
+     * - | `bits <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2019>`_
        - | ``string``
        - | bits (target) for the block as hex 
-     * - | `chainwork <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1953>`_
+     * - | `chainwork <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2023>`_
        - | ``string``
        - | total amount of work since genesis 
-     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1933>`_
+     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2003>`_
        - | ``number``
        - | number of confirmations or blocks mined on top of the containing block 
-     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1951>`_
+     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2021>`_
        - | ``number``
        - | difficulty of the block 
-     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1931>`_
+     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2001>`_
        - | ``string``
        - | the hash of the blockheader 
-     * - | `height <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1935>`_
+     * - | `height <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2005>`_
        - | ``number``
        - | block number 
-     * - | `mediantime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1945>`_
+     * - | `mediantime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2015>`_
        - | ``string``
        - | unix timestamp in seconds since 1970 
-     * - | `merkleroot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1941>`_
+     * - | `merkleroot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2011>`_
        - | ``string``
        - | merkle root of the trie of all transactions in the block 
-     * - | `nTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1955>`_
+     * - | `nTx <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2025>`_
        - | ``number``
        - | number of transactions in the block 
-     * - | `nextblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1959>`_
+     * - | `nextblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2029>`_
        - | ``string``
        - | hash of the next blockheader 
-     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1947>`_
+     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2017>`_
        - | ``number``
        - | nonce-field of the block 
-     * - | `previousblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1957>`_
+     * - | `previousblockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2027>`_
        - | ``string``
        - | hash of the parent blockheader 
-     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1943>`_
+     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2013>`_
        - | ``string``
        - | unix timestamp in seconds since 1970 
-     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1937>`_
+     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2007>`_
        - | ``number``
        - | used version 
-     * - | `versionHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1939>`_
+     * - | `versionHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2009>`_
        - | ``string``
        - | version as hex 
 
@@ -1766,7 +1973,7 @@ a Block header
 ### Type BlockInfo
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L897)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L909)
 
 
 Block state.
@@ -1775,13 +1982,13 @@ Block state.
   .. list-table::
      :widths: auto
 
-     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L898>`_
+     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L910>`_
        - | ``number``
        - | the blockNumber 
-     * - | `committed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L899>`_
+     * - | `committed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L911>`_
        - | ``boolean``
        - | the committed 
-     * - | `verified <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L900>`_
+     * - | `verified <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L912>`_
        - | ``boolean``
        - | the verified 
 
@@ -1791,7 +1998,7 @@ Block state.
 ### Type BtcAPI
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1972)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2042)
 
 
 API for handling BitCoin data
@@ -1804,7 +2011,7 @@ API for handling BitCoin data
 retrieves the serialized block (bytes) including all transactions 
 
 ```eval_rst
-`Promise<BufferType> <#type-buffertype>`_  `getBlockBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1992>`_ (
+`Promise<BufferType> <#type-buffertype>`_  `getBlockBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2062>`_ (
       blockHash:`Hash <#type-hash>`_ )
 ```
 
@@ -1827,13 +2034,29 @@ Returns:
 
 
 
+#### getBlockCount()
+
+
+Returns the number of blocks in the longest blockchain. 
+
+```eval_rst
+`Promise<Number> <#type-number>`_  `getBlockCount <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2065>`_ ()
+```
+
+Returns: 
+```eval_rst
+`Promise<Number> <#type-number>`_ 
+```
+
+
+
 #### getBlockHeader()
 
 
 retrieves the blockheader and returns the data as json. 
 
 ```eval_rst
-`Promise<BTCBlockHeader> <#type-btcblockheader>`_  `getBlockHeader <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1980>`_ (
+`Promise<BTCBlockHeader> <#type-btcblockheader>`_  `getBlockHeader <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2050>`_ (
       blockHash:`Hash <#type-hash>`_ )
 ```
 
@@ -1862,7 +2085,7 @@ Returns:
 retrieves the serialized blockheader (bytes) 
 
 ```eval_rst
-`Promise<BufferType> <#type-buffertype>`_  `getBlockHeaderBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1983>`_ (
+`Promise<BufferType> <#type-buffertype>`_  `getBlockHeaderBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2053>`_ (
       blockHash:`Hash <#type-hash>`_ )
 ```
 
@@ -1891,7 +2114,7 @@ Returns:
 retrieves the block including all tx data as json. 
 
 ```eval_rst
-`Promise<BTCBlock> <#type-btcblock>`_  `getBlockWithTxData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1986>`_ (
+`Promise<BTCBlock> <#type-btcblock>`_  `getBlockWithTxData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2056>`_ (
       blockHash:`Hash <#type-hash>`_ )
 ```
 
@@ -1920,7 +2143,7 @@ Returns:
 retrieves the block including all tx ids as json. 
 
 ```eval_rst
-`Promise<BTCBlock> <#type-btcblock>`_  `getBlockWithTxIds <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1989>`_ (
+`Promise<BTCBlock> <#type-btcblock>`_  `getBlockWithTxIds <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2059>`_ (
       blockHash:`Hash <#type-hash>`_ )
 ```
 
@@ -1949,7 +2172,7 @@ Returns:
 retrieves the transaction and returns the data as json. 
 
 ```eval_rst
-`Promise<BtcTransaction> <#type-btctransaction>`_  `getTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1974>`_ (
+`Promise<BtcTransaction> <#type-btctransaction>`_  `getTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2044>`_ (
       txid:`Hash <#type-hash>`_ )
 ```
 
@@ -1978,7 +2201,7 @@ Returns:
 retrieves the serialized transaction (bytes) 
 
 ```eval_rst
-`Promise<BufferType> <#type-buffertype>`_  `getTransactionBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1977>`_ (
+`Promise<BufferType> <#type-buffertype>`_  `getTransactionBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2047>`_ (
       txid:`Hash <#type-hash>`_ )
 ```
 
@@ -2004,7 +2227,7 @@ Returns:
 ### Type BtcTransaction
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1881)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1951)
 
 
 a BitCoin Transaction.
@@ -2013,49 +2236,49 @@ a BitCoin Transaction.
   .. list-table::
      :widths: auto
 
-     * - | `blockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1910>`_
+     * - | `blockhash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1980>`_
        - | `Hash <#type-hash>`_ 
        - | the block hash of the block containing this transaction. 
-     * - | `blocktime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1919>`_
+     * - | `blocktime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1989>`_
        - | ``number``
        - | The block time in seconds since epoch (Jan 1 1970 GMT) 
-     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1913>`_
+     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1983>`_
        - | ``number``
        - | The confirmations. 
-     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1892>`_
+     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1962>`_
        - | `Hash <#type-hash>`_ 
        - | The transaction hash (differs from txid for witness transactions) 
-     * - | `hex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1886>`_
+     * - | `hex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1956>`_
        - | `Data <#type-data>`_ 
        - | the hex representation of raw data 
-     * - | `in_active_chain <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1883>`_
+     * - | `in_active_chain <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1953>`_
        - | ``boolean``
        - | true if this transaction is part of the longest chain 
-     * - | `locktime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1907>`_
+     * - | `locktime <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1977>`_
        - | ``number``
        - | The locktime 
-     * - | `size <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1895>`_
+     * - | `size <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1965>`_
        - | ``number``
        - | The serialized transaction size 
-     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1916>`_
+     * - | `time <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1986>`_
        - | ``number``
        - | The transaction time in seconds since epoch (Jan 1 1970 GMT) 
-     * - | `txid <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1889>`_
+     * - | `txid <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1959>`_
        - | `Hash <#type-hash>`_ 
        - | The requested transaction id. 
-     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1904>`_
+     * - | `version <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1974>`_
        - | ``number``
        - | The version 
-     * - | `vin <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1922>`_
+     * - | `vin <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1992>`_
        - | `BtcTransactionInput <#type-btctransactioninput>`_  []
        - | the transaction inputs 
-     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1925>`_
+     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1995>`_
        - | `BtcTransactionOutput <#type-btctransactionoutput>`_  []
        - | the transaction outputs 
-     * - | `vsize <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1898>`_
+     * - | `vsize <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1968>`_
        - | ``number``
        - | The virtual transaction size (differs from size for witness transactions) 
-     * - | `weight <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1901>`_
+     * - | `weight <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1971>`_
        - | ``number``
        - | The transaction’s weight (between vsize4-3 and vsize4) 
 
@@ -2065,7 +2288,7 @@ a BitCoin Transaction.
 ### Type BtcTransactionInput
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1824)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1894)
 
 
 a Input of a Bitcoin Transaction
@@ -2074,19 +2297,19 @@ a Input of a Bitcoin Transaction
   .. list-table::
      :widths: auto
 
-     * - | `scriptSig <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1832>`_
+     * - | `scriptSig <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1902>`_
        - | 
        - | the script 
-     * - | `sequence <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1841>`_
+     * - | `sequence <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1911>`_
        - | ``number``
        - | The script sequence number 
-     * - | `txid <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1826>`_
+     * - | `txid <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1896>`_
        - | `Hash <#type-hash>`_ 
        - | the transaction id 
-     * - | `txinwitness <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1844>`_
+     * - | `txinwitness <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1914>`_
        - | `Data <#type-data>`_  []
        - | hex-encoded witness data (if any) 
-     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1829>`_
+     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1899>`_
        - | ``number``
        - | the index of the transactionoutput 
 
@@ -2096,7 +2319,7 @@ a Input of a Bitcoin Transaction
 ### Type BtcTransactionOutput
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1849)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1919)
 
 
 a Input of a Bitcoin Transaction
@@ -2105,16 +2328,16 @@ a Input of a Bitcoin Transaction
   .. list-table::
      :widths: auto
 
-     * - | `n <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1854>`_
+     * - | `n <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1924>`_
        - | ``number``
        - | the index 
-     * - | `scriptPubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1860>`_
+     * - | `scriptPubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1930>`_
        - | 
        - | the script 
-     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1851>`_
+     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1921>`_
        - | ``number``
        - | the value in BTC 
-     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1857>`_
+     * - | `vout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1927>`_
        - | ``number``
        - | the index of the transactionoutput 
 
@@ -2124,7 +2347,7 @@ a Input of a Bitcoin Transaction
 ### Type DepositResponse
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L957)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L969)
 
 
 Response of a Deposit-Transaction.
@@ -2133,7 +2356,7 @@ Response of a Deposit-Transaction.
   .. list-table::
      :widths: auto
 
-     * - | `receipt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L958>`_
+     * - | `receipt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L970>`_
        - | `TransactionReceipt <#type-transactionreceipt>`_ 
        - | the receipt 
 
@@ -2143,7 +2366,7 @@ Response of a Deposit-Transaction.
 ### Type ETHOpInfoResp
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L916)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L928)
 
 
 L1 Operation State
@@ -2152,10 +2375,10 @@ L1 Operation State
   .. list-table::
      :widths: auto
 
-     * - | `block <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L918>`_
+     * - | `block <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L930>`_
        - | `BlockInfo <#type-blockinfo>`_ 
        - | the block 
-     * - | `executed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L917>`_
+     * - | `executed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L929>`_
        - | ``boolean``
        - | the executed 
 
@@ -2165,7 +2388,7 @@ L1 Operation State
 ### Type EthAPI
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1486)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1546)
 
 
 The API for ethereum operations.
@@ -2174,13 +2397,13 @@ The API for ethereum operations.
   .. list-table::
      :widths: auto
 
-     * - | `accounts <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1500>`_
+     * - | `accounts <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1560>`_
        - | `AccountAPI<BufferType> <#type-accountapi>`_ 
        - | accounts-API 
-     * - | `client <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1490>`_
+     * - | `client <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1550>`_
        - | `IN3Generic<BigIntType,BufferType> <#type-in3generic>`_ 
        - | the client used. 
-     * - | `signer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1495>`_
+     * - | `signer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1555>`_
        - | `Signer<BigIntType,BufferType> <#type-signer>`_ 
        - | a custom signer  *(optional)* 
 
@@ -2193,7 +2416,7 @@ The API for ethereum operations.
 Returns the number of most recent block. (as number) 
 
 ```eval_rst
-``Promise<number>`` `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1506>`_ ()
+``Promise<number>`` `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1566>`_ ()
 ```
 
 Returns: 
@@ -2209,7 +2432,7 @@ Returns:
 Executes a new message call immediately without creating a transaction on the block chain. 
 
 ```eval_rst
-``Promise<string>`` `call <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1514>`_ (
+``Promise<string>`` `call <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1574>`_ (
       tx:`Transaction <#type-transaction>`_ ,
       block:`BlockType <#type-blocktype>`_ )
 ```
@@ -2242,7 +2465,7 @@ Returns:
 Executes a function of a contract, by passing a [method-signature](https://github.com/ethereumjs/ethereumjs-abi/blob/master/README.md#simple-encoding-and-decoding) and the arguments, which will then be ABI-encoded and send as eth_call. 
 
 ```eval_rst
-``Promise<any>`` `callFn <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1518>`_ (
+``Promise<any>`` `callFn <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1578>`_ (
       to:`Address <#type-address>`_ ,
       method:``string``,
       args:``any`` [])
@@ -2279,7 +2502,7 @@ Returns:
 Returns the EIP155 chain ID used for transaction signing at the current best block. Null is returned if not available. 
 
 ```eval_rst
-``Promise<string>`` `chainId <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1522>`_ ()
+``Promise<string>`` `chainId <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1582>`_ ()
 ```
 
 Returns: 
@@ -2295,7 +2518,7 @@ Returns:
 Returns the clientVersion. This may differ in case of an network, depending on the node it communicates with. 
 
 ```eval_rst
-``Promise<string>`` `clientVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1526>`_ ()
+``Promise<string>`` `clientVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1586>`_ ()
 ```
 
 Returns: 
@@ -2311,7 +2534,7 @@ Returns:
 The API for ethereum operations. 
 
 ```eval_rst
-`EthAPI<BigIntType,BufferType> <#type-ethapi>`_  `constructor <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1502>`_ (
+`EthAPI<BigIntType,BufferType> <#type-ethapi>`_  `constructor <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1562>`_ (
       client:`IN3Generic<BigIntType,BufferType> <#type-in3generic>`_ )
 ```
 
@@ -2340,7 +2563,7 @@ Returns:
 contract at 
 
 ```eval_rst
- `contractAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1691>`_ (
+ `contractAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1761>`_ (
       abi:`ABI <#type-abi>`_  [],
       address:`Address <#type-address>`_ )
 ```
@@ -2368,7 +2591,7 @@ Parameters:
 decode event data 
 
 ```eval_rst
-``any`` `decodeEventData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1731>`_ (
+``any`` `decodeEventData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1801>`_ (
       log:`Log <#type-log>`_ ,
       d:`ABI <#type-abi>`_ )
 ```
@@ -2401,7 +2624,7 @@ Returns:
 Makes a call or transaction, which won’t be added to the blockchain and returns the used gas, which can be used for estimating the used gas. 
 
 ```eval_rst
-``Promise<number>`` `estimateGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1530>`_ (
+``Promise<number>`` `estimateGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1590>`_ (
       tx:`Transaction <#type-transaction>`_ )
 ```
 
@@ -2424,13 +2647,50 @@ Returns:
 
 
 
+#### fromWei()
+
+
+Returns a formated String in the specified unit (or eth if not specified). If digits are specified, the number of digits behind the comma can be limited. 
+
+```eval_rst
+``string`` `fromWei <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1720>`_ (
+      value:``string``,
+      unit:``string``,
+      digits:``number``)
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | value
+       - | ``string``
+       - | value
+     * - | unit
+       - | ``string``
+       - | unit
+     * - | digits
+       - | ``number``
+       - | digits
+
+```
+
+
+Returns: 
+```eval_rst
+``string``
+```
+
+
+
 #### gasPrice()
 
 
 Returns the current price per gas in wei. (as number) 
 
 ```eval_rst
-``Promise<number>`` `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1510>`_ ()
+``Promise<number>`` `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1570>`_ ()
 ```
 
 Returns: 
@@ -2446,7 +2706,7 @@ Returns:
 returns the public addresses  accounts 
 
 ```eval_rst
-``Promise<>`` `getAccounts <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1591>`_ ()
+``Promise<>`` `getAccounts <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1651>`_ ()
 ```
 
 Returns: 
@@ -2462,7 +2722,7 @@ Returns:
 Returns the balance of the account of given address in wei (as hex). 
 
 ```eval_rst
-`Promise<BigIntType> <#type-biginttype>`_  `getBalance <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1534>`_ (
+`Promise<BigIntType> <#type-biginttype>`_  `getBalance <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1594>`_ (
       address:`Address <#type-address>`_ ,
       block:`BlockType <#type-blocktype>`_ )
 ```
@@ -2495,7 +2755,7 @@ Returns:
 Returns information about a block by hash. 
 
 ```eval_rst
-`Promise<Block> <#type-block>`_  `getBlockByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1546>`_ (
+`Promise<Block> <#type-block>`_  `getBlockByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1606>`_ (
       hash:`Hash <#type-hash>`_ ,
       includeTransactions:``boolean``)
 ```
@@ -2528,7 +2788,7 @@ Returns:
 Returns information about a block by block number. 
 
 ```eval_rst
-`Promise<Block> <#type-block>`_  `getBlockByNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1550>`_ (
+`Promise<Block> <#type-block>`_  `getBlockByNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1610>`_ (
       block:`BlockType <#type-blocktype>`_ ,
       includeTransactions:``boolean``)
 ```
@@ -2561,7 +2821,7 @@ Returns:
 Returns the number of transactions in a block from a block matching the given block hash. 
 
 ```eval_rst
-``Promise<number>`` `getBlockTransactionCountByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1554>`_ (
+``Promise<number>`` `getBlockTransactionCountByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1614>`_ (
       block:`Hash <#type-hash>`_ )
 ```
 
@@ -2590,7 +2850,7 @@ Returns:
 Returns the number of transactions in a block from a block matching the given block number. 
 
 ```eval_rst
-``Promise<number>`` `getBlockTransactionCountByNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1558>`_ (
+``Promise<number>`` `getBlockTransactionCountByNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1618>`_ (
       block:`Hash <#type-hash>`_ )
 ```
 
@@ -2619,7 +2879,7 @@ Returns:
 Returns code at a given address. 
 
 ```eval_rst
-``Promise<string>`` `getCode <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1538>`_ (
+``Promise<string>`` `getCode <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1598>`_ (
       address:`Address <#type-address>`_ ,
       block:`BlockType <#type-blocktype>`_ )
 ```
@@ -2652,7 +2912,7 @@ Returns:
 Polling method for a filter, which returns an array of logs which occurred since last poll. 
 
 ```eval_rst
-``Promise<>`` `getFilterChanges <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1562>`_ (
+``Promise<>`` `getFilterChanges <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1622>`_ (
       id:`Quantity <#type-quantity>`_ )
 ```
 
@@ -2681,7 +2941,7 @@ Returns:
 Returns an array of all logs matching filter with given id. 
 
 ```eval_rst
-``Promise<>`` `getFilterLogs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1566>`_ (
+``Promise<>`` `getFilterLogs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1626>`_ (
       id:`Quantity <#type-quantity>`_ )
 ```
 
@@ -2710,7 +2970,7 @@ Returns:
 Returns an array of all logs matching a given filter object. 
 
 ```eval_rst
-``Promise<>`` `getLogs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1570>`_ (
+``Promise<>`` `getLogs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1630>`_ (
       filter:`LogFilter <#type-logfilter>`_ )
 ```
 
@@ -2739,7 +2999,7 @@ Returns:
 Returns the value from a storage position at a given address. 
 
 ```eval_rst
-``Promise<string>`` `getStorageAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1542>`_ (
+``Promise<string>`` `getStorageAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1602>`_ (
       address:`Address <#type-address>`_ ,
       pos:`Quantity <#type-quantity>`_ ,
       block:`BlockType <#type-blocktype>`_ )
@@ -2776,7 +3036,7 @@ Returns:
 Returns information about a transaction by block hash and transaction index position. 
 
 ```eval_rst
-`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByBlockHashAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1574>`_ (
+`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByBlockHashAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1634>`_ (
       hash:`Hash <#type-hash>`_ ,
       pos:`Quantity <#type-quantity>`_ )
 ```
@@ -2809,7 +3069,7 @@ Returns:
 Returns information about a transaction by block number and transaction index position. 
 
 ```eval_rst
-`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByBlockNumberAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1578>`_ (
+`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByBlockNumberAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1638>`_ (
       block:`BlockType <#type-blocktype>`_ ,
       pos:`Quantity <#type-quantity>`_ )
 ```
@@ -2842,7 +3102,7 @@ Returns:
 Returns the information about a transaction requested by transaction hash. 
 
 ```eval_rst
-`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1582>`_ (
+`Promise<TransactionDetail> <#type-transactiondetail>`_  `getTransactionByHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1642>`_ (
       hash:`Hash <#type-hash>`_ )
 ```
 
@@ -2871,7 +3131,7 @@ Returns:
 Returns the number of transactions sent from an address. (as number) 
 
 ```eval_rst
-``Promise<number>`` `getTransactionCount <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1586>`_ (
+``Promise<number>`` `getTransactionCount <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1646>`_ (
       address:`Address <#type-address>`_ ,
       block:`BlockType <#type-blocktype>`_ )
 ```
@@ -2905,7 +3165,7 @@ Returns the receipt of a transaction by transaction hash.
 Note That the receipt is available even for pending transactions. 
 
 ```eval_rst
-`Promise<TransactionReceipt> <#type-transactionreceipt>`_  `getTransactionReceipt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1597>`_ (
+`Promise<TransactionReceipt> <#type-transactionreceipt>`_  `getTransactionReceipt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1657>`_ (
       hash:`Hash <#type-hash>`_ )
 ```
 
@@ -2935,7 +3195,7 @@ Returns information about a uncle of a block by hash and uncle index position.
 Note: An uncle doesn’t contain individual transactions. 
 
 ```eval_rst
-`Promise<Block> <#type-block>`_  `getUncleByBlockHashAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1602>`_ (
+`Promise<Block> <#type-block>`_  `getUncleByBlockHashAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1662>`_ (
       hash:`Hash <#type-hash>`_ ,
       pos:`Quantity <#type-quantity>`_ )
 ```
@@ -2969,7 +3229,7 @@ Returns information about a uncle of a block number and uncle index position.
 Note: An uncle doesn’t contain individual transactions. 
 
 ```eval_rst
-`Promise<Block> <#type-block>`_  `getUncleByBlockNumberAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1607>`_ (
+`Promise<Block> <#type-block>`_  `getUncleByBlockNumberAndIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1667>`_ (
       block:`BlockType <#type-blocktype>`_ ,
       pos:`Quantity <#type-quantity>`_ )
 ```
@@ -3002,7 +3262,7 @@ Returns:
 Returns the number of uncles in a block from a block matching the given block hash. 
 
 ```eval_rst
-``Promise<number>`` `getUncleCountByBlockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1611>`_ (
+``Promise<number>`` `getUncleCountByBlockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1671>`_ (
       hash:`Hash <#type-hash>`_ )
 ```
 
@@ -3031,7 +3291,7 @@ Returns:
 Returns the number of uncles in a block from a block matching the given block hash. 
 
 ```eval_rst
-``Promise<number>`` `getUncleCountByBlockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1615>`_ (
+``Promise<number>`` `getUncleCountByBlockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1675>`_ (
       block:`BlockType <#type-blocktype>`_ )
 ```
 
@@ -3060,7 +3320,7 @@ Returns:
 a Hexcoded String (starting with 0x) 
 
 ```eval_rst
-`Hex <#type-hex>`_  `hashMessage <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1732>`_ (
+`Hex <#type-hex>`_  `hashMessage <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1802>`_ (
       data:`Data <#type-data>`_ )
 ```
 
@@ -3089,7 +3349,7 @@ Returns:
 Creates a filter in the node, to notify when a new block arrives. To check if the state has changed, call eth_getFilterChanges. 
 
 ```eval_rst
-``Promise<string>`` `newBlockFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1619>`_ ()
+``Promise<string>`` `newBlockFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1685>`_ ()
 ```
 
 Returns: 
@@ -3115,7 +3375,7 @@ Topics are order-dependent. A transaction with a log with topics [A, B] will be 
  
 
 ```eval_rst
-``Promise<string>`` `newFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1632>`_ (
+``Promise<string>`` `newFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1698>`_ (
       filter:`LogFilter <#type-logfilter>`_ )
 ```
 
@@ -3138,6 +3398,22 @@ Returns:
 
 
 
+#### newPendingFilter()
+
+
+adds a filter for pending transaction (only available for local rpc) 
+
+```eval_rst
+``Promise<string>`` `newPendingFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1680>`_ ()
+```
+
+Returns: 
+```eval_rst
+``Promise<string>``
+```
+
+
+
 #### newPendingTransactionFilter()
 
 
@@ -3147,7 +3423,7 @@ To check if the state has changed, call eth_getFilterChanges.
  
 
 ```eval_rst
-``Promise<string>`` `newPendingTransactionFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1638>`_ ()
+``Promise<string>`` `newPendingTransactionFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1704>`_ ()
 ```
 
 Returns: 
@@ -3163,7 +3439,7 @@ Returns:
 Returns the current ethereum protocol version. 
 
 ```eval_rst
-``Promise<string>`` `protocolVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1646>`_ ()
+``Promise<string>`` `protocolVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1712>`_ ()
 ```
 
 Returns: 
@@ -3179,7 +3455,7 @@ Returns:
 resolves a name as an ENS-Domain. 
 
 ```eval_rst
-`Promise<Address> <#type-address>`_  `resolveENS <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1669>`_ (
+`Promise<Address> <#type-address>`_  `resolveENS <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1739>`_ (
       name:``string``,
       type:`Address <#type-address>`_ ,
       registry:``string``)
@@ -3217,7 +3493,7 @@ Returns:
 Creates new message call transaction or a contract creation for signed transactions. 
 
 ```eval_rst
-``Promise<string>`` `sendRawTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1674>`_ (
+``Promise<string>`` `sendRawTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1744>`_ (
       data:`Data <#type-data>`_ )
 ```
 
@@ -3246,7 +3522,7 @@ Returns:
 sends a Transaction 
 
 ```eval_rst
-``Promise<>`` `sendTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1682>`_ (
+``Promise<>`` `sendTransaction <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1752>`_ (
       args:`TxRequest <#type-txrequest>`_ )
 ```
 
@@ -3275,7 +3551,7 @@ Returns:
 signs any kind of message using the `\x19Ethereum Signed Message:\n`-prefix 
 
 ```eval_rst
-`Promise<BufferType> <#type-buffertype>`_  `sign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1680>`_ (
+`Promise<BufferType> <#type-buffertype>`_  `sign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1750>`_ (
       account:`Address <#type-address>`_ ,
       data:`Data <#type-data>`_ )
 ```
@@ -3309,7 +3585,7 @@ Returns:
 Returns the state of the underlying node. 
 
 ```eval_rst
-``Promise<>`` `syncing <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1654>`_ ()
+``Promise<>`` `syncing <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1724>`_ ()
 ```
 
 Returns: 
@@ -3325,7 +3601,7 @@ Returns:
 Returns the value in wei as hexstring. 
 
 ```eval_rst
-``string`` `toWei <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1650>`_ (
+``string`` `toWei <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1716>`_ (
       value:``string``,
       unit:``string``)
 ```
@@ -3358,7 +3634,7 @@ Returns:
 Uninstalls a filter with given id. Should always be called when watch is no longer needed. Additonally Filters timeout when they aren’t requested with eth_getFilterChanges for a period of time. 
 
 ```eval_rst
-`Promise<Quantity> <#type-quantity>`_  `uninstallFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1642>`_ (
+`Promise<Quantity> <#type-quantity>`_  `uninstallFilter <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1708>`_ (
       id:`Quantity <#type-quantity>`_ )
 ```
 
@@ -3387,7 +3663,7 @@ Returns:
 web3 contract at 
 
 ```eval_rst
-`Web3Contract <#type-web3contract>`_  `web3ContractAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1684>`_ (
+`Web3Contract <#type-web3contract>`_  `web3ContractAt <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1754>`_ (
       abi:`ABI <#type-abi>`_  [],
       address:`Address <#type-address>`_ ,
       options:)
@@ -3421,7 +3697,7 @@ Returns:
 ### Type Fee
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L931)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L943)
 
 
 fee collection.
@@ -3430,22 +3706,22 @@ fee collection.
   .. list-table::
      :widths: auto
 
-     * - | `feeType <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L932>`_
+     * - | `feeType <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L944>`_
        - | `TxType <#type-txtype>`_ 
        - | the feeType 
-     * - | `gasFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L935>`_
+     * - | `gasFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L947>`_
        - | ``number``
        - | the gasFee 
-     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L934>`_
+     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L946>`_
        - | ``number``
        - | the gasPrice 
-     * - | `totalFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L937>`_
+     * - | `totalFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L949>`_
        - | ``number``
        - | the totalFee 
-     * - | `totalGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L933>`_
+     * - | `totalGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L945>`_
        - | ``number``
        - | the totalGas 
-     * - | `zkpFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L936>`_
+     * - | `zkpFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L948>`_
        - | ``number``
        - | the zkpFee 
 
@@ -3750,7 +4026,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type IpfsAPI
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1772)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1842)
 
 
 API for storing and retrieving IPFS-data.
@@ -3763,7 +4039,7 @@ API for storing and retrieving IPFS-data.
 retrieves the content for a hash from IPFS. 
 
 ```eval_rst
-`Promise<BufferType> <#type-buffertype>`_  `get <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1778>`_ (
+`Promise<BufferType> <#type-buffertype>`_  `get <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1848>`_ (
       multihash:``string``)
 ```
 
@@ -3794,7 +4070,7 @@ Returns:
 stores the data on ipfs and returns the IPFS-Hash. 
 
 ```eval_rst
-``Promise<string>`` `put <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1783>`_ (
+``Promise<string>`` `put <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1853>`_ (
       content:`BufferType <#type-buffertype>`_ )
 ```
 
@@ -4012,7 +4288,7 @@ Returns:
 ### Type Token
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L947)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L959)
 
 
 Token representation
@@ -4021,16 +4297,16 @@ Token representation
   .. list-table::
      :widths: auto
 
-     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L948>`_
+     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L960>`_
        - | `String <#type-string>`_ 
        - | the address 
-     * - | `decimals <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L949>`_
+     * - | `decimals <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L961>`_
        - | ``number``
        - | the decimals 
-     * - | `id <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L950>`_
+     * - | `id <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L962>`_
        - | ``number``
        - | the id 
-     * - | `symbol <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L951>`_
+     * - | `symbol <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L963>`_
        - | `String <#type-string>`_ 
        - | the symbol 
 
@@ -4040,7 +4316,7 @@ Token representation
 ### Type Tokens
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L943)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L955)
 
 
 Token List.
@@ -4050,7 +4326,7 @@ Token List.
 ### Type TxInfo
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L906)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L918)
 
 
 Transaction state
@@ -4059,16 +4335,16 @@ Transaction state
   .. list-table::
      :widths: auto
 
-     * - | `block <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L907>`_
+     * - | `block <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L919>`_
        - | `BlockInfo <#type-blockinfo>`_ 
        - | the block 
-     * - | `executed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L908>`_
+     * - | `executed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L920>`_
        - | ``boolean``
        - | the executed 
-     * - | `failReason <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L909>`_
+     * - | `failReason <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L921>`_
        - | ``string``
        - | the failReason 
-     * - | `success <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L910>`_
+     * - | `success <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L922>`_
        - | ``boolean``
        - | the success 
 
@@ -4078,7 +4354,7 @@ Transaction state
 ### Type TxType
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L924)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L936)
 
 
 Defines the type of a transaction.
@@ -4087,7 +4363,7 @@ Defines the type of a transaction.
   .. list-table::
      :widths: auto
 
-     * - | `type <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L925>`_
+     * - | `type <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L937>`_
        - | ``'Withdraw'`` 
          | | ``'Transfer'`` 
          | | ``'TransferToNew'``
@@ -4277,7 +4553,7 @@ Returns:
 create a signature (65 bytes) for the given message and kexy 
 
 ```eval_rst
-`BufferType <#type-buffertype>`_  `ecSign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L818>`_ (
+`BufferType <#type-buffertype>`_  `ecSign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L824>`_ (
       pk:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_ ,
       msg:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_ ,
       hashFirst:``boolean``,
@@ -4321,7 +4597,7 @@ Returns:
 returns the incubed version. 
 
 ```eval_rst
-``string`` `getVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L783>`_ ()
+``string`` `getVersion <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L789>`_ ()
 ```
 
 Returns: 
@@ -4398,7 +4674,7 @@ Returns:
 generates the public address from the private key. 
 
 ```eval_rst
-`Address <#type-address>`_  `private2address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L832>`_ (
+`Address <#type-address>`_  `private2address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L838>`_ (
       pk:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_ )
 ```
 
@@ -4423,6 +4699,37 @@ Returns:
 
 
 
+#### private2public()
+
+
+generates the public address (64 bytes) from the private key 
+
+```eval_rst
+`BufferType <#type-buffertype>`_  `private2public <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L844>`_ (
+      pk:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_ )
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | pk
+       - | `Hex <#type-hex>`_  
+         | | `BufferType <#type-buffertype>`_ 
+       - | the raw private key
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`BufferType <#type-buffertype>`_ 
+```
+
+
+
 #### randomBytes()
 
 
@@ -4430,7 +4737,7 @@ returns a Buffer with strong random bytes.
 Thsi will use the browsers crypto-module or in case of nodejs use the crypto-module there. 
 
 ```eval_rst
-`BufferType <#type-buffertype>`_  `randomBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L773>`_ (
+`BufferType <#type-buffertype>`_  `randomBytes <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L779>`_ (
       len:``number``)
 ```
 
@@ -4442,6 +4749,37 @@ Parameters:
      * - | len
        - | ``number``
        - | the number of bytes to generate.
+         | 
+
+```
+
+
+Returns: 
+```eval_rst
+`BufferType <#type-buffertype>`_ 
+```
+
+
+
+#### sha256()
+
+
+calculates the sha256 hash for the given data. 
+
+```eval_rst
+`BufferType <#type-buffertype>`_  `sha256 <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L772>`_ (
+      data:`BufferType <#type-buffertype>`_  | `Data <#type-data>`_ )
+```
+
+Parameters: 
+```eval_rst
+  .. list-table::
+     :widths: auto
+
+     * - | data
+       - | `BufferType <#type-buffertype>`_  
+         | | `Data <#type-data>`_ 
+       - | the data as Uint8Array or hex data.
          | 
 
 ```
@@ -4489,7 +4827,7 @@ Returns:
 takes raw signature (65 bytes) and splits it into a signature object. 
 
 ```eval_rst
-`Signature <#type-signature>`_  `splitSignature <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L826>`_ (
+`Signature <#type-signature>`_  `splitSignature <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L832>`_ (
       signature:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_ ,
       message:`BufferType <#type-buffertype>`_  | `Hex <#type-hex>`_ ,
       hashFirst:``boolean``)
@@ -4530,7 +4868,7 @@ converts any value to a Buffer.
 optionally the target length can be specified (in bytes) 
 
 ```eval_rst
-`BufferType <#type-buffertype>`_  `toBuffer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L798>`_ (
+`BufferType <#type-buffertype>`_  `toBuffer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L804>`_ (
       data:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_  | ``number`` | ``bigint``,
       len:``number``)
 ```
@@ -4602,7 +4940,7 @@ converts any value to a hex string (with prefix 0x).
 optionally the target length can be specified (in bytes) 
 
 ```eval_rst
-`Hex <#type-hex>`_  `toHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L779>`_ (
+`Hex <#type-hex>`_  `toHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L785>`_ (
       data:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_  | ``number`` | ``bigint``,
       len:``number``)
 ```
@@ -4638,7 +4976,7 @@ Returns:
 removes all leading 0 in the hexstring 
 
 ```eval_rst
-``string`` `toMinHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L786>`_ (
+``string`` `toMinHex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L792>`_ (
       key:``string`` | `BufferType <#type-buffertype>`_  | ``number``)
 ```
 
@@ -4670,7 +5008,7 @@ converts any value to a hex string (with prefix 0x).
 optionally the target length can be specified (in bytes) 
 
 ```eval_rst
-``number`` `toNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L804>`_ (
+``number`` `toNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L810>`_ (
       data:``string`` | `BufferType <#type-buffertype>`_  | ``number`` | ``bigint``)
 ```
 
@@ -4703,7 +5041,7 @@ converts any value to a Uint8Array.
 optionally the target length can be specified (in bytes) 
 
 ```eval_rst
-`BufferType <#type-buffertype>`_  `toUint8Array <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L792>`_ (
+`BufferType <#type-buffertype>`_  `toUint8Array <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L798>`_ (
       data:`Hex <#type-hex>`_  | `BufferType <#type-buffertype>`_  | ``number`` | ``bigint``,
       len:``number``)
 ```
@@ -4739,7 +5077,7 @@ Returns:
 convert to String 
 
 ```eval_rst
-``string`` `toUtf8 <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L809>`_ (
+``string`` `toUtf8 <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L815>`_ (
       val:``any``)
 ```
 
@@ -4765,7 +5103,7 @@ Returns:
 ### Type Web3Contract
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1440)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1500)
 
 
 
@@ -4774,13 +5112,13 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `events <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1461>`_
+     * - | `events <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1521>`_
        - | 
        - | the events 
-     * - | `methods <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1455>`_
+     * - | `methods <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1515>`_
        - | 
        - | the methods 
-     * - | `options <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1441>`_
+     * - | `options <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1501>`_
        - | 
        - | the options 
 
@@ -4793,7 +5131,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 deploy 
 
 ```eval_rst
-`Web3TransactionObject <#type-web3transactionobject>`_  `deploy <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1451>`_ (
+`Web3TransactionObject <#type-web3transactionobject>`_  `deploy <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1511>`_ (
       args:)
 ```
 
@@ -4822,7 +5160,7 @@ Returns:
 once 
 
 ```eval_rst
-``void`` `once <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1459>`_ (
+``void`` `once <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1519>`_ (
       eventName:``string``,
       options:,
       handler:(`Error <#type-error>`_  , `Web3Event <#type-web3event>`_ ) => ``void``)
@@ -4854,7 +5192,7 @@ Parameters:
 get past events 
 
 ```eval_rst
-``Promise<>`` `getPastEvents <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1474>`_ (
+``Promise<>`` `getPastEvents <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1534>`_ (
       evName:``string``,
       options:)
 ```
@@ -4884,7 +5222,7 @@ Returns:
 ### Type Web3Event
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1381)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1393)
 
 
 
@@ -4893,34 +5231,34 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1390>`_
+     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1402>`_
        - | `Address <#type-address>`_ 
        - | the address 
-     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1392>`_
+     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1404>`_
        - | `Hash <#type-hash>`_ 
        - | the blockHash 
-     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1391>`_
+     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1403>`_
        - | ``number``
        - | the blockNumber 
-     * - | `event <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1385>`_
+     * - | `event <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1397>`_
        - | ``string``
        - | the event 
-     * - | `logIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1387>`_
+     * - | `logIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1399>`_
        - | ``number``
        - | the logIndex 
-     * - | `raw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1393>`_
+     * - | `raw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1405>`_
        - | 
        - | the raw 
-     * - | `returnValues <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1382>`_
+     * - | `returnValues <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1394>`_
        - | 
        - | the returnValues 
-     * - | `signature <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1386>`_
+     * - | `signature <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1398>`_
        - | ``string``
        - | the signature 
-     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1389>`_
+     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1401>`_
        - | `Hash <#type-hash>`_ 
        - | the transactionHash 
-     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1388>`_
+     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1400>`_
        - | ``number``
        - | the transactionIndex 
 
@@ -4930,7 +5268,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type Web3TransactionObject
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1416)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1476)
 
 
 
@@ -4943,7 +5281,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 call 
 
 ```eval_rst
-``Promise<any>`` `call <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1417>`_ (
+``Promise<any>`` `call <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1477>`_ (
       options:)
 ```
 
@@ -4972,7 +5310,7 @@ Returns:
 a Hexcoded String (starting with 0x) 
 
 ```eval_rst
-`Hex <#type-hex>`_  `encodeABI <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1437>`_ ()
+`Hex <#type-hex>`_  `encodeABI <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1497>`_ ()
 ```
 
 Returns: 
@@ -4988,7 +5326,7 @@ Returns:
 estimate gas 
 
 ```eval_rst
-``Promise<number>`` `estimateGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1431>`_ (
+``Promise<number>`` `estimateGas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1491>`_ (
       options:)
 ```
 
@@ -5017,7 +5355,7 @@ Returns:
 send 
 
 ```eval_rst
-``Promise<any>`` `send <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1423>`_ (
+``Promise<any>`` `send <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1483>`_ (
       options:)
 ```
 
@@ -5043,7 +5381,7 @@ Returns:
 ### Type ZKAccountInfo
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L871)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L883)
 
 
 return structure after fetching the current account info.
@@ -5052,19 +5390,19 @@ return structure after fetching the current account info.
   .. list-table::
      :widths: auto
 
-     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L872>`_
+     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L884>`_
        - | ``string``
        - | the address 
-     * - | `committed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L873>`_
+     * - | `committed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L885>`_
        - | 
        - | the committed 
-     * - | `depositing <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L880>`_
+     * - | `depositing <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L892>`_
        - | 
        - | the depositing 
-     * - | `id <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L885>`_
+     * - | `id <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L897>`_
        - | ``number``
        - | the id 
-     * - | `verified <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L886>`_
+     * - | `verified <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L898>`_
        - | 
        - | the verified 
 
@@ -5074,7 +5412,7 @@ return structure after fetching the current account info.
 ### Type ZksyncAPI
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L964)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L976)
 
 
 API for zksync.
@@ -5087,7 +5425,7 @@ API for zksync.
 aggregates the given publickeys into one public key for a Musig Schnorr signature 
 
 ```eval_rst
-``string`` `aggregatePubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1085>`_ (
+``string`` `aggregatePubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1097>`_ (
       pubkeys:``string`` | ``string`` [])
 ```
 
@@ -5117,7 +5455,7 @@ Returns:
 deposits the declared amount into the rollup 
 
 ```eval_rst
-`Promise<DepositResponse> <#type-depositresponse>`_  `deposit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1042>`_ (
+`Promise<DepositResponse> <#type-depositresponse>`_  `deposit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1054>`_ (
       amount:``number``,
       token:``string``,
       approveDepositAmountForERC20:``boolean``,
@@ -5159,7 +5497,7 @@ Returns:
 executes an emergency withdrawel onchain 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `emergencyWithdraw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1066>`_ (
+`Promise<String> <#type-string>`_  `emergencyWithdraw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1078>`_ (
       token:``string``)
 ```
 
@@ -5189,7 +5527,7 @@ Returns:
 returns the address of the account used. 
 
 ```eval_rst
-`String <#type-string>`_  `getAccountAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L980>`_ ()
+`String <#type-string>`_  `getAccountAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L992>`_ ()
 ```
 
 Returns: 
@@ -5205,7 +5543,7 @@ Returns:
 gets current account Infoa and balances. 
 
 ```eval_rst
-`Promise<ZKAccountInfo> <#type-zkaccountinfo>`_  `getAccountInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L970>`_ (
+`Promise<ZKAccountInfo> <#type-zkaccountinfo>`_  `getAccountInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L982>`_ (
       account:``string``)
 ```
 
@@ -5235,7 +5573,7 @@ Returns:
 gets the contract address of the zksync contract 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `getContractAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L975>`_ ()
+`Promise<String> <#type-string>`_  `getContractAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L987>`_ ()
 ```
 
 Returns: 
@@ -5251,7 +5589,7 @@ Returns:
 returns the state of receipt of the PriorityOperation 
 
 ```eval_rst
-`Promise<ETHOpInfoResp> <#type-ethopinforesp>`_  `getEthopInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1004>`_ (
+`Promise<ETHOpInfoResp> <#type-ethopinforesp>`_  `getEthopInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1016>`_ (
       opId:``number``)
 ```
 
@@ -5281,7 +5619,7 @@ Returns:
 returns private key used for signing zksync transactions 
 
 ```eval_rst
-`String <#type-string>`_  `getSyncKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1023>`_ ()
+`String <#type-string>`_  `getSyncKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1035>`_ ()
 ```
 
 Returns: 
@@ -5297,7 +5635,7 @@ Returns:
 returns public key used for signing zksync transactions 
 
 ```eval_rst
-`String <#type-string>`_  `getSyncPubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1033>`_ ()
+`String <#type-string>`_  `getSyncPubKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1045>`_ ()
 ```
 
 Returns: 
@@ -5313,7 +5651,7 @@ Returns:
 returns public key used for signing zksync transactions 
 
 ```eval_rst
-`String <#type-string>`_  `getSyncPubKeyHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1028>`_ ()
+`String <#type-string>`_  `getSyncPubKeyHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1040>`_ ()
 ```
 
 Returns: 
@@ -5329,7 +5667,7 @@ Returns:
 returns the current token price 
 
 ```eval_rst
-`Promise<Number> <#type-number>`_  `getTokenPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1010>`_ (
+`Promise<Number> <#type-number>`_  `getTokenPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1022>`_ (
       tokenSymbol:``string``)
 ```
 
@@ -5359,7 +5697,7 @@ Returns:
 returns an object containing Token objects with its short name as key 
 
 ```eval_rst
-`Promise<Tokens> <#type-tokens>`_  `getTokens <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L985>`_ ()
+`Promise<Tokens> <#type-tokens>`_  `getTokens <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L997>`_ ()
 ```
 
 Returns: 
@@ -5375,7 +5713,7 @@ Returns:
 returns the transaction fee 
 
 ```eval_rst
-`Promise<Fee> <#type-fee>`_  `getTxFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1018>`_ (
+`Promise<Fee> <#type-fee>`_  `getTxFee <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1030>`_ (
       txType:`TxType <#type-txtype>`_ ,
       receipient:``string``,
       token:``string``)
@@ -5413,7 +5751,7 @@ Returns:
 get transaction info 
 
 ```eval_rst
-`Promise<TxInfo> <#type-txinfo>`_  `getTxInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L991>`_ (
+`Promise<TxInfo> <#type-txinfo>`_  `getTxInfo <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1003>`_ (
       txHash:``string``)
 ```
 
@@ -5443,7 +5781,7 @@ Returns:
 set the signer key based on the current pk 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `setKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L998>`_ (
+`Promise<String> <#type-string>`_  `setKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1010>`_ (
       tokenSymbol:``string``,
       newKey:`BufferType <#type-buffertype>`_  | ``string``)
 ```
@@ -5477,7 +5815,7 @@ Returns:
 signs the message based on the config and returns a Musig Schnorr signature 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `sign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1072>`_ (
+`Promise<String> <#type-string>`_  `sign <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1084>`_ (
       msg:``string``)
 ```
 
@@ -5507,7 +5845,7 @@ Returns:
 transfers the specified amount to another address within the zksync rollup 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `transfer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1051>`_ (
+`Promise<String> <#type-string>`_  `transfer <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1063>`_ (
       to:``string``,
       amount:``number``,
       token:``string``,
@@ -5549,7 +5887,7 @@ Returns:
 verifies a Musig Schnorr signature 
 
 ```eval_rst
-``boolean`` `verify <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1079>`_ (
+``boolean`` `verify <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1091>`_ (
       msg:``string``,
       sig:``string``)
 ```
@@ -5583,7 +5921,7 @@ Returns:
 withdraws the specified amount from the rollup to a specific address 
 
 ```eval_rst
-`Promise<String> <#type-string>`_  `withdraw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1060>`_ (
+`Promise<String> <#type-string>`_  `withdraw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1072>`_ (
       ethAddress:``string``,
       amount:``number``,
       token:``string``,
@@ -5716,7 +6054,7 @@ a Hexcoded String (starting with 0x)
 ### Type Block
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1265)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1277)
 
 
 
@@ -5725,67 +6063,67 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `author <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1285>`_
+     * - | `author <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1297>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - the address of the author of the block (the beneficiary to whom the mining rewards were given) 
-     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1289>`_
+     * - | `difficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1301>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer of the difficulty for this block 
-     * - | `extraData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1293>`_
+     * - | `extraData <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1305>`_
        - | `Data <#type-data>`_ 
        - | the ‘extra data’ field of this block 
-     * - | `gasLimit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1297>`_
+     * - | `gasLimit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1309>`_
        - | `Quantity <#type-quantity>`_ 
        - | the maximum gas allowed in this block 
-     * - | `gasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1299>`_
+     * - | `gasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1311>`_
        - | `Quantity <#type-quantity>`_ 
        - | the total used gas by all transactions in this block 
-     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1269>`_
+     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1281>`_
        - | `Hash <#type-hash>`_ 
        - | hash of the block. null when its pending block 
-     * - | `logsBloom <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1277>`_
+     * - | `logsBloom <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1289>`_
        - | `Data <#type-data>`_ 
        - | 256 Bytes - the bloom filter for the logs of the block. null when its pending block 
-     * - | `miner <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1287>`_
+     * - | `miner <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1299>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - alias of ‘author’ 
-     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1273>`_
+     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1285>`_
        - | `Data <#type-data>`_ 
        - | 8 bytes hash of the generated proof-of-work. null when its pending block. Missing in case of PoA. 
-     * - | `number <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1267>`_
+     * - | `number <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1279>`_
        - | `Quantity <#type-quantity>`_ 
        - | The block number. null when its pending block 
-     * - | `parentHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1271>`_
+     * - | `parentHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1283>`_
        - | `Hash <#type-hash>`_ 
        - | hash of the parent block 
-     * - | `receiptsRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1283>`_
+     * - | `receiptsRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1295>`_
        - | `Data <#type-data>`_ 
        - | 32 Bytes - the root of the receipts trie of the block 
-     * - | `sealFields <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1307>`_
+     * - | `sealFields <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1319>`_
        - | `Data <#type-data>`_  []
        - | PoA-Fields 
-     * - | `sha3Uncles <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1275>`_
+     * - | `sha3Uncles <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1287>`_
        - | `Data <#type-data>`_ 
        - | SHA3 of the uncles data in the block 
-     * - | `size <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1295>`_
+     * - | `size <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1307>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer the size of this block in bytes 
-     * - | `stateRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1281>`_
+     * - | `stateRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1293>`_
        - | `Data <#type-data>`_ 
        - | 32 Bytes - the root of the final state trie of the block 
-     * - | `timestamp <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1301>`_
+     * - | `timestamp <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1313>`_
        - | `Quantity <#type-quantity>`_ 
        - | the unix timestamp for when the block was collated 
-     * - | `totalDifficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1291>`_
+     * - | `totalDifficulty <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1303>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer of the total difficulty of the chain until this block 
-     * - | `transactions <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1303>`_
+     * - | `transactions <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1315>`_
        - | ``string`` |  []
        - | Array of transaction objects, or 32 Bytes transaction hashes depending on the last given parameter 
-     * - | `transactionsRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1279>`_
+     * - | `transactionsRoot <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1291>`_
        - | `Data <#type-data>`_ 
        - | 32 Bytes - the root of the transaction trie of the block 
-     * - | `uncles <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1305>`_
+     * - | `uncles <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1317>`_
        - | `Hash <#type-hash>`_  []
        - | Array of uncle hashes 
 
@@ -5819,7 +6157,7 @@ a Hexcoded String (starting with 0x)
 ### Type Log
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1309)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1321)
 
 
 
@@ -5828,31 +6166,31 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1323>`_
+     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1335>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - address from which this log originated. 
-     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1319>`_
+     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1331>`_
        - | `Hash <#type-hash>`_ 
        - | Hash, 32 Bytes - hash of the block where this log was in. null when its pending. null when its pending log. 
-     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1321>`_
+     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1333>`_
        - | `Quantity <#type-quantity>`_ 
        - | the block number where this log was in. null when its pending. null when its pending log. 
-     * - | `data <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1325>`_
+     * - | `data <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1337>`_
        - | `Data <#type-data>`_ 
        - | contains the non-indexed arguments of the log. 
-     * - | `logIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1313>`_
+     * - | `logIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1325>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer of the log index position in the block. null when its pending log. 
-     * - | `removed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1311>`_
+     * - | `removed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1323>`_
        - | ``boolean``
        - | true when the log was removed, due to a chain reorganization. false if its a valid log. 
-     * - | `topics <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1327>`_
+     * - | `topics <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1339>`_
        - | `Data <#type-data>`_  []
        - | - Array of 0 to 4 32 Bytes DATA of indexed log arguments. (In solidity: The first topic is the hash of the signature of the event (e.g. Deposit(address,bytes32,uint256)), except you declared the event with the anonymous specifier.) 
-     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1317>`_
+     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1329>`_
        - | `Hash <#type-hash>`_ 
        - | Hash, 32 Bytes - hash of the transactions this log was created from. null when its pending log. 
-     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1315>`_
+     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1327>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer of the transactions index position log was created from. null when its pending log. 
 
@@ -5862,7 +6200,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type LogFilter
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1330)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1342)
 
 
 
@@ -5871,19 +6209,19 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1336>`_
+     * - | `address <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1348>`_
        - | `Address <#type-address>`_ 
        - | (optional) 20 Bytes - Contract address or a list of addresses from which logs should originate. 
-     * - | `fromBlock <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1332>`_
+     * - | `fromBlock <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1344>`_
        - | `BlockType <#type-blocktype>`_ 
        - | Quantity or Tag - (optional) (default: latest) Integer block number, or 'latest' for the last mined block or 'pending', 'earliest' for not yet mined transactions.  *(optional)* 
-     * - | `limit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1340>`_
+     * - | `limit <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1352>`_
        - | `Quantity <#type-quantity>`_ 
        - | å(optional) The maximum number of entries to retrieve (latest first).  *(optional)* 
-     * - | `toBlock <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1334>`_
+     * - | `toBlock <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1346>`_
        - | `BlockType <#type-blocktype>`_ 
        - | Quantity or Tag - (optional) (default: latest) Integer block number, or 'latest' for the last mined block or 'pending', 'earliest' for not yet mined transactions.  *(optional)* 
-     * - | `topics <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1338>`_
+     * - | `topics <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1350>`_
        - | ``string`` | ``string`` [] []
        - | (optional) Array of 32 Bytes Data topics. Topics are order-dependent. It’s possible to pass in null to match any topic, or a subarray of multiple topics of which one should be matching.  *(optional)* 
 
@@ -5968,7 +6306,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type TransactionDetail
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1222)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1234)
 
 
 
@@ -5977,64 +6315,64 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1228>`_
+     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1240>`_
        - | `Hash <#type-hash>`_ 
        - | 32 Bytes - hash of the block where this transaction was in. null when its pending. 
-     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1230>`_
+     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1242>`_
        - | `BlockType <#type-blocktype>`_ 
        - | block number where this transaction was in. null when its pending. 
-     * - | `chainId <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1256>`_
+     * - | `chainId <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1268>`_
        - | `Quantity <#type-quantity>`_ 
        - | the chain id of the transaction, if any. 
-     * - | `condition <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1260>`_
+     * - | `condition <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1272>`_
        - | ``any``
        - | (optional) conditional submission, Block number in block or timestamp in time or null. (parity-feature)  *(optional)* 
-     * - | `creates <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1258>`_
+     * - | `creates <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1270>`_
        - | `Address <#type-address>`_ 
        - | creates contract address 
-     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1234>`_
+     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1246>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - address of the sender. 
-     * - | `gas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1242>`_
+     * - | `gas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1254>`_
        - | `Quantity <#type-quantity>`_ 
        - | gas provided by the sender. 
-     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1240>`_
+     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1252>`_
        - | `Quantity <#type-quantity>`_ 
        - | gas price provided by the sender in Wei. 
-     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1224>`_
+     * - | `hash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1236>`_
        - | `Hash <#type-hash>`_ 
        - | 32 Bytes - hash of the transaction. 
-     * - | `input <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1244>`_
+     * - | `input <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1256>`_
        - | `Data <#type-data>`_ 
        - | the data send along with the transaction. 
-     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1226>`_
+     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1238>`_
        - | `Quantity <#type-quantity>`_ 
        - | the number of transactions made by the sender prior to this one. 
-     * - | `pk <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1262>`_
+     * - | `pk <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1274>`_
        - | ``any``
        - | optional: the private key to use for signing  *(optional)* 
-     * - | `publicKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1254>`_
+     * - | `publicKey <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1266>`_
        - | `Hash <#type-hash>`_ 
        - | public key of the signer. 
-     * - | `r <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1250>`_
+     * - | `r <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1262>`_
        - | `Quantity <#type-quantity>`_ 
        - | the R field of the signature. 
-     * - | `raw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1252>`_
+     * - | `raw <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1264>`_
        - | `Data <#type-data>`_ 
        - | raw transaction data 
-     * - | `standardV <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1248>`_
+     * - | `standardV <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1260>`_
        - | `Quantity <#type-quantity>`_ 
        - | the standardised V field of the signature (0 or 1). 
-     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1236>`_
+     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1248>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - address of the receiver. null when its a contract creation transaction. 
-     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1232>`_
+     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1244>`_
        - | `Quantity <#type-quantity>`_ 
        - | integer of the transactions index position in the block. null when its pending. 
-     * - | `v <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1246>`_
+     * - | `v <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1258>`_
        - | `Quantity <#type-quantity>`_ 
        - | the standardised V field of the signature. 
-     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1238>`_
+     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1250>`_
        - | `Quantity <#type-quantity>`_ 
        - | value transferred in Wei. 
 
@@ -6044,7 +6382,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type TransactionReceipt
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1188)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1200)
 
 
 a  Receipt of a Transaction containing the events and execution status
@@ -6054,46 +6392,46 @@ a  Receipt of a Transaction containing the events and execution status
   .. list-table::
      :widths: auto
 
-     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1190>`_
+     * - | `blockHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1202>`_
        - | `Hash <#type-hash>`_ 
        - | 32 Bytes - hash of the block where this transaction was in. 
-     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1192>`_
+     * - | `blockNumber <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1204>`_
        - | `BlockType <#type-blocktype>`_ 
        - | block number where this transaction was in. 
-     * - | `contractAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1194>`_
+     * - | `contractAddress <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1206>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - The contract address created, if the transaction was a contract creation, otherwise null. 
-     * - | `cumulativeGasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1196>`_
+     * - | `cumulativeGasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1208>`_
        - | `Quantity <#type-quantity>`_ 
        - | The total amount of gas used when this transaction was executed in the block. 
-     * - | `events <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1216>`_
+     * - | `events <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1228>`_
        - | 
        - | event objects, which are only added in the web3Contract  *(optional)* 
-     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1198>`_
+     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1210>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - The address of the sender. 
-     * - | `gasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1202>`_
+     * - | `gasUsed <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1214>`_
        - | `Quantity <#type-quantity>`_ 
        - | The amount of gas used by this specific transaction alone. 
-     * - | `logs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1204>`_
+     * - | `logs <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1216>`_
        - | `Log <#type-log>`_  []
        - | Array of log objects, which this transaction generated. 
-     * - | `logsBloom <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1206>`_
+     * - | `logsBloom <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1218>`_
        - | `Data <#type-data>`_ 
        - | 256 Bytes - A bloom filter of logs/events generated by contracts during transaction execution. Used to efficiently rule out transactions without expected logs. 
-     * - | `root <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1208>`_
+     * - | `root <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1220>`_
        - | `Hash <#type-hash>`_ 
        - | 32 Bytes - Merkle root of the state trie after the transaction has been executed (optional after Byzantium hard fork EIP609)  *(optional)* 
-     * - | `status <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1210>`_
+     * - | `status <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1222>`_
        - | `Quantity <#type-quantity>`_ 
        - | 0x0 indicates transaction failure , 0x1 indicates transaction success. Set for blocks mined after Byzantium hard fork EIP609, null before. 
-     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1200>`_
+     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1212>`_
        - | `Address <#type-address>`_ 
        - | 20 Bytes - The address of the receiver. null when it’s a contract creation transaction. 
-     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1212>`_
+     * - | `transactionHash <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1224>`_
        - | `Hash <#type-hash>`_ 
        - | 32 Bytes - hash of the transaction. 
-     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1214>`_
+     * - | `transactionIndex <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1226>`_
        - | `Quantity <#type-quantity>`_ 
        - | Integer of the transactions index position in the block. 
 
@@ -6103,7 +6441,7 @@ a  Receipt of a Transaction containing the events and execution status
 ### Type TxRequest
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1343)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1355)
 
 
 
@@ -6112,40 +6450,40 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
   .. list-table::
      :widths: auto
 
-     * - | `args <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1369>`_
+     * - | `args <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1381>`_
        - | ``any`` []
        - | the argument to pass to the method  *(optional)* 
-     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1375>`_
+     * - | `confirmations <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1387>`_
        - | ``number``
        - | number of block to wait before confirming  *(optional)* 
-     * - | `data <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1351>`_
+     * - | `data <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1363>`_
        - | `Data <#type-data>`_ 
        - | the data to send  *(optional)* 
-     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1348>`_
+     * - | `from <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1360>`_
        - | `Address <#type-address>`_ 
        - | address of the account to use  *(optional)* 
-     * - | `gas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1354>`_
+     * - | `gas <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1366>`_
        - | ``number``
        - | the gas needed  *(optional)* 
-     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1357>`_
+     * - | `gasPrice <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1369>`_
        - | ``number``
        - | the gasPrice used  *(optional)* 
-     * - | `method <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1366>`_
+     * - | `method <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1378>`_
        - | ``string``
        - | the ABI of the method to be used  *(optional)* 
-     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1360>`_
+     * - | `nonce <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1372>`_
        - | ``number``
        - | the nonce  *(optional)* 
-     * - | `pk <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1372>`_
+     * - | `pk <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1384>`_
        - | `Hash <#type-hash>`_ 
        - | raw private key in order to sign  *(optional)* 
-     * - | `timeout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1378>`_
+     * - | `timeout <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1390>`_
        - | ``number``
        - | number of seconds to wait for confirmations before giving up. Default: 10  *(optional)* 
-     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1345>`_
+     * - | `to <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1357>`_
        - | `Address <#type-address>`_ 
        - | contract  *(optional)* 
-     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1363>`_
+     * - | `value <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1375>`_
        - | `Quantity <#type-quantity>`_ 
        - | the value in wei  *(optional)* 
 
@@ -6155,7 +6493,7 @@ Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index
 ### Type btc_config
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1998)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2071)
 
 
 bitcoin configuration.
@@ -6164,10 +6502,10 @@ bitcoin configuration.
   .. list-table::
      :widths: auto
 
-     * - | `maxDAP <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2002>`_
+     * - | `maxDAP <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2075>`_
        - | ``number``
        - | max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets.  *(optional)* 
-     * - | `maxDiff <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2007>`_
+     * - | `maxDiff <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L2080>`_
        - | ``number``
        - | max increase (in percent) of the difference between targets when accepting new targets.  *(optional)* 
 
@@ -6177,7 +6515,7 @@ bitcoin configuration.
 ### Type zksync_config
 
 
-Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1092)
+Source: [index.d.ts](https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1104)
 
 
 zksync configuration.
@@ -6186,25 +6524,25 @@ zksync configuration.
   .. list-table::
      :widths: auto
 
-     * - | `account <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1101>`_
+     * - | `account <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1113>`_
        - | ``string``
        - | the account to be used. if not specified, the first signer will be used.  *(optional)* 
-     * - | `create2 <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1117>`_
+     * - | `create2 <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1129>`_
        - | 
        - | create2 arguments  *(optional)* 
-     * - | `musig_pub_keys <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1142>`_
+     * - | `musig_pub_keys <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1154>`_
        - | ``string``
        - | concated packed public keys of the signers of the multisig  *(optional)* 
-     * - | `musig_urls <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1137>`_
+     * - | `musig_urls <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1149>`_
        - | ``string`` []
        - | if used as a musig-signature the  *(optional)* 
-     * - | `provider_url <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1096>`_
+     * - | `provider_url <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1108>`_
        - | ``string``
        - | url of the zksync-server  *(optional)* 
-     * - | `signer_type <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1106>`_
+     * - | `signer_type <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1118>`_
        - | ``'pk'`` | ``'contract'`` | ``'create2'``
        - | defines the type of the signer. Must be one of those 3 values. (default: pk)  *(optional)* 
-     * - | `sync_key <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1112>`_
+     * - | `sync_key <https://github.com/slockit/in3-c/blob/master/wasm/src/index.d.ts#L1124>`_
        - | ``string``
        - | optionaly the private seephrase to use when signing sync-transaction.
          | If ommited this key is derrived from the signer.  *(optional)* 
