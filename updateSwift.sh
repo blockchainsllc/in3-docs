@@ -1,5 +1,6 @@
 #!/bin/sh
 cd ../c/in3-core/swift
+rm -rf .build/documentation/* 
 swift doc generate . --module-name In3
 rm -rf .build/documentation/_* .build/documentation/Home.md ".build/documentation/allTests().md"
 cat docs/*.md > ../../../doc/docs/api-swift.md
