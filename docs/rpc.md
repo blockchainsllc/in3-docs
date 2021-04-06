@@ -37,10 +37,10 @@ Whenever the client is not able to trust the changes of the target (which is the
 2. **verified_dap** : `uint` - the number of the closest already verified dap
 
 
-3. **max_diff** : `uint` - the maximum target difference between 2 verified daps
+3. **max_diff** : `uint` *(optional)* - the maximum target difference between 2 verified daps (default: `5`)
 
 
-4. **max_dap** : `uint` - the maximum amount of daps between 2 verified daps
+4. **max_dap** : `uint` *(optional)* - the maximum amount of daps between 2 verified daps (default: `5`)
 
 
 5. **limit** : `uint` *(optional)* - the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
@@ -74,10 +74,6 @@ This graph shows the usage of this method and visualizes the result from above. 
 
 ![](proofTarget.png)
 
-
-*Returns:*
-
-A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data.
 
 *Proof:*
 
@@ -229,10 +225,6 @@ The following in3-configuration will have an impact on the result:
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
-*Returns:* `bytes32`
-
-the hash of the best block
-
 *Proof:*
 
 Since we can't prove the finality of the latest block we consider the `current block count` - `amount of finality` (set in `in3.finality`-field) as the latest block. The hash of this block will be returned. Setting `in3.finality`=`0` will return will return the hash of the actual latest block.
@@ -297,7 +289,7 @@ Returns data of block for given block hash. The returned level of details depend
 1. **hash** : `bytes32` - The block hash
 
 
-2. **verbosity** : `uint` - 0 or false for hex-encoded data, 1 or true for a json object, and 2 for json object **with** transaction data
+2. **verbosity** : `int` - 0 or false for hex-encoded data, 1 or true for a json object, and 2 for json object **with** transaction data
 
 
 The following in3-configuration will have an impact on the result:
@@ -310,164 +302,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
-
-*Returns:* `object`
-
-the block. 
-- verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
-- verbose `1` or `true`: an object representing the blockheader.
-
-
-
-The return value contains the following properties :
-
-* **hash** : `bytes32` - the block hash (same as provided)
-
-
-* **confirmations** : `int` - The number of confirmations, or -1 if the block is not on the main chain
-
-
-* **height** : `uint` - The block height or index
-
-
-* **version** : `uint` - The block version
-
-
-* **versionHex** : `hex` - The block version formatted in hexadecimal
-
-
-* **merkleroot** : `bytes32` - The merkle root ( 32 bytes )
-
-
-* **time** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
-
-
-* **mediantime** : `uint` - The median block time in seconds since epoch (Jan 1 1970 GMT)
-
-
-* **nonce** : `uint` - The nonce
-
-
-* **bits** : `bytes4` - The bits ( 4 bytes as hex) representing the target
-
-
-* **difficulty** : `uint` - The difficulty
-
-
-* **chainwork** : `uint` - Expected number of hashes required to produce the current chain (in hex)
-
-
-* **nTx** : `uint` - The number of transactions in the block.
-
-
-* **tx** : `btctransaction` - the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
-The tx object supports the following properties :
-
-    * **txid** : `bytes32` - txid
-    
-
-    * **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
-    
-
-    * **hex** : `bytes` - The serialized, hex-encoded data for `txid`
-    
-
-    * **hash** : `bytes32` - The transaction hash (differs from txid for witness transactions)
-    
-
-    * **size** : `uint` - The serialized transaction size
-    
-
-    * **vsize** : `uint` - The virtual transaction size (differs from size for witness transactions)
-    
-
-    * **weight** : `uint` - The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
-    
-
-    * **version** : `uint` - The version
-    
-
-    * **locktime** : `uint` - The lock time
-    
-
-    * **vin** : `object` - array of json objects of incoming txs to be used
-The vin object supports the following properties :
-    
-        * **txid** : `bytes32` - the transaction id
-        
-
-        * **vout** : `uint` - the index of the transaction out to be used
-        
-
-        * **scriptSig** : `object` - the script
-The scriptSig object supports the following properties :
-        
-            * **asm** : `string` - the asm-codes
-            
-
-            * **hex** : `string` - hex representation
-            
-
-        
-
-        * **sequence** : `uint` - The script sequence number
-        
-
-        * **txinwitness** : `string[]` - hex-encoded witness data (if any)
-        
-
-    
-
-    * **vout** : `object` - array of json objects describing the tx outputs
-The vout object supports the following properties :
-    
-        * **value** : `uint` - The Value in BTC
-        
-
-        * **n** : `uint` - the index
-        
-
-        * **scriptPubKey** : `object` - the script pubkey
-The scriptPubKey object supports the following properties :
-        
-            * **asm** : `string` - asm
-            
-
-            * **hex** : `string` - hex representation of the script
-            
-
-            * **reqSigs** : `uint` - the required signatures
-            
-
-            * **type** : `string` - The type, eg 'pubkeyhash'
-            
-
-            * **addresses** : `string[]` - Array of address(each representing a bitcoin adress)
-            
-
-        
-
-    
-
-    * **blockhash** : `bytes32` - the block hash
-    
-
-    * **confirmations** : `uint` - The confirmations
-    
-
-    * **blocktime** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
-    
-
-    * **time** : `uint` - Same as "blocktime"
-    
-
-
-
-* **previousblockhash** : `bytes32` - The hash of the previous block
-
-
-* **nextblockhash** : `bytes32` - The hash of the next block
 
 
 *Proof:*
@@ -572,10 +406,6 @@ The following in3-configuration will have an impact on the result:
 * **verification** : `string` - defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
-*Returns:* `uint`
-
-the current blockheight
-
 *Proof:*
 
 Since we can't prove the finality of the latest block we consider the `current block count` - `amount of finality` (set in `in3.finality`-field) as the latest block. The number of this block will be returned. Setting `in3.finality`=`0` will return the actual current block count.
@@ -641,7 +471,7 @@ Returns data of block header for given block hash. The returned level of details
 1. **hash** : `bytes32` - The block hash
 
 
-2. **verbosity** : `uint` - 0 or false for the hex-encoded data, 1 or true for a json object
+2. **verbosity** : `int` - 0 or false for the hex-encoded data, 1 or true for a json object
 
 
 The following in3-configuration will have an impact on the result:
@@ -651,61 +481,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
-
-*Returns:* `object`
-
-the blockheader. 
-- verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
-- verbose `1` or `true`: an object representing the blockheader.
-
-
-
-The return value contains the following properties :
-
-* **hash** : `bytes32` - the block hash (same as provided)
-
-
-* **confirmations** : `int` - The number of confirmations, or -1 if the block is not on the main chain
-
-
-* **height** : `uint` - The block height or index
-
-
-* **version** : `uint` - The block version
-
-
-* **versionHex** : `hex` - The block version formatted in hexadecimal
-
-
-* **merkleroot** : `bytes32` - The merkle root ( 32 bytes )
-
-
-* **time** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
-
-
-* **mediantime** : `uint` - The median block time in seconds since epoch (Jan 1 1970 GMT)
-
-
-* **nonce** : `uint` - The nonce
-
-
-* **bits** : `bytes4` - The bits ( 4 bytes as hex) representing the target
-
-
-* **difficulty** : `uint` - The difficulty
-
-
-* **chainwork** : `uint` - Expected number of hashes required to produce the current chain (in hex)
-
-
-* **nTx** : `uint` - The number of transactions in the block.
-
-
-* **previousblockhash** : `bytes32` - The hash of the previous block
-
-
-* **nextblockhash** : `bytes32` - The hash of the next block
 
 
 *Proof:*
@@ -824,7 +599,7 @@ Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 
 *Parameters:*
 
-1. **blocknumber** - Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
+1. **blocknumber** : `uint` - Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
 
 
 The following in3-configuration will have an impact on the result:
@@ -837,12 +612,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
-
-*Returns:*
-
-- `blocknumber` is a certain number: the difficulty of this block
-- `blocknumber` is `latest`, `earliest`, `pending` or empty: the difficulty of the latest block (`actual latest block` minus `in3.finality`)
 
 
 *Proof:*
@@ -935,7 +704,7 @@ Returns the raw transaction data. The returned level of details depends on the a
 1. **txid** : `bytes32` - The transaction id
 
 
-2. **verbosity** : `uint` *(optional)* - 0 or false for the hex-encoded data for `txid`, 1 or true for a json object with information about `txid` (default: `1`)
+2. **verbosity** : `int` *(optional)* - 0 or false for the hex-encoded data for `txid`, 1 or true for a json object with information about `txid` (default: `1`)
 
 
 3. **blockhash** : `bytes32` *(optional)* - The block in which to look for the transaction
@@ -951,113 +720,6 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
-
-
-*Returns:* `btctransaction`
-
-- verbose `0` or `false`: a string that is serialized, hex-encoded data for `txid`
-- verbose `1` or `false`: an object representing the transaction.        
-
-
-
-The return value contains the following properties :
-
-* **txid** : `bytes32` - txid
-
-
-* **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
-
-
-* **hex** : `bytes` - The serialized, hex-encoded data for `txid`
-
-
-* **hash** : `bytes32` - The transaction hash (differs from txid for witness transactions)
-
-
-* **size** : `uint` - The serialized transaction size
-
-
-* **vsize** : `uint` - The virtual transaction size (differs from size for witness transactions)
-
-
-* **weight** : `uint` - The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
-
-
-* **version** : `uint` - The version
-
-
-* **locktime** : `uint` - The lock time
-
-
-* **vin** : `object` - array of json objects of incoming txs to be used
-The vin object supports the following properties :
-
-    * **txid** : `bytes32` - the transaction id
-    
-
-    * **vout** : `uint` - the index of the transaction out to be used
-    
-
-    * **scriptSig** : `object` - the script
-The scriptSig object supports the following properties :
-    
-        * **asm** : `string` - the asm-codes
-        
-
-        * **hex** : `string` - hex representation
-        
-
-    
-
-    * **sequence** : `uint` - The script sequence number
-    
-
-    * **txinwitness** : `string[]` - hex-encoded witness data (if any)
-    
-
-
-
-* **vout** : `object` - array of json objects describing the tx outputs
-The vout object supports the following properties :
-
-    * **value** : `uint` - The Value in BTC
-    
-
-    * **n** : `uint` - the index
-    
-
-    * **scriptPubKey** : `object` - the script pubkey
-The scriptPubKey object supports the following properties :
-    
-        * **asm** : `string` - asm
-        
-
-        * **hex** : `string` - hex representation of the script
-        
-
-        * **reqSigs** : `uint` - the required signatures
-        
-
-        * **type** : `string` - The type, eg 'pubkeyhash'
-        
-
-        * **addresses** : `string[]` - Array of address(each representing a bitcoin adress)
-        
-
-    
-
-
-
-* **blockhash** : `bytes32` - the block hash
-
-
-* **confirmations** : `uint` - The confirmations
-
-
-* **blocktime** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
-
-
-* **time** : `uint` - Same as "blocktime"
 
 
 *Proof:*
@@ -1747,7 +1409,7 @@ The return value contains the following properties :
 * **parentHash** : `bytes32` - hash of the parent block.
 
 
-* **nonce** : `uint64` - hash of the generated proof-of-work. `null` when its pending block.
+* **nonce** : `uint` - hash of the generated proof-of-work. `null` when its pending block.
 
 
 * **sha3Uncles** : `bytes32` - SHA3 of the uncles Merkle root in the block.
@@ -3615,10 +3277,6 @@ For the address to sign a signer must be registered.
 2. **message** : `bytes` - the message to sign
 
 
-*Returns:*
-
-the signature (65 bytes) for the given message.
-
 *Example:*
 
 ```sh
@@ -3677,10 +3335,6 @@ The tx object supports the following properties :
 
 
 
-*Returns:*
-
-the raw signed transaction
-
 *Example:*
 
 ```sh
@@ -3725,10 +3379,6 @@ If not the number should not be considered sceure or used in production.
 1. **seed** : `bytes` *(optional)* - the seed. If given the result will be deterministic.
 
 
-*Returns:*
-
-the 32byte random data
-
 *Example:*
 
 ```sh
@@ -3764,10 +3414,6 @@ the Network Version (currently 1)
 
 *Parameters:* - 
 
-*Returns:*
-
-the Version number
-
 ### sha256
 
 
@@ -3780,10 +3426,6 @@ No proof needed, since the client will execute this locally.
 
 1. **data** : `bytes` - data to hash
 
-
-*Returns:*
-
-the 32byte hash of the data
 
 *Example:*
 
@@ -3816,10 +3458,6 @@ Returns the underlying client version. See [web3_clientversion](https://eth.wiki
 
 *Parameters:* - 
 
-*Returns:*
-
-when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
-
 ### web3_sha3
 
 
@@ -3834,10 +3472,6 @@ No proof needed, since the client will execute this locally.
 
 1. **data** : `bytes` - data to hash
 
-
-*Returns:*
-
-the 32byte hash of the data
 
 *Example:*
 
@@ -3924,10 +3558,6 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 2. **data** : `hex` - the data to decode (usually the result of a eth_call)
 
 
-*Returns:* `array`
-
-a array (if more then one arguments in the result-type) or the the value after decodeing.
-
 *Example:*
 
 ```sh
@@ -3969,12 +3599,8 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 1. **signature** : `string` - the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
 
 
-2. **params** : `array` - a array of arguments. the number of arguments must match the arguments in the signature.
+2. **params** : `any` - a array of arguments. the number of arguments must match the arguments in the signature.
 
-
-*Returns:* `hex`
-
-the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
 
 *Example:*
 
@@ -4048,10 +3674,6 @@ clears the incubed cache (usually found in the .in3-folder)
 
 *Parameters:* - 
 
-*Returns:*
-
-true indicating the success
-
 *Example:*
 
 ```sh
@@ -4086,10 +3708,6 @@ Will convert an upper or lowercase Ethereum address to a checksum address.  (See
 
 2. **useChainId** : `bool` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
 
-
-*Returns:*
-
-the address-string using the upper/lowercase hex characters.
 
 *Example:*
 
@@ -4418,10 +4036,6 @@ decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition]
 2. **passphrase** : `string` - the password to decrypt it.
 
 
-*Returns:*
-
-a raw private key (32 bytes)
-
 *Example:*
 
 ```sh
@@ -4482,19 +4096,6 @@ extracts the public key and address from signature.
 3. **sigtype** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
 
 
-*Returns:* `object`
-
-the extracted public key and address
-
-
-The return value contains the following properties :
-
-* **publicKey** : `bytes` - the public Key of the signer (64 bytes)
-
-
-* **address** : `address` - the address
-
-
 *Example:*
 
 ```sh
@@ -4543,10 +4144,6 @@ For Javascript implementations, a [library](https://www.npmjs.com/package/idna-u
 2. **field** : `string` *(optional)* - the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain) (default: `"addr"`)
 
 
-*Returns:*
-
-the value of the specified field
-
 *Example:*
 
 ```sh
@@ -4579,7 +4176,7 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 
 *Parameters:*
 
-1. **value** : `uint or bytes` - the value in wei
+1. **value** : `bytes | uint` - the value in wei
 
     *Example* : value: "0x234324abdef"
 
@@ -4589,10 +4186,6 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 
 3. **digits** : `uint` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
 
-
-*Returns:*
-
-the value as string.
 
 *Example:*
 
@@ -4927,10 +4520,6 @@ extracts the address from a private key.
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
 
 
-*Returns:*
-
-the address
-
 *Example:*
 
 ```sh
@@ -4964,10 +4553,6 @@ extracts the public key from a private key.
 
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
 
-
-*Returns:*
-
-the public key as 64 bytes
 
 *Example:*
 
@@ -5025,10 +4610,6 @@ The tx object supports the following properties :
     
 
 
-
-*Returns:*
-
-the unsigned raw transaction as hex.
 
 *Example:*
 
@@ -5167,31 +4748,6 @@ signs the given data.
 3. **msgType** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
 
 
-*Returns:* `object`
-
-the signature
-
-
-The return value contains the following properties :
-
-* **message** : `bytes` - original message used
-
-
-* **messageHash** : `bytes32` - the hash the signature is based on
-
-
-* **signature** : `bytes` - the signature (65 bytes)
-
-
-* **r** : `bytes32` - the x-value of the EC-Point
-
-
-* **s** : `bytes32` - the y-value of the EC-Point
-
-
-* **v** : `byte` - the recovery value (0|1) + 27
-
-
 *Example:*
 
 ```sh
@@ -5245,10 +4801,6 @@ signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can b
 2. **from** : `address` - the account to sign
 
 
-*Returns:*
-
-the raw transaction with signature.
-
 *Example:*
 
 ```sh
@@ -5281,17 +4833,13 @@ converts the given value into wei.
 
 *Parameters:*
 
-1. **value** : `string or uint` - the value, which may be floating number as string
+1. **value** : `string | uint` - the value, which may be floating number as string
 
     *Example* : value: "0.9"
 
 
 2. **unit** : `string` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
 
-
-*Returns:*
-
-the value in wei as hex.
 
 *Example:*
 
@@ -5517,15 +5065,11 @@ Fetches the data for a requested ipfs-hash. If the node is not able to resolve t
 
 *Parameters:*
 
-1. **ipfshash** : `ipfshash` - the ipfs multi hash
+1. **ipfshash** : `string` - the ipfs multi hash
 
 
 2. **encoding** : `string` - the encoding used for the response. ( `hex` , `base64` or `utf8`)
 
-
-*Returns:*
-
-the content matching the requested hash encoded in the defined encoding.
 
 *Proof:*
 
@@ -5574,10 +5118,6 @@ Even if the node stores the content there is no gurantee it will do it forever.
 
 2. **encoding** : `string` - the encoding used for the request. ( `hex` , `base64` or `utf8`)
 
-
-*Returns:*
-
-the ipfs multi hash
 
 *Example:*
 
