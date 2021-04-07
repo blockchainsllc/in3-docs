@@ -67,13 +67,32 @@ returns a hex representation of the blockheader
 public func getblockheaderAsHex(hash: String) -> Future<String?>
 ```
 
+  - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+
+  - verbose `1` or `true`: an object representing the blockheader.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getblockheaderAsHex(hash: "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d
+     }
+}
+ 
+```
+
 **Parameters**
 
   - hash: The block hash
 
 **Returns**
 
-the blockheader.     /// - verbose `0` or `false`:​ a hex string with 80 bytes representing the blockheader    /// - verbose `1` or `true`:​ an object representing the blockheader.    ///
+the blockheader.
 
 #### getblockheader(hash:)
 
@@ -83,13 +102,47 @@ returns the blockheader
 public func getblockheader(hash: String) -> Future<Btcblockheader?>
 ```
 
+  - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+
+  - verbose `1` or `true`: an object representing the blockheader.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getblockheader(hash: "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          hash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+//          confirmations: 8268
+//          height: 624958
+//          version: 536928256
+//          versionHex: 2000
+//          merkleroot: d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb
+//          time: 1586333924
+//          mediantime: 1586332639
+//          nonce: 1985217615
+//          bits: 17143b41
+//          difficulty: 13912524048945.91
+//          chainwork: 00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494
+//          nTx: 33
+//          previousblockhash: 00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49
+//          nextblockhash: 0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343
+     }
+}
+ 
+```
+
 **Parameters**
 
   - hash: The block hash
 
 **Returns**
 
-the blockheader.     /// - verbose `0` or `false`:​ a hex string with 80 bytes representing the blockheader    /// - verbose `1` or `true`:​ an object representing the blockheader.    ///
+the blockheader.
 
 #### getBlockAsHex(hash:)
 
@@ -99,13 +152,32 @@ returns a hex representation of the block
 public func getBlockAsHex(hash: String) -> Future<String?>
 ```
 
+  - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+
+  - verbose `1` or `true`: an object representing the blockheader.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getBlockAsHex(hash: "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d
+     }
+}
+ 
+```
+
 **Parameters**
 
   - hash: The block hash
 
 **Returns**
 
-the block.     /// - verbose `0` or `false`:​ a hex string with 80 bytes representing the blockheader    /// - verbose `1` or `true`:​ an object representing the blockheader.    ///
+the block.
 
 #### getBlock(hash:)
 
@@ -115,13 +187,51 @@ returns the block with transactionhashes
 public func getBlock(hash: String) -> Future<Btcblock?>
 ```
 
+  - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+
+  - verbose `1` or `true`: an object representing the blockheader.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getBlock(hash: "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          hash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+//          confirmations: 8268
+//          height: 624958
+//          version: 536928256
+//          versionHex: 2000
+//          merkleroot: d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb
+//          time: 1586333924
+//          mediantime: 1586332639
+//          nonce: 1985217615
+//          bits: 17143b41
+//          difficulty: 13912524048945.91
+//          chainwork: 00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494
+//          tx:
+//            - d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290
+//            - ...
+//            - 6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919
+//          nTx: 33
+//          previousblockhash: 00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49
+//          nextblockhash: 0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343
+     }
+}
+ 
+```
+
 **Parameters**
 
   - hash: The block hash
 
 **Returns**
 
-the block.     /// - verbose `0` or `false`:​ a hex string with 80 bytes representing the blockheader    /// - verbose `1` or `true`:​ an object representing the blockheader.    ///
+the block.
 
 #### getBlockWithTx(hash:)
 
@@ -131,13 +241,51 @@ returns the block with full transactions
 public func getBlockWithTx(hash: String) -> Future<BtcblockWithTx?>
 ```
 
+  - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+
+  - verbose `1` or `true`: an object representing the blockheader.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getBlockWithTx(hash: "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          hash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+//          confirmations: 8268
+//          height: 624958
+//          version: 536928256
+//          versionHex: 2000
+//          merkleroot: d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb
+//          time: 1586333924
+//          mediantime: 1586332639
+//          nonce: 1985217615
+//          bits: 17143b41
+//          difficulty: 13912524048945.91
+//          chainwork: 00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494
+//          tx:
+//            - d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290
+//            - ...
+//            - 6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919
+//          nTx: 33
+//          previousblockhash: 00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49
+//          nextblockhash: 0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343
+     }
+}
+ 
+```
+
 **Parameters**
 
   - hash: The block hash
 
 **Returns**
 
-the block.     /// - verbose `0` or `false`:​ a hex string with 80 bytes representing the blockheader    /// - verbose `1` or `true`:​ an object representing the blockheader.    ///
+the block.
 
 #### getRawTransactionAsHex(txid:blockhash:)
 
@@ -147,21 +295,21 @@ returns a hex representation of the tx
 public func getRawTransactionAsHex(txid: String, blockhash: String? = nil) -> Future<String?>
 ```
 
-**Parameters**
+  - verbose `1` or `false`: an object representing the transaction.
 
-  - txid: The transaction id
-  - blockhash: The block in which to look for the transaction
-
-**Returns**
-
-  - verbose `0` or `false`:​ a string that is serialized, hex-encoded data for `txid`    /// - verbose `1` or `false`:​ an object representing the transaction.            ///
-
-#### getRawTransaction(txid:blockhash:)
-
-returns the raw transaction
+**Example**
 
 ``` swift
-public func getRawTransaction(txid: String, blockhash: String? = nil) -> Future<Btctransaction?>
+BtcAPI(in3).getRawTransactionAsHex(txid: "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", verbosity: true) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -171,7 +319,93 @@ public func getRawTransaction(txid: String, blockhash: String? = nil) -> Future<
 
 **Returns**
 
-  - verbose `0` or `false`:​ a string that is serialized, hex-encoded data for `txid`    /// - verbose `1` or `false`:​ an object representing the transaction.            ///
+  - verbose `0` or `false`:​ a string that is serialized, hex-encoded data for `txid`
+
+#### getRawTransaction(txid:blockhash:)
+
+returns the raw transaction
+
+``` swift
+public func getRawTransaction(txid: String, blockhash: String? = nil) -> Future<Btctransaction?>
+```
+
+  - verbose `1` or `false`: an object representing the transaction.
+
+**Example**
+
+``` swift
+BtcAPI(in3).getRawTransaction(txid: "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf", verbosity: true) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          in_active_chain: true
+//          txid: f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf
+//          hash: f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf
+//          version: 1
+//          size: 518
+//          vsize: 518
+//          weight: 2072
+//          locktime: 0
+//          vin:
+//            - txid: 0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c
+//              vout: 0
+//              scriptSig:
+//                asm: 30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874
+//                hex: 4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874
+//              sequence: 4294967295
+//            - txid: 869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044
+//              vout: 0
+//              scriptSig:
+//                asm: 3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d
+//                hex: 483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d
+//              sequence: 4294967295
+//            - txid: 8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff
+//              vout: 1
+//              scriptSig:
+//                asm: 304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da
+//                hex: 47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da
+//              sequence: 4294967295
+//          vout:
+//            - value: 0.00017571
+//              n: 0
+//              scriptPubKey:
+//                asm: OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY
+//                  OP_CHECKSIG
+//                hex: 76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac
+//                reqSigs: 1
+//                type: pubkeyhash
+//                addresses:
+//                  - 18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU
+//            - value: 0.00915732
+//              n: 1
+//              scriptPubKey:
+//                asm: OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL
+//                hex: a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87
+//                reqSigs: 1
+//                type: scripthash
+//                addresses:
+//                  - 3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw
+//          hex: 01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000
+//          blockhash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+//          confirmations: 15307
+//          time: 1586333924
+//          blocktime: 1586333924
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - txid: The transaction id
+  - blockhash: The block in which to look for the transaction
+
+**Returns**
+
+  - verbose `0` or `false`:​ a string that is serialized, hex-encoded data for `txid`
 
 #### getblockcount()
 
@@ -179,6 +413,21 @@ Returns the number of blocks in the longest blockchain.
 
 ``` swift
 public func getblockcount() -> Future<UInt64>
+```
+
+**Example**
+
+``` swift
+BtcAPI(in3).getblockcount() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 640387
+     }
+}
+ 
 ```
 
 **Returns**
@@ -193,13 +442,30 @@ Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 public func getdifficulty(blocknumber: UInt64) -> Future<UInt64>
 ```
 
+  - `blocknumber` is `latest`, `earliest`, `pending` or empty: the difficulty of the latest block (`actual latest block` minus `in3.finality`)
+
+**Example**
+
+``` swift
+BtcAPI(in3).getdifficulty(blocknumber: 631910) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 15138043247082.88
+     }
+}
+ 
+```
+
 **Parameters**
 
   - blocknumber: Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
 
 **Returns**
 
-  - `blocknumber` is a certain number:​ the difficulty of this block    /// - `blocknumber` is `latest`, `earliest`, `pending` or empty:​ the difficulty of the latest block (`actual latest block` minus `in3.finality`)    ///
+  - `blocknumber` is a certain number:​ the difficulty of this block
 
 #### proofTarget(target_dap:verified_dap:max_diff:max_dap:limit:)
 
@@ -217,6 +483,46 @@ public func proofTarget(target_dap: UInt64, verified_dap: UInt64, max_diff: UInt
 
   - Parameter max\_dap : the maximum amount of daps between 2 verified daps
 
+**Example**
+
+``` swift
+BtcAPI(in3).proofTarget(target_dap: 230, verified_dap: 200, max_diff: 5, max_dap: 5, limit: 15) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          - dap: 205
+//            block: 0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284
+//            final: 0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b
+//            cbtx: 0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000
+//            cbtxMerkleProof: 0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4
+//          - dap: 210
+//            block: 0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce
+//            final: 0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d
+//            cbtx: 0x01000000...c075061b4b6e434d696e657242332d50314861...000000
+//            cbtxMerkleProof: 0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d
+//          - dap: 215
+//            block: 0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64
+//            final: 0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e
+//            cbtx: 0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000
+//            cbtxMerkleProof: 0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61
+//          - dap: 220
+//            block: 0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e
+//            final: 0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5
+//            cbtx: 0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000
+//            cbtxMerkleProof: 0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4
+//          - dap: 225
+//            block: 0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f
+//            final: 0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240
+//            cbtx: 0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000
+//            cbtxMerkleProof: 0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46
+     }
+}
+ 
+```
+
 **Parameters**
 
   - limit: the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
@@ -231,6 +537,21 @@ Returns the hash of the best (tip) block in the longest blockchain.
 
 ``` swift
 public func getbestblockhash() -> Future<String>
+```
+
+**Example**
+
+``` swift
+BtcAPI(in3).getbestblockhash() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6
+     }
+}
+ 
 ```
 
 **Returns**
@@ -305,6 +626,13 @@ See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
 
 No proof needed, since the client will execute this locally.
 
+**Example**
+
+``` swift
+let result = try EthAPI(in3).keccak(data: "0x1234567890")
+// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+```
+
 **Parameters**
 
   - data: data to hash
@@ -325,6 +653,13 @@ See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
 
 No proof needed, since the client will execute this locally.
 
+**Example**
+
+``` swift
+let result = try EthAPI(in3).sha3(data: "0x1234567890")
+// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+```
+
 **Parameters**
 
   - data: data to hash
@@ -342,6 +677,13 @@ public func sha256(data: String) throws -> String
 ```
 
 No proof needed, since the client will execute this locally.
+
+**Example**
+
+``` swift
+let result = try EthAPI(in3).sha256(data: "0x1234567890")
+// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+```
 
 **Parameters**
 
@@ -373,6 +715,13 @@ If not the number should not be considered sceure or used in production.
 public func createKey(seed: String? = nil) throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try EthAPI(in3).createKey()
+// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+```
+
 **Parameters**
 
   - seed: the seed. If given the result will be deterministic.
@@ -397,6 +746,22 @@ By adding a prefix to the message makes the calculated signature recognisable as
 
 For the address to sign a signer must be registered.
 
+**Example**
+
+``` swift
+EthAPI(in3).sign(account: "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", message: "0xdeadbeaf") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
+//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - account: the account to sign with
@@ -412,6 +777,22 @@ Signs a transaction that can be submitted to the network at a later time using w
 
 ``` swift
 public func signTransaction(tx: EthTransaction) -> Future<String>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).signTransaction(tx: {"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
+//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -435,43 +816,256 @@ See [eth\_blockNumber](https://eth.wiki/json-rpc/API#eth_blockNumber) for spec.
 No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others.
 With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
 
+**Example**
+
+``` swift
+EthAPI(in3).blockNumber() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xb8a2a5"
+     }
+}
+ 
+```
+
 **Returns**
 
 the highest known blocknumber
 
-#### getBlockByNumber(blockNumber:fullTx:)
+#### getBlockByNumber(blockNumber:)
 
-returns information about a block by block number.
+returns the given Block by number with transactionHashes
 
 ``` swift
-public func getBlockByNumber(blockNumber: UInt64, fullTx: Bool) -> Future<EthBlockdata>
+public func getBlockByNumber(blockNumber: UInt64) -> Future<EthBlockdataWithTxHashes?>
 ```
 
-See [eth\_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) for spec.
+**Example**
+
+``` swift
+EthAPI(in3).getBlockByNumber(blockNumber: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          author: "0x0000000000000000000000000000000000000000"
+//          difficulty: "0x2"
+//          extraData: 0x696e667572612d696f0000000000000...31570f1e500
+//          gasLimit: "0x7a1200"
+//          gasUsed: "0x20e145"
+//          hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+//          logsBloom: 0x000008000000000000...00400100000000080
+//          miner: "0x0000000000000000000000000000000000000000"
+//          number: "0x449956"
+//          parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+//          receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+//          sealFields:
+//            - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+//            - "0x880000000000000000"
+//          sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+//          size: "0x74b"
+//          stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+//          timestamp: "0x605aec86"
+//          totalDifficulty: "0x6564de"
+//          transactions:
+//            - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+//            - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+//            - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+//            - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+//            - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+//            - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+//          transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+//          uncles: []
+     }
+}
+ 
+```
 
 **Parameters**
 
   - blockNumber: the blockNumber or one of `latest`, `earliest`or `pending`
-  - fullTx: if true the full transactions are contained in the result.
 
 **Returns**
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
-#### getBlockByHash(blockHash:fullTx:)
+#### getBlockByNumberWithTx(blockNumber:)
 
-Returns information about a block by hash.
+returns the given Block by number with full transaction data
 
 ``` swift
-public func getBlockByHash(blockHash: String, fullTx: Bool) -> Future<EthBlockdata>
+public func getBlockByNumberWithTx(blockNumber: UInt64) -> Future<EthBlockdata?>
 ```
 
-See [eth\_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for spec.
+**Example**
+
+``` swift
+EthAPI(in3).getBlockByNumberWithTx(blockNumber: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          author: "0x0000000000000000000000000000000000000000"
+//          difficulty: "0x2"
+//          extraData: 0x696e667572612d696f0000000000000...31570f1e500
+//          gasLimit: "0x7a1200"
+//          gasUsed: "0x20e145"
+//          hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+//          logsBloom: 0x000008000000000000...00400100000000080
+//          miner: "0x0000000000000000000000000000000000000000"
+//          number: "0x449956"
+//          parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+//          receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+//          sealFields:
+//            - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+//            - "0x880000000000000000"
+//          sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+//          size: "0x74b"
+//          stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+//          timestamp: "0x605aec86"
+//          totalDifficulty: "0x6564de"
+//          transactions:
+//            - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+//            - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+//            - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+//            - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+//            - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+//            - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+//          transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+//          uncles: []
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - blockNumber: the blockNumber or one of `latest`, `earliest`or `pending`
+
+**Returns**
+
+the blockdata, or in case the block with that number does not exist, `null` will be returned.
+
+#### getBlockByHash(blockHash:)
+
+returns the given Block by hash with transactionHashes
+
+``` swift
+public func getBlockByHash(blockHash: String) -> Future<EthBlockdataWithTxHashes?>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).getBlockByHash(blockHash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          author: "0x0000000000000000000000000000000000000000"
+//          difficulty: "0x2"
+//          extraData: 0x696e667572612d696f0000000000000...31570f1e500
+//          gasLimit: "0x7a1200"
+//          gasUsed: "0x20e145"
+//          hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+//          logsBloom: 0x000008000000000000...00400100000000080
+//          miner: "0x0000000000000000000000000000000000000000"
+//          number: "0x449956"
+//          parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+//          receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+//          sealFields:
+//            - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+//            - "0x880000000000000000"
+//          sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+//          size: "0x74b"
+//          stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+//          timestamp: "0x605aec86"
+//          totalDifficulty: "0x6564de"
+//          transactions:
+//            - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+//            - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+//            - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+//            - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+//            - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+//            - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+//          transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+//          uncles: []
+     }
+}
+ 
+```
 
 **Parameters**
 
   - blockHash: the blockHash of the block
-  - fullTx: if true the full transactions are contained in the result.
+
+**Returns**
+
+the blockdata, or in case the block with that number does not exist, `null` will be returned.
+
+#### getBlockByHashWithTx(blockHash:)
+
+returns the given Block by hash with full transaction data
+
+``` swift
+public func getBlockByHashWithTx(blockHash: String) -> Future<EthBlockdata?>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).getBlockByHashWithTx(blockHash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          author: "0x0000000000000000000000000000000000000000"
+//          difficulty: "0x2"
+//          extraData: 0x696e667572612d696f0000000000000...31570f1e500
+//          gasLimit: "0x7a1200"
+//          gasUsed: "0x20e145"
+//          hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+//          logsBloom: 0x000008000000000000...00400100000000080
+//          miner: "0x0000000000000000000000000000000000000000"
+//          number: "0x449956"
+//          parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+//          receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+//          sealFields:
+//            - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+//            - "0x880000000000000000"
+//          sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+//          size: "0x74b"
+//          stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+//          timestamp: "0x605aec86"
+//          totalDifficulty: "0x6564de"
+//          transactions:
+//            - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+//            - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+//            - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+//            - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+//            - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+//            - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+//          transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+//          uncles: []
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - blockHash: the blockHash of the block
 
 **Returns**
 
@@ -551,6 +1145,36 @@ public func getTransactionByBlockHashAndIndex(blockHash: String, index: UInt64) 
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockHashAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockHashAndIndex) for more details.
 
+**Example**
+
+``` swift
+EthAPI(in3).getTransactionByBlockHashAndIndex(blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee", index: "0xd5") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+//          blockNumber: "0xb8a4a9"
+//          from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+//          gas: "0xac6b"
+//          gasPrice: "0x1bf08eb000"
+//          hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+//          input: 0x095ea7b300000000000000000000000...a7640000
+//          nonce: "0xa"
+//          to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+//          transactionIndex: "0xd5"
+//          value: "0x0"
+//          type: "0x0"
+//          v: "0x25"
+//          r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+//          s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - blockHash: the blockhash containing the transaction.
@@ -570,6 +1194,36 @@ public func getTransactionByBlockNumberAndIndex(blockNumber: UInt64, index: UInt
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockNumberAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockNumberAndIndex) for more details.
 
+**Example**
+
+``` swift
+EthAPI(in3).getTransactionByBlockNumberAndIndex(blockNumber: "0xb8a4a9", index: "0xd5") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+//          blockNumber: "0xb8a4a9"
+//          from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+//          gas: "0xac6b"
+//          gasPrice: "0x1bf08eb000"
+//          hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+//          input: 0x095ea7b300000000000000000000000...a7640000
+//          nonce: "0xa"
+//          to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+//          transactionIndex: "0xd5"
+//          value: "0x0"
+//          type: "0x0"
+//          v: "0x25"
+//          r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+//          s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - blockNumber: the block number containing the transaction.
@@ -588,6 +1242,36 @@ public func getTransactionByHash(txHash: String) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByHash](https://eth.wiki/json-rpc/API#eth_getTransactionByHash) for more details.
+
+**Example**
+
+``` swift
+EthAPI(in3).getTransactionByHash(txHash: "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+//          blockNumber: "0xb8a4a9"
+//          from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+//          gas: "0xac6b"
+//          gasPrice: "0x1bf08eb000"
+//          hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+//          input: 0x095ea7b300000000000000000000000...a7640000
+//          nonce: "0xa"
+//          to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+//          transactionIndex: "0xd5"
+//          value: "0x0"
+//          type: "0x0"
+//          v: "0x25"
+//          r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+//          s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+     }
+}
+ 
+```
 
 **Parameters**
 
@@ -617,6 +1301,21 @@ gets the balance of an account for a given block
 public func getBalance(account: String, block: UInt64) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+EthAPI(in3).getBalance(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b", block: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x20599832af6ec00"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - account: address of the account
@@ -632,6 +1331,21 @@ gets the nonce or number of transaction sent from this account at a given block
 
 ``` swift
 public func getTransactionCount(account: String, block: UInt64) -> Future<String>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).getTransactionCount(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b", block: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x5"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -651,6 +1365,21 @@ gets the code of a given contract
 public func getCode(account: String, block: UInt64) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+EthAPI(in3).getCode(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", block: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 0x6080604052348...6c634300050a0040
+     }
+}
+ 
+```
+
 **Parameters**
 
   - account: address of the account
@@ -666,6 +1395,21 @@ gets the storage value of a given key
 
 ``` swift
 public func getStorageAt(account: String, key: String, block: UInt64) -> Future<String>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).getStorageAt(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", key: "0x0", block: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x19"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -751,6 +1495,21 @@ calls a function of a contract (or simply executes the evm opcodes) and returns 
 public func call(tx: EthTx, block: UInt64) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+EthAPI(in3).call(tx: {"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"}, block: "latest") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 0x0000000000000000000000000...
+     }
+}
+ 
+```
+
 **Parameters**
 
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
@@ -766,6 +1525,46 @@ The Receipt of a Transaction. For Details, see [eth\_getTransactionReceipt](http
 
 ``` swift
 public func getTransactionReceipt(txHash: String) -> Future<EthTransactionReceipt?>
+```
+
+**Example**
+
+``` swift
+EthAPI(in3).getTransactionReceipt(txHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+//          blockNumber: "0x8c1e39"
+//          contractAddress: null
+//          cumulativeGasUsed: "0x2466d"
+//          gasUsed: "0x2466d"
+//          logs:
+//            - address: "0x85ec283a3ed4b66df4da23656d4bf8a507383bca"
+//              blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+//              blockNumber: "0x8c1e39"
+//              data: 0x00000000000...
+//              logIndex: "0x0"
+//              removed: false
+//              topics:
+//                - "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8"
+//                - "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6"
+//                - "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+//              transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+//              transactionIndex: "0x0"
+//              transactionLogIndex: "0x0"
+//              type: mined
+//          logsBloom: 0x00000000000000000000200000...
+//          root: null
+//          status: "0x1"
+//          transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+//          transactionIndex: "0x0"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -916,6 +1715,13 @@ based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spe
 public func abiEncode(signature: String, params: [AnyObject]) throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).abiEncode(signature: "getBalance(address)", params: ["0x1234567890123456789012345678901234567890"])
+// result = "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+```
+
 **Parameters**
 
   - signature: the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
@@ -933,6 +1739,15 @@ based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spe
 public func abiDecode(signature: String, data: String) throws -> [RPCObject]
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).abiDecode(signature: "(address,uint256)", data: "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005")
+// result = 
+//          - "0x1234567890123456789012345678901234567890"
+//          - "0x05"
+```
+
 **Parameters**
 
   - signature: the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
@@ -948,6 +1763,13 @@ Will convert an upper or lowercase Ethereum address to a checksum address.  (See
 
 ``` swift
 public func checksumAddress(address: String, useChainId: Bool? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try In3API(in3).checksumAddress(address: "0x1fe2e9bf29aa1938859af64c413361227d04059a", useChainId: false)
+// result = "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
 ```
 
 **Parameters**
@@ -969,6 +1791,21 @@ For Javascript implementations, a [library](https:​//www.npmjs.com/package/idn
 public func ens(name: String, field: String? = "addr") -> Future<String>
 ```
 
+**Example**
+
+``` swift
+In3API(in3).ens(name: "cryptokitties.eth", field: "addr") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - name: the domain name UTS46 compliant string.
@@ -986,6 +1823,13 @@ converts the given value into wei.
 public func toWei(value: String, unit: String? = "eth") throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).toWei(value: "20.0009123", unit: "eth")
+// result = "0x01159183c4793db800"
+```
+
 **Parameters**
 
   - value: the value, which may be floating number as string
@@ -1001,6 +1845,13 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 
 ``` swift
 public func fromWei(value: String, unit: String, digits: UInt64? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try In3API(in3).fromWei(value: "0x234324abadefdef", unit: "eth", digits: 3)
+// result = "0.158"
 ```
 
 **Parameters**
@@ -1021,6 +1872,13 @@ extracts the address from a private key.
 public func pk2address(pk: String) throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).pk2address(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
+// result = "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
+```
+
 **Parameters**
 
   - pk: the 32 bytes private key as hex.
@@ -1037,6 +1895,14 @@ extracts the public key from a private key.
 public func pk2public(pk: String) throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).pk2public(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
+// result = "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f7818\
+//          6577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
+```
+
 **Parameters**
 
   - pk: the 32 bytes private key as hex.
@@ -1051,6 +1917,16 @@ extracts the public key and address from signature.
 
 ``` swift
 public func ecrecover(msg: String, sig: String, sigtype: String? = "raw") throws -> In3Ecrecover
+```
+
+**Example**
+
+``` swift
+let result = try In3API(in3).ecrecover(msg: "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999", sig: "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c", sigtype: "hash")
+// result = 
+//          publicKey: "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c\
+//            4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb"
+//          address: "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
 ```
 
 **Parameters**
@@ -1071,6 +1947,22 @@ prepares a Transaction by filling the unspecified values and returens the unsign
 public func prepareTx(tx: In3Transaction) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+In3API(in3).prepareTx(tx: {"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a0850100000000\
+//          80018080"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
@@ -1085,6 +1977,23 @@ signs the given raw Tx (as prepared by in3\_prepareTx ). The resulting data can 
 
 ``` swift
 public func signTx(tx: String, from: String) -> Future<String>
+```
+
+**Example**
+
+``` swift
+In3API(in3).signTx(tx: "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000\
+//          008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755\
+//          f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1102,6 +2011,28 @@ signs the given data.
 
 ``` swift
 public func signData(msg: String, account: String, msgType: String? = "raw") -> Future<In3SignData>
+```
+
+**Example**
+
+``` swift
+In3API(in3).signData(msg: "0x0102030405060708090a0b0c0d0e0f", account: "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852", msgType: "raw") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          message: "0x0102030405060708090a0b0c0d0e0f"
+//          messageHash: "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67"
+//          signature: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792\
+//            264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b"
+//          r: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579"
+//          s: "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152"
+//          v: 27
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1122,6 +2053,13 @@ decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition]
 public func decryptKey(key: String, passphrase: String) throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).decryptKey(key: {"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}, passphrase: "test")
+// result = "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
+```
+
 **Parameters**
 
   - key: Keydata as object as defined in the keystorefile
@@ -1139,6 +2077,13 @@ clears the incubed cache (usually found in the .in3-folder)
 public func cacheClear() throws -> String
 ```
 
+**Example**
+
+``` swift
+let result = try In3API(in3).cacheClear()
+// result = true
+```
+
 **Returns**
 
 true indicating the success
@@ -1149,6 +2094,44 @@ fetches and verifies the nodeList from a node
 
 ``` swift
 public func nodeList(limit: UInt64? = nil, seed: String? = nil, addresses: [String]? = nil) -> Future<In3NodeList>
+```
+
+**Example**
+
+``` swift
+In3API(in3).nodeList(limit: 2, seed: "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b", addresses: []) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          totalServers: 5
+//          contract: "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5"
+//          registryId: "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+//          lastBlockNumber: 8669495
+//          nodes:
+//            - url: https://in3-v2.slock.it/mainnet/nd-3
+//              address: "0x945F75c0408C0026a3CD204d36f5e47745182fd4"
+//              index: 2
+//              deposit: "10000000000000000"
+//              props: 29
+//              timeout: 3600
+//              registerTime: 1570109570
+//              weight: 2000
+//              proofHash: "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+//            - url: https://in3-v2.slock.it/mainnet/nd-5
+//              address: "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2"
+//              index: 4
+//              deposit: "10000000000000000"
+//              props: 29
+//              timeout: 3600
+//              registerTime: 1570109690
+//              weight: 2000
+//              proofHash: "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1174,6 +2157,27 @@ public func sign(blocks: In3Blocks) -> Future<In3Sign>
 Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit,
 per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks\!
 
+**Example**
+
+``` swift
+In3API(in3).sign(blocks: {"blockNumber":8770580}) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          - blockHash: "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8"
+//            block: 8770580
+//            r: "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337"
+//            s: "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596"
+//            v: 28
+//            msgHash: "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - blocks: array of requested blocks.
@@ -1188,6 +2192,27 @@ Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired f
 
 ``` swift
 public func whitelist(address: String) -> Future<In3Whitelist>
+```
+
+**Example**
+
+``` swift
+In3API(in3).whitelist(address: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          totalServers: 2
+//          contract: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+//          lastBlockNumber: 1546354
+//          nodes:
+//            - "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+//            - "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1206,6 +2231,21 @@ adds a raw private key as signer, which allows signing transactions.
 public func addRawKey(pk: String) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+In3API(in3).addRawKey(pk: "0x1234567890123456789012345678901234567890123456789012345678901234") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - pk: the 32byte long private key as hex string.
@@ -1220,6 +2260,23 @@ returns a array of account-addresss the incubed client is able to sign with. In 
 
 ``` swift
 public func accounts() -> Future<String>
+```
+
+**Example**
+
+``` swift
+In3API(in3).accounts() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          - "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+//          - "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+     }
+}
+ 
 ```
 
 **Returns**
@@ -1245,6 +2302,21 @@ Fetches the data for a requested ipfs-hash. If the node is not able to resolve t
 public func get(ipfshash: String, encoding: String) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+IpfsAPI(in3).get(ipfshash: "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD", encoding: "utf8") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = I love Incubed
+     }
+}
+ 
+```
+
 **Parameters**
 
   - ipfshash: the ipfs multi hash
@@ -1262,6 +2334,21 @@ Even if the node stores the content there is no gurantee it will do it forever.
 
 ``` swift
 public func put(data: String, encoding: String) -> Future<String>
+```
+
+**Example**
+
+``` swift
+IpfsAPI(in3).put(data: "I love Incubed", encoding: "utf8") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1319,6 +2406,23 @@ returns the contract address
 public func contractAddress() -> Future<ZksyncContractAddress>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).contractAddress() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          govContract: "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01"
+//          mainContract: "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
+     }
+}
+ 
+```
+
 **Returns**
 
 fetches the contract addresses from the zksync server. This request also caches them and will return the results from cahe if available.
@@ -1331,6 +2435,41 @@ returns the list of all available tokens
 public func tokens() -> Future<[String:ZksyncTokens]>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).tokens() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          BAT:
+//            address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef"
+//            decimals: 18
+//            id: 8
+//            symbol: BAT
+//          BUSD:
+//            address: "0x4fabb145d64652a948d72533023f6e7a623c7c53"
+//            decimals: 18
+//            id: 6
+//            symbol: BUSD
+//          DAI:
+//            address: "0x6b175474e89094c44da98b954eedeac495271d0f"
+//            decimals: 18
+//            id: 1
+//            symbol: DAI
+//          ETH:
+//            address: "0x0000000000000000000000000000000000000000"
+//            decimals: 18
+//            id: 0
+//            symbol: ETH
+     }
+}
+ 
+```
+
 **Returns**
 
 a array of tokens-definitions. This request also caches them and will return the results from cahe if available.
@@ -1341,6 +2480,33 @@ returns account\_info from the server
 
 ``` swift
 public func accountInfo(address: String? = nil) -> Future<ZksyncAccountInfo>
+```
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).accountInfo() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          address: "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
+//          committed:
+//            balances: {}
+//            nonce: 0
+//            pubKeyHash: sync:0000000000000000000000000000000000000000
+//          depositing:
+//            balances: {}
+//          id: null
+//          verified:
+//            balances: {}
+//            nonce: 0
+//            pubKeyHash: sync:0000000000000000000000000000000000000000
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1357,6 +2523,25 @@ returns the state or receipt of the the zksync-tx
 
 ``` swift
 public func txInfo(tx: String) -> Future<ZksyncTxInfo>
+```
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).txInfo(tx: "sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          block: null
+//          executed: false
+//          failReason: null
+//          success: null
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1394,6 +2579,21 @@ we support 3 different signer types (`signer_type` in the `zksync` config) :
 
 <!-- end list -->
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).setKey(token: "eth") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = sync:e41d2489571d322189246dafa5ebde1f4699f498
+     }
+}
+ 
+```
+
 **Parameters**
 
   - token: the token to pay the gas (either the symbol or the address)
@@ -1408,6 +2608,13 @@ returns the current PubKeyHash based on the configuration set.
 
 ``` swift
 public func pubkeyhash(pubKey: String? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try ZksyncAPI(in3).pubkeyhash()
+// result = sync:4dcd9bb4463121470c7232efb9ff23ec21398e58
 ```
 
 **Parameters**
@@ -1428,6 +2635,13 @@ public func pubkey() throws -> String
 
 If the config contains public keys for musig-signatures, the keys will be aggregated, otherwise the pubkey will be derrived from the signing key set.
 
+**Example**
+
+``` swift
+let result = try ZksyncAPI(in3).pubkey()
+// result = "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04"
+```
+
 **Returns**
 
 the pubKey
@@ -1438,6 +2652,13 @@ returns the address of the account used.
 
 ``` swift
 public func accountAddress() throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try ZksyncAPI(in3).accountAddress()
+// result = "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
 ```
 
 **Returns**
@@ -1455,13 +2676,36 @@ public func sign(message: String) -> Future<String>
 This also supports signing with multiple keys. In this case the configuration needs to sets the urls of the other keys, so the client can then excange all data needed in order to create the combined signature.
 when exchanging the data with other keys, all known data will be send using `zk_sign` as method, but instead of the raw message a object with those data will be passed.
 
+  - `[0...32]` packed public key
+
+  - `[32..64]` r-value
+
+  - `[64..96]` s-value
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).sign(message: "0xaabbccddeeff") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c398\
+//          0e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31\
+//          b69cd0910a432156a0977c3a5baa404547e01"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - message: the message to sign
 
 **Returns**
 
-The return value are 96 bytes of signature:​    /// - `[0...32]` packed public key    /// - `[32..64]` r-value    /// - `[64..96]` s-value    ///
+The return value are 96 bytes of signature:​
 
 #### verify(message:signature:)
 
@@ -1472,6 +2716,13 @@ public func verify(message: String, signature: String) throws -> UInt64
 ```
 
 if the `musig_pubkeys` are set it will also verify against the given public keys list.
+
+**Example**
+
+``` swift
+let result = try ZksyncAPI(in3).verify(message: "0xaabbccddeeff", signature: "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01")
+// result = 1
+```
 
 **Parameters**
 
@@ -1502,6 +2753,21 @@ returns current token-price
 public func getTokenPrice(token: String) -> Future<Double>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).getTokenPrice(token: "WBTC") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 11320.002167
+     }
+}
+ 
+```
+
 **Parameters**
 
   - token: Symbol or address of the token
@@ -1516,6 +2782,27 @@ calculates the fees for a transaction.
 
 ``` swift
 public func getTxFee(txType: String, address: String, token: String) -> Future<ZksyncTxFee>
+```
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).getTxFee(txType: "Transfer", address: "0xabea9132b05a70803a4e85094fd0e1800777fbef", token: "BAT") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          feeType: TransferToNew
+//          gasFee: "47684047990828528"
+//          gasPriceWei: "116000000000"
+//          gasTxAmount: "350"
+//          totalFee: "66000000000000000"
+//          zkpFee: "18378682992117666"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1536,6 +2823,21 @@ returns private key used for signing zksync-transactions
 public func syncKey() -> Future<String>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).syncKey() .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6"
+     }
+}
+ 
+```
+
 **Returns**
 
 the raw private key configured based on the signers seed
@@ -1546,6 +2848,21 @@ sends a deposit-transaction and returns the opId, which can be used to tradck pr
 
 ``` swift
 public func deposit(amount: UInt64, token: String, approveDepositAmountForERC20: Bool? = nil, account: String? = nil) -> Future<UInt64>
+```
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).deposit(amount: 1000, token: "WBTC") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 74
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1567,6 +2884,21 @@ sends a zksync-transaction and returns data including the transactionHash.
 public func transfer(to: String, amount: UInt64, token: String, account: String? = nil) -> Future<String>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).transfer(to: 9.814684447173249e+47, amount: 100, token: "WBTC") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - to: the receipient of the tokens
@@ -1584,6 +2916,21 @@ withdraws the amount to the given `ethAddress` for the given token.
 
 ``` swift
 public func withdraw(ethAddress: String, amount: UInt64, token: String, account: String? = nil) -> Future<String>
+```
+
+**Example**
+
+``` swift
+ZksyncAPI(in3).withdraw(ethAddress: 9.814684447173249e+47, amount: 100, token: "WBTC") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1"
+     }
+}
+ 
 ```
 
 **Parameters**
@@ -1605,6 +2952,46 @@ withdraws all tokens for the specified token as a onchain-transaction. This is u
 public func emergencyWithdraw(token: String) -> Future<ZksyncTransactionReceipt>
 ```
 
+**Example**
+
+``` swift
+ZksyncAPI(in3).emergencyWithdraw(token: "WBTC") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+//          blockNumber: "0x8c1e39"
+//          contractAddress: null
+//          cumulativeGasUsed: "0x2466d"
+//          gasUsed: "0x2466d"
+//          logs:
+//            - address: "0x85ec283a3ed4b66df4da23656d4bf8a507383bca"
+//              blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+//              blockNumber: "0x8c1e39"
+//              data: 0x00000000000...
+//              logIndex: "0x0"
+//              removed: false
+//              topics:
+//                - "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8"
+//                - "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6"
+//                - "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+//              transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+//              transactionIndex: "0x0"
+//              transactionLogIndex: "0x0"
+//              type: mined
+//          logsBloom: 0x00000000000000000000200000...
+//          root: null
+//          status: "0x1"
+//          transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+//          transactionIndex: "0x0"
+     }
+}
+ 
+```
+
 **Parameters**
 
   - token: the token as symbol or address
@@ -1619,6 +3006,13 @@ calculate the public key based on multiple public keys signing together using sc
 
 ``` swift
 public func aggregatePubkey(pubkeys: String) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try ZksyncAPI(in3).aggregatePubkey(pubkeys: "0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409")
+// result = "0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b"
 ```
 
 **Parameters**
@@ -2530,6 +3924,167 @@ Array of transaction objects
 
 ``` swift
 var transactions: [EthTransactiondata]
+```
+
+#### uncles
+
+Array of uncle hashes.
+
+``` swift
+var uncles: [String]
+```
+### EthBlockdataWithTxHashes
+
+the blockdata, or in case the block with that number does not exist, `null` will be returned.
+
+``` swift
+public struct EthBlockdataWithTxHashes
+```
+
+
+
+#### number
+
+the block number. `null` when its pending block.
+
+``` swift
+var number: UInt64
+```
+
+#### hash
+
+hash of the block. `null` when its pending block.
+
+``` swift
+var hash: String
+```
+
+#### parentHash
+
+hash of the parent block.
+
+``` swift
+var parentHash: String
+```
+
+#### nonce
+
+hash of the generated proof-of-work. `null` when its pending block.
+
+``` swift
+var nonce: UInt64
+```
+
+#### sha3Uncles
+
+SHA3 of the uncles Merkle root in the block.
+
+``` swift
+var sha3Uncles: String
+```
+
+#### logsBloom
+
+the bloom filter for the logs of the block. `null` when its pending block.
+
+``` swift
+var logsBloom: String
+```
+
+#### transactionsRoot
+
+the root of the transaction trie of the block.
+
+``` swift
+var transactionsRoot: String
+```
+
+#### stateRoot
+
+the root of the final state trie of the block.
+
+``` swift
+var stateRoot: String
+```
+
+#### receiptsRoot
+
+the root of the receipts trie of the block.
+
+``` swift
+var receiptsRoot: String
+```
+
+#### miner
+
+the address of the beneficiary to whom the mining rewards were given.
+
+``` swift
+var miner: String
+```
+
+#### difficulty
+
+integer of the difficulty for this block.
+
+``` swift
+var difficulty: UInt64
+```
+
+#### totalDifficulty
+
+integer of the total difficulty of the chain until this block.
+
+``` swift
+var totalDifficulty: UInt64
+```
+
+#### extraData
+
+the "extra data" field of this block.
+
+``` swift
+var extraData: String
+```
+
+#### size
+
+integer the size of this block in bytes.
+
+``` swift
+var size: UInt64
+```
+
+#### gasLimit
+
+the maximum gas allowed in this block.
+
+``` swift
+var gasLimit: UInt64
+```
+
+#### gasUsed
+
+the total used gas by all transactions in this block.
+
+``` swift
+var gasUsed: UInt64
+```
+
+#### timestamp
+
+the unix timestamp for when the block was collated.
+
+``` swift
+var timestamp: UInt64
+```
+
+#### transactions
+
+Array of transaction hashes
+
+``` swift
+var transactions: [String]
 ```
 
 #### uncles

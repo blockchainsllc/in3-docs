@@ -1749,7 +1749,7 @@ See [eth_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for s
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
 
 
-*Returns:* `blockdata`
+*Returns:* `blockdata?`
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
@@ -1984,7 +1984,7 @@ See [eth_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) f
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
 
 
-*Returns:* `blockdata`
+*Returns:* `blockdata?`
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
