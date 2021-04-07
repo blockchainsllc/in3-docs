@@ -5842,7 +5842,7 @@ The return value contains the following properties :
 * **commited** : `object` - the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
 The commited object supports the following properties :
 
-    * **balances** : `{key:uint}` - the token-balance
+    * **balances** : `{key:uint}` - the token-balance with the token as keys in the object
     
 
     * **nonce** : `uint` - the nonce or transaction count.
@@ -5856,7 +5856,7 @@ The commited object supports the following properties :
 * **depositing** : `object` - the state of all depositing-tx.
 The depositing object supports the following properties :
 
-    * **balances** : `{key:uint}` - the token-values.
+    * **balances** : `{key:uint}` - the token-values. with the token as keys in the object
     
 
 
@@ -5867,7 +5867,7 @@ The depositing object supports the following properties :
 * **verified** : `object` - the state after the rollup was verified in L1.
 The verified object supports the following properties :
 
-    * **balances** : `{key:uint}` - the token-balances.
+    * **balances** : `{key:uint}` - the token-balances. with the token as keys in the object
     
 
     * **nonce** : `uint` - the nonce or transaction count.
