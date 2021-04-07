@@ -1392,7 +1392,7 @@ The tx object supports the following properties :
 
 
 
-2. **block** : `uint | string` - the blockNumber or one of `latest`, `earliest`or `pending`
+2. **block** : `uint | string?` *(optional)* - the blockNumber or  `latest`
 
 
 *Returns:*
@@ -1640,7 +1640,7 @@ The tx object supports the following properties :
 
 
 
-2. **block** : `uint | string` - the blockNumber or one of `latest`, `earliest`or `pending`
+2. **block** : `uint | string?` *(optional)* - the blockNumber or  `latest`
 
 
 *Returns:*
@@ -1664,7 +1664,7 @@ gets the balance of an account for a given block
 1. **account** : `address` - address of the account
 
 
-2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
+2. **block** : `uint?` *(optional)* - the blockNumber or `latest`
 
 
 *Returns:*
@@ -1978,7 +1978,7 @@ See [eth_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) f
 
 *Parameters:*
 
-1. **blockNumber** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
+1. **blockNumber** : `uint?` *(optional)* - the blockNumber or one of `latest`, `earliest`or `pending`
 
 
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
@@ -2303,7 +2303,7 @@ gets the code of a given contract
 1. **account** : `address` - address of the account
 
 
-2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
+2. **block** : `uint?` *(optional)* - the blockNumber or `latest`
 
 
 *Returns:*
@@ -2486,7 +2486,7 @@ gets the storage value of a given key
 2. **key** : `bytes32` - key to look for
 
 
-3. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
+3. **block** : `uint?` *(optional)* - the blockNumber or`latest`
 
 
 *Returns:*
@@ -3226,7 +3226,7 @@ gets the nonce or number of transaction sent from this account at a given block
 1. **account** : `address` - address of the account
 
 
-2. **block** : `uint` - the blockNumber or one of `latest`, `earliest`or `pending`
+2. **block** : `uint?` *(optional)* - the blockNumber or  `latest`
 
 
 *Returns:*

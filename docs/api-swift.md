@@ -782,7 +782,7 @@ public func signTransaction(tx: EthTransaction) -> Future<String>
 **Example**
 
 ``` swift
-EthAPI(in3).signTransaction(tx: {"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}) .observe(using: {
+EthAPI(in3).signTransaction(tx: EthTransaction(data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155", gas: "0x76c0", gasPrice: "0x9184e72a000", to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567", value: "0x9184e72a")) .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -835,18 +835,18 @@ EthAPI(in3).blockNumber() .observe(using: {
 
 the highest known blocknumber
 
-#### getBlockByNumber(blockNumber:)
+#### getBlock(blockNumber:)
 
-returns the given Block by number with transactionHashes
+returns the given Block by number with transactionHashes. if no blocknumber is specified the latest block will be returned.
 
 ``` swift
-public func getBlockByNumber(blockNumber: UInt64) -> Future<EthBlockdataWithTxHashes?>
+public func getBlock(blockNumber: UInt64? = nil) -> Future<EthBlockdataWithTxHashes?>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getBlockByNumber(blockNumber: "latest") .observe(using: {
+EthAPI(in3).getBlock() .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -894,18 +894,18 @@ EthAPI(in3).getBlockByNumber(blockNumber: "latest") .observe(using: {
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
-#### getBlockByNumberWithTx(blockNumber:)
+#### getBlockWithTx(blockNumber:)
 
-returns the given Block by number with full transaction data
+returns the given Block by number with full transaction data. if no blocknumber is specified the latest block will be returned.
 
 ``` swift
-public func getBlockByNumberWithTx(blockNumber: UInt64) -> Future<EthBlockdata?>
+public func getBlockWithTx(blockNumber: UInt64? = nil) -> Future<EthBlockdata?>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getBlockByNumberWithTx(blockNumber: "latest") .observe(using: {
+EthAPI(in3).getBlockWithTx() .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1298,13 +1298,13 @@ public func getLogs(filter: EthFilter) -> Future<String>
 gets the balance of an account for a given block
 
 ``` swift
-public func getBalance(account: String, block: UInt64) -> Future<String>
+public func getBalance(account: String, block: UInt64? = nil) -> Future<String>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getBalance(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b", block: "latest") .observe(using: {
+EthAPI(in3).getBalance(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b") .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1319,7 +1319,7 @@ EthAPI(in3).getBalance(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b", bl
 **Parameters**
 
   - account: address of the account
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or `latest`
 
 **Returns**
 
@@ -1330,13 +1330,13 @@ the balance
 gets the nonce or number of transaction sent from this account at a given block
 
 ``` swift
-public func getTransactionCount(account: String, block: UInt64) -> Future<String>
+public func getTransactionCount(account: String, block: UInt64? = nil) -> Future<String>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getTransactionCount(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b", block: "latest") .observe(using: {
+EthAPI(in3).getTransactionCount(account: "0x2e333ec090f1028df0a3c39a918063443be82b2b") .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1351,7 +1351,7 @@ EthAPI(in3).getTransactionCount(account: "0x2e333ec090f1028df0a3c39a918063443be8
 **Parameters**
 
   - account: address of the account
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or  `latest`
 
 **Returns**
 
@@ -1362,13 +1362,13 @@ the nonce
 gets the code of a given contract
 
 ``` swift
-public func getCode(account: String, block: UInt64) -> Future<String>
+public func getCode(account: String, block: UInt64? = nil) -> Future<String>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getCode(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", block: "latest") .observe(using: {
+EthAPI(in3).getCode(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f") .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1383,7 +1383,7 @@ EthAPI(in3).getCode(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", block
 **Parameters**
 
   - account: address of the account
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or `latest`
 
 **Returns**
 
@@ -1394,13 +1394,13 @@ the code as hex
 gets the storage value of a given key
 
 ``` swift
-public func getStorageAt(account: String, key: String, block: UInt64) -> Future<String>
+public func getStorageAt(account: String, key: String, block: UInt64? = nil) -> Future<String>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).getStorageAt(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", key: "0x0", block: "latest") .observe(using: {
+EthAPI(in3).getStorageAt(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", key: "0x0") .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1416,7 +1416,7 @@ EthAPI(in3).getStorageAt(account: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f", 
 
   - account: address of the account
   - key: key to look for
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or`latest`
 
 **Returns**
 
@@ -1475,13 +1475,13 @@ the transactionhash
 calculates the gas needed to execute a transaction. for spec see [eth\_estimateGas](https:​//eth.wiki/json-rpc/API#eth_estimateGas)
 
 ``` swift
-public func estimateGas(tx: EthTransaction, block: UInt64) -> Future<String>
+public func estimateGas(tx: EthTransaction, block: UInt64? = nil) -> Future<String>
 ```
 
 **Parameters**
 
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or  `latest`
 
 **Returns**
 
@@ -1492,13 +1492,13 @@ the amount of gass needed.
 calls a function of a contract (or simply executes the evm opcodes) and returns the result. for spec see [eth\_call](https:​//eth.wiki/json-rpc/API#eth_call)
 
 ``` swift
-public func call(tx: EthTx, block: UInt64) -> Future<String>
+public func call(tx: EthTx, block: UInt64? = nil) -> Future<String>
 ```
 
 **Example**
 
 ``` swift
-EthAPI(in3).call(tx: {"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"}, block: "latest") .observe(using: {
+EthAPI(in3).call(tx: EthTx(to: "0x2736D225f85740f42D17987100dc8d58e9e16252", data: "0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001")) .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -1513,7 +1513,7 @@ EthAPI(in3).call(tx: {"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"
 **Parameters**
 
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-  - block: the blockNumber or one of `latest`, `earliest`or `pending`
+  - block: the blockNumber or  `latest`
 
 **Returns**
 
@@ -1950,7 +1950,7 @@ public func prepareTx(tx: In3Transaction) -> Future<String>
 **Example**
 
 ``` swift
-In3API(in3).prepareTx(tx: {"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}) .observe(using: {
+In3API(in3).prepareTx(tx: In3Transaction(to: "0x63f666a23cbd135a91187499b5cc51d589c302a0", value: "0x100000000", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f")) .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
@@ -2160,7 +2160,7 @@ per default nodes will and should not sign blockHash of the last `minBlockHeight
 **Example**
 
 ``` swift
-In3API(in3).sign(blocks: {"blockNumber":8770580}) .observe(using: {
+In3API(in3).sign(blocks: In3Blocks(blockNumber: 8770580)) .observe(using: {
     switch $0 {
        case let .failure(err):
          print("Failed because : \(err.localizedDescription)")
