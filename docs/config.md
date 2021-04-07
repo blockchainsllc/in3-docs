@@ -9,7 +9,7 @@ When creating a new Incubed Instance you can configure it. The Configuration dep
 
 the chainId or the name of a known chain. It defines the nodelist to connect to. *This config is optional.* (default: `"mainnet"`)
 
- Type: `string | uint`
+ Type: `string | uint?`
 
 Possible Values are:
 
@@ -40,7 +40,7 @@ const in3 = new IN3({
 
 the number in percent needed in order reach finality (% of signature of the validators). *This config is optional.*
 
- Type: `uint | string`
+ Type: `uint | string?`
 
 *Example:*
 
@@ -61,7 +61,7 @@ const in3 = new IN3({
 
 if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards. *This config is optional.*
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -81,7 +81,7 @@ const in3 = new IN3({
 
 max number of attempts in case a response is rejected. *This config is optional.* (default: `7`)
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -102,7 +102,7 @@ const in3 = new IN3({
 
 if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did. *This config is optional.*
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -123,7 +123,7 @@ const in3 = new IN3({
 
 if true, requests sent will be used for stats. *This config is optional.* (default: `true`)
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -143,7 +143,7 @@ const in3 = new IN3({
 
 if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore. *This config is optional.*
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -163,7 +163,7 @@ const in3 = new IN3({
 
 iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used. *This config is optional.*
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -184,7 +184,7 @@ const in3 = new IN3({
 
 specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. *This config is optional.* (default: `20000`)
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -204,7 +204,7 @@ const in3 = new IN3({
 
 if true the nodes should send a proof of the response. If set to none, verification is turned off completly. *This config is optional.* (default: `"standard"`)
 
- Type: `string`
+ Type: `string?`
 
 Possible Values are:
 
@@ -232,7 +232,7 @@ const in3 = new IN3({
 
 if specified, the blocknumber *latest* will be replaced by blockNumber- specified value. *This config is optional.*
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -253,7 +253,7 @@ const in3 = new IN3({
 
 if true the nodelist will be automaticly updated if the lastBlock is newer. *This config is optional.* (default: `true`)
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -273,7 +273,7 @@ const in3 = new IN3({
 
 number of signatures requested in order to verify the blockhash. *This config is optional.* (default: `1`)
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -294,7 +294,7 @@ const in3 = new IN3({
 
 if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. *This config is optional.* (default: `true`)
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -315,7 +315,7 @@ const in3 = new IN3({
 
 if true the client will try to use http instead of https. *This config is optional.*
 
- Type: `bool`
+ Type: `bool?`
 
 *Example:*
 
@@ -335,7 +335,7 @@ const in3 = new IN3({
 
 min stake of the server. Only nodes owning at least this amount will be chosen. *This config is optional.*
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -355,7 +355,7 @@ const in3 = new IN3({
 
 used to identify the capabilities of the node. *This config is optional.*
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -375,7 +375,7 @@ const in3 = new IN3({
 
 the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. *This config is optional.* (default: `2`)
 
- Type: `uint`
+ Type: `uint?`
 
 *Example:*
 
@@ -396,7 +396,7 @@ const in3 = new IN3({
 
 url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off. *This config is optional.*
 
- Type: `string`
+ Type: `string?`
 
 *Example:*
 
@@ -416,28 +416,28 @@ const in3 = new IN3({
 
 defining the nodelist. collection of JSON objects with chain Id (hex string) as key. *This config is optional.*
 
- Type: `object`
+ Type: `object?`
 The nodes object supports the following properties :
 
 * **contract** : `address` - address of the registry contract. (This is the data-contract!)
 
 
-* **whiteListContract** : `address` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
+* **whiteListContract** : `address?` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
 
 
-* **whiteList** : `address[]` *(optional)* - manual whitelist.
+* **whiteList** : `address[]?` *(optional)* - manual whitelist.
 
 
 * **registryId** : `bytes32` - identifier of the registry.
 
 
-* **needsUpdate** : `bool` *(optional)* - if set, the nodeList will be updated before next request.
+* **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
 
 
-* **avgBlockTime** : `uint` *(optional)* - average block time (seconds) for this chain.
+* **avgBlockTime** : `uint?` *(optional)* - average block time (seconds) for this chain.
 
 
-* **verifiedHashes** : `object` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
+* **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
     * **block** : `uint` - block number
     
 
@@ -446,7 +446,7 @@ The nodes object supports the following properties :
 
 
 
-* **nodeList** : `object` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
+* **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
     * **url** : `string` - URL of the node.
     
 
@@ -489,19 +489,19 @@ configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, wh
  Type: `object`
 The zksync object supports the following properties :
 
-* **provider_url** : `string` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
+* **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
 
 
-* **account** : `address` *(optional)* - the account to be used. if not specified, the first signer will be used.
+* **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
 
 
-* **sync_key** : `bytes32` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+* **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
 
 
-* **main_contract** : `address` *(optional)* - address of the main contract- If not specified it will be taken from the server.
+* **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
 
 
-* **signer_type** : `string` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
+* **signer_type** : `string?` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
 Possible Values are:
 
     - `pk` : Private matching the account is used ( for EOA)
@@ -510,13 +510,13 @@ Possible Values are:
 
 
 
-* **musig_pub_keys** : `bytes` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+* **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
 
 
-* **musig_urls** : `string[]` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+* **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
 
 
-* **create2** : `object` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
+* **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
     * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
     
 
@@ -591,7 +591,7 @@ const in3 = new IN3({
 
 the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default) *This config is optional.*
 
- Type: `bytes32`
+ Type: `bytes32?`
 
 *Example:*
 
@@ -612,7 +612,7 @@ const in3 = new IN3({
 
 registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default) *This config is optional.*
 
- Type: `bytes32|bytes32[]`
+ Type: `bytes32|bytes32[]?`
 
 *Example:*
 
@@ -636,10 +636,10 @@ configure the Bitcoin verification
  Type: `object`
 The btc object supports the following properties :
 
-* **maxDAP** : `uint` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
+* **maxDAP** : `uint?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
 
 
-* **maxDiff** : `uint` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
+* **maxDiff** : `uint?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
 
 
 

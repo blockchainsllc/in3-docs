@@ -427,13 +427,17 @@ the raw signed transaction
 returns the number of the most recent block.
 
 ``` swift
-public func blockNumber() -> Future<String>
+public func blockNumber() -> Future<UInt64>
 ```
 
 See [eth\_blockNumber](https://eth.wiki/json-rpc/API#eth_blockNumber) for spec.
 
 No proof returned, since there is none, but the client should verify the result by comparing it to the current blocks returned from others.
 With the `blockTime` from the chainspec, including a tolerance, the current blocknumber may be checked if in the proposed range.
+
+**Returns**
+
+the highest known blocknumber
 
 #### getBlockByNumber(blockNumber:fullTx:)
 
@@ -459,7 +463,7 @@ the blockdata, or in case the block with that number does not exist, `null` will
 Returns information about a block by hash.
 
 ``` swift
-public func getBlockByHash(blockHash: String, fullTx: Bool) -> Future<String>
+public func getBlockByHash(blockHash: String, fullTx: Bool) -> Future<EthBlockdata>
 ```
 
 See [eth\_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for spec.
@@ -468,6 +472,10 @@ See [eth\_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for 
 
   - blockHash: the blockHash of the block
   - fullTx: if true the full transactions are contained in the result.
+
+**Returns**
+
+the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
 #### getBlockTransactionCountByHash(blockHash:)
 
@@ -481,6 +489,10 @@ public func getBlockTransactionCountByHash(blockHash: String) -> Future<String>
 
   - blockHash: the blockHash of the block
 
+**Returns**
+
+the number of transactions in the block
+
 #### getBlockTransactionCountByNumber(blockNumber:)
 
 returns the number of transactions. For Spec, see [eth\_getBlockTransactionCountByNumber](https:​//eth.wiki/json-rpc/API#eth_getBlockTransactionCountByNumber).
@@ -492,6 +504,10 @@ public func getBlockTransactionCountByNumber(blockNumber: UInt64) -> Future<Stri
 **Parameters**
 
   - blockNumber: the blockNumber of the block
+
+**Returns**
+
+the number of transactions in the block
 
 #### getUncleCountByBlockHash(blockHash:)
 
@@ -505,6 +521,10 @@ public func getUncleCountByBlockHash(blockHash: String) -> Future<String>
 
   - blockHash: the blockHash of the block
 
+**Returns**
+
+the number of uncles
+
 #### getUncleCountByBlockNumber(blockNumber:)
 
 returns the number of uncles. For Spec, see [eth\_getUncleCountByBlockNumber](https:​//eth.wiki/json-rpc/API#eth_getUncleCountByBlockNumber).
@@ -517,12 +537,16 @@ public func getUncleCountByBlockNumber(blockNumber: UInt64) -> Future<String>
 
   - blockNumber: the blockNumber of the block
 
+**Returns**
+
+the number of uncles
+
 #### getTransactionByBlockHashAndIndex(blockHash:index:)
 
 returns the transaction data.
 
 ``` swift
-public func getTransactionByBlockHashAndIndex(blockHash: String, index: UInt64) -> Future<String>
+public func getTransactionByBlockHashAndIndex(blockHash: String, index: UInt64) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockHashAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockHashAndIndex) for more details.
@@ -532,12 +556,16 @@ See JSON-RPC-Spec for [eth\_getTransactionByBlockHashAndIndex](https://eth.wiki/
   - blockHash: the blockhash containing the transaction.
   - index: the transactionIndex
 
+**Returns**
+
+the transactiondata or `null` if it does not exist
+
 #### getTransactionByBlockNumberAndIndex(blockNumber:index:)
 
 returns the transaction data.
 
 ``` swift
-public func getTransactionByBlockNumberAndIndex(blockNumber: UInt64, index: UInt64) -> Future<String>
+public func getTransactionByBlockNumberAndIndex(blockNumber: UInt64, index: UInt64) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockNumberAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockNumberAndIndex) for more details.
@@ -547,12 +575,16 @@ See JSON-RPC-Spec for [eth\_getTransactionByBlockNumberAndIndex](https://eth.wik
   - blockNumber: the block number containing the transaction.
   - index: the transactionIndex
 
+**Returns**
+
+the transactiondata or `null` if it does not exist
+
 #### getTransactionByHash(txHash:)
 
 returns the transaction data.
 
 ``` swift
-public func getTransactionByHash(txHash: String) -> Future<String>
+public func getTransactionByHash(txHash: String) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByHash](https://eth.wiki/json-rpc/API#eth_getTransactionByHash) for more details.
@@ -560,6 +592,10 @@ See JSON-RPC-Spec for [eth\_getTransactionByHash](https://eth.wiki/json-rpc/API#
 **Parameters**
 
   - txHash: the transactionHash of the transaction.
+
+**Returns**
+
+the transactiondata or `null` if it does not exist
 
 #### getLogs(filter:)
 
@@ -586,6 +622,10 @@ public func getBalance(account: String, block: UInt64) -> Future<String>
   - account: address of the account
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
 
+**Returns**
+
+the balance
+
 #### getTransactionCount(account:block:)
 
 gets the nonce or number of transaction sent from this account at a given block
@@ -599,6 +639,10 @@ public func getTransactionCount(account: String, block: UInt64) -> Future<String
   - account: address of the account
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
 
+**Returns**
+
+the nonce
+
 #### getCode(account:block:)
 
 gets the code of a given contract
@@ -611,6 +655,10 @@ public func getCode(account: String, block: UInt64) -> Future<String>
 
   - account: address of the account
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
+
+**Returns**
+
+the code as hex
 
 #### getStorageAt(account:key:block:)
 
@@ -626,6 +674,10 @@ public func getStorageAt(account: String, key: String, block: UInt64) -> Future<
   - key: key to look for
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
 
+**Returns**
+
+the value of the storage slot.
+
 #### sendTransaction(tx:)
 
 signs and sends a Transaction
@@ -638,17 +690,25 @@ public func sendTransaction(tx: EthTransaction) -> Future<String>
 
   - tx: the transactiondata to send
 
+**Returns**
+
+the transactionHash
+
 #### sendTransactionAndWait(tx:)
 
 signs and sends a Transaction, but then waits until the transaction receipt can be verified. Depending on the finality of the nodes, this may take a while, since only final blocks will be signed by the nodes.
 
 ``` swift
-public func sendTransactionAndWait(tx: EthTransaction) -> Future<String>
+public func sendTransactionAndWait(tx: EthTransaction) -> Future<EthTransactionReceipt>
 ```
 
 **Parameters**
 
   - tx: the transactiondata to send
+
+**Returns**
+
+the transactionReceipt
 
 #### sendRawTransaction(tx:)
 
@@ -661,6 +721,10 @@ public func sendRawTransaction(tx: String) -> Future<String>
 **Parameters**
 
   - tx: the raw signed transactiondata to send
+
+**Returns**
+
+the transactionhash
 
 #### estimateGas(tx:block:)
 
@@ -675,6 +739,10 @@ public func estimateGas(tx: EthTransaction, block: UInt64) -> Future<String>
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
 
+**Returns**
+
+the amount of gass needed.
+
 #### call(tx:block:)
 
 calls a function of a contract (or simply executes the evm opcodes) and returns the result. for spec see [eth\_call](https:​//eth.wiki/json-rpc/API#eth_call)
@@ -688,17 +756,25 @@ public func call(tx: EthTx, block: UInt64) -> Future<String>
   - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
   - block: the blockNumber or one of `latest`, `earliest`or `pending`
 
+**Returns**
+
+the abi-encoded result of the function.
+
 #### getTransactionReceipt(txHash:)
 
 The Receipt of a Transaction. For Details, see [eth\_getTransactionReceipt](https:​//eth.wiki/json-rpc/API#eth_gettransactionreceipt).
 
 ``` swift
-public func getTransactionReceipt(txHash: String) -> Future<String>
+public func getTransactionReceipt(txHash: String) -> Future<EthTransactionReceipt?>
 ```
 
 **Parameters**
 
   - txHash: the transactionHash
+
+**Returns**
+
+the TransactionReceipt or `null`  if it does not exist.
 ### FileCache
 
 File-Implementation for the cache.
@@ -1043,7 +1119,7 @@ the signature
 decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition](https:​//github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition). The result is the raw private key.
 
 ``` swift
-public func decryptKey(key: Object, passphrase: String) throws -> String
+public func decryptKey(key: String, passphrase: String) throws -> String
 ```
 
 **Parameters**
@@ -1072,7 +1148,7 @@ true indicating the success
 fetches and verifies the nodeList from a node
 
 ``` swift
-public func nodeList(limit: UInt64? = nil, seed: String? = nil, addresses: [Address]? = nil) -> Future<String>
+public func nodeList(limit: UInt64? = nil, seed: String? = nil, addresses: [String]? = nil) -> Future<In3NodeList>
 ```
 
 **Parameters**
@@ -1081,6 +1157,10 @@ public func nodeList(limit: UInt64? = nil, seed: String? = nil, addresses: [Addr
   - seed: this 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
   - addresses: a optional array of addresses of signers the nodeList must include.
 
+**Returns**
+
+the current nodelist
+
 #### sign(blocks:)
 
 requests a signed blockhash from the node.
@@ -1088,7 +1168,7 @@ In most cases these requests will come from other nodes, because the client simp
 and the processising nodes will then aquire the signatures with this method from the other nodes.
 
 ``` swift
-public func sign(blocks: In3Blocks) -> Future<String>
+public func sign(blocks: In3Blocks) -> Future<In3Sign>
 ```
 
 Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit,
@@ -1098,17 +1178,25 @@ per default nodes will and should not sign blockHash of the last `minBlockHeight
 
   - blocks: array of requested blocks.
 
+**Returns**
+
+the Array with signatures of all the requires blocks.
+
 #### whitelist(address:)
 
 Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired from whitelist contract that user can specify in request params.
 
 ``` swift
-public func whitelist(address: String) -> Future<String>
+public func whitelist(address: String) -> Future<In3Whitelist>
 ```
 
 **Parameters**
 
   - address: address of whitelist contract
+
+**Returns**
+
+the whitelisted addresses
 
 #### addRawKey(pk:)
 
@@ -1122,6 +1210,10 @@ public func addRawKey(pk: String) -> Future<String>
 
   - pk: the 32byte long private key as hex string.
 
+**Returns**
+
+the address of given key.
+
 #### accounts()
 
 returns a array of account-addresss the incubed client is able to sign with. In order to add keys, you can use [in3\_addRawKey](#in3-addrawkey) or configure them in the config. The result also contains the addresses of any signer signer-supporting the `PLGN_ACT_SIGN_ACCOUNT` action.
@@ -1129,6 +1221,10 @@ returns a array of account-addresss the incubed client is able to sign with. In 
 ``` swift
 public func accounts() -> Future<String>
 ```
+
+**Returns**
+
+the array of addresses of all registered signers.
 ### IpfsAPI
 
 A Node supporting IPFS must support these 2 RPC-Methods for uploading and downloading IPFS-Content. The node itself will run a ipfs-client to handle them.
@@ -1220,40 +1316,56 @@ All zksync-methods can be used with `zksync_` or `zk_` prefix.
 returns the contract address
 
 ``` swift
-public func contractAddress() -> Future<String>
+public func contractAddress() -> Future<ZksyncContractAddress>
 ```
+
+**Returns**
+
+fetches the contract addresses from the zksync server. This request also caches them and will return the results from cahe if available.
 
 #### tokens()
 
 returns the list of all available tokens
 
 ``` swift
-public func tokens() -> Future<String>
+public func tokens() -> Future<[String:ZksyncTokens]>
 ```
+
+**Returns**
+
+a array of tokens-definitions. This request also caches them and will return the results from cahe if available.
 
 #### accountInfo(address:)
 
 returns account\_info from the server
 
 ``` swift
-public func accountInfo(address: String? = nil) -> Future<String>
+public func accountInfo(address: String? = nil) -> Future<ZksyncAccountInfo>
 ```
 
 **Parameters**
 
   - address: the account-address. if not specified, the client will try to use its own address based on the signer config.
 
+**Returns**
+
+the current state of the requested account.
+
 #### txInfo(tx:)
 
 returns the state or receipt of the the zksync-tx
 
 ``` swift
-public func txInfo(tx: String) -> Future<String>
+public func txInfo(tx: String) -> Future<ZksyncTxInfo>
 ```
 
 **Parameters**
 
   - tx: the txHash of the send tx
+
+**Returns**
+
+the current state of the requested tx.
 
 #### setKey(token:)
 
@@ -1286,35 +1398,51 @@ we support 3 different signer types (`signer_type` in the `zksync` config) :
 
   - token: the token to pay the gas (either the symbol or the address)
 
+**Returns**
+
+the pubKeyHash, if it was executed successfully
+
 #### pubkeyhash(pubKey:)
 
 returns the current PubKeyHash based on the configuration set.
 
 ``` swift
-public func pubkeyhash(pubKey: String? = nil) -> Future<String>
+public func pubkeyhash(pubKey: String? = nil) throws -> String
 ```
 
 **Parameters**
 
   - pubKey: the packed public key to hash ( if given the hash is build based on the given hash, otherwise the hash is based on the config)
 
+**Returns**
+
+the pubKeyHash
+
 #### pubkey()
 
 returns the current packed PubKey based on the config set.
 
 ``` swift
-public func pubkey() -> Future<String>
+public func pubkey() throws -> String
 ```
 
 If the config contains public keys for musig-signatures, the keys will be aggregated, otherwise the pubkey will be derrived from the signing key set.
+
+**Returns**
+
+the pubKey
 
 #### accountAddress()
 
 returns the address of the account used.
 
 ``` swift
-public func accountAddress() -> Future<String>
+public func accountAddress() throws -> String
 ```
+
+**Returns**
+
+the account used.
 
 #### sign(message:)
 
@@ -1331,12 +1459,16 @@ when exchanging the data with other keys, all known data will be send using `zk_
 
   - message: the message to sign
 
+**Returns**
+
+The return value are 96 bytes of signature:​    /// - `[0...32]` packed public key    /// - `[32..64]` r-value    /// - `[64..96]` s-value    ///
+
 #### verify(message:signature:)
 
 returns 0 or 1 depending on the successfull verification of the signature.
 
 ``` swift
-public func verify(message: String, signature: String) -> Future<String>
+public func verify(message: String, signature: String) throws -> UInt64
 ```
 
 if the `musig_pubkeys` are set it will also verify against the given public keys list.
@@ -1345,6 +1477,10 @@ if the `musig_pubkeys` are set it will also verify against the given public keys
 
   - message: the message which was supposed to be signed
   - signature: the signature (96 bytes)
+
+**Returns**
+
+1 if the signature(which contains the pubkey as the first 32bytes) matches the message.
 
 #### ethopInfo(opId:)
 
@@ -1363,19 +1499,23 @@ public func ethopInfo(opId: UInt64) -> Future<String>
 returns current token-price
 
 ``` swift
-public func getTokenPrice(token: String) -> Future<String>
+public func getTokenPrice(token: String) -> Future<Double>
 ```
 
 **Parameters**
 
   - token: Symbol or address of the token
 
+**Returns**
+
+the token price
+
 #### getTxFee(txType:address:token:)
 
 calculates the fees for a transaction.
 
 ``` swift
-public func getTxFee(txType: String, address: String, token: String) -> Future<String>
+public func getTxFee(txType: String, address: String, token: String) -> Future<ZksyncTxFee>
 ```
 
 **Parameters**
@@ -1383,6 +1523,10 @@ public func getTxFee(txType: String, address: String, token: String) -> Future<S
   - txType: The Type of the transaction "Withdraw" or "Transfer"
   - address: the address of the receipient
   - token: the symbol or address of the token to pay
+
+**Returns**
+
+the fees split up into single values
 
 #### syncKey()
 
@@ -1392,12 +1536,16 @@ returns private key used for signing zksync-transactions
 public func syncKey() -> Future<String>
 ```
 
+**Returns**
+
+the raw private key configured based on the signers seed
+
 #### deposit(amount:token:approveDepositAmountForERC20:account:)
 
 sends a deposit-transaction and returns the opId, which can be used to tradck progress.
 
 ``` swift
-public func deposit(amount: UInt64, token: String, approveDepositAmountForERC20: Bool? = nil, account: String? = nil) -> Future<String>
+public func deposit(amount: UInt64, token: String, approveDepositAmountForERC20: Bool? = nil, account: String? = nil) -> Future<UInt64>
 ```
 
 **Parameters**
@@ -1406,6 +1554,10 @@ public func deposit(amount: UInt64, token: String, approveDepositAmountForERC20:
   - token: the token as symbol or address
   - approveDepositAmountForERC20: if true and in case of an erc20-token, the client will send a approve transaction first, otherwise it is expected to be already approved.
   - account: address of the account to send the tx from. if not specified, the first available signer will be used.
+
+**Returns**
+
+the opId. You can use `zksync_ethop_info` to follow the state-changes.
 
 #### transfer(to:amount:token:account:)
 
@@ -1422,6 +1574,10 @@ public func transfer(to: String, amount: UInt64, token: String, account: String?
   - token: the token as symbol or address
   - account: address of the account to send the tx from. if not specified, the first available signer will be used.
 
+**Returns**
+
+the transactionHash. use `zksync_tx_info` to check the progress.
+
 #### withdraw(ethAddress:amount:token:account:)
 
 withdraws the amount to the given `ethAddress` for the given token.
@@ -1437,29 +1593,41 @@ public func withdraw(ethAddress: String, amount: UInt64, token: String, account:
   - token: the token as symbol or address
   - account: address of the account to send the tx from. if not specified, the first available signer will be used.
 
+**Returns**
+
+the transactionHash. use `zksync_tx_info` to check the progress.
+
 #### emergencyWithdraw(token:)
 
 withdraws all tokens for the specified token as a onchain-transaction. This is useful in case the zksync-server is offline or tries to be malicious.
 
 ``` swift
-public func emergencyWithdraw(token: String) -> Future<String>
+public func emergencyWithdraw(token: String) -> Future<ZksyncTransactionReceipt>
 ```
 
 **Parameters**
 
   - token: the token as symbol or address
 
+**Returns**
+
+the transactionReceipt
+
 #### aggregatePubkey(pubkeys:)
 
 calculate the public key based on multiple public keys signing together using schnorr musig signatures.
 
 ``` swift
-public func aggregatePubkey(pubkeys: String) -> Future<String>
+public func aggregatePubkey(pubkeys: String) throws -> String
 ```
 
 **Parameters**
 
   - pubkeys: concatinated packed publickeys of the signers. the length of the bytes must be `num_keys * 32`
+
+**Returns**
+
+the compact public Key
 ## Structs
 ### BtcProofTarget
 
@@ -2358,10 +2526,10 @@ var timestamp: UInt64
 
 #### transactions
 
-Array of transaction objects, or 32 Bytes transaction hashes depending on the last given parameter.
+Array of transaction objects
 
 ``` swift
-var transactions: [Transaction]
+var transactions: [EthTransactiondata]
 ```
 
 #### uncles
@@ -2369,7 +2537,7 @@ var transactions: [Transaction]
 Array of uncle hashes.
 
 ``` swift
-var uncles: String
+var uncles: [String]
 ```
 ### EthFilter
 
@@ -2410,7 +2578,7 @@ var address: String?
 Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with “or” options.
 
 ``` swift
-var topics: String?
+var topics: [String]?
 ```
 
 #### blockhash
@@ -2419,6 +2587,103 @@ With the addition of EIP-234, blockHash will be a new filter option which restri
 
 ``` swift
 var blockhash: String?
+```
+### EthLogs
+
+array of events created during execution of the tx
+
+``` swift
+public struct EthLogs
+```
+
+
+
+#### address
+
+the address triggering the event.
+
+``` swift
+var address: String
+```
+
+#### blockNumber
+
+the blockNumber
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### blockHash
+
+blockhash if ther containing block
+
+``` swift
+var blockHash: String
+```
+
+#### data
+
+abi-encoded data of the event (all non indexed fields)
+
+``` swift
+var data: String
+```
+
+#### logIndex
+
+the index of the even within the block.
+
+``` swift
+var logIndex: UInt64
+```
+
+#### removed
+
+the reorg-status of the event.
+
+``` swift
+var removed: Bool
+```
+
+#### topics
+
+array of 32byte-topics of the indexed fields.
+
+``` swift
+var topics: String
+```
+
+#### transactionHash
+
+requested transactionHash
+
+``` swift
+var transactionHash: String
+```
+
+#### transactionIndex
+
+transactionIndex within the containing block.
+
+``` swift
+var transactionIndex: UInt64
+```
+
+#### transactionLogIndex
+
+index of the event within the transaction.
+
+``` swift
+var transactionLogIndex: UInt64
+```
+
+#### type
+
+mining-status
+
+``` swift
+var type: String
 ```
 ### EthTransaction
 
@@ -2484,6 +2749,216 @@ the data-section of the transaction
 
 ``` swift
 var data: String?
+```
+### EthTransactionReceipt
+
+the transactionReceipt
+
+``` swift
+public struct EthTransactionReceipt
+```
+
+
+
+#### blockNumber
+
+the blockNumber
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### blockHash
+
+blockhash if ther containing block
+
+``` swift
+var blockHash: String
+```
+
+#### contractAddress
+
+the deployed contract in case the tx did deploy a new contract
+
+``` swift
+var contractAddress: String
+```
+
+#### cumulativeGasUsed
+
+gas used for all transaction up to this one in the block
+
+``` swift
+var cumulativeGasUsed: UInt64
+```
+
+#### gasUsed
+
+gas used by this transaction.
+
+``` swift
+var gasUsed: UInt64
+```
+
+#### logs
+
+array of events created during execution of the tx
+
+``` swift
+var logs: EthLogs
+```
+
+#### logsBloom
+
+bloomfilter used to detect events for `eth_getLogs`
+
+``` swift
+var logsBloom: String
+```
+
+#### status
+
+error-status of the tx.  0x1 = success 0x0 = failure
+
+``` swift
+var status: UInt64
+```
+
+#### transactionHash
+
+requested transactionHash
+
+``` swift
+var transactionHash: String
+```
+
+#### transactionIndex
+
+transactionIndex within the containing block.
+
+``` swift
+var transactionIndex: UInt64
+```
+### EthTransactiondata
+
+Array of transaction objects
+
+``` swift
+public struct EthTransactiondata
+```
+
+
+
+#### to
+
+receipient of the transaction.
+
+``` swift
+var to: String
+```
+
+#### from
+
+sender or signer of the transaction
+
+``` swift
+var from: String
+```
+
+#### value
+
+value in wei to send
+
+``` swift
+var value: UInt64
+```
+
+#### gas
+
+the gas to be send along
+
+``` swift
+var gas: UInt64
+```
+
+#### gasPrice
+
+the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+
+``` swift
+var gasPrice: UInt64
+```
+
+#### nonce
+
+the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+
+``` swift
+var nonce: UInt64
+```
+
+#### blockHash
+
+blockHash of the block holding this transaction or `null` if still pending.
+
+``` swift
+var blockHash: String
+```
+
+#### blockNumber
+
+blockNumber of the block holding this transaction or `null` if still pending.
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### hash
+
+transactionHash
+
+``` swift
+var hash: String
+```
+
+#### input
+
+data of the transaaction
+
+``` swift
+var input: String
+```
+
+#### transactionIndex
+
+index of the transaaction in the block
+
+``` swift
+var transactionIndex: UInt64
+```
+
+#### v
+
+recovery-byte of the signature
+
+``` swift
+var v: String
+```
+
+#### r
+
+x-value of the EC-Point of the signature
+
+``` swift
+var r: String
+```
+
+#### s
+
+y-value of the EC-Point of the signature
+
+``` swift
+var s: String
 ```
 ### EthTx
 
@@ -3368,6 +3843,196 @@ the address
 ``` swift
 var address: String
 ```
+### In3NodeList
+
+the current nodelist
+
+``` swift
+public struct In3NodeList
+```
+
+
+
+#### nodes
+
+a array of node definitions.
+
+``` swift
+var nodes: In3Nodes
+```
+
+#### contract
+
+the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
+
+``` swift
+var contract: String
+```
+
+#### registryId
+
+the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
+
+``` swift
+var registryId: String
+```
+
+#### lastBlockNumber
+
+the blockNumber of the last change of the list (usually the last event).
+
+``` swift
+var lastBlockNumber: UInt64
+```
+
+#### totalServer
+
+the total numbers of nodes.
+
+``` swift
+var totalServer: UInt64
+```
+### In3Nodes
+
+a array of node definitions.
+
+``` swift
+public struct In3Nodes
+```
+
+
+
+#### url
+
+the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
+
+``` swift
+var url: String
+```
+
+#### address
+
+the address of the signer
+
+``` swift
+var address: String
+```
+
+#### index
+
+the index within the nodeList of the contract
+
+``` swift
+var index: UInt64
+```
+
+#### deposit
+
+the stored deposit
+
+``` swift
+var deposit: UInt64
+```
+
+#### props
+
+the bitset of capabilities as described in the [Node Structure](spec.html#node-structure)
+
+``` swift
+var props: UInt64
+```
+
+#### timeout
+
+the time in seconds describing how long the deposit would be locked when trying to unregister a node.
+
+``` swift
+var timeout: UInt64
+```
+
+#### registerTime
+
+unix timestamp in seconds when the node has registered.
+
+``` swift
+var registerTime: UInt64
+```
+
+#### weight
+
+the weight of a node ( not used yet ) describing the amount of request-points it can handle per second.
+
+``` swift
+var weight: UInt64
+```
+
+#### proofHash
+
+a hash value containing the above values.
+This hash is explicitly stored in the contract, which enables the client to have only one merkle proof
+per node instead of verifying each property as its own storage value.
+The proof hash is build `keccak256( abi.encodePacked( deposit, timeout, registerTime, props, signer, url ))`
+
+``` swift
+var proofHash: String
+```
+### In3Sign
+
+the Array with signatures of all the requires blocks.
+
+``` swift
+public struct In3Sign
+```
+
+
+
+#### blockHash
+
+the blockhash which was signed.
+
+``` swift
+var blockHash: String
+```
+
+#### block
+
+the blocknumber
+
+``` swift
+var block: UInt64
+```
+
+#### r
+
+r-value of the signature
+
+``` swift
+var r: String
+```
+
+#### s
+
+s-value of the signature
+
+``` swift
+var s: String
+```
+
+#### v
+
+v-value of the signature
+
+``` swift
+var v: String
+```
+
+#### msgHash
+
+the msgHash signed. This Hash is created with `keccak256( abi.encodePacked( _blockhash,  _blockNumber, registryId ))`
+
+``` swift
+var msgHash: String
+```
 ### In3SignData
 
 the signature
@@ -3490,6 +4155,55 @@ the data-section of the transaction
 ``` swift
 var data: String?
 ```
+### In3Whitelist
+
+the whitelisted addresses
+
+``` swift
+public struct In3Whitelist
+```
+
+
+
+#### nodes
+
+array of whitelisted nodes addresses.
+
+``` swift
+var nodes: String
+```
+
+#### lastWhiteList
+
+the blockNumber of the last change of the in3 white list event.
+
+``` swift
+var lastWhiteList: UInt64
+```
+
+#### contract
+
+whitelist contract address.
+
+``` swift
+var contract: String
+```
+
+#### lastBlockNumber
+
+the blockNumber of the last change of the list (usually the last event).
+
+``` swift
+var lastBlockNumber: UInt64
+```
+
+#### totalServer
+
+the total numbers of whitelist nodes.
+
+``` swift
+var totalServer: UInt64
+```
 ### RPCError
 
 Error of a RPC-Request
@@ -3524,6 +4238,488 @@ the error description
 
 ``` swift
 let description: String?
+```
+### ZksyncAccountInfo
+
+the current state of the requested account.
+
+``` swift
+public struct ZksyncAccountInfo
+```
+
+
+
+#### address
+
+the address of the account
+
+``` swift
+var address: String
+```
+
+#### commited
+
+the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
+
+``` swift
+var commited: ZksyncCommited
+```
+
+#### depositing
+
+the state of all depositing-tx.
+
+``` swift
+var depositing: ZksyncDepositing
+```
+
+#### id
+
+the assigned id of the account, which will be used when encoding it into the rollup.
+
+``` swift
+var id: UInt64
+```
+
+#### verified
+
+the state after the rollup was verified in L1.
+
+``` swift
+var verified: ZksyncVerified
+```
+### ZksyncCommited
+
+the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
+
+``` swift
+public struct ZksyncCommited
+```
+
+
+
+#### balances
+
+the token-balance
+
+``` swift
+var balances: [String:UInt64]
+```
+
+#### nonce
+
+the nonce or transaction count.
+
+``` swift
+var nonce: UInt64
+```
+
+#### pubKeyHash
+
+the pubKeyHash set for the requested account or `0x0000...` if not set yet.
+
+``` swift
+var pubKeyHash: String
+```
+### ZksyncContractAddress
+
+fetches the contract addresses from the zksync server. This request also caches them and will return the results from cahe if available.
+
+``` swift
+public struct ZksyncContractAddress
+```
+
+
+
+#### govContract
+
+the address of the govement contract
+
+``` swift
+var govContract: String
+```
+
+#### mainContract
+
+the address of the main contract
+
+``` swift
+var mainContract: String
+```
+### ZksyncDepositing
+
+the state of all depositing-tx.
+
+``` swift
+public struct ZksyncDepositing
+```
+
+
+
+#### balances
+
+the token-values.
+
+``` swift
+var balances: [String:UInt64]
+```
+### ZksyncLogs
+
+array of events created during execution of the tx
+
+``` swift
+public struct ZksyncLogs
+```
+
+
+
+#### address
+
+the address triggering the event.
+
+``` swift
+var address: String
+```
+
+#### blockNumber
+
+the blockNumber
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### blockHash
+
+blockhash if ther containing block
+
+``` swift
+var blockHash: String
+```
+
+#### data
+
+abi-encoded data of the event (all non indexed fields)
+
+``` swift
+var data: String
+```
+
+#### logIndex
+
+the index of the even within the block.
+
+``` swift
+var logIndex: UInt64
+```
+
+#### removed
+
+the reorg-status of the event.
+
+``` swift
+var removed: Bool
+```
+
+#### topics
+
+array of 32byte-topics of the indexed fields.
+
+``` swift
+var topics: String
+```
+
+#### transactionHash
+
+requested transactionHash
+
+``` swift
+var transactionHash: String
+```
+
+#### transactionIndex
+
+transactionIndex within the containing block.
+
+``` swift
+var transactionIndex: UInt64
+```
+
+#### transactionLogIndex
+
+index of the event within the transaction.
+
+``` swift
+var transactionLogIndex: UInt64
+```
+
+#### type
+
+mining-status
+
+``` swift
+var type: String
+```
+### ZksyncTokens
+
+a array of tokens-definitions. This request also caches them and will return the results from cahe if available.
+
+``` swift
+public struct ZksyncTokens
+```
+
+
+
+#### address
+
+the address of the ERC2-Contract or 0x00000..000 in case of the native token (eth)
+
+``` swift
+var address: String
+```
+
+#### decimals
+
+decimals to be used when formating it for human readable representation.
+
+``` swift
+var decimals: UInt64
+```
+
+#### id
+
+id which will be used when encoding the token.
+
+``` swift
+var id: UInt64
+```
+
+#### symbol
+
+symbol for the token
+
+``` swift
+var symbol: String
+```
+### ZksyncTransactionReceipt
+
+the transactionReceipt
+
+``` swift
+public struct ZksyncTransactionReceipt
+```
+
+
+
+#### blockNumber
+
+the blockNumber
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### blockHash
+
+blockhash if ther containing block
+
+``` swift
+var blockHash: String
+```
+
+#### contractAddress
+
+the deployed contract in case the tx did deploy a new contract
+
+``` swift
+var contractAddress: String
+```
+
+#### cumulativeGasUsed
+
+gas used for all transaction up to this one in the block
+
+``` swift
+var cumulativeGasUsed: UInt64
+```
+
+#### gasUsed
+
+gas used by this transaction.
+
+``` swift
+var gasUsed: UInt64
+```
+
+#### logs
+
+array of events created during execution of the tx
+
+``` swift
+var logs: ZksyncLogs
+```
+
+#### logsBloom
+
+bloomfilter used to detect events for `eth_getLogs`
+
+``` swift
+var logsBloom: String
+```
+
+#### status
+
+error-status of the tx.  0x1 = success 0x0 = failure
+
+``` swift
+var status: UInt64
+```
+
+#### transactionHash
+
+requested transactionHash
+
+``` swift
+var transactionHash: String
+```
+
+#### transactionIndex
+
+transactionIndex within the containing block.
+
+``` swift
+var transactionIndex: UInt64
+```
+### ZksyncTxFee
+
+the fees split up into single values
+
+``` swift
+public struct ZksyncTxFee
+```
+
+
+
+#### feeType
+
+Type of the transaaction
+
+``` swift
+var feeType: String
+```
+
+#### gasFee
+
+the gas for the core-transaction
+
+``` swift
+var gasFee: UInt64
+```
+
+#### gasPriceWei
+
+current gasPrice
+
+``` swift
+var gasPriceWei: UInt64
+```
+
+#### gasTxAmount
+
+gasTxAmount
+
+``` swift
+var gasTxAmount: UInt64
+```
+
+#### totalFee
+
+total of all fees needed to pay in order to execute the transaction
+
+``` swift
+var totalFee: UInt64
+```
+
+#### zkpFee
+
+zkpFee
+
+``` swift
+var zkpFee: UInt64
+```
+### ZksyncTxInfo
+
+the current state of the requested tx.
+
+``` swift
+public struct ZksyncTxInfo
+```
+
+
+
+#### block
+
+the blockNumber containing the tx or `null` if still pending
+
+``` swift
+var block: UInt64
+```
+
+#### executed
+
+true, if the tx has been executed by the operator. If false it is still in the txpool of the operator.
+
+``` swift
+var executed: Bool
+```
+
+#### success
+
+if executed, this property marks the success of the tx.
+
+``` swift
+var success: Bool
+```
+
+#### failReason
+
+if executed and failed this will include an error message
+
+``` swift
+var failReason: String
+```
+### ZksyncVerified
+
+the state after the rollup was verified in L1.
+
+``` swift
+public struct ZksyncVerified
+```
+
+
+
+#### balances
+
+the token-balances.
+
+``` swift
+var balances: [String:UInt64]
+```
+
+#### nonce
+
+the nonce or transaction count.
+
+``` swift
+var nonce: UInt64
+```
+
+#### pubKeyHash
+
+the pubKeyHash set for the requested account or `0x0000...` if not set yet.
+
+``` swift
+var pubKeyHash: String
 ```
 ## Enums
 ### IncubedError

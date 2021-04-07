@@ -37,13 +37,13 @@ Whenever the client is not able to trust the changes of the target (which is the
 2. **verified_dap** : `uint` - the number of the closest already verified dap
 
 
-3. **max_diff** : `uint` *(optional)* - the maximum target difference between 2 verified daps (default: `5`)
+3. **max_diff** : `uint?` *(optional)* - the maximum target difference between 2 verified daps (default: `5`)
 
 
-4. **max_dap** : `uint` *(optional)* - the maximum amount of daps between 2 verified daps (default: `5`)
+4. **max_dap** : `uint?` *(optional)* - the maximum amount of daps between 2 verified daps (default: `5`)
 
 
-5. **limit** : `uint` *(optional)* - the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
+5. **limit** : `uint?` *(optional)* - the maximum amount of daps to return (`0` = no limit) - this is important for embedded devices since returning all daps might be too much for limited memory
 
 
 The following in3-configuration will have an impact on the result:
@@ -73,6 +73,28 @@ Hints:
 This graph shows the usage of this method and visualizes the result from above. The client is not able to trust the changes of the target due to his limits (`max_diff` and `max_dap`). This method provides a path of daps in which the limits are fulfilled from dap to another. The client is going to trust the target of the target dap since he is able to perform a step by step verification of the target by using the path of daps.
 
 ![](proofTarget.png)
+
+
+*Returns:* `object[]`
+
+A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data.
+
+
+The return value contains the following properties :
+
+* **dap** : `uint` - the difficulty adjustement period
+
+
+* **block** : `bytes` - the first blockheader
+
+
+* **final** : `bytes` - the finality header
+
+
+* **cbtx** : `bytes` - the coinbase transaction as hex
+
+
+* **cbtxMerkleProof** : `bytes` - the coinbasetx merkle proof
 
 
 *Proof:*
@@ -225,6 +247,10 @@ The following in3-configuration will have an impact on the result:
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
+*Returns:* `bytes32`
+
+the hash of the best block
+
 *Proof:*
 
 Since we can't prove the finality of the latest block we consider the `current block count` - `amount of finality` (set in `in3.finality`-field) as the latest block. The hash of this block will be returned. Setting `in3.finality`=`0` will return will return the hash of the actual latest block.
@@ -302,6 +328,164 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
+
+
+*Returns:* `btcblockWithTx`
+
+the block. 
+- verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+- verbose `1` or `true`: an object representing the blockheader.
+
+
+
+The return value contains the following properties :
+
+* **hash** : `bytes32` - the block hash (same as provided)
+
+
+* **confirmations** : `int` - The number of confirmations, or -1 if the block is not on the main chain
+
+
+* **height** : `uint` - The block height or index
+
+
+* **version** : `uint` - The block version
+
+
+* **versionHex** : `hex` - The block version formatted in hexadecimal
+
+
+* **merkleroot** : `bytes32` - The merkle root ( 32 bytes )
+
+
+* **time** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
+
+
+* **mediantime** : `uint` - The median block time in seconds since epoch (Jan 1 1970 GMT)
+
+
+* **nonce** : `uint` - The nonce
+
+
+* **bits** : `bytes4` - The bits ( 4 bytes as hex) representing the target
+
+
+* **difficulty** : `uint` - The difficulty
+
+
+* **chainwork** : `uint` - Expected number of hashes required to produce the current chain (in hex)
+
+
+* **nTx** : `uint` - The number of transactions in the block.
+
+
+* **tx** : `btctransaction[]` - the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
+The tx object supports the following properties :
+
+    * **txid** : `bytes32` - txid
+    
+
+    * **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+    
+
+    * **hex** : `bytes` - The serialized, hex-encoded data for `txid`
+    
+
+    * **hash** : `bytes32` - The transaction hash (differs from txid for witness transactions)
+    
+
+    * **size** : `uint` - The serialized transaction size
+    
+
+    * **vsize** : `uint` - The virtual transaction size (differs from size for witness transactions)
+    
+
+    * **weight** : `uint` - The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
+    
+
+    * **version** : `uint` - The version
+    
+
+    * **locktime** : `uint` - The lock time
+    
+
+    * **vin** : `object[]` - array of json objects of incoming txs to be used
+The vin object supports the following properties :
+    
+        * **txid** : `bytes32` - the transaction id
+        
+
+        * **vout** : `uint` - the index of the transaction out to be used
+        
+
+        * **scriptSig** : `object` - the script
+The scriptSig object supports the following properties :
+        
+            * **asm** : `string` - the asm-codes
+            
+
+            * **hex** : `string` - hex representation
+            
+
+        
+
+        * **sequence** : `uint` - The script sequence number
+        
+
+        * **txinwitness** : `string[]` - hex-encoded witness data (if any)
+        
+
+    
+
+    * **vout** : `object[]` - array of json objects describing the tx outputs
+The vout object supports the following properties :
+    
+        * **value** : `uint` - The Value in BTC
+        
+
+        * **n** : `uint` - the index
+        
+
+        * **scriptPubKey** : `object` - the script pubkey
+The scriptPubKey object supports the following properties :
+        
+            * **asm** : `string` - asm
+            
+
+            * **hex** : `string` - hex representation of the script
+            
+
+            * **reqSigs** : `uint` - the required signatures
+            
+
+            * **type** : `string` - The type, eg 'pubkeyhash'
+            
+
+            * **addresses** : `string[]` - Array of address(each representing a bitcoin adress)
+            
+
+        
+
+    
+
+    * **blockhash** : `bytes32` - the block hash
+    
+
+    * **confirmations** : `int` - The confirmations
+    
+
+    * **blocktime** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
+    
+
+    * **time** : `uint` - Same as "blocktime"
+    
+
+
+
+* **previousblockhash** : `bytes32` - The hash of the previous block
+
+
+* **nextblockhash** : `bytes32` - The hash of the next block
 
 
 *Proof:*
@@ -406,6 +590,10 @@ The following in3-configuration will have an impact on the result:
 * **verification** : `string` - defines the kind of proof the client is asking for (must be `never` or `proof`)
 
 
+*Returns:* `uint`
+
+the current blockheight
+
 *Proof:*
 
 Since we can't prove the finality of the latest block we consider the `current block count` - `amount of finality` (set in `in3.finality`-field) as the latest block. The number of this block will be returned. Setting `in3.finality`=`0` will return the actual current block count.
@@ -481,6 +669,61 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
+
+
+*Returns:* `btcblockheader`
+
+the blockheader. 
+- verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
+- verbose `1` or `true`: an object representing the blockheader.
+
+
+
+The return value contains the following properties :
+
+* **hash** : `bytes32` - the block hash (same as provided)
+
+
+* **confirmations** : `int` - The number of confirmations, or -1 if the block is not on the main chain
+
+
+* **height** : `uint` - The block height or index
+
+
+* **version** : `uint` - The block version
+
+
+* **versionHex** : `hex` - The block version formatted in hexadecimal
+
+
+* **merkleroot** : `bytes32` - The merkle root ( 32 bytes )
+
+
+* **time** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
+
+
+* **mediantime** : `uint` - The median block time in seconds since epoch (Jan 1 1970 GMT)
+
+
+* **nonce** : `uint` - The nonce
+
+
+* **bits** : `bytes4` - The bits ( 4 bytes as hex) representing the target
+
+
+* **difficulty** : `uint` - The difficulty
+
+
+* **chainwork** : `uint` - Expected number of hashes required to produce the current chain (in hex)
+
+
+* **nTx** : `uint` - The number of transactions in the block.
+
+
+* **previousblockhash** : `bytes32` - The hash of the previous block
+
+
+* **nextblockhash** : `bytes32` - The hash of the next block
 
 
 *Proof:*
@@ -614,6 +857,12 @@ The following in3-configuration will have an impact on the result:
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
+*Returns:* `uint`
+
+- `blocknumber` is a certain number: the difficulty of this block
+- `blocknumber` is `latest`, `earliest`, `pending` or empty: the difficulty of the latest block (`actual latest block` minus `in3.finality`)
+
+
 *Proof:*
 
 The `proof`-object contains the following properties:
@@ -704,10 +953,10 @@ Returns the raw transaction data. The returned level of details depends on the a
 1. **txid** : `bytes32` - The transaction id
 
 
-2. **verbosity** : `int` *(optional)* - 0 or false for the hex-encoded data for `txid`, 1 or true for a json object with information about `txid` (default: `1`)
+2. **verbosity** : `int?` *(optional)* - 0 or false for the hex-encoded data for `txid`, 1 or true for a json object with information about `txid` (default: `1`)
 
 
-3. **blockhash** : `bytes32` *(optional)* - The block in which to look for the transaction
+3. **blockhash** : `bytes32?` *(optional)* - The block in which to look for the transaction
 
 
 The following in3-configuration will have an impact on the result:
@@ -720,6 +969,113 @@ The following in3-configuration will have an impact on the result:
 
 
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
+
+
+*Returns:* `btctransaction`
+
+- verbose `0` or `false`: a string that is serialized, hex-encoded data for `txid`
+- verbose `1` or `false`: an object representing the transaction.        
+
+
+
+The return value contains the following properties :
+
+* **txid** : `bytes32` - txid
+
+
+* **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+
+
+* **hex** : `bytes` - The serialized, hex-encoded data for `txid`
+
+
+* **hash** : `bytes32` - The transaction hash (differs from txid for witness transactions)
+
+
+* **size** : `uint` - The serialized transaction size
+
+
+* **vsize** : `uint` - The virtual transaction size (differs from size for witness transactions)
+
+
+* **weight** : `uint` - The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
+
+
+* **version** : `uint` - The version
+
+
+* **locktime** : `uint` - The lock time
+
+
+* **vin** : `object[]` - array of json objects of incoming txs to be used
+The vin object supports the following properties :
+
+    * **txid** : `bytes32` - the transaction id
+    
+
+    * **vout** : `uint` - the index of the transaction out to be used
+    
+
+    * **scriptSig** : `object` - the script
+The scriptSig object supports the following properties :
+    
+        * **asm** : `string` - the asm-codes
+        
+
+        * **hex** : `string` - hex representation
+        
+
+    
+
+    * **sequence** : `uint` - The script sequence number
+    
+
+    * **txinwitness** : `string[]` - hex-encoded witness data (if any)
+    
+
+
+
+* **vout** : `object[]` - array of json objects describing the tx outputs
+The vout object supports the following properties :
+
+    * **value** : `uint` - The Value in BTC
+    
+
+    * **n** : `uint` - the index
+    
+
+    * **scriptPubKey** : `object` - the script pubkey
+The scriptPubKey object supports the following properties :
+    
+        * **asm** : `string` - asm
+        
+
+        * **hex** : `string` - hex representation of the script
+        
+
+        * **reqSigs** : `uint` - the required signatures
+        
+
+        * **type** : `string` - The type, eg 'pubkeyhash'
+        
+
+        * **addresses** : `string[]` - Array of address(each representing a bitcoin adress)
+        
+
+    
+
+
+
+* **blockhash** : `bytes32` - the block hash
+
+
+* **confirmations** : `int` - The confirmations
+
+
+* **blocktime** : `uint` - The block time in seconds since epoch (Jan 1 1970 GMT)
+
+
+* **time** : `uint` - Same as "blocktime"
 
 
 *Proof:*
@@ -977,7 +1333,7 @@ With the `blockTime` from the chainspec, including a tolerance, the current bloc
 
 *Parameters:* - 
 
-*Returns:*
+*Returns:* `uint`
 
 the highest known blocknumber
 
@@ -1016,22 +1372,22 @@ The tx object supports the following properties :
     * **to** : `address` - address of the contract
     
 
-    * **from** : `address` *(optional)* - sender of the address
+    * **from** : `address?` *(optional)* - sender of the address
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction, which includes the functionhash and the abi-encoded arguments
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction, which includes the functionhash and the abi-encoded arguments
     
 
 
@@ -1267,19 +1623,19 @@ The tx object supports the following properties :
     * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
@@ -1451,7 +1807,51 @@ The return value contains the following properties :
 * **timestamp** : `uint` - the unix timestamp for when the block was collated.
 
 
-* **transactions** : `transaction[]` - Array of transaction objects, or 32 Bytes transaction hashes depending on the last given parameter.
+* **transactions** : `transactiondata[]` - Array of transaction objects
+The transactions object supports the following properties :
+
+    * **to** : `address` - receipient of the transaction.
+    
+
+    * **from** : `address` - sender or signer of the transaction
+    
+
+    * **value** : `uint` - value in wei to send
+    
+
+    * **gas** : `uint` - the gas to be send along
+    
+
+    * **gasPrice** : `uint` - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    
+
+    * **nonce** : `uint` - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    
+
+    * **blockHash** : `bytes32` - blockHash of the block holding this transaction or `null` if still pending.
+    
+
+    * **blockNumber** : `uint` - blockNumber of the block holding this transaction or `null` if still pending.
+    
+
+    * **hash** : `bytes32` - transactionHash
+    
+
+    * **input** : `bytes` - data of the transaaction
+    
+
+    * **transactionIndex** : `uint` - index of the transaaction in the block
+    
+
+    * **v** : `byte` - recovery-byte of the signature
+    
+
+    * **r** : `bytes32` - x-value of the EC-Point of the signature
+    
+
+    * **s** : `bytes32` - y-value of the EC-Point of the signature
+    
+
 
 
 * **uncles** : `bytes32[]` - Array of uncle hashes.
@@ -1582,6 +1982,114 @@ See [eth_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) f
 
 
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
+
+
+*Returns:* `blockdata`
+
+the blockdata, or in case the block with that number does not exist, `null` will be returned.
+
+
+The return value contains the following properties :
+
+* **number** : `uint` - the block number. `null` when its pending block.
+
+
+* **hash** : `bytes32` - hash of the block. `null` when its pending block.
+
+
+* **parentHash** : `bytes32` - hash of the parent block.
+
+
+* **nonce** : `uint` - hash of the generated proof-of-work. `null` when its pending block.
+
+
+* **sha3Uncles** : `bytes32` - SHA3 of the uncles Merkle root in the block.
+
+
+* **logsBloom** : `bytes256` - the bloom filter for the logs of the block. `null` when its pending block.
+
+
+* **transactionsRoot** : `bytes32` - the root of the transaction trie of the block.
+
+
+* **stateRoot** : `bytes32` - the root of the final state trie of the block.
+
+
+* **receiptsRoot** : `bytes32` - the root of the receipts trie of the block.
+
+
+* **miner** : `address` - the address of the beneficiary to whom the mining rewards were given.
+
+
+* **difficulty** : `uint` - integer of the difficulty for this block.
+
+
+* **totalDifficulty** : `uint` - integer of the total difficulty of the chain until this block.
+
+
+* **extraData** : `bytes` - the "extra data" field of this block.
+
+
+* **size** : `uint` - integer the size of this block in bytes.
+
+
+* **gasLimit** : `uint` - the maximum gas allowed in this block.
+
+
+* **gasUsed** : `uint` - the total used gas by all transactions in this block.
+
+
+* **timestamp** : `uint` - the unix timestamp for when the block was collated.
+
+
+* **transactions** : `transactiondata[]` - Array of transaction objects
+The transactions object supports the following properties :
+
+    * **to** : `address` - receipient of the transaction.
+    
+
+    * **from** : `address` - sender or signer of the transaction
+    
+
+    * **value** : `uint` - value in wei to send
+    
+
+    * **gas** : `uint` - the gas to be send along
+    
+
+    * **gasPrice** : `uint` - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    
+
+    * **nonce** : `uint` - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    
+
+    * **blockHash** : `bytes32` - blockHash of the block holding this transaction or `null` if still pending.
+    
+
+    * **blockNumber** : `uint` - blockNumber of the block holding this transaction or `null` if still pending.
+    
+
+    * **hash** : `bytes32` - transactionHash
+    
+
+    * **input** : `bytes` - data of the transaaction
+    
+
+    * **transactionIndex** : `uint` - index of the transaaction in the block
+    
+
+    * **v** : `byte` - recovery-byte of the signature
+    
+
+    * **r** : `bytes32` - x-value of the EC-Point of the signature
+    
+
+    * **s** : `bytes32` - y-value of the EC-Point of the signature
+    
+
+
+
+* **uncles** : `bytes32[]` - Array of uncle hashes.
 
 
 *Proof:*
@@ -1874,19 +2382,19 @@ searches for events matching the given criteria. See [eth_getLogs](https://eth.w
 1. **filter** : `object` - The filter criteria for the events.
 The filter object supports the following properties :
 
-    * **fromBlock** : `uint | string` *(optional)* - Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. (default: `"latest"`)
+    * **fromBlock** : `uint | string?` *(optional)* - Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. (default: `"latest"`)
     
 
-    * **toBlock** : `uint | string` *(optional)* - Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. (default: `"latest"`)
+    * **toBlock** : `uint | string?` *(optional)* - Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. (default: `"latest"`)
     
 
-    * **address** : `address` *(optional)* - Contract address or a list of addresses from which logs should originate.
+    * **address** : `address?` *(optional)* - Contract address or a list of addresses from which logs should originate.
     
 
-    * **topics** : `bytes32[]` *(optional)* - Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with “or” options.
+    * **topics** : `bytes32[]?` *(optional)* - Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with “or” options.
     
 
-    * **blockhash** : `bytes32` *(optional)* - With the addition of EIP-234, blockHash will be a new filter option which restricts the logs returned to the single block with the 32-byte hash blockHash. Using blockHash is equivalent to fromBlock = toBlock = the block number with hash blockHash. If blockHash is present in in the filter criteria, then neither fromBlock nor toBlock are allowed.
+    * **blockhash** : `bytes32?` *(optional)* - With the addition of EIP-234, blockHash will be a new filter option which restricts the logs returned to the single block with the 32-byte hash blockHash. Using blockHash is equivalent to fromBlock = toBlock = the block number with hash blockHash. If blockHash is present in in the filter criteria, then neither fromBlock nor toBlock are allowed.
     
 
 
@@ -2797,7 +3305,7 @@ The Receipt of a Transaction. For Details, see [eth_getTransactionReceipt](https
 1. **txHash** : `bytes32` - the transactionHash
 
 
-*Returns:* `transactionReceipt`
+*Returns:* `transactionReceipt?`
 
 the TransactionReceipt or `null`  if it does not exist.
 
@@ -3125,19 +3633,19 @@ The tx object supports the following properties :
     * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
@@ -3166,19 +3674,19 @@ The tx object supports the following properties :
     * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
@@ -3277,6 +3785,10 @@ For the address to sign a signer must be registered.
 2. **message** : `bytes` - the message to sign
 
 
+*Returns:*
+
+the signature (65 bytes) for the given message.
+
 *Example:*
 
 ```sh
@@ -3318,22 +3830,26 @@ The tx object supports the following properties :
     * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
+
+*Returns:*
+
+the raw signed transaction
 
 *Example:*
 
@@ -3376,8 +3892,12 @@ If not the number should not be considered sceure or used in production.
 
 *Parameters:*
 
-1. **seed** : `bytes` *(optional)* - the seed. If given the result will be deterministic.
+1. **seed** : `bytes?` *(optional)* - the seed. If given the result will be deterministic.
 
+
+*Returns:*
+
+the 32byte random data
 
 *Example:*
 
@@ -3414,6 +3934,10 @@ the Network Version (currently 1)
 
 *Parameters:* - 
 
+*Returns:*
+
+the Version number
+
 ### sha256
 
 
@@ -3426,6 +3950,10 @@ No proof needed, since the client will execute this locally.
 
 1. **data** : `bytes` - data to hash
 
+
+*Returns:*
+
+the 32byte hash of the data
 
 *Example:*
 
@@ -3458,6 +3986,10 @@ Returns the underlying client version. See [web3_clientversion](https://eth.wiki
 
 *Parameters:* - 
 
+*Returns:*
+
+when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
+
 ### web3_sha3
 
 
@@ -3472,6 +4004,10 @@ No proof needed, since the client will execute this locally.
 
 1. **data** : `bytes` - data to hash
 
+
+*Returns:*
+
+the 32byte hash of the data
 
 *Example:*
 
@@ -3558,6 +4094,10 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 2. **data** : `hex` - the data to decode (usually the result of a eth_call)
 
 
+*Returns:* `any[]`
+
+a array with the values after decodeing.
+
 *Example:*
 
 ```sh
@@ -3599,8 +4139,12 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 1. **signature** : `string` - the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
 
 
-2. **params** : `any` - a array of arguments. the number of arguments must match the arguments in the signature.
+2. **params** : `any[]` - a array of arguments. the number of arguments must match the arguments in the signature.
 
+
+*Returns:* `hex`
+
+the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
 
 *Example:*
 
@@ -3674,6 +4218,10 @@ clears the incubed cache (usually found in the .in3-folder)
 
 *Parameters:* - 
 
+*Returns:*
+
+true indicating the success
+
 *Example:*
 
 ```sh
@@ -3706,8 +4254,12 @@ Will convert an upper or lowercase Ethereum address to a checksum address.  (See
 1. **address** : `address` - the address to convert.
 
 
-2. **useChainId** : `bool` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
+2. **useChainId** : `bool?` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
 
+
+*Returns:*
+
+the address-string using the upper/lowercase hex characters.
 
 *Example:*
 
@@ -3744,7 +4296,7 @@ changes the configuration of a client. The configuration is passed as the first 
 1. **config** : `object` - a Object with config-params.
 The config object supports the following properties :
 
-    * **chainId** : `string | uint` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
+    * **chainId** : `string | uint?` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
     Possible Values are:
 
         - `mainnet` : Mainnet Chain
@@ -3758,45 +4310,45 @@ The config object supports the following properties :
         *Example* : chainId: "goerli"
     
 
-    * **finality** : `uint | string` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators).
+    * **finality** : `uint | string?` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators).
 
         *Example* : finality: 50
     
 
-    * **includeCode** : `bool` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards.
+    * **includeCode** : `bool?` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards.
 
         *Example* : includeCode: true
     
 
-    * **maxAttempts** : `uint` *(optional)* - max number of attempts in case a response is rejected. (default: `7`)
+    * **maxAttempts** : `uint?` *(optional)* - max number of attempts in case a response is rejected. (default: `7`)
 
         *Example* : maxAttempts: 1
     
 
-    * **keepIn3** : `bool` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
+    * **keepIn3** : `bool?` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
 
         *Example* : keepIn3: true
     
 
-    * **stats** : `bool` *(optional)* - if true, requests sent will be used for stats. (default: `true`)
+    * **stats** : `bool?` *(optional)* - if true, requests sent will be used for stats. (default: `true`)
     
 
-    * **useBinary** : `bool` *(optional)* - if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore.
+    * **useBinary** : `bool?` *(optional)* - if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore.
 
         *Example* : useBinary: true
     
 
-    * **experimental** : `bool` *(optional)* - iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
+    * **experimental** : `bool?` *(optional)* - iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
 
         *Example* : experimental: true
     
 
-    * **timeout** : `uint` *(optional)* - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. (default: `20000`)
+    * **timeout** : `uint?` *(optional)* - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. (default: `20000`)
 
         *Example* : timeout: 100000
     
 
-    * **proof** : `string` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
+    * **proof** : `string?` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
     Possible Values are:
 
         - `none` : no proof will be generated or verfiied. This also works with standard rpc-endpoints.
@@ -3807,71 +4359,71 @@ The config object supports the following properties :
         *Example* : proof: "none"
     
 
-    * **replaceLatestBlock** : `uint` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
+    * **replaceLatestBlock** : `uint?` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
 
         *Example* : replaceLatestBlock: 6
     
 
-    * **autoUpdateList** : `bool` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. (default: `true`)
+    * **autoUpdateList** : `bool?` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. (default: `true`)
     
 
-    * **signatureCount** : `uint` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
+    * **signatureCount** : `uint?` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
 
         *Example* : signatureCount: 2
     
 
-    * **bootWeights** : `bool` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. (default: `true`)
+    * **bootWeights** : `bool?` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. (default: `true`)
 
         *Example* : bootWeights: true
     
 
-    * **useHttp** : `bool` *(optional)* - if true the client will try to use http instead of https.
+    * **useHttp** : `bool?` *(optional)* - if true the client will try to use http instead of https.
 
         *Example* : useHttp: true
     
 
-    * **minDeposit** : `uint` *(optional)* - min stake of the server. Only nodes owning at least this amount will be chosen.
+    * **minDeposit** : `uint?` *(optional)* - min stake of the server. Only nodes owning at least this amount will be chosen.
 
         *Example* : minDeposit: 10000000
     
 
-    * **nodeProps** : `uint` *(optional)* - used to identify the capabilities of the node.
+    * **nodeProps** : `uint?` *(optional)* - used to identify the capabilities of the node.
 
         *Example* : nodeProps: 65535
     
 
-    * **requestCount** : `uint` *(optional)* - the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. (default: `2`)
+    * **requestCount** : `uint?` *(optional)* - the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. (default: `2`)
 
         *Example* : requestCount: 3
     
 
-    * **rpc** : `string` *(optional)* - url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off.
+    * **rpc** : `string?` *(optional)* - url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off.
 
         *Example* : rpc: "http://loalhost:8545"
     
 
-    * **nodes** : `object` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
+    * **nodes** : `object?` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
 The nodes object supports the following properties :
     
         * **contract** : `address` - address of the registry contract. (This is the data-contract!)
         
 
-        * **whiteListContract** : `address` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
+        * **whiteListContract** : `address?` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
         
 
-        * **whiteList** : `address[]` *(optional)* - manual whitelist.
+        * **whiteList** : `address[]?` *(optional)* - manual whitelist.
         
 
         * **registryId** : `bytes32` - identifier of the registry.
         
 
-        * **needsUpdate** : `bool` *(optional)* - if set, the nodeList will be updated before next request.
+        * **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
         
 
-        * **avgBlockTime** : `uint` *(optional)* - average block time (seconds) for this chain.
+        * **avgBlockTime** : `uint?` *(optional)* - average block time (seconds) for this chain.
         
 
-        * **verifiedHashes** : `object` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
+        * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
 The verifiedHashes object supports the following properties :
         
             * **block** : `uint` - block number
@@ -3882,7 +4434,7 @@ The verifiedHashes object supports the following properties :
 
         
 
-        * **nodeList** : `object` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
+        * **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
 The nodeList object supports the following properties :
         
             * **url** : `string` - URL of the node.
@@ -3903,19 +4455,19 @@ The nodeList object supports the following properties :
     * **zksync** : `object` - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is on per default).
 The zksync object supports the following properties :
     
-        * **provider_url** : `string` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
+        * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
         
 
-        * **account** : `address` *(optional)* - the account to be used. if not specified, the first signer will be used.
+        * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
         
 
-        * **sync_key** : `bytes32` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+        * **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
         
 
-        * **main_contract** : `address` *(optional)* - address of the main contract- If not specified it will be taken from the server.
+        * **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
         
 
-        * **signer_type** : `string` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
+        * **signer_type** : `string?` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
         Possible Values are:
 
             - `pk` : Private matching the account is used ( for EOA)
@@ -3924,13 +4476,13 @@ The zksync object supports the following properties :
 
         
 
-        * **musig_pub_keys** : `bytes` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+        * **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
         
 
-        * **musig_urls** : `string[]` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+        * **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
         
 
-        * **create2** : `object` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
+        * **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
 The create2 object supports the following properties :
         
             * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
@@ -3948,12 +4500,12 @@ The create2 object supports the following properties :
         *Example* : zksync: [{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"contract"},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"create2","create2":{"creator":"0x6487c3ae644703c1f07527c18fe5569592654bcb","saltarg":"0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12","codehash":"0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"}},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","signer_type":"pk","musig_pub_keys":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","sync_key":"0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734","musig_urls":[null,"https://approver.service.com"]}]
     
 
-    * **key** : `bytes32` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    * **key** : `bytes32?` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
 
         *Example* : key: "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
     
 
-    * **pk** : `bytes32|bytes32[]` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    * **pk** : `bytes32|bytes32[]?` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
 
         *Example* : pk: ["0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"]
     
@@ -3961,12 +4513,12 @@ The create2 object supports the following properties :
     * **btc** : `object` - configure the Bitcoin verification
 The btc object supports the following properties :
     
-        * **maxDAP** : `uint` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
+        * **maxDAP** : `uint?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
 
             *Example* : maxDAP: 10
         
 
-        * **maxDiff** : `uint` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
+        * **maxDiff** : `uint?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
 
             *Example* : maxDiff: 5
         
@@ -4030,11 +4582,15 @@ decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition]
 
 *Parameters:*
 
-1. **key** : `object` - Keydata as object as defined in the keystorefile
+1. **key** : `string` - Keydata as object as defined in the keystorefile
 
 
 2. **passphrase** : `string` - the password to decrypt it.
 
+
+*Returns:*
+
+a raw private key (32 bytes)
 
 *Example:*
 
@@ -4093,7 +4649,20 @@ extracts the public key and address from signature.
 2. **sig** : `bytes` - the 65 bytes signature as hex.
 
 
-3. **sigtype** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
+3. **sigtype** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
+
+
+*Returns:* `object`
+
+the extracted public key and address
+
+
+The return value contains the following properties :
+
+* **publicKey** : `bytes` - the public Key of the signer (64 bytes)
+
+
+* **address** : `address` - the address
 
 
 *Example:*
@@ -4141,8 +4710,12 @@ For Javascript implementations, a [library](https://www.npmjs.com/package/idna-u
 1. **name** : `string` - the domain name UTS46 compliant string.
 
 
-2. **field** : `string` *(optional)* - the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain) (default: `"addr"`)
+2. **field** : `string?` *(optional)* - the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain) (default: `"addr"`)
 
+
+*Returns:*
+
+the value of the specified field
 
 *Example:*
 
@@ -4184,8 +4757,12 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 2. **unit** : `string` - the unit of the target value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
 
 
-3. **digits** : `uint` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
+3. **digits** : `uint?` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
 
+
+*Returns:*
+
+the value as string.
 
 *Example:*
 
@@ -4220,13 +4797,13 @@ fetches and verifies the nodeList from a node
 
 *Parameters:*
 
-1. **limit** : `uint` *(optional)* - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
+1. **limit** : `uint?` *(optional)* - if the number is defined and >0 this method will return a partial nodeList limited to the given number.
 
 
-2. **seed** : `bytes32` *(optional)* - this 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
+2. **seed** : `bytes32?` *(optional)* - this 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
 
 
-3. **addresses** : `address[]` *(optional)* - a optional array of addresses of signers the nodeList must include.
+3. **addresses** : `address[]?` *(optional)* - a optional array of addresses of signers the nodeList must include.
 
 
 *Returns:* `object`
@@ -4520,6 +5097,10 @@ extracts the address from a private key.
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
 
 
+*Returns:*
+
+the address
+
 *Example:*
 
 ```sh
@@ -4553,6 +5134,10 @@ extracts the public key from a private key.
 
 1. **pk** : `bytes32` - the 32 bytes private key as hex.
 
+
+*Returns:*
+
+the public key as 64 bytes
 
 *Example:*
 
@@ -4594,22 +5179,26 @@ The tx object supports the following properties :
     * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
     
 
-    * **value** : `uint` *(optional)* - value in wei to send
+    * **value** : `uint?` *(optional)* - value in wei to send
     
 
-    * **gas** : `uint` *(optional)* - the gas to be send along (default: `21000`)
+    * **gas** : `uint?` *(optional)* - the gas to be send along (default: `21000`)
     
 
-    * **gasPrice** : `uint` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    * **gasPrice** : `uint?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
-    * **nonce** : `uint` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    * **nonce** : `uint?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes` *(optional)* - the data-section of the transaction
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
+
+*Returns:*
+
+the unsigned raw transaction as hex.
 
 *Example:*
 
@@ -4658,7 +5247,7 @@ The blocks object supports the following properties :
     * **blockNumber** : `uint` - the blockNumber to sign
     
 
-    * **hash** : `bytes32` *(optional)* - the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
+    * **hash** : `bytes32?` *(optional)* - the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
     
 
 
@@ -4676,7 +5265,7 @@ The return value contains the following properties :
 * **block** : `uint` - the blocknumber
 
 
-* **r** : `bytres32` - r-value of the signature
+* **r** : `bytes32` - r-value of the signature
 
 
 * **s** : `bytes32` - s-value of the signature
@@ -4745,7 +5334,32 @@ signs the given data.
 2. **account** : `address | bytes32` - the account to sign if the account is a bytes32 it will be used as private key
 
 
-3. **msgType** : `string` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
+3. **msgType** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
+
+
+*Returns:* `object`
+
+the signature
+
+
+The return value contains the following properties :
+
+* **message** : `bytes` - original message used
+
+
+* **messageHash** : `bytes32` - the hash the signature is based on
+
+
+* **signature** : `bytes` - the signature (65 bytes)
+
+
+* **r** : `bytes32` - the x-value of the EC-Point
+
+
+* **s** : `bytes32` - the y-value of the EC-Point
+
+
+* **v** : `byte` - the recovery value (0|1) + 27
 
 
 *Example:*
@@ -4801,6 +5415,10 @@ signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can b
 2. **from** : `address` - the account to sign
 
 
+*Returns:*
+
+the raw transaction with signature.
+
 *Example:*
 
 ```sh
@@ -4838,8 +5456,12 @@ converts the given value into wei.
     *Example* : value: "0.9"
 
 
-2. **unit** : `string` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
+2. **unit** : `string?` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
 
+
+*Returns:*
+
+the value in wei as hex.
 
 *Example:*
 
@@ -5071,6 +5693,10 @@ Fetches the data for a requested ipfs-hash. If the node is not able to resolve t
 2. **encoding** : `string` - the encoding used for the response. ( `hex` , `base64` or `utf8`)
 
 
+*Returns:*
+
+the content matching the requested hash encoded in the defined encoding.
+
 *Proof:*
 
 No proof or verification needed on the server side. All the verification are done in the client by creating the ipfs multihash and comparing to the requested hash.
@@ -5118,6 +5744,10 @@ Even if the node stores the content there is no gurantee it will do it forever.
 
 2. **encoding** : `string` - the encoding used for the request. ( `hex` , `base64` or `utf8`)
 
+
+*Returns:*
+
+the ipfs multi hash
 
 *Example:*
 
@@ -5196,7 +5826,7 @@ returns account_info from the server
 
 *Parameters:*
 
-1. **address** : `address` *(optional)* - the account-address. if not specified, the client will try to use its own address based on the signer config.
+1. **address** : `address?` *(optional)* - the account-address. if not specified, the client will try to use its own address based on the signer config.
 
 
 *Returns:* `object`
@@ -5212,12 +5842,7 @@ The return value contains the following properties :
 * **commited** : `object` - the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
 The commited object supports the following properties :
 
-    * **balances** : `object` - the token-balances.
-The balances object supports the following properties :
-    
-        * **<token>** : `uint` - the balance of the token
-        
-
+    * **balances** : `{key:uint}` - the token-balance
     
 
     * **nonce** : `uint` - the nonce or transaction count.
@@ -5231,12 +5856,7 @@ The balances object supports the following properties :
 * **depositing** : `object` - the state of all depositing-tx.
 The depositing object supports the following properties :
 
-    * **balances** : `object` - the token-values.
-The balances object supports the following properties :
-    
-        * **<token>** : `uint` - the value of the token
-        
-
+    * **balances** : `{key:uint}` - the token-values.
     
 
 
@@ -5247,12 +5867,7 @@ The balances object supports the following properties :
 * **verified** : `object` - the state after the rollup was verified in L1.
 The verified object supports the following properties :
 
-    * **balances** : `object` - the token-balances.
-The balances object supports the following properties :
-    
-        * **<token>** : `uint` - the balance of the token
-        
-
+    * **balances** : `{key:uint}` - the token-balances.
     
 
     * **nonce** : `uint` - the nonce or transaction count.
@@ -5416,10 +6031,10 @@ sends a deposit-transaction and returns the opId, which can be used to tradck pr
 2. **token** : `string` - the token as symbol or address
 
 
-3. **approveDepositAmountForERC20** : `bool` *(optional)* - if true and in case of an erc20-token, the client will send a approve transaction first, otherwise it is expected to be already approved.
+3. **approveDepositAmountForERC20** : `bool?` *(optional)* - if true and in case of an erc20-token, the client will send a approve transaction first, otherwise it is expected to be already approved.
 
 
-4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
+4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
 *Returns:* `uint`
@@ -5789,7 +6404,7 @@ returns the current PubKeyHash based on the configuration set.
 
 *Parameters:*
 
-1. **pubKey** : `bytes32` *(optional)* - the packed public key to hash ( if given the hash is build based on the given hash, otherwise the hash is based on the config)
+1. **pubKey** : `bytes32?` *(optional)* - the packed public key to hash ( if given the hash is build based on the given hash, otherwise the hash is based on the config)
 
 
 *Returns:* `address`
@@ -5957,7 +6572,7 @@ returns the list of all available tokens
 
 *Parameters:* - 
 
-*Returns:* `object`
+*Returns:* `{key:object}`
 
 a array of tokens-definitions. This request also caches them and will return the results from cahe if available.
 
@@ -6064,7 +6679,7 @@ sends a zksync-transaction and returns data including the transactionHash.
 3. **token** : `string` - the token as symbol or address
 
 
-4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
+4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
 *Returns:* `bytes32`
@@ -6221,7 +6836,7 @@ withdraws the amount to the given `ethAddress` for the given token.
 3. **token** : `string` - the token as symbol or address
 
 
-4. **account** : `address` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
+4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
 *Returns:* `bytes32`
