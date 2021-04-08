@@ -40,7 +40,7 @@ const in3 = new IN3({
 
 the number in percent needed in order reach finality (% of signature of the validators). *This config is optional.*
 
- Type: `uint | string?`
+ Type: `int?`
 
 *Example:*
 
@@ -81,7 +81,7 @@ const in3 = new IN3({
 
 max number of attempts in case a response is rejected. *This config is optional.* (default: `7`)
 
- Type: `uint?`
+ Type: `int?`
 
 *Example:*
 
@@ -184,7 +184,7 @@ const in3 = new IN3({
 
 specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. *This config is optional.* (default: `20000`)
 
- Type: `uint?`
+ Type: `uint64?`
 
 *Example:*
 
@@ -232,7 +232,7 @@ const in3 = new IN3({
 
 if specified, the blocknumber *latest* will be replaced by blockNumber- specified value. *This config is optional.*
 
- Type: `uint?`
+ Type: `int?`
 
 *Example:*
 
@@ -273,7 +273,7 @@ const in3 = new IN3({
 
 number of signatures requested in order to verify the blockhash. *This config is optional.* (default: `1`)
 
- Type: `uint?`
+ Type: `int?`
 
 *Example:*
 
@@ -335,7 +335,7 @@ const in3 = new IN3({
 
 min stake of the server. Only nodes owning at least this amount will be chosen. *This config is optional.*
 
- Type: `uint?`
+ Type: `uint256?`
 
 *Example:*
 
@@ -355,18 +355,18 @@ const in3 = new IN3({
 
 used to identify the capabilities of the node. *This config is optional.*
 
- Type: `uint?`
+ Type: `hex?`
 
 *Example:*
 
 ```sh
-> in3 --nodeProps=65535  ....
+> in3 --nodeProps=0xffff  ....
 
 ```
 
 ```js
 const in3 = new IN3({
-  "nodeProps": 65535
+  "nodeProps": "0xffff"
 })
 ```
 
@@ -375,7 +375,7 @@ const in3 = new IN3({
 
 the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. *This config is optional.* (default: `2`)
 
- Type: `uint?`
+ Type: `int?`
 
 *Example:*
 
@@ -434,11 +434,11 @@ The nodes object supports the following properties :
 * **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
 
 
-* **avgBlockTime** : `uint?` *(optional)* - average block time (seconds) for this chain.
+* **avgBlockTime** : `int?` *(optional)* - average block time (seconds) for this chain.
 
 
 * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
-    * **block** : `uint` - block number
+    * **block** : `uint64` - block number
     
 
     * **hash** : `bytes32` - verified hash corresponding to block number.
@@ -453,7 +453,7 @@ The nodes object supports the following properties :
     * **address** : `string` - address of the node
     
 
-    * **props** : `uint` - used to identify the capabilities of the node (defaults to 0xFFFF).
+    * **props** : `hex` - used to identify the capabilities of the node (defaults to 0xFFFF).
     
 
 
@@ -636,10 +636,10 @@ configure the Bitcoin verification
  Type: `object`
 The btc object supports the following properties :
 
-* **maxDAP** : `uint?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
+* **maxDAP** : `int?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
 
 
-* **maxDiff** : `uint?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
+* **maxDiff** : `int?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
 
 
 
