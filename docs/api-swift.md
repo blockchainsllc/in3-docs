@@ -32,12 +32,372 @@ Eth(in3).getTransactionReceipt(hash: "0xe3f6f3a73bccd73b77a7b9e9096fe07b9341e7d1
         })
 ```
 ## Classes
-### BtcAPI
+### Account
+
+Account Handling includes handling signers and preparing and signing transacrtion and data.
+
+``` swift
+public class Account
+```
+
+Signers are Plugins able to create signatures. Those functions will use the registered plugins.
+
+
+
+#### pk2address(pk:)
+
+extracts the address from a private key.
+
+``` swift
+public func pk2address(pk: String) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).pk2address(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
+// result = "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
+```
+
+**Parameters**
+
+  - pk: the 32 bytes private key as hex.
+
+**Returns**
+
+the address
+
+#### pk2public(pk:)
+
+extracts the public key from a private key.
+
+``` swift
+public func pk2public(pk: String) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).pk2public(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
+// result = "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f7818\
+//          6577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
+```
+
+**Parameters**
+
+  - pk: the 32 bytes private key as hex.
+
+**Returns**
+
+the public key as 64 bytes
+
+#### ecrecover(msg:sig:sigtype:)
+
+extracts the public key and address from signature.
+
+``` swift
+public func ecrecover(msg: String, sig: String, sigtype: String? = "raw") throws -> AccountEcrecover
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).ecrecover(msg: "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999", sig: "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c", sigtype: "hash")
+// result = 
+//          publicKey: "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c\
+//            4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb"
+//          address: "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+```
+
+**Parameters**
+
+  - msg: the message the signature is based on.
+  - sig: the 65 bytes signature as hex.
+  - sigtype: the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw`
+
+**Returns**
+
+the extracted public key and address
+
+#### prepareTx(tx:)
+
+prepares a Transaction by filling the unspecified values and returens the unsigned raw Transaction.
+
+``` swift
+public func prepareTx(tx: AccountTransaction) -> Future<String>
+```
+
+**Example**
+
+``` swift
+AccountAPI(in3).prepareTx(tx: AccountTransaction(to: "0x63f666a23cbd135a91187499b5cc51d589c302a0", value: "0x100000000", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f")) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a0850100000000\
+//          80018080"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+
+**Returns**
+
+the unsigned raw transaction as hex.
+
+#### signTx(tx:from:)
+
+signs the given raw Tx (as prepared by in3\_prepareTx ). The resulting data can be used in `eth_sendRawTransaction` to publish and broadcast the transaction.
+
+``` swift
+public func signTx(tx: String, from: String) -> Future<String>
+```
+
+**Example**
+
+``` swift
+AccountAPI(in3).signTx(tx: "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000\
+//          008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755\
+//          f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - tx: the raw unsigned transactiondata
+  - from: the account to sign
+
+**Returns**
+
+the raw transaction with signature.
+
+#### signData(msg:account:msgType:)
+
+signs the given data.
+
+``` swift
+public func signData(msg: String, account: String, msgType: String? = "raw") -> Future<AccountSignData>
+```
+
+**Example**
+
+``` swift
+AccountAPI(in3).signData(msg: "0x0102030405060708090a0b0c0d0e0f", account: "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852", msgType: "raw") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          message: "0x0102030405060708090a0b0c0d0e0f"
+//          messageHash: "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67"
+//          signature: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792\
+//            264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b"
+//          r: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579"
+//          s: "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152"
+//          v: 27
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - msg: the message to sign.
+  - account: the account to sign if the account is a bytes32 it will be used as private key
+  - msgType: the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data)
+
+**Returns**
+
+the signature
+
+#### decryptKey(key:passphrase:)
+
+decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition](https:​//github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition). The result is the raw private key.
+
+``` swift
+public func decryptKey(key: String, passphrase: String) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).decryptKey(key: {"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}, passphrase: "test")
+// result = "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
+```
+
+**Parameters**
+
+  - key: Keydata as object as defined in the keystorefile
+  - passphrase: the password to decrypt it.
+
+**Returns**
+
+a raw private key (32 bytes)
+
+#### createKey(seed:)
+
+Generates 32 random bytes.
+If /dev/urandom is available it will be used and should generate a secure random number.
+If not the number should not be considered sceure or used in production.
+
+``` swift
+public func createKey(seed: String? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).createKey()
+// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+```
+
+**Parameters**
+
+  - seed: the seed. If given the result will be deterministic.
+
+**Returns**
+
+the 32byte random data
+
+#### sign(account:message:)
+
+The sign method calculates an Ethereum specific signature with:​
+
+``` swift
+public func sign(account: String, message: String) -> Future<String>
+```
+
+``` js
+sign(keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))).
+```
+
+By adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature. This prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to impersonate the victim.
+
+For the address to sign a signer must be registered.
+
+**Example**
+
+``` swift
+AccountAPI(in3).sign(account: "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", message: "0xdeadbeaf") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
+//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - account: the account to sign with
+  - message: the message to sign
+
+**Returns**
+
+the signature (65 bytes) for the given message.
+
+#### signTransaction(tx:)
+
+Signs a transaction that can be submitted to the network at a later time using with eth\_sendRawTransaction.
+
+``` swift
+public func signTransaction(tx: AccountTransaction) -> Future<String>
+```
+
+**Example**
+
+``` swift
+AccountAPI(in3).signTransaction(tx: AccountTransaction(data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155", gas: "0x76c0", gasPrice: "0x9184e72a000", to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567", value: "0x9184e72a")) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
+//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - tx: transaction to sign
+
+**Returns**
+
+the raw signed transaction
+
+#### addRawKey(pk:)
+
+adds a raw private key as signer, which allows signing transactions.
+
+``` swift
+public func addRawKey(pk: String) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).addRawKey(pk: "0x1234567890123456789012345678901234567890123456789012345678901234")
+// result = "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+```
+
+**Parameters**
+
+  - pk: the 32byte long private key as hex string.
+
+**Returns**
+
+the address of given key.
+
+#### accounts()
+
+returns a array of account-addresss the incubed client is able to sign with.
+
+``` swift
+public func accounts() throws -> [String]
+```
+
+In order to add keys, you can use [in3\_addRawKey](#in3-addrawkey) or configure them in the config. The result also contains the addresses of any signer signer-supporting the `PLGN_ACT_SIGN_ACCOUNT` action.
+
+**Example**
+
+``` swift
+let result = try AccountAPI(in3).accounts()
+// result = 
+//          - "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+//          - "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+```
+
+**Returns**
+
+the array of addresses of all registered signers.
+### Btc
 
 *Important:​ This feature is still experimental and not considered stable yet. In order to use it, you need to set the experimental-flag (-x on the comandline or `"experimental":​true`\!*
 
 ``` swift
-public class BtcAPI
+public class Btc
 ```
 
 For bitcoin incubed follows the specification as defined in <https://bitcoincore.org/en/doc/0.18.0/>.
@@ -439,7 +799,7 @@ the current blockheight
 Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 
 ``` swift
-public func getdifficulty(blocknumber: UInt64) -> Future<UInt64>
+public func getdifficulty(blocknumber: UInt64) -> Future<UInt256>
 ```
 
   - `blocknumber` is `latest`, `earliest`, `pending` or empty: the difficulty of the latest block (`actual latest block` minus `in3.finality`)
@@ -472,7 +832,7 @@ BtcAPI(in3).getdifficulty(blocknumber: 631910) .observe(using: {
 Whenever the client is not able to trust the changes of the target (which is the case if a block can't be found in the verified target cache *and* the value of the target changed more than the client's limit `max_diff`) he will call this method. It will return additional proof data to verify the changes of the target on the side of the client. This is not a standard Bitcoin rpc-method like the other ones, but more like an internal method.
 
 ``` swift
-public func proofTarget(target_dap: UInt64, verified_dap: UInt64, max_diff: UInt64? = 5, max_dap: UInt64? = 5, limit: UInt64? = 0) -> Future<[BtcProofTarget]>
+public func proofTarget(target_dap: UInt64, verified_dap: UInt64, max_diff: Int? = 5, max_dap: Int? = 5, limit: Int? = 0) -> Future<[BtcProofTarget]>
 ```
 
   - Parameter target\_dap : the number of the difficulty adjustment period (dap) we are looking for
@@ -557,12 +917,47 @@ BtcAPI(in3).getbestblockhash() .observe(using: {
 **Returns**
 
 the hash of the best block
-### EthAPI
+### Contract
+
+``` swift
+public class Contract
+```
+
+
+
+#### init(in3:abi:at:)
+
+``` swift
+public init(in3: In3, abi: [ABI], at: String? = nil) throws
+```
+
+
+
+#### deploy(data:args:)
+
+``` swift
+public func deploy(data: String, args: [AnyObject])
+```
+
+#### call(name:args:)
+
+``` swift
+public func call(name: String, args: [AnyObject]) -> Future<[Any]>
+```
+
+#### encodeCall(name:args:)
+
+returns the abi encoded arguments as hex string
+
+``` swift
+public func encodeCall(name: String, args: [AnyObject]) throws -> String
+```
+### Eth
 
 Standard JSON-RPC calls as described in https:​//eth.wiki/json-rpc/API.
 
 ``` swift
-public class EthAPI
+public class Eth
 ```
 
 Whenever a request is made for a response with `verification`: `proof`, the node must provide the proof needed to validate the response result. The proof itself depends on the chain.
@@ -601,207 +996,6 @@ Proofs will add a special in3-section to the response containing a `proof`- obje
   - **signatures** `Signature[]` - Requested signatures.
 
 
-
-#### clientVersion()
-
-Returns the underlying client version. See [web3\_clientversion](https:​//eth.wiki/json-rpc/API#web3_clientversion) for spec.
-
-``` swift
-public func clientVersion() -> Future<String>
-```
-
-**Returns**
-
-when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
-
-#### keccak(data:)
-
-Returns Keccak-256 (not the standardized SHA3-256) of the given data.
-
-``` swift
-public func keccak(data: String) throws -> String
-```
-
-See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
-
-No proof needed, since the client will execute this locally.
-
-**Example**
-
-``` swift
-let result = try EthAPI(in3).keccak(data: "0x1234567890")
-// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
-```
-
-**Parameters**
-
-  - data: data to hash
-
-**Returns**
-
-the 32byte hash of the data
-
-#### sha3(data:)
-
-Returns Keccak-256 (not the standardized SHA3-256) of the given data.
-
-``` swift
-public func sha3(data: String) throws -> String
-```
-
-See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
-
-No proof needed, since the client will execute this locally.
-
-**Example**
-
-``` swift
-let result = try EthAPI(in3).sha3(data: "0x1234567890")
-// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
-```
-
-**Parameters**
-
-  - data: data to hash
-
-**Returns**
-
-the 32byte hash of the data
-
-#### sha256(data:)
-
-Returns sha-256 of the given data.
-
-``` swift
-public func sha256(data: String) throws -> String
-```
-
-No proof needed, since the client will execute this locally.
-
-**Example**
-
-``` swift
-let result = try EthAPI(in3).sha256(data: "0x1234567890")
-// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-```
-
-**Parameters**
-
-  - data: data to hash
-
-**Returns**
-
-the 32byte hash of the data
-
-#### version()
-
-the Network Version (currently 1)
-
-``` swift
-public func version() throws -> String
-```
-
-**Returns**
-
-the Version number
-
-#### createKey(seed:)
-
-Generates 32 random bytes.
-If /dev/urandom is available it will be used and should generate a secure random number.
-If not the number should not be considered sceure or used in production.
-
-``` swift
-public func createKey(seed: String? = nil) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try EthAPI(in3).createKey()
-// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-```
-
-**Parameters**
-
-  - seed: the seed. If given the result will be deterministic.
-
-**Returns**
-
-the 32byte random data
-
-#### sign(account:message:)
-
-The sign method calculates an Ethereum specific signature with:​
-
-``` swift
-public func sign(account: String, message: String) -> Future<String>
-```
-
-``` js
-sign(keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))).
-```
-
-By adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature. This prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to impersonate the victim.
-
-For the address to sign a signer must be registered.
-
-**Example**
-
-``` swift
-EthAPI(in3).sign(account: "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83", message: "0xdeadbeaf") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
-//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - account: the account to sign with
-  - message: the message to sign
-
-**Returns**
-
-the signature (65 bytes) for the given message.
-
-#### signTransaction(tx:)
-
-Signs a transaction that can be submitted to the network at a later time using with eth\_sendRawTransaction.
-
-``` swift
-public func signTransaction(tx: EthTransaction) -> Future<String>
-```
-
-**Example**
-
-``` swift
-EthAPI(in3).signTransaction(tx: EthTransaction(data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675", from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155", gas: "0x76c0", gasPrice: "0x9184e72a000", to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567", value: "0x9184e72a")) .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17b\
-//          fdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - tx: transaction to sign
-
-**Returns**
-
-the raw signed transaction
 
 #### blockNumber()
 
@@ -1140,7 +1334,7 @@ the number of uncles
 returns the transaction data.
 
 ``` swift
-public func getTransactionByBlockHashAndIndex(blockHash: String, index: UInt64) -> Future<EthTransactiondata>
+public func getTransactionByBlockHashAndIndex(blockHash: String, index: Int) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockHashAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockHashAndIndex) for more details.
@@ -1189,7 +1383,7 @@ the transactiondata or `null` if it does not exist
 returns the transaction data.
 
 ``` swift
-public func getTransactionByBlockNumberAndIndex(blockNumber: UInt64, index: UInt64) -> Future<EthTransactiondata>
+public func getTransactionByBlockNumberAndIndex(blockNumber: UInt64, index: Int) -> Future<EthTransactiondata>
 ```
 
 See JSON-RPC-Spec for [eth\_getTransactionByBlockNumberAndIndex](https://eth.wiki/json-rpc/API#eth_getTransactionByBlockNumberAndIndex) for more details.
@@ -1634,7 +1828,7 @@ public func observe(using callback: @escaping (Result) -> Void)
 ```
 ### In3
 
-The I ncubed client
+The Incubed client
 
 ``` swift
 public class In3
@@ -1643,6 +1837,8 @@ public class In3
 
 
 #### init(_:)
+
+initialize with a Configurations
 
 ``` swift
 public init(_ config: In3Config) throws
@@ -1662,9 +1858,13 @@ var transport: (_ url: String, _ method:String, _ payload:Data?, _ headers: [Str
 
 #### configure(_:)
 
+change the configuration.
+
 ``` swift
 public func configure(_ config: In3Config) throws
 ```
+
+  - Paramater config : the partial or full Configuration to change.
 
 #### execLocal(_:_:)
 
@@ -1686,608 +1886,33 @@ public func execLocal(_ method: String, _ params: [RPCObject]) throws -> RPCObje
 
 #### exec(_:_:cb:)
 
+executes a asnychronous request
+
 ``` swift
 public func exec(_ method: String, _ params: RPCObject, cb: @escaping  (_ result:RequestResult)->Void) throws
 ```
 
+This requires a transport to be set
+
+**Parameters**
+
+  - method: the rpc-method to call
+  - params: the paramas as ROCPobjects
+  - cb: the callback which will be called with a Result (either success or error ) when done.
+
 #### executeJSON(_:)
+
+executes a json-rpc encoded request synchonously and returns the result as json-string
 
 ``` swift
 public func executeJSON(_ rpc: String) -> String
 ```
-### In3API
-
-There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
-
-``` swift
-public class In3API
-```
-
-The incubed client itself offers special RPC-Methods, which are mostly handled directly inside the client:
-
-
-
-#### abiEncode(signature:params:)
-
-based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function encodes the value given and returns it as hexstring.
-
-``` swift
-public func abiEncode(signature: String, params: [AnyObject]) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).abiEncode(signature: "getBalance(address)", params: ["0x1234567890123456789012345678901234567890"])
-// result = "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
-```
-
-**Parameters**
-
-  - signature: the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
-  - params: a array of arguments. the number of arguments must match the arguments in the signature.
-
-**Returns**
-
-the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
-
-#### abiDecode(signature:data:)
-
-based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function decodes the bytes given and returns it as array of values.
-
-``` swift
-public func abiDecode(signature: String, data: String) throws -> [RPCObject]
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).abiDecode(signature: "(address,uint256)", data: "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005")
-// result = 
-//          - "0x1234567890123456789012345678901234567890"
-//          - "0x05"
-```
-
-**Parameters**
-
-  - signature: the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
-  - data: the data to decode (usually the result of a eth\_call)
-
-**Returns**
-
-a array with the values after decodeing.
-
-#### checksumAddress(address:useChainId:)
-
-Will convert an upper or lowercase Ethereum address to a checksum address.  (See [EIP55](https:​//github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) )
-
-``` swift
-public func checksumAddress(address: String, useChainId: Bool? = nil) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).checksumAddress(address: "0x1fe2e9bf29aa1938859af64c413361227d04059a", useChainId: false)
-// result = "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
-```
-
-**Parameters**
-
-  - address: the address to convert.
-  - useChainId: if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
-
-**Returns**
-
-the address-string using the upper/lowercase hex characters.
-
-#### ens(name:field:)
-
-resolves a ens-name.
-the domain names consist of a series of dot-separated labels. Each label must be a valid normalised label as described in [UTS46](https:​//unicode.org/reports/tr46/) with the options `transitional=false` and `useSTD3AsciiRules=true`.
-For Javascript implementations, a [library](https:​//www.npmjs.com/package/idna-uts46) is available that normalises and checks names.
-
-``` swift
-public func ens(name: String, field: String? = "addr") -> Future<String>
-```
-
-**Example**
-
-``` swift
-In3API(in3).ens(name: "cryptokitties.eth", field: "addr") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - name: the domain name UTS46 compliant string.
-  - field: the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain)
-
-**Returns**
-
-the value of the specified field
-
-#### toWei(value:unit:)
-
-converts the given value into wei.
-
-``` swift
-public func toWei(value: String, unit: String? = "eth") throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).toWei(value: "20.0009123", unit: "eth")
-// result = "0x01159183c4793db800"
-```
-
-**Parameters**
-
-  - value: the value, which may be floating number as string
-  - unit: the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
-
-**Returns**
-
-the value in wei as hex.
-
-#### fromWei(value:unit:digits:)
-
-converts a given uint (also as hex) with a wei-value into a specified unit.
-
-``` swift
-public func fromWei(value: String, unit: String, digits: UInt64? = nil) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).fromWei(value: "0x234324abadefdef", unit: "eth", digits: 3)
-// result = "0.158"
-```
-
-**Parameters**
-
-  - value: the value in wei
-  - unit: the unit of the target value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
-  - digits: fix number of digits after the comma. If left out, only as many as needed will be included.
-
-**Returns**
-
-the value as string.
-
-#### pk2address(pk:)
-
-extracts the address from a private key.
-
-``` swift
-public func pk2address(pk: String) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).pk2address(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
-// result = "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
-```
-
-**Parameters**
-
-  - pk: the 32 bytes private key as hex.
-
-**Returns**
-
-the address
-
-#### pk2public(pk:)
-
-extracts the public key from a private key.
-
-``` swift
-public func pk2public(pk: String) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).pk2public(pk: "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a")
-// result = "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f7818\
-//          6577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
-```
-
-**Parameters**
-
-  - pk: the 32 bytes private key as hex.
-
-**Returns**
-
-the public key as 64 bytes
-
-#### ecrecover(msg:sig:sigtype:)
-
-extracts the public key and address from signature.
-
-``` swift
-public func ecrecover(msg: String, sig: String, sigtype: String? = "raw") throws -> In3Ecrecover
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).ecrecover(msg: "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999", sig: "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c", sigtype: "hash")
-// result = 
-//          publicKey: "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c\
-//            4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb"
-//          address: "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
-```
-
-**Parameters**
-
-  - msg: the message the signature is based on.
-  - sig: the 65 bytes signature as hex.
-  - sigtype: the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw`
-
-**Returns**
-
-the extracted public key and address
-
-#### prepareTx(tx:)
-
-prepares a Transaction by filling the unspecified values and returens the unsigned raw Transaction.
-
-``` swift
-public func prepareTx(tx: In3Transaction) -> Future<String>
-```
-
-**Example**
-
-``` swift
-In3API(in3).prepareTx(tx: In3Transaction(to: "0x63f666a23cbd135a91187499b5cc51d589c302a0", value: "0x100000000", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f")) .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a0850100000000\
-//          80018080"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - tx: the tx-object, which is the same as specified in [eth\_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-
-**Returns**
-
-the unsigned raw transaction as hex.
-
-#### signTx(tx:from:)
-
-signs the given raw Tx (as prepared by in3\_prepareTx ). The resulting data can be used in `eth_sendRawTransaction` to publish and broadcast the transaction.
-
-``` swift
-public func signTx(tx: String, from: String) -> Future<String>
-```
-
-**Example**
-
-``` swift
-In3API(in3).signTx(tx: "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080", from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000\
-//          008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755\
-//          f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - tx: the raw unsigned transactiondata
-  - from: the account to sign
-
-**Returns**
-
-the raw transaction with signature.
-
-#### signData(msg:account:msgType:)
-
-signs the given data.
-
-``` swift
-public func signData(msg: String, account: String, msgType: String? = "raw") -> Future<In3SignData>
-```
-
-**Example**
-
-``` swift
-In3API(in3).signData(msg: "0x0102030405060708090a0b0c0d0e0f", account: "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852", msgType: "raw") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = 
-//          message: "0x0102030405060708090a0b0c0d0e0f"
-//          messageHash: "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67"
-//          signature: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792\
-//            264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b"
-//          r: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579"
-//          s: "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152"
-//          v: 27
-     }
-}
- 
-```
-
-**Parameters**
-
-  - msg: the message to sign.
-  - account: the account to sign if the account is a bytes32 it will be used as private key
-  - msgType: the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data)
-
-**Returns**
-
-the signature
-
-#### decryptKey(key:passphrase:)
-
-decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition](https:​//github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition). The result is the raw private key.
-
-``` swift
-public func decryptKey(key: String, passphrase: String) throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).decryptKey(key: {"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}, passphrase: "test")
-// result = "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
-```
-
-**Parameters**
-
-  - key: Keydata as object as defined in the keystorefile
-  - passphrase: the password to decrypt it.
-
-**Returns**
-
-a raw private key (32 bytes)
-
-#### cacheClear()
-
-clears the incubed cache (usually found in the .in3-folder)
-
-``` swift
-public func cacheClear() throws -> String
-```
-
-**Example**
-
-``` swift
-let result = try In3API(in3).cacheClear()
-// result = true
-```
-
-**Returns**
-
-true indicating the success
-
-#### nodeList(limit:seed:addresses:)
-
-fetches and verifies the nodeList from a node
-
-``` swift
-public func nodeList(limit: UInt64? = nil, seed: String? = nil, addresses: [String]? = nil) -> Future<In3NodeList>
-```
-
-**Example**
-
-``` swift
-In3API(in3).nodeList(limit: 2, seed: "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b", addresses: []) .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = 
-//          totalServers: 5
-//          contract: "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5"
-//          registryId: "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-//          lastBlockNumber: 8669495
-//          nodes:
-//            - url: https://in3-v2.slock.it/mainnet/nd-3
-//              address: "0x945F75c0408C0026a3CD204d36f5e47745182fd4"
-//              index: 2
-//              deposit: "10000000000000000"
-//              props: 29
-//              timeout: 3600
-//              registerTime: 1570109570
-//              weight: 2000
-//              proofHash: "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-//            - url: https://in3-v2.slock.it/mainnet/nd-5
-//              address: "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2"
-//              index: 4
-//              deposit: "10000000000000000"
-//              props: 29
-//              timeout: 3600
-//              registerTime: 1570109690
-//              weight: 2000
-//              proofHash: "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - limit: if the number is defined and \>0 this method will return a partial nodeList limited to the given number.
-  - seed: this 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
-  - addresses: a optional array of addresses of signers the nodeList must include.
-
-**Returns**
-
-the current nodelist
-
-#### sign(blocks:)
-
-requests a signed blockhash from the node.
-In most cases these requests will come from other nodes, because the client simply adds the addresses of the requested signers
-and the processising nodes will then aquire the signatures with this method from the other nodes.
-
-``` swift
-public func sign(blocks: In3Blocks) -> Future<In3Sign>
-```
-
-Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit,
-per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks\!
-
-**Example**
-
-``` swift
-In3API(in3).sign(blocks: In3Blocks(blockNumber: 8770580)) .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = 
-//          - blockHash: "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8"
-//            block: 8770580
-//            r: "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337"
-//            s: "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596"
-//            v: 28
-//            msgHash: "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - blocks: array of requested blocks.
-
-**Returns**
-
-the Array with signatures of all the requires blocks.
-
-#### whitelist(address:)
-
-Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired from whitelist contract that user can specify in request params.
-
-``` swift
-public func whitelist(address: String) -> Future<In3Whitelist>
-```
-
-**Example**
-
-``` swift
-In3API(in3).whitelist(address: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = 
-//          totalServers: 2
-//          contract: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
-//          lastBlockNumber: 1546354
-//          nodes:
-//            - "0x1fe2e9bf29aa1938859af64c413361227d04059a"
-//            - "0x45d45e6ff99e6c34a235d263965910298985fcfe"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - address: address of whitelist contract
-
-**Returns**
-
-the whitelisted addresses
-
-#### addRawKey(pk:)
-
-adds a raw private key as signer, which allows signing transactions.
-
-``` swift
-public func addRawKey(pk: String) -> Future<String>
-```
-
-**Example**
-
-``` swift
-In3API(in3).addRawKey(pk: "0x1234567890123456789012345678901234567890123456789012345678901234") .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
-     }
-}
- 
-```
-
-**Parameters**
-
-  - pk: the 32byte long private key as hex string.
-
-**Returns**
-
-the address of given key.
-
-#### accounts()
-
-returns a array of account-addresss the incubed client is able to sign with. In order to add keys, you can use [in3\_addRawKey](#in3-addrawkey) or configure them in the config. The result also contains the addresses of any signer signer-supporting the `PLGN_ACT_SIGN_ACCOUNT` action.
-
-``` swift
-public func accounts() -> Future<String>
-```
-
-**Example**
-
-``` swift
-In3API(in3).accounts() .observe(using: {
-    switch $0 {
-       case let .failure(err):
-         print("Failed because : \(err.localizedDescription)")
-       case let .success(val):
-         print("result : \(val)")
-//              result = 
-//          - "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
-//          - "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
-     }
-}
- 
-```
-
-**Returns**
-
-the array of addresses of all registered signers.
-### IpfsAPI
+### Ipfs
 
 A Node supporting IPFS must support these 2 RPC-Methods for uploading and downloading IPFS-Content. The node itself will run a ipfs-client to handle them.
 
 ``` swift
-public class IpfsAPI
+public class Ipfs
 ```
 
 Fetching ipfs-content can be easily verified by creating the ipfs-hash based on the received data and comparing it to the requested ipfs-hash. Since there is no chance of manipulating the data, there is also no need to put a deposit or convict a node. That's why the registry-contract allows a zero-deposit fot ipfs-nodes.
@@ -2359,6 +1984,150 @@ IpfsAPI(in3).put(data: "I love Incubed", encoding: "utf8") .observe(using: {
 **Returns**
 
 the ipfs multi hash
+### Nodelist
+
+special Incubed nodelist-handling functions. Most of those are only used internally.
+
+``` swift
+public class Nodelist
+```
+
+
+
+#### nodes(limit:seed:addresses:)
+
+fetches and verifies the nodeList from a node
+
+``` swift
+public func nodes(limit: Int? = nil, seed: String? = nil, addresses: [String]? = nil) -> Future<NodeListDefinition>
+```
+
+**Example**
+
+``` swift
+NodelistAPI(in3).nodes(limit: 2, seed: "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b", addresses: []) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          totalServers: 5
+//          contract: "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5"
+//          registryId: "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+//          lastBlockNumber: 8669495
+//          nodes:
+//            - url: https://in3-v2.slock.it/mainnet/nd-3
+//              address: "0x945F75c0408C0026a3CD204d36f5e47745182fd4"
+//              index: 2
+//              deposit: "10000000000000000"
+//              props: 29
+//              timeout: 3600
+//              registerTime: 1570109570
+//              weight: 2000
+//              proofHash: "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+//            - url: https://in3-v2.slock.it/mainnet/nd-5
+//              address: "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2"
+//              index: 4
+//              deposit: "10000000000000000"
+//              props: 29
+//              timeout: 3600
+//              registerTime: 1570109690
+//              weight: 2000
+//              proofHash: "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - limit: if the number is defined and \>0 this method will return a partial nodeList limited to the given number.
+  - seed: this 32byte hex integer is used to calculate the indexes of the partial nodeList. It is expected to be a random value choosen by the client in order to make the result deterministic.
+  - addresses: a optional array of addresses of signers the nodeList must include.
+
+**Returns**
+
+the current nodelist
+
+#### signBlockHash(blocks:)
+
+requests a signed blockhash from the node.
+In most cases these requests will come from other nodes, because the client simply adds the addresses of the requested signers
+and the processising nodes will then aquire the signatures with this method from the other nodes.
+
+``` swift
+public func signBlockHash(blocks: NodelistBlocks) -> Future<NodelistSignBlockHash>
+```
+
+Since each node has a risk of signing a wrong blockhash and getting convicted and losing its deposit,
+per default nodes will and should not sign blockHash of the last `minBlockHeight` (default: 6) blocks\!
+
+**Example**
+
+``` swift
+NodelistAPI(in3).signBlockHash(blocks: NodelistBlocks(blockNumber: 8770580)) .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          - blockHash: "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8"
+//            block: 8770580
+//            r: "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337"
+//            s: "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596"
+//            v: 28
+//            msgHash: "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - blocks: array of requested blocks.
+
+**Returns**
+
+the Array with signatures of all the requires blocks.
+
+#### whitelist(address:)
+
+Returns whitelisted in3-nodes addresses. The whitelist addressed are accquired from whitelist contract that user can specify in request params.
+
+``` swift
+public func whitelist(address: String) -> Future<NodelistWhitelist>
+```
+
+**Example**
+
+``` swift
+NodelistAPI(in3).whitelist(address: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b") .observe(using: {
+    switch $0 {
+       case let .failure(err):
+         print("Failed because : \(err.localizedDescription)")
+       case let .success(val):
+         print("result : \(val)")
+//              result = 
+//          totalServers: 2
+//          contract: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+//          lastBlockNumber: 1546354
+//          nodes:
+//            - "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+//            - "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+     }
+}
+ 
+```
+
+**Parameters**
+
+  - address: address of whitelist contract
+
+**Returns**
+
+the whitelisted addresses
 ### Promise
 
 ``` swift
@@ -2382,12 +2151,457 @@ public func resolve(with value: Value)
 ``` swift
 public func reject(with error: Error)
 ```
-### ZksyncAPI
+### UInt256
+
+a bigint implementation based on tommath to represent big numbers
+It is used to represent uint256 values
+
+``` swift
+final public class UInt256: CustomStringConvertible, Hashable, Comparable, Decodable, Encodable
+```
+
+
+
+`Comparable`, `CustomStringConvertible`, `Decodable`, `Encodable`, `Hashable`
+
+
+
+#### init()
+
+creates a empt (0)-value
+
+``` swift
+public init()
+```
+
+#### init(_:)
+
+i nitializes its value from a uint64 type
+
+``` swift
+public init(_ v: UInt64)
+```
+
+#### init(_:)
+
+inits its value from a Int
+
+``` swift
+public required convenience init(_ val: IntegerLiteralType)
+```
+
+#### init(_:)
+
+copies the value from another UInt256
+
+``` swift
+public init(_ value: UInt256)
+```
+
+#### init?(_:radix:)
+
+initialze the value from a string.
+if the string starts with '0x' it will interpreted as radix 16
+otherwise the default for the radix is 10
+
+``` swift
+public init?(_ val: String, radix: Int = 10)
+```
+
+**Parameters**
+
+  - radix: the radix or the base to use when parsing the String (10 - decimal, 16 - hex, 2 - binary ... )
+
+#### init(from:)
+
+initializes from a decoder
+
+``` swift
+public init(from decoder: Decoder) throws
+```
+
+
+
+#### doubleValue
+
+returns the value as Double (as close as possible)
+
+``` swift
+var doubleValue: Double
+```
+
+#### hexValue
+
+the hex representation staring with '0x'
+
+``` swift
+var hexValue: String
+```
+
+#### uintValue
+
+a unsigned Int representation (if possible)
+
+``` swift
+var uintValue: UInt
+```
+
+#### uint64Value
+
+a unsigned UInt64 representation (if possible)
+
+``` swift
+var uint64Value: UInt64
+```
+
+#### description
+
+String representation as decimals
+
+``` swift
+var description: String
+```
+
+
+
+#### encode(to:)
+
+encodes the value to a decoder
+
+``` swift
+public func encode(to encoder: Encoder) throws
+```
+
+#### hash(into:)
+
+hash of the value
+
+``` swift
+public func hash(into hasher: inout Hasher)
+```
+
+#### toString(radix:)
+
+a string representation based on the given radix.
+
+``` swift
+public func toString(radix: Int = 10) -> String
+```
+
+**Parameters**
+
+  - radix: the radix or the base to use when parsing the String (10 - decimal, 16 - hex, 2 - binary ... )
+
+#### compare(other:)
+
+compare 2 UInt256 values
+the result is zero if they are equal
+negative if the current value is smaller than the given
+positive if the current value is higher than the given
+
+``` swift
+public func compare(other: UInt256) -> Int32
+```
+
+#### add(_:)
+
+adds the given number and returns the sum of both
+
+``` swift
+public func add(_ val: UInt256) -> UInt256
+```
+
+#### sub(_:)
+
+substracts the given number and returns the difference of both
+
+``` swift
+public func sub(_ val: UInt256) -> UInt256
+```
+
+#### mul(_:)
+
+multiplies the current with the given number and returns the product of both
+
+``` swift
+public func mul(_ val: UInt256) -> UInt256
+```
+
+#### div(_:)
+
+divides the current number by the given and return the result
+
+``` swift
+public func div(_ val: UInt256) -> UInt256
+```
+
+#### mod(_:)
+
+divides the current number by the given and return the rest or module operator
+
+``` swift
+public func mod(_ val: UInt256) -> UInt256
+```
+### Utils
+
+a Collection of utility-function.
+
+``` swift
+public class Utils
+```
+
+
+
+#### abiEncode(signature:params:)
+
+based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function encodes the value given and returns it as hexstring.
+
+``` swift
+public func abiEncode(signature: String, params: [AnyObject]) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).abiEncode(signature: "getBalance(address)", params: ["0x1234567890123456789012345678901234567890"])
+// result = "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+```
+
+**Parameters**
+
+  - signature: the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
+  - params: a array of arguments. the number of arguments must match the arguments in the signature.
+
+**Returns**
+
+the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
+
+#### abiDecode(signature:data:)
+
+based on the [ABI-encoding](https:​//solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function decodes the bytes given and returns it as array of values.
+
+``` swift
+public func abiDecode(signature: String, data: String) throws -> [RPCObject]
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).abiDecode(signature: "(address,uint256)", data: "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005")
+// result = 
+//          - "0x1234567890123456789012345678901234567890"
+//          - "0x05"
+```
+
+**Parameters**
+
+  - signature: the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
+  - data: the data to decode (usually the result of a eth\_call)
+
+**Returns**
+
+a array with the values after decodeing.
+
+#### checksumAddress(address:useChainId:)
+
+Will convert an upper or lowercase Ethereum address to a checksum address.  (See [EIP55](https:​//github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) )
+
+``` swift
+public func checksumAddress(address: String, useChainId: Bool? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).checksumAddress(address: "0x1fe2e9bf29aa1938859af64c413361227d04059a", useChainId: false)
+// result = "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+```
+
+**Parameters**
+
+  - address: the address to convert.
+  - useChainId: if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
+
+**Returns**
+
+the address-string using the upper/lowercase hex characters.
+
+#### toWei(value:unit:)
+
+converts the given value into wei.
+
+``` swift
+public func toWei(value: String, unit: String? = "eth") throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).toWei(value: "20.0009123", unit: "eth")
+// result = "0x01159183c4793db800"
+```
+
+**Parameters**
+
+  - value: the value, which may be floating number as string
+  - unit: the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
+
+**Returns**
+
+the value in wei as hex.
+
+#### fromWei(value:unit:digits:)
+
+converts a given uint (also as hex) with a wei-value into a specified unit.
+
+``` swift
+public func fromWei(value: UInt256, unit: String, digits: Int? = nil) throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).fromWei(value: "0x234324abadefdef", unit: "eth", digits: 3)
+// result = "0.158"
+```
+
+**Parameters**
+
+  - value: the value in wei
+  - unit: the unit of the target value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
+  - digits: fix number of digits after the comma. If left out, only as many as needed will be included.
+
+**Returns**
+
+the value as string.
+
+#### cacheClear()
+
+clears the incubed cache (usually found in the .in3-folder)
+
+``` swift
+public func cacheClear() throws -> String
+```
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).cacheClear()
+// result = true
+```
+
+**Returns**
+
+true indicating the success
+
+#### clientVersion()
+
+Returns the underlying client version. See [web3\_clientversion](https:​//eth.wiki/json-rpc/API#web3_clientversion) for spec.
+
+``` swift
+public func clientVersion() -> Future<String>
+```
+
+**Returns**
+
+when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
+
+#### keccak(data:)
+
+Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+
+``` swift
+public func keccak(data: String) throws -> String
+```
+
+See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
+
+No proof needed, since the client will execute this locally.
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).keccak(data: "0x1234567890")
+// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+```
+
+**Parameters**
+
+  - data: data to hash
+
+**Returns**
+
+the 32byte hash of the data
+
+#### sha3(data:)
+
+Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+
+``` swift
+public func sha3(data: String) throws -> String
+```
+
+See [web3\_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
+
+No proof needed, since the client will execute this locally.
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).sha3(data: "0x1234567890")
+// result = "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+```
+
+**Parameters**
+
+  - data: data to hash
+
+**Returns**
+
+the 32byte hash of the data
+
+#### sha256(data:)
+
+Returns sha-256 of the given data.
+
+``` swift
+public func sha256(data: String) throws -> String
+```
+
+No proof needed, since the client will execute this locally.
+
+**Example**
+
+``` swift
+let result = try UtilsAPI(in3).sha256(data: "0x1234567890")
+// result = "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+```
+
+**Parameters**
+
+  - data: data to hash
+
+**Returns**
+
+the 32byte hash of the data
+
+#### version()
+
+the Network Version (currently 1)
+
+``` swift
+public func version() throws -> String
+```
+
+**Returns**
+
+the Version number
+### Zksync
 
 *Important:​ This feature is still experimental and not considered stable yet. In order to use it, you need to set the experimental-flag (-x on the comandline or `"experimental":​true`\!*
 
 ``` swift
-public class ZksyncAPI
+public class Zksync
 ```
 
 the zksync-plugin is able to handle operations to use [zksync](https://zksync.io/) like deposit transfer or withdraw. Also see the \#in3-config on how to configure the zksync-server or account.
@@ -2712,7 +2926,7 @@ The return value are 96 bytes of signature:​
 returns 0 or 1 depending on the successfull verification of the signature.
 
 ``` swift
-public func verify(message: String, signature: String) throws -> UInt64
+public func verify(message: String, signature: String) throws -> Int
 ```
 
 if the `musig_pubkeys` are set it will also verify against the given public keys list.
@@ -2847,7 +3061,7 @@ the raw private key configured based on the signers seed
 sends a deposit-transaction and returns the opId, which can be used to tradck progress.
 
 ``` swift
-public func deposit(amount: UInt64, token: String, approveDepositAmountForERC20: Bool? = nil, account: String? = nil) -> Future<UInt64>
+public func deposit(amount: UInt256, token: String, approveDepositAmountForERC20: Bool? = nil, account: String? = nil) -> Future<UInt64>
 ```
 
 **Example**
@@ -2881,7 +3095,7 @@ the opId. You can use `zksync_ethop_info` to follow the state-changes.
 sends a zksync-transaction and returns data including the transactionHash.
 
 ``` swift
-public func transfer(to: String, amount: UInt64, token: String, account: String? = nil) -> Future<String>
+public func transfer(to: String, amount: UInt256, token: String, account: String? = nil) -> Future<String>
 ```
 
 **Example**
@@ -2915,7 +3129,7 @@ the transactionHash. use `zksync_tx_info` to check the progress.
 withdraws the amount to the given `ethAddress` for the given token.
 
 ``` swift
-public func withdraw(ethAddress: String, amount: UInt64, token: String, account: String? = nil) -> Future<String>
+public func withdraw(ethAddress: String, amount: UInt256, token: String, account: String? = nil) -> Future<String>
 ```
 
 **Example**
@@ -3023,6 +3237,341 @@ let result = try ZksyncAPI(in3).aggregatePubkey(pubkeys: "0x0f61bfe164cc43b5a112
 
 the compact public Key
 ## Structs
+### ABI
+
+a function, event or a
+
+``` swift
+public struct ABI: Codable
+```
+
+
+
+`Codable`
+
+
+
+#### hash
+
+``` swift
+var hash: String?
+```
+
+#### anonymous
+
+``` swift
+var anonymous: Bool?
+```
+
+#### constant
+
+``` swift
+var constant: Bool?
+```
+
+#### payable
+
+``` swift
+var payable: Bool?
+```
+
+#### stateMutability
+
+``` swift
+var stateMutability: String?
+```
+
+#### components
+
+``` swift
+var components: [ABIField]?
+```
+
+#### inputs
+
+``` swift
+var inputs: [ABIField]?
+```
+
+#### outputs
+
+``` swift
+var outputs: [ABIField]?
+```
+
+#### name
+
+``` swift
+var name: String?
+```
+
+#### type
+
+``` swift
+var type: String
+```
+
+#### internalType
+
+``` swift
+var internalType: String?
+```
+
+#### signature
+
+``` swift
+var signature: String
+```
+### ABIField
+
+configure the Bitcoin verification
+
+``` swift
+public struct ABIField: Codable
+```
+
+
+
+`Codable`
+
+
+
+#### internalType
+
+``` swift
+var internalType: String?
+```
+
+#### components
+
+``` swift
+var components: [ABIField]?
+```
+
+#### indexed
+
+``` swift
+var indexed: Bool?
+```
+
+#### name
+
+``` swift
+var name: String
+```
+
+#### type
+
+``` swift
+var type: String
+```
+
+#### signature
+
+``` swift
+var signature: String
+```
+### AccountEcrecover
+
+the extracted public key and address
+
+``` swift
+public struct AccountEcrecover
+```
+
+
+
+#### init(publicKey:address:)
+
+initialize the AccountEcrecover
+
+``` swift
+public init(publicKey: String, address: String)
+```
+
+**Parameters**
+
+  - publicKey: the public Key of the signer (64 bytes)
+  - address: the address
+
+
+
+#### publicKey
+
+the public Key of the signer (64 bytes)
+
+``` swift
+var publicKey: String
+```
+
+#### address
+
+the address
+
+``` swift
+var address: String
+```
+### AccountSignData
+
+the signature
+
+``` swift
+public struct AccountSignData
+```
+
+
+
+#### init(message:messageHash:signature:r:s:v:)
+
+initialize the AccountSignData
+
+``` swift
+public init(message: String, messageHash: String, signature: String, r: String, s: String, v: String)
+```
+
+**Parameters**
+
+  - message: original message used
+  - messageHash: the hash the signature is based on
+  - signature: the signature (65 bytes)
+  - r: the x-value of the EC-Point
+  - s: the y-value of the EC-Point
+  - v: the recovery value (0|1) + 27
+
+
+
+#### message
+
+original message used
+
+``` swift
+var message: String
+```
+
+#### messageHash
+
+the hash the signature is based on
+
+``` swift
+var messageHash: String
+```
+
+#### signature
+
+the signature (65 bytes)
+
+``` swift
+var signature: String
+```
+
+#### r
+
+the x-value of the EC-Point
+
+``` swift
+var r: String
+```
+
+#### s
+
+the y-value of the EC-Point
+
+``` swift
+var s: String
+```
+
+#### v
+
+the recovery value (0|1) + 27
+
+``` swift
+var v: String
+```
+### AccountTransaction
+
+the tx-object, which is the same as specified in [eth\_sendTransaction](https:​//eth.wiki/json-rpc/API#eth_sendTransaction).
+
+``` swift
+public struct AccountTransaction
+```
+
+
+
+#### init(to:from:value:gas:gasPrice:nonce:data:)
+
+initialize the AccountTransaction
+
+``` swift
+public init(to: String, from: String, value: UInt256? = nil, gas: UInt64? = nil, gasPrice: UInt64? = nil, nonce: UInt64? = nil, data: String? = nil)
+```
+
+**Parameters**
+
+  - to: receipient of the transaction.
+  - from: sender of the address (if not sepcified, the first signer will be the sender)
+  - value: value in wei to send
+  - gas: the gas to be send along
+  - gasPrice: the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+  - nonce: the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+  - data: the data-section of the transaction
+
+
+
+#### to
+
+receipient of the transaction.
+
+``` swift
+var to: String
+```
+
+#### from
+
+sender of the address (if not sepcified, the first signer will be the sender)
+
+``` swift
+var from: String
+```
+
+#### value
+
+value in wei to send
+
+``` swift
+var value: UInt256?
+```
+
+#### gas
+
+the gas to be send along
+
+``` swift
+var gas: UInt64?
+```
+
+#### gasPrice
+
+the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+
+``` swift
+var gasPrice: UInt64?
+```
+
+#### nonce
+
+the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+
+``` swift
+var nonce: UInt64?
+```
+
+#### data
+
+the data-section of the transaction
+
+``` swift
+var data: String?
+```
 ### BtcProofTarget
 
 A path of daps from the `verified_dap` to the `target_dap` which fulfils the conditions of `max_diff`, `max_dap` and `limit`. Each dap of the path is a `dap`-object with corresponding proof data.
@@ -3030,6 +3579,24 @@ A path of daps from the `verified_dap` to the `target_dap` which fulfils the con
 ``` swift
 public struct BtcProofTarget
 ```
+
+
+
+#### init(dap:block:final:cbtx:cbtxMerkleProof:)
+
+initialize the BtcProofTarget
+
+``` swift
+public init(dap: UInt64, block: String, final: String, cbtx: String, cbtxMerkleProof: String)
+```
+
+**Parameters**
+
+  - dap: the difficulty adjustement period
+  - block: the first blockheader
+  - final: the finality header
+  - cbtx: the coinbase transaction as hex
+  - cbtxMerkleProof: the coinbasetx merkle proof
 
 
 
@@ -3082,6 +3649,24 @@ public struct BtcScriptPubKey
 
 
 
+#### init(asm:hex:reqSigs:type:addresses:)
+
+initialize the BtcScriptPubKey
+
+``` swift
+public init(asm: String, hex: String, reqSigs: Int, type: String, addresses: [String])
+```
+
+**Parameters**
+
+  - asm: asm
+  - hex: hex representation of the script
+  - reqSigs: the required signatures
+  - type: The type, eg 'pubkeyhash'
+  - addresses: Array of address(each representing a bitcoin adress)
+
+
+
 #### asm
 
 asm
@@ -3103,7 +3688,7 @@ var hex: String
 the required signatures
 
 ``` swift
-var reqSigs: UInt64
+var reqSigs: Int
 ```
 
 #### type
@@ -3131,6 +3716,21 @@ public struct BtcScriptSig
 
 
 
+#### init(asm:hex:)
+
+initialize the BtcScriptSig
+
+``` swift
+public init(asm: String, hex: String)
+```
+
+**Parameters**
+
+  - asm: the asm-codes
+  - hex: hex representation
+
+
+
 #### asm
 
 the asm-codes
@@ -3153,6 +3753,24 @@ array of json objects of incoming txs to be used
 ``` swift
 public struct BtcVin
 ```
+
+
+
+#### init(txid:vout:scriptSig:sequence:txinwitness:)
+
+initialize the BtcVin
+
+``` swift
+public init(txid: String, vout: UInt64, scriptSig: BtcScriptSig, sequence: UInt64, txinwitness: [String])
+```
+
+**Parameters**
+
+  - txid: the transaction id
+  - vout: the index of the transaction out to be used
+  - scriptSig: the script
+  - sequence: The script sequence number
+  - txinwitness: hex-encoded witness data (if any)
 
 
 
@@ -3205,12 +3823,28 @@ public struct BtcVout
 
 
 
+#### init(value:n:scriptPubKey:)
+
+initialize the BtcVout
+
+``` swift
+public init(value: Double, n: Int, scriptPubKey: BtcScriptPubKey)
+```
+
+**Parameters**
+
+  - value: The Value in BTC
+  - n: the index
+  - scriptPubKey: the script pubkey
+
+
+
 #### value
 
 The Value in BTC
 
 ``` swift
-var value: UInt64
+var value: Double
 ```
 
 #### n
@@ -3218,7 +3852,7 @@ var value: UInt64
 the index
 
 ``` swift
-var n: UInt64
+var n: Int
 ```
 
 #### scriptPubKey
@@ -3239,6 +3873,35 @@ public struct Btcblock
   - verbose `0` or `false`: a hex string with 80 bytes representing the blockheader
 
   - verbose `1` or `true`: an object representing the blockheader.
+
+
+
+#### init(hash:confirmations:height:version:versionHex:merkleroot:time:mediantime:nonce:bits:difficulty:chainwork:nTx:tx:previousblockhash:nextblockhash:)
+
+initialize the Btcblock
+
+``` swift
+public init(hash: String, confirmations: Int, height: UInt256, version: Int, versionHex: String, merkleroot: String, time: UInt64, mediantime: UInt64, nonce: UInt64, bits: String, difficulty: UInt256, chainwork: String, nTx: Int, tx: [String], previousblockhash: String, nextblockhash: String)
+```
+
+**Parameters**
+
+  - hash: the block hash (same as provided)
+  - confirmations: The number of confirmations, or -1 if the block is not on the main chain
+  - height: The block height or index
+  - version: The block version
+  - versionHex: The block version formatted in hexadecimal
+  - merkleroot: The merkle root ( 32 bytes )
+  - time: The block time in seconds since epoch (Jan 1 1970 GMT)
+  - mediantime: The median block time in seconds since epoch (Jan 1 1970 GMT)
+  - nonce: The nonce
+  - bits: The bits ( 4 bytes as hex) representing the target
+  - difficulty: The difficulty
+  - chainwork: Expected number of hashes required to produce the current chain (in hex)
+  - nTx: The number of transactions in the block.
+  - tx: the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
+  - previousblockhash: The hash of the previous block
+  - nextblockhash: The hash of the next block
 
 
 
@@ -3263,7 +3926,7 @@ var confirmations: Int
 The block height or index
 
 ``` swift
-var height: UInt64
+var height: UInt256
 ```
 
 #### version
@@ -3271,7 +3934,7 @@ var height: UInt64
 The block version
 
 ``` swift
-var version: UInt64
+var version: Int
 ```
 
 #### versionHex
@@ -3327,7 +3990,7 @@ var bits: String
 The difficulty
 
 ``` swift
-var difficulty: UInt64
+var difficulty: UInt256
 ```
 
 #### chainwork
@@ -3335,7 +3998,7 @@ var difficulty: UInt64
 Expected number of hashes required to produce the current chain (in hex)
 
 ``` swift
-var chainwork: UInt64
+var chainwork: String
 ```
 
 #### nTx
@@ -3343,7 +4006,7 @@ var chainwork: UInt64
 The number of transactions in the block.
 
 ``` swift
-var nTx: UInt64
+var nTx: Int
 ```
 
 #### tx
@@ -3383,6 +4046,35 @@ public struct BtcblockWithTx
 
 
 
+#### init(hash:confirmations:height:version:versionHex:merkleroot:time:mediantime:nonce:bits:difficulty:chainwork:nTx:tx:previousblockhash:nextblockhash:)
+
+initialize the BtcblockWithTx
+
+``` swift
+public init(hash: String, confirmations: Int, height: UInt64, version: Int, versionHex: String, merkleroot: String, time: UInt64, mediantime: UInt64, nonce: UInt64, bits: String, difficulty: UInt256, chainwork: String, nTx: Int, tx: [Btctransaction], previousblockhash: String, nextblockhash: String)
+```
+
+**Parameters**
+
+  - hash: the block hash (same as provided)
+  - confirmations: The number of confirmations, or -1 if the block is not on the main chain
+  - height: The block height or index
+  - version: The block version
+  - versionHex: The block version formatted in hexadecimal
+  - merkleroot: The merkle root ( 32 bytes )
+  - time: The block time in seconds since epoch (Jan 1 1970 GMT)
+  - mediantime: The median block time in seconds since epoch (Jan 1 1970 GMT)
+  - nonce: The nonce
+  - bits: The bits ( 4 bytes as hex) representing the target
+  - difficulty: The difficulty
+  - chainwork: Expected number of hashes required to produce the current chain (in hex)
+  - nTx: The number of transactions in the block.
+  - tx: the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
+  - previousblockhash: The hash of the previous block
+  - nextblockhash: The hash of the next block
+
+
+
 #### hash
 
 the block hash (same as provided)
@@ -3412,7 +4104,7 @@ var height: UInt64
 The block version
 
 ``` swift
-var version: UInt64
+var version: Int
 ```
 
 #### versionHex
@@ -3468,7 +4160,7 @@ var bits: String
 The difficulty
 
 ``` swift
-var difficulty: UInt64
+var difficulty: UInt256
 ```
 
 #### chainwork
@@ -3476,7 +4168,7 @@ var difficulty: UInt64
 Expected number of hashes required to produce the current chain (in hex)
 
 ``` swift
-var chainwork: UInt64
+var chainwork: String
 ```
 
 #### nTx
@@ -3484,7 +4176,7 @@ var chainwork: UInt64
 The number of transactions in the block.
 
 ``` swift
-var nTx: UInt64
+var nTx: Int
 ```
 
 #### tx
@@ -3524,6 +4216,34 @@ public struct Btcblockheader
 
 
 
+#### init(hash:confirmations:height:version:versionHex:merkleroot:time:mediantime:nonce:bits:difficulty:chainwork:nTx:previousblockhash:nextblockhash:)
+
+initialize the Btcblockheader
+
+``` swift
+public init(hash: String, confirmations: Int, height: UInt64, version: Int, versionHex: String, merkleroot: String, time: UInt64, mediantime: UInt64, nonce: UInt64, bits: String, difficulty: UInt256, chainwork: String, nTx: Int, previousblockhash: String, nextblockhash: String)
+```
+
+**Parameters**
+
+  - hash: the block hash (same as provided)
+  - confirmations: The number of confirmations, or -1 if the block is not on the main chain
+  - height: The block height or index
+  - version: The block version
+  - versionHex: The block version formatted in hexadecimal
+  - merkleroot: The merkle root ( 32 bytes )
+  - time: The block time in seconds since epoch (Jan 1 1970 GMT)
+  - mediantime: The median block time in seconds since epoch (Jan 1 1970 GMT)
+  - nonce: The nonce
+  - bits: The bits ( 4 bytes as hex) representing the target
+  - difficulty: The difficulty
+  - chainwork: Expected number of hashes required to produce the current chain (in hex)
+  - nTx: The number of transactions in the block.
+  - previousblockhash: The hash of the previous block
+  - nextblockhash: The hash of the next block
+
+
+
 #### hash
 
 the block hash (same as provided)
@@ -3553,7 +4273,7 @@ var height: UInt64
 The block version
 
 ``` swift
-var version: UInt64
+var version: Int
 ```
 
 #### versionHex
@@ -3609,7 +4329,7 @@ var bits: String
 The difficulty
 
 ``` swift
-var difficulty: UInt64
+var difficulty: UInt256
 ```
 
 #### chainwork
@@ -3617,7 +4337,7 @@ var difficulty: UInt64
 Expected number of hashes required to produce the current chain (in hex)
 
 ``` swift
-var chainwork: UInt64
+var chainwork: String
 ```
 
 #### nTx
@@ -3625,7 +4345,7 @@ var chainwork: UInt64
 The number of transactions in the block.
 
 ``` swift
-var nTx: UInt64
+var nTx: Int
 ```
 
 #### previousblockhash
@@ -3650,6 +4370,35 @@ the array of transactions either as ids (verbose=1) or full transaction (verbose
 ``` swift
 public struct Btctransaction
 ```
+
+
+
+#### init(txid:in_active_chain:hex:hash:size:vsize:weight:version:locktime:vin:vout:blockhash:confirmations:blocktime:time:)
+
+initialize the Btctransaction
+
+``` swift
+public init(txid: String, in_active_chain: Bool, hex: String, hash: String, size: UInt64, vsize: UInt64, weight: UInt64, version: Int, locktime: UInt64, vin: [BtcVin], vout: [BtcVout], blockhash: String, confirmations: Int, blocktime: UInt64, time: UInt64)
+```
+
+  - Parameter in\_active\_chain : Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+
+**Parameters**
+
+  - txid: txid
+  - hex: The serialized, hex-encoded data for `txid`
+  - hash: The transaction hash (differs from txid for witness transactions)
+  - size: The serialized transaction size
+  - vsize: The virtual transaction size (differs from size for witness transactions)
+  - weight: The transaction's weight (between `vsize`\*4-3 and `vsize`\*4)
+  - version: The version
+  - locktime: The lock time
+  - vin: array of json objects of incoming txs to be used
+  - vout: array of json objects describing the tx outputs
+  - blockhash: the block hash
+  - confirmations: The confirmations
+  - blocktime: The block time in seconds since epoch (Jan 1 1970 GMT)
+  - time: Same as "blocktime"
 
 
 
@@ -3714,7 +4463,7 @@ var weight: UInt64
 The version
 
 ``` swift
-var version: UInt64
+var version: Int
 ```
 
 #### locktime
@@ -3782,6 +4531,46 @@ public struct EthBlockdata
 
 
 
+#### init(transactions:number:hash:parentHash:nonce:sha3Uncles:logsBloom:transactionsRoot:stateRoot:receiptsRoot:miner:difficulty:totalDifficulty:extraData:size:gasLimit:gasUsed:timestamp:uncles:)
+
+initialize the EthBlockdata
+
+``` swift
+public init(transactions: [EthTransactiondata], number: UInt64, hash: String, parentHash: String, nonce: UInt256, sha3Uncles: String, logsBloom: String, transactionsRoot: String, stateRoot: String, receiptsRoot: String, miner: String, difficulty: UInt256, totalDifficulty: UInt256, extraData: String, size: UInt64, gasLimit: UInt64, gasUsed: UInt64, timestamp: UInt64, uncles: [String])
+```
+
+**Parameters**
+
+  - transactions: Array of transaction objects
+  - number: the block number. `null` when its pending block.
+  - hash: hash of the block. `null` when its pending block.
+  - parentHash: hash of the parent block.
+  - nonce: hash of the generated proof-of-work. `null` when its pending block.
+  - sha3Uncles: SHA3 of the uncles Merkle root in the block.
+  - logsBloom: the bloom filter for the logs of the block. `null` when its pending block.
+  - transactionsRoot: the root of the transaction trie of the block.
+  - stateRoot: the root of the final state trie of the block.
+  - receiptsRoot: the root of the receipts trie of the block.
+  - miner: the address of the beneficiary to whom the mining rewards were given.
+  - difficulty: integer of the difficulty for this block.
+  - totalDifficulty: integer of the total difficulty of the chain until this block.
+  - extraData: the "extra data" field of this block.
+  - size: integer the size of this block in bytes.
+  - gasLimit: the maximum gas allowed in this block.
+  - gasUsed: the total used gas by all transactions in this block.
+  - timestamp: the unix timestamp for when the block was collated.
+  - uncles: Array of uncle hashes.
+
+
+
+#### transactions
+
+Array of transaction objects
+
+``` swift
+var transactions: [EthTransactiondata]
+```
+
 #### number
 
 the block number. `null` when its pending block.
@@ -3811,7 +4600,7 @@ var parentHash: String
 hash of the generated proof-of-work. `null` when its pending block.
 
 ``` swift
-var nonce: UInt64
+var nonce: UInt256
 ```
 
 #### sha3Uncles
@@ -3867,7 +4656,7 @@ var miner: String
 integer of the difficulty for this block.
 
 ``` swift
-var difficulty: UInt64
+var difficulty: UInt256
 ```
 
 #### totalDifficulty
@@ -3875,7 +4664,7 @@ var difficulty: UInt64
 integer of the total difficulty of the chain until this block.
 
 ``` swift
-var totalDifficulty: UInt64
+var totalDifficulty: UInt256
 ```
 
 #### extraData
@@ -3916,14 +4705,6 @@ the unix timestamp for when the block was collated.
 
 ``` swift
 var timestamp: UInt64
-```
-
-#### transactions
-
-Array of transaction objects
-
-``` swift
-var transactions: [EthTransactiondata]
 ```
 
 #### uncles
@@ -3943,6 +4724,46 @@ public struct EthBlockdataWithTxHashes
 
 
 
+#### init(transactions:number:hash:parentHash:nonce:sha3Uncles:logsBloom:transactionsRoot:stateRoot:receiptsRoot:miner:difficulty:totalDifficulty:extraData:size:gasLimit:gasUsed:timestamp:uncles:)
+
+initialize the EthBlockdataWithTxHashes
+
+``` swift
+public init(transactions: [String], number: UInt64, hash: String, parentHash: String, nonce: UInt256, sha3Uncles: String, logsBloom: String, transactionsRoot: String, stateRoot: String, receiptsRoot: String, miner: String, difficulty: UInt256, totalDifficulty: UInt256, extraData: String, size: UInt64, gasLimit: UInt64, gasUsed: UInt64, timestamp: UInt64, uncles: [String])
+```
+
+**Parameters**
+
+  - transactions: Array of transaction hashes
+  - number: the block number. `null` when its pending block.
+  - hash: hash of the block. `null` when its pending block.
+  - parentHash: hash of the parent block.
+  - nonce: hash of the generated proof-of-work. `null` when its pending block.
+  - sha3Uncles: SHA3 of the uncles Merkle root in the block.
+  - logsBloom: the bloom filter for the logs of the block. `null` when its pending block.
+  - transactionsRoot: the root of the transaction trie of the block.
+  - stateRoot: the root of the final state trie of the block.
+  - receiptsRoot: the root of the receipts trie of the block.
+  - miner: the address of the beneficiary to whom the mining rewards were given.
+  - difficulty: integer of the difficulty for this block.
+  - totalDifficulty: integer of the total difficulty of the chain until this block.
+  - extraData: the "extra data" field of this block.
+  - size: integer the size of this block in bytes.
+  - gasLimit: the maximum gas allowed in this block.
+  - gasUsed: the total used gas by all transactions in this block.
+  - timestamp: the unix timestamp for when the block was collated.
+  - uncles: Array of uncle hashes.
+
+
+
+#### transactions
+
+Array of transaction hashes
+
+``` swift
+var transactions: [String]
+```
+
 #### number
 
 the block number. `null` when its pending block.
@@ -3972,7 +4793,7 @@ var parentHash: String
 hash of the generated proof-of-work. `null` when its pending block.
 
 ``` swift
-var nonce: UInt64
+var nonce: UInt256
 ```
 
 #### sha3Uncles
@@ -4028,7 +4849,7 @@ var miner: String
 integer of the difficulty for this block.
 
 ``` swift
-var difficulty: UInt64
+var difficulty: UInt256
 ```
 
 #### totalDifficulty
@@ -4036,7 +4857,7 @@ var difficulty: UInt64
 integer of the total difficulty of the chain until this block.
 
 ``` swift
-var totalDifficulty: UInt64
+var totalDifficulty: UInt256
 ```
 
 #### extraData
@@ -4079,14 +4900,6 @@ the unix timestamp for when the block was collated.
 var timestamp: UInt64
 ```
 
-#### transactions
-
-Array of transaction hashes
-
-``` swift
-var transactions: [String]
-```
-
 #### uncles
 
 Array of uncle hashes.
@@ -4101,6 +4914,24 @@ The filter criteria for the events.
 ``` swift
 public struct EthFilter
 ```
+
+
+
+#### init(fromBlock:toBlock:address:topics:blockhash:)
+
+initialize the EthFilter
+
+``` swift
+public init(fromBlock: UInt64? = nil, toBlock: UInt64? = nil, address: String? = nil, topics: [String]? = nil, blockhash: String? = nil)
+```
+
+**Parameters**
+
+  - fromBlock: Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+  - toBlock: Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
+  - address: Contract address or a list of addresses from which logs should originate.
+  - topics: Array of 32 Bytes DATA topics. Topics are order-dependent. Each topic can also be an array of DATA with “or” options.
+  - blockhash: With the addition of EIP-234, blockHash will be a new filter option which restricts the logs returned to the single block with the 32-byte hash blockHash. Using blockHash is equivalent to fromBlock = toBlock = the block number with hash blockHash. If blockHash is present in in the filter criteria, then neither fromBlock nor toBlock are allowed.
 
 
 
@@ -4153,6 +4984,30 @@ public struct EthLogs
 
 
 
+#### init(address:blockNumber:blockHash:data:logIndex:removed:topics:transactionHash:transactionIndex:transactionLogIndex:type:)
+
+initialize the EthLogs
+
+``` swift
+public init(address: String, blockNumber: UInt64, blockHash: String, data: String, logIndex: Int, removed: Bool, topics: [String], transactionHash: String, transactionIndex: Int, transactionLogIndex: Int, type: String)
+```
+
+**Parameters**
+
+  - address: the address triggering the event.
+  - blockNumber: the blockNumber
+  - blockHash: blockhash if ther containing block
+  - data: abi-encoded data of the event (all non indexed fields)
+  - logIndex: the index of the even within the block.
+  - removed: the reorg-status of the event.
+  - topics: array of 32byte-topics of the indexed fields.
+  - transactionHash: requested transactionHash
+  - transactionIndex: transactionIndex within the containing block.
+  - transactionLogIndex: index of the event within the transaction.
+  - type: mining-status
+
+
+
 #### address
 
 the address triggering the event.
@@ -4190,7 +5045,7 @@ var data: String
 the index of the even within the block.
 
 ``` swift
-var logIndex: UInt64
+var logIndex: Int
 ```
 
 #### removed
@@ -4206,7 +5061,7 @@ var removed: Bool
 array of 32byte-topics of the indexed fields.
 
 ``` swift
-var topics: String
+var topics: [String]
 ```
 
 #### transactionHash
@@ -4222,7 +5077,7 @@ var transactionHash: String
 transactionIndex within the containing block.
 
 ``` swift
-var transactionIndex: UInt64
+var transactionIndex: Int
 ```
 
 #### transactionLogIndex
@@ -4230,7 +5085,7 @@ var transactionIndex: UInt64
 index of the event within the transaction.
 
 ``` swift
-var transactionLogIndex: UInt64
+var transactionLogIndex: Int
 ```
 
 #### type
@@ -4242,11 +5097,31 @@ var type: String
 ```
 ### EthTransaction
 
-transaction to sign
+the transactiondata to send
 
 ``` swift
 public struct EthTransaction
 ```
+
+
+
+#### init(to:from:value:gas:gasPrice:nonce:data:)
+
+initialize the EthTransaction
+
+``` swift
+public init(to: String, from: String, value: UInt256? = nil, gas: UInt64? = nil, gasPrice: UInt64? = nil, nonce: UInt64? = nil, data: String? = nil)
+```
+
+**Parameters**
+
+  - to: receipient of the transaction.
+  - from: sender of the address (if not sepcified, the first signer will be the sender)
+  - value: value in wei to send
+  - gas: the gas to be send along
+  - gasPrice: the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+  - nonce: the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+  - data: the data-section of the transaction
 
 
 
@@ -4271,7 +5146,7 @@ var from: String
 value in wei to send
 
 ``` swift
-var value: UInt64?
+var value: UInt256?
 ```
 
 #### gas
@@ -4312,6 +5187,29 @@ the transactionReceipt
 ``` swift
 public struct EthTransactionReceipt
 ```
+
+
+
+#### init(blockNumber:blockHash:contractAddress:cumulativeGasUsed:gasUsed:logs:logsBloom:status:transactionHash:transactionIndex:)
+
+initialize the EthTransactionReceipt
+
+``` swift
+public init(blockNumber: UInt64, blockHash: String, contractAddress: String, cumulativeGasUsed: UInt64, gasUsed: UInt64, logs: EthLogs, logsBloom: String, status: Int, transactionHash: String, transactionIndex: Int)
+```
+
+**Parameters**
+
+  - blockNumber: the blockNumber
+  - blockHash: blockhash if ther containing block
+  - contractAddress: the deployed contract in case the tx did deploy a new contract
+  - cumulativeGasUsed: gas used for all transaction up to this one in the block
+  - gasUsed: gas used by this transaction.
+  - logs: array of events created during execution of the tx
+  - logsBloom: bloomfilter used to detect events for `eth_getLogs`
+  - status: error-status of the tx.  0x1 = success 0x0 = failure
+  - transactionHash: requested transactionHash
+  - transactionIndex: transactionIndex within the containing block.
 
 
 
@@ -4376,7 +5274,7 @@ var logsBloom: String
 error-status of the tx.  0x1 = success 0x0 = failure
 
 ``` swift
-var status: UInt64
+var status: Int
 ```
 
 #### transactionHash
@@ -4392,7 +5290,7 @@ var transactionHash: String
 transactionIndex within the containing block.
 
 ``` swift
-var transactionIndex: UInt64
+var transactionIndex: Int
 ```
 ### EthTransactiondata
 
@@ -4401,6 +5299,33 @@ Array of transaction objects
 ``` swift
 public struct EthTransactiondata
 ```
+
+
+
+#### init(to:from:value:gas:gasPrice:nonce:blockHash:blockNumber:hash:input:transactionIndex:v:r:s:)
+
+initialize the EthTransactiondata
+
+``` swift
+public init(to: String, from: String, value: UInt256, gas: UInt64, gasPrice: UInt64, nonce: UInt64, blockHash: String, blockNumber: UInt64, hash: String, input: String, transactionIndex: UInt64, v: String, r: String, s: String)
+```
+
+**Parameters**
+
+  - to: receipient of the transaction.
+  - from: sender or signer of the transaction
+  - value: value in wei to send
+  - gas: the gas to be send along
+  - gasPrice: the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+  - nonce: the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+  - blockHash: blockHash of the block holding this transaction or `null` if still pending.
+  - blockNumber: blockNumber of the block holding this transaction or `null` if still pending.
+  - hash: transactionHash
+  - input: data of the transaaction
+  - transactionIndex: index of the transaaction in the block
+  - v: recovery-byte of the signature
+  - r: x-value of the EC-Point of the signature
+  - s: y-value of the EC-Point of the signature
 
 
 
@@ -4425,7 +5350,7 @@ var from: String
 value in wei to send
 
 ``` swift
-var value: UInt64
+var value: UInt256
 ```
 
 #### gas
@@ -4525,6 +5450,26 @@ public struct EthTx
 
 
 
+#### init(to:from:value:gas:gasPrice:nonce:data:)
+
+initialize the EthTx
+
+``` swift
+public init(to: String, from: String? = nil, value: UInt256? = nil, gas: UInt64? = nil, gasPrice: UInt64? = nil, nonce: UInt64? = nil, data: String? = nil)
+```
+
+**Parameters**
+
+  - to: address of the contract
+  - from: sender of the address
+  - value: value in wei to send
+  - gas: the gas to be send along
+  - gasPrice: the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+  - nonce: the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+  - data: the data-section of the transaction, which includes the functionhash and the abi-encoded arguments
+
+
+
 #### to
 
 address of the contract
@@ -4546,7 +5491,7 @@ var from: String?
 value in wei to send
 
 ``` swift
-var value: UInt64?
+var value: UInt256?
 ```
 
 #### gas
@@ -4580,31 +5525,6 @@ the data-section of the transaction, which includes the functionhash and the abi
 ``` swift
 var data: String?
 ```
-### In3Blocks
-
-array of requested blocks.
-
-``` swift
-public struct In3Blocks
-```
-
-
-
-#### blockNumber
-
-the blockNumber to sign
-
-``` swift
-var blockNumber: UInt64
-```
-
-#### hash
-
-the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
-
-``` swift
-var hash: String?
-```
 ### In3Config
 
 The main Incubed Configuration
@@ -4624,7 +5544,7 @@ public struct In3Config: Codable
 initialize it memberwise
 
 ``` swift
-public init(chainId: String? = nil, finality: UInt64? = nil, includeCode: Bool? = nil, maxAttempts: UInt64? = nil, keepIn3: Bool? = nil, stats: Bool? = nil, useBinary: Bool? = nil, experimental: Bool? = nil, timeout: UInt64? = nil, proof: String? = nil, replaceLatestBlock: UInt64? = nil, autoUpdateList: Bool? = nil, signatureCount: UInt64? = nil, bootWeights: Bool? = nil, useHttp: Bool? = nil, minDeposit: UInt64? = nil, nodeProps: UInt64? = nil, requestCount: UInt64? = nil, rpc: String? = nil, nodes: Nodes? = nil, zksync: Zksync? = nil, key: String? = nil, pk: String? = nil, btc: Btc? = nil)
+public init(chainId: String? = nil, finality: Int? = nil, includeCode: Bool? = nil, maxAttempts: Int? = nil, keepIn3: Bool? = nil, stats: Bool? = nil, useBinary: Bool? = nil, experimental: Bool? = nil, timeout: UInt64? = nil, proof: String? = nil, replaceLatestBlock: Int? = nil, autoUpdateList: Bool? = nil, signatureCount: Int? = nil, bootWeights: Bool? = nil, useHttp: Bool? = nil, minDeposit: UInt256? = nil, nodeProps: String? = nil, requestCount: Int? = nil, rpc: String? = nil, nodes: Nodes? = nil, zksync: Zksync? = nil, key: String? = nil, pk: String? = nil, btc: Btc? = nil)
 ```
 
 **Parameters**
@@ -4686,7 +5606,7 @@ Example: `goerli`
 the number in percent needed in order reach finality (% of signature of the validators).
 
 ``` swift
-var finality: UInt64?
+var finality: Int?
 ```
 
 Example: `50`
@@ -4707,7 +5627,7 @@ max number of attempts in case a response is rejected.
 (default:​ `7`)
 
 ``` swift
-var maxAttempts: UInt64?
+var maxAttempts: Int?
 ```
 
 Example: `1`
@@ -4786,7 +5706,7 @@ Example: `none`
 if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
 
 ``` swift
-var replaceLatestBlock: UInt64?
+var replaceLatestBlock: Int?
 ```
 
 Example: `6`
@@ -4806,7 +5726,7 @@ number of signatures requested in order to verify the blockhash.
 (default:​ `1`)
 
 ``` swift
-var signatureCount: UInt64?
+var signatureCount: Int?
 ```
 
 Example: `2`
@@ -4837,7 +5757,7 @@ Example: `true`
 min stake of the server. Only nodes owning at least this amount will be chosen.
 
 ``` swift
-var minDeposit: UInt64?
+var minDeposit: UInt256?
 ```
 
 Example: `10000000`
@@ -4847,10 +5767,10 @@ Example: `10000000`
 used to identify the capabilities of the node.
 
 ``` swift
-var nodeProps: UInt64?
+var nodeProps: String?
 ```
 
-Example: `65535`
+Example: `"0xffff"`
 
 #### requestCount
 
@@ -4858,7 +5778,7 @@ the number of request send in parallel when getting an answer. More request will
 (default:​ `2`)
 
 ``` swift
-var requestCount: UInt64?
+var requestCount: Int?
 ```
 
 Example: `3`
@@ -4980,7 +5900,7 @@ public struct Btc: Codable
 initialize it memberwise
 
 ``` swift
-public init(maxDAP: UInt64? = nil, maxDiff: UInt64? = nil)
+public init(maxDAP: Int? = nil, maxDiff: Int? = nil)
 ```
 
 **Parameters**
@@ -4996,7 +5916,7 @@ max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new ta
 (default:​ `20`)
 
 ``` swift
-var maxDAP: UInt64?
+var maxDAP: Int?
 ```
 
 Example: `10`
@@ -5007,7 +5927,7 @@ max increase (in percent) of the difference between targets when accepting new t
 (default:​ `10`)
 
 ``` swift
-var maxDiff: UInt64?
+var maxDiff: Int?
 ```
 
 Example: `5`
@@ -5083,7 +6003,7 @@ public struct NodeList: Codable
 initialize it memberwise
 
 ``` swift
-public init(url: String, address: String, props: UInt64)
+public init(url: String, address: String, props: String)
 ```
 
 **Parameters**
@@ -5115,7 +6035,7 @@ var address: String
 used to identify the capabilities of the node (defaults to 0xFFFF).
 
 ``` swift
-var props: UInt64
+var props: String
 ```
 ### In3Config.Nodes
 
@@ -5136,7 +6056,7 @@ public struct Nodes: Codable
 initialize it memberwise
 
 ``` swift
-public init(contract: String, whiteListContract: String? = nil, whiteList: String? = nil, registryId: String, needsUpdate: Bool? = nil, avgBlockTime: UInt64? = nil, verifiedHashes: [VerifiedHashes]? = nil, nodeList: [NodeList]? = nil)
+public init(contract: String, whiteListContract: String? = nil, whiteList: [String]? = nil, registryId: String, needsUpdate: Bool? = nil, avgBlockTime: Int? = nil, verifiedHashes: [VerifiedHashes]? = nil, nodeList: [NodeList]? = nil)
 ```
 
 **Parameters**
@@ -5173,7 +6093,7 @@ var whiteListContract: String?
 manual whitelist.
 
 ``` swift
-var whiteList: String?
+var whiteList: [String]?
 ```
 
 #### registryId
@@ -5197,7 +6117,7 @@ var needsUpdate: Bool?
 average block time (seconds) for this chain.
 
 ``` swift
-var avgBlockTime: UInt64?
+var avgBlockTime: Int?
 ```
 
 #### verifiedHashes
@@ -5373,87 +6293,35 @@ create2-arguments for sign\_type `create2`. This will allow to sign for contract
 ``` swift
 var create2: Create2?
 ```
-### In3Ecrecover
-
-the extracted public key and address
-
-``` swift
-public struct In3Ecrecover
-```
-
-
-
-#### publicKey
-
-the public Key of the signer (64 bytes)
-
-``` swift
-var publicKey: String
-```
-
-#### address
-
-the address
-
-``` swift
-var address: String
-```
-### In3NodeList
-
-the current nodelist
-
-``` swift
-public struct In3NodeList
-```
-
-
-
-#### nodes
+### Node
 
 a array of node definitions.
 
 ``` swift
-var nodes: In3Nodes
+public struct Node
 ```
 
-#### contract
 
-the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
+
+#### init(url:address:index:deposit:props:timeout:registerTime:weight:proofHash:)
+
+initialize the Node
 
 ``` swift
-var contract: String
+public init(url: String, address: String, index: UInt64, deposit: UInt256, props: String, timeout: UInt64, registerTime: UInt64, weight: UInt64, proofHash: String)
 ```
 
-#### registryId
+**Parameters**
 
-the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
-
-``` swift
-var registryId: String
-```
-
-#### lastBlockNumber
-
-the blockNumber of the last change of the list (usually the last event).
-
-``` swift
-var lastBlockNumber: UInt64
-```
-
-#### totalServer
-
-the total numbers of nodes.
-
-``` swift
-var totalServer: UInt64
-```
-### In3Nodes
-
-a array of node definitions.
-
-``` swift
-public struct In3Nodes
-```
+  - url: the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
+  - address: the address of the signer
+  - index: the index within the nodeList of the contract
+  - deposit: the stored deposit
+  - props: the bitset of capabilities as described in the [Node Structure](spec.html#node-structure)
+  - timeout: the time in seconds describing how long the deposit would be locked when trying to unregister a node.
+  - registerTime: unix timestamp in seconds when the node has registered.
+  - weight: the weight of a node ( not used yet ) describing the amount of request-points it can handle per second.
+  - proofHash: a hash value containing the above values. This hash is explicitly stored in the contract, which enables the client to have only one merkle proof per node instead of verifying each property as its own storage value. The proof hash is build `keccak256( abi.encodePacked( deposit, timeout, registerTime, props, signer, url ))`
 
 
 
@@ -5486,7 +6354,7 @@ var index: UInt64
 the stored deposit
 
 ``` swift
-var deposit: UInt64
+var deposit: UInt256
 ```
 
 #### props
@@ -5494,7 +6362,7 @@ var deposit: UInt64
 the bitset of capabilities as described in the [Node Structure](spec.html#node-structure)
 
 ``` swift
-var props: UInt64
+var props: String
 ```
 
 #### timeout
@@ -5531,13 +6399,139 @@ The proof hash is build `keccak256( abi.encodePacked( deposit, timeout, register
 ``` swift
 var proofHash: String
 ```
-### In3Sign
+### NodeListDefinition
+
+the current nodelist
+
+``` swift
+public struct NodeListDefinition
+```
+
+
+
+#### init(nodes:contract:registryId:lastBlockNumber:totalServer:)
+
+initialize the NodeListDefinition
+
+``` swift
+public init(nodes: [Node], contract: String, registryId: String, lastBlockNumber: UInt64, totalServer: UInt64)
+```
+
+**Parameters**
+
+  - nodes: a array of node definitions.
+  - contract: the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
+  - registryId: the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
+  - lastBlockNumber: the blockNumber of the last change of the list (usually the last event).
+  - totalServer: the total numbers of nodes.
+
+
+
+#### nodes
+
+a array of node definitions.
+
+``` swift
+var nodes: [Node]
+```
+
+#### contract
+
+the address of the Incubed-storage-contract. The client may use this information to verify that we are talking about the same contract or throw an exception otherwise.
+
+``` swift
+var contract: String
+```
+
+#### registryId
+
+the registryId (32 bytes)  of the contract, which is there to verify the correct contract.
+
+``` swift
+var registryId: String
+```
+
+#### lastBlockNumber
+
+the blockNumber of the last change of the list (usually the last event).
+
+``` swift
+var lastBlockNumber: UInt64
+```
+
+#### totalServer
+
+the total numbers of nodes.
+
+``` swift
+var totalServer: UInt64
+```
+### NodelistBlocks
+
+array of requested blocks.
+
+``` swift
+public struct NodelistBlocks
+```
+
+
+
+#### init(blockNumber:hash:)
+
+initialize the NodelistBlocks
+
+``` swift
+public init(blockNumber: UInt64, hash: String? = nil)
+```
+
+**Parameters**
+
+  - blockNumber: the blockNumber to sign
+  - hash: the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
+
+
+
+#### blockNumber
+
+the blockNumber to sign
+
+``` swift
+var blockNumber: UInt64
+```
+
+#### hash
+
+the expected hash. This is optional and can be used to check if the expected hash is correct, but as a client you should not rely on it, but only on the hash in the signature.
+
+``` swift
+var hash: String?
+```
+### NodelistSignBlockHash
 
 the Array with signatures of all the requires blocks.
 
 ``` swift
-public struct In3Sign
+public struct NodelistSignBlockHash
 ```
+
+
+
+#### init(blockHash:block:r:s:v:msgHash:)
+
+initialize the NodelistSignBlockHash
+
+``` swift
+public init(blockHash: String, block: UInt64, r: String, s: String, v: String, msgHash: String)
+```
+
+**Parameters**
+
+  - blockHash: the blockhash which was signed.
+  - block: the blocknumber
+  - r: r-value of the signature
+  - s: s-value of the signature
+  - v: v-value of the signature
+  - msgHash: the msgHash signed. This Hash is created with `keccak256( abi.encodePacked( _blockhash,  _blockNumber, registryId ))`
 
 
 
@@ -5588,135 +6582,31 @@ the msgHash signed. This Hash is created with `keccak256( abi.encodePacked( _blo
 ``` swift
 var msgHash: String
 ```
-### In3SignData
-
-the signature
-
-``` swift
-public struct In3SignData
-```
-
-
-
-#### message
-
-original message used
-
-``` swift
-var message: String
-```
-
-#### messageHash
-
-the hash the signature is based on
-
-``` swift
-var messageHash: String
-```
-
-#### signature
-
-the signature (65 bytes)
-
-``` swift
-var signature: String
-```
-
-#### r
-
-the x-value of the EC-Point
-
-``` swift
-var r: String
-```
-
-#### s
-
-the y-value of the EC-Point
-
-``` swift
-var s: String
-```
-
-#### v
-
-the recovery value (0|1) + 27
-
-``` swift
-var v: String
-```
-### In3Transaction
-
-the tx-object, which is the same as specified in [eth\_sendTransaction](https:​//eth.wiki/json-rpc/API#eth_sendTransaction).
-
-``` swift
-public struct In3Transaction
-```
-
-
-
-#### to
-
-receipient of the transaction.
-
-``` swift
-var to: String
-```
-
-#### from
-
-sender of the address (if not sepcified, the first signer will be the sender)
-
-``` swift
-var from: String
-```
-
-#### value
-
-value in wei to send
-
-``` swift
-var value: UInt64?
-```
-
-#### gas
-
-the gas to be send along
-
-``` swift
-var gas: UInt64?
-```
-
-#### gasPrice
-
-the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
-
-``` swift
-var gasPrice: UInt64?
-```
-
-#### nonce
-
-the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
-
-``` swift
-var nonce: UInt64?
-```
-
-#### data
-
-the data-section of the transaction
-
-``` swift
-var data: String?
-```
-### In3Whitelist
+### NodelistWhitelist
 
 the whitelisted addresses
 
 ``` swift
-public struct In3Whitelist
+public struct NodelistWhitelist
 ```
+
+
+
+#### init(nodes:lastWhiteList:contract:lastBlockNumber:totalServer:)
+
+initialize the NodelistWhitelist
+
+``` swift
+public init(nodes: String, lastWhiteList: UInt64, contract: String, lastBlockNumber: UInt64, totalServer: UInt64)
+```
+
+**Parameters**
+
+  - nodes: array of whitelisted nodes addresses.
+  - lastWhiteList: the blockNumber of the last change of the in3 white list event.
+  - contract: whitelist contract address.
+  - lastBlockNumber: the blockNumber of the last change of the list (usually the last event).
+  - totalServer: the total numbers of whitelist nodes.
 
 
 
@@ -5804,6 +6694,24 @@ public struct ZksyncAccountInfo
 
 
 
+#### init(address:commited:depositing:id:verified:)
+
+initialize the ZksyncAccountInfo
+
+``` swift
+public init(address: String, commited: ZksyncCommited, depositing: ZksyncDepositing, id: UInt64, verified: ZksyncVerified)
+```
+
+**Parameters**
+
+  - address: the address of the account
+  - commited: the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
+  - depositing: the state of all depositing-tx.
+  - id: the assigned id of the account, which will be used when encoding it into the rollup.
+  - verified: the state after the rollup was verified in L1.
+
+
+
 #### address
 
 the address of the account
@@ -5853,12 +6761,28 @@ public struct ZksyncCommited
 
 
 
+#### init(balances:nonce:pubKeyHash:)
+
+initialize the ZksyncCommited
+
+``` swift
+public init(balances: [String:UInt256], nonce: UInt64, pubKeyHash: String)
+```
+
+**Parameters**
+
+  - balances: the token-balance
+  - nonce: the nonce or transaction count.
+  - pubKeyHash: the pubKeyHash set for the requested account or `0x0000...` if not set yet.
+
+
+
 #### balances
 
 the token-balance
 
 ``` swift
-var balances: [String:UInt64]
+var balances: [String:UInt256]
 ```
 
 #### nonce
@@ -5883,6 +6807,21 @@ fetches the contract addresses from the zksync server. This request also caches 
 ``` swift
 public struct ZksyncContractAddress
 ```
+
+
+
+#### init(govContract:mainContract:)
+
+initialize the ZksyncContractAddress
+
+``` swift
+public init(govContract: String, mainContract: String)
+```
+
+**Parameters**
+
+  - govContract: the address of the govement contract
+  - mainContract: the address of the main contract
 
 
 
@@ -5911,12 +6850,26 @@ public struct ZksyncDepositing
 
 
 
+#### init(balances:)
+
+initialize the ZksyncDepositing
+
+``` swift
+public init(balances: [String:UInt256])
+```
+
+**Parameters**
+
+  - balances: the token-values.
+
+
+
 #### balances
 
 the token-values.
 
 ``` swift
-var balances: [String:UInt64]
+var balances: [String:UInt256]
 ```
 ### ZksyncLogs
 
@@ -5925,6 +6878,30 @@ array of events created during execution of the tx
 ``` swift
 public struct ZksyncLogs
 ```
+
+
+
+#### init(address:blockNumber:blockHash:data:logIndex:removed:topics:transactionHash:transactionIndex:transactionLogIndex:type:)
+
+initialize the ZksyncLogs
+
+``` swift
+public init(address: String, blockNumber: UInt64, blockHash: String, data: String, logIndex: Int, removed: Bool, topics: [String], transactionHash: String, transactionIndex: Int, transactionLogIndex: Int, type: String)
+```
+
+**Parameters**
+
+  - address: the address triggering the event.
+  - blockNumber: the blockNumber
+  - blockHash: blockhash if ther containing block
+  - data: abi-encoded data of the event (all non indexed fields)
+  - logIndex: the index of the even within the block.
+  - removed: the reorg-status of the event.
+  - topics: array of 32byte-topics of the indexed fields.
+  - transactionHash: requested transactionHash
+  - transactionIndex: transactionIndex within the containing block.
+  - transactionLogIndex: index of the event within the transaction.
+  - type: mining-status
 
 
 
@@ -5965,7 +6942,7 @@ var data: String
 the index of the even within the block.
 
 ``` swift
-var logIndex: UInt64
+var logIndex: Int
 ```
 
 #### removed
@@ -5981,7 +6958,7 @@ var removed: Bool
 array of 32byte-topics of the indexed fields.
 
 ``` swift
-var topics: String
+var topics: [String]
 ```
 
 #### transactionHash
@@ -5997,7 +6974,7 @@ var transactionHash: String
 transactionIndex within the containing block.
 
 ``` swift
-var transactionIndex: UInt64
+var transactionIndex: Int
 ```
 
 #### transactionLogIndex
@@ -6005,7 +6982,7 @@ var transactionIndex: UInt64
 index of the event within the transaction.
 
 ``` swift
-var transactionLogIndex: UInt64
+var transactionLogIndex: Int
 ```
 
 #### type
@@ -6025,6 +7002,23 @@ public struct ZksyncTokens
 
 
 
+#### init(address:decimals:id:symbol:)
+
+initialize the ZksyncTokens
+
+``` swift
+public init(address: String, decimals: Int, id: UInt64, symbol: String)
+```
+
+**Parameters**
+
+  - address: the address of the ERC2-Contract or 0x00000..000 in case of the native token (eth)
+  - decimals: decimals to be used when formating it for human readable representation.
+  - id: id which will be used when encoding the token.
+  - symbol: symbol for the token
+
+
+
 #### address
 
 the address of the ERC2-Contract or 0x00000..000 in case of the native token (eth)
@@ -6038,7 +7032,7 @@ var address: String
 decimals to be used when formating it for human readable representation.
 
 ``` swift
-var decimals: UInt64
+var decimals: Int
 ```
 
 #### id
@@ -6063,6 +7057,29 @@ the transactionReceipt
 ``` swift
 public struct ZksyncTransactionReceipt
 ```
+
+
+
+#### init(blockNumber:blockHash:contractAddress:cumulativeGasUsed:gasUsed:logs:logsBloom:status:transactionHash:transactionIndex:)
+
+initialize the ZksyncTransactionReceipt
+
+``` swift
+public init(blockNumber: UInt64, blockHash: String, contractAddress: String, cumulativeGasUsed: UInt64, gasUsed: UInt64, logs: ZksyncLogs, logsBloom: String, status: Int, transactionHash: String, transactionIndex: Int)
+```
+
+**Parameters**
+
+  - blockNumber: the blockNumber
+  - blockHash: blockhash if ther containing block
+  - contractAddress: the deployed contract in case the tx did deploy a new contract
+  - cumulativeGasUsed: gas used for all transaction up to this one in the block
+  - gasUsed: gas used by this transaction.
+  - logs: array of events created during execution of the tx
+  - logsBloom: bloomfilter used to detect events for `eth_getLogs`
+  - status: error-status of the tx.  0x1 = success 0x0 = failure
+  - transactionHash: requested transactionHash
+  - transactionIndex: transactionIndex within the containing block.
 
 
 
@@ -6127,7 +7144,7 @@ var logsBloom: String
 error-status of the tx.  0x1 = success 0x0 = failure
 
 ``` swift
-var status: UInt64
+var status: Int
 ```
 
 #### transactionHash
@@ -6143,7 +7160,7 @@ var transactionHash: String
 transactionIndex within the containing block.
 
 ``` swift
-var transactionIndex: UInt64
+var transactionIndex: Int
 ```
 ### ZksyncTxFee
 
@@ -6152,6 +7169,25 @@ the fees split up into single values
 ``` swift
 public struct ZksyncTxFee
 ```
+
+
+
+#### init(feeType:gasFee:gasPriceWei:gasTxAmount:totalFee:zkpFee:)
+
+initialize the ZksyncTxFee
+
+``` swift
+public init(feeType: String, gasFee: UInt64, gasPriceWei: UInt64, gasTxAmount: UInt64, totalFee: UInt64, zkpFee: UInt64)
+```
+
+**Parameters**
+
+  - feeType: Type of the transaaction
+  - gasFee: the gas for the core-transaction
+  - gasPriceWei: current gasPrice
+  - gasTxAmount: gasTxAmount
+  - totalFee: total of all fees needed to pay in order to execute the transaction
+  - zkpFee: zkpFee
 
 
 
@@ -6212,6 +7248,23 @@ public struct ZksyncTxInfo
 
 
 
+#### init(block:executed:success:failReason:)
+
+initialize the ZksyncTxInfo
+
+``` swift
+public init(block: UInt64, executed: Bool, success: Bool, failReason: String)
+```
+
+**Parameters**
+
+  - block: the blockNumber containing the tx or `null` if still pending
+  - executed: true, if the tx has been executed by the operator. If false it is still in the txpool of the operator.
+  - success: if executed, this property marks the success of the tx.
+  - failReason: if executed and failed this will include an error message
+
+
+
 #### block
 
 the blockNumber containing the tx or `null` if still pending
@@ -6253,12 +7306,28 @@ public struct ZksyncVerified
 
 
 
+#### init(balances:nonce:pubKeyHash:)
+
+initialize the ZksyncVerified
+
+``` swift
+public init(balances: [String:UInt256], nonce: UInt64, pubKeyHash: String)
+```
+
+**Parameters**
+
+  - balances: the token-balances.
+  - nonce: the nonce or transaction count.
+  - pubKeyHash: the pubKeyHash set for the requested account or `0x0000...` if not set yet.
+
+
+
 #### balances
 
 the token-balances.
 
 ``` swift
-var balances: [String:UInt64]
+var balances: [String:UInt256]
 ```
 
 #### nonce
@@ -6411,6 +7480,14 @@ public init(_ value: UInt64)
 
 #### init(_:)
 
+Wrap a UInt256 as Value
+
+``` swift
+public init(_ value: UInt256)
+```
+
+#### init(_:)
+
 Wrap a Double as Value
 
 ``` swift
@@ -6529,6 +7606,14 @@ a JSON-Object represented as Dictionary with properties as keys and their values
 
 ``` swift
 case dictionary(: [String: RPCObject])
+```
+
+
+
+#### asObject()
+
+``` swift
+public func asObject<T>() -> T
 ```
 ### RequestResult
 

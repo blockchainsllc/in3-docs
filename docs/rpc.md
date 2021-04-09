@@ -6,6 +6,638 @@ This section describes the behavior for each RPC-method supported with incubed.
 The core of incubed is to execute rpc-requests which will be send to the incubed nodes and verified. This means the available RPC-Requests are defined by the clients itself.
 
 
+## account
+
+
+Account Handling includes handling signers and preparing and signing transacrtion and data.
+
+Signers are Plugins able to create signatures. Those functions will use the registered plugins.
+
+
+### eth_accounts
+
+
+returns a array of account-addresss the incubed client is able to sign with. 
+
+In order to add keys, you can use [in3_addRawKey](#in3-addrawkey) or configure them in the config. The result also contains the addresses of any signer signer-supporting the `PLGN_ACT_SIGN_ACCOUNT` action.
+
+
+*Parameters:* - 
+
+*Returns:* `address[]`
+
+the array of addresses of all registered signers.
+
+*Example:*
+
+```sh
+> in3 eth_accounts  | jq
+[
+  "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
+  "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+]
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "eth_accounts",
+  "params": []
+}
+
+//---- Response -----
+
+{
+  "result": [
+    "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
+    "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+  ]
+}
+```
+
+### eth_sign
+
+
+The sign method calculates an Ethereum specific signature with: 
+
+```js
+sign(keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))).
+```
+
+By adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature. This prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to impersonate the victim.
+
+For the address to sign a signer must be registered.
+
+
+*Parameters:*
+
+1. **account** : `address` - the account to sign with
+
+
+2. **message** : `bytes` - the message to sign
+
+
+*Returns:*
+
+the signature (65 bytes) for the given message.
+
+*Example:*
+
+```sh
+> in3 eth_sign 0x9b2055d370f73ec7d8a03e965129118dc8f5bf83 0xdeadbeaf
+0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "eth_sign",
+  "params": [
+    "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83",
+    "0xdeadbeaf"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+}
+```
+
+### eth_signTransaction
+
+
+Signs a transaction that can be submitted to the network at a later time using with eth_sendRawTransaction.
+
+*Parameters:*
+
+1. **tx** : `transaction` - transaction to sign
+The tx object supports the following properties :
+
+    * **to** : `address` - receipient of the transaction.
+    
+
+    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **value** : `uint256?` *(optional)* - value in wei to send
+    
+
+    * **gas** : `uint64?` *(optional)* - the gas to be send along (default: `21000`)
+    
+
+    * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    
+
+    * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    
+
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+
+
+*Returns:*
+
+the raw signed transaction
+
+*Example:*
+
+```sh
+> in3 eth_signTransaction '{"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}'
+0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "eth_signTransaction",
+  "params": [
+    {
+      "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+      "from": "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+      "gas": "0x76c0",
+      "gasPrice": "0x9184e72a000",
+      "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+      "value": "0x9184e72a"
+    }
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+}
+```
+
+### in3_addRawKey
+
+
+adds a raw private key as signer, which allows signing transactions.
+
+*Parameters:*
+
+1. **pk** : `bytes32` - the 32byte long private key as hex string.
+
+
+*Returns:* `address`
+
+the address of given key.
+
+*Example:*
+
+```sh
+> in3 in3_addRawKey 0x1234567890123456789012345678901234567890123456789012345678901234
+0x2e988a386a799f506693793c6a5af6b54dfaabfb
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_addRawKey",
+  "params": [
+    "0x1234567890123456789012345678901234567890123456789012345678901234"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+}
+```
+
+### in3_createKey
+
+
+Generates 32 random bytes.
+If /dev/urandom is available it will be used and should generate a secure random number.
+If not the number should not be considered sceure or used in production.
+
+
+*Parameters:*
+
+1. **seed** : `bytes?` *(optional)* - the seed. If given the result will be deterministic.
+
+
+*Returns:*
+
+the 32byte random data
+
+*Example:*
+
+```sh
+> in3 in3_createKey 
+0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_createKey",
+  "params": []
+}
+
+//---- Response -----
+
+{
+  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+}
+```
+
+### in3_decryptKey
+
+
+decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition](https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition). The result is the raw private key.
+
+*Parameters:*
+
+1. **key** : `string` - Keydata as object as defined in the keystorefile
+
+
+2. **passphrase** : `string` - the password to decrypt it.
+
+
+*Returns:*
+
+a raw private key (32 bytes)
+
+*Example:*
+
+```sh
+> in3 in3_decryptKey '{"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}' test
+0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_decryptKey",
+  "params": [
+    {
+      "version": "3,",
+      "id": "f6b5c0b1-ba7a-4b67-9086-a01ea54ec638",
+      "address": "08aa30739030f362a8dd597fd3fcde283e36f4a1",
+      "crypto": {
+        "ciphertext": "d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d",
+        "cipherparams": {
+          "iv": "415440d2b1d6811d5c8a3f4c92c73f49"
+        },
+        "cipher": "aes-128-ctr",
+        "kdf": "pbkdf2",
+        "kdfparams": {
+          "dklen": 32,
+          "salt": "691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d",
+          "c": 16384,
+          "prf": "hmac-sha256"
+        },
+        "mac": "de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"
+      }
+    },
+    "test"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
+}
+```
+
+### in3_ecrecover
+
+
+extracts the public key and address from signature.
+
+*Parameters:*
+
+1. **msg** : `hex` - the message the signature is based on.
+
+
+2. **sig** : `bytes` - the 65 bytes signature as hex.
+
+
+3. **sigtype** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
+
+
+*Returns:* `object`
+
+the extracted public key and address
+
+
+The return value contains the following properties :
+
+* **publicKey** : `bytes` - the public Key of the signer (64 bytes)
+
+
+* **address** : `address` - the address
+
+
+*Example:*
+
+```sh
+> in3 in3_ecrecover 0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999 0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c hash | jq
+{
+  "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
+  "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_ecrecover",
+  "params": [
+    "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999",
+    "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c",
+    "hash"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
+    "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+  }
+}
+```
+
+### in3_pk2address
+
+
+extracts the address from a private key.
+
+*Parameters:*
+
+1. **pk** : `bytes32` - the 32 bytes private key as hex.
+
+
+*Returns:*
+
+the address
+
+*Example:*
+
+```sh
+> in3 in3_pk2address 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
+0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_pk2address",
+  "params": [
+    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
+}
+```
+
+### in3_pk2public
+
+
+extracts the public key from a private key.
+
+*Parameters:*
+
+1. **pk** : `bytes32` - the 32 bytes private key as hex.
+
+
+*Returns:*
+
+the public key as 64 bytes
+
+*Example:*
+
+```sh
+> in3 in3_pk2public 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
+0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_pk2public",
+  "params": [
+    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
+}
+```
+
+### in3_prepareTx
+
+
+prepares a Transaction by filling the unspecified values and returens the unsigned raw Transaction.
+
+*Parameters:*
+
+1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+The tx object supports the following properties :
+
+    * **to** : `address` - receipient of the transaction.
+    
+
+    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **value** : `uint256?` *(optional)* - value in wei to send
+    
+
+    * **gas** : `uint64?` *(optional)* - the gas to be send along (default: `21000`)
+    
+
+    * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
+    
+
+    * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
+    
+
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+
+
+*Returns:*
+
+the unsigned raw transaction as hex.
+
+*Example:*
+
+```sh
+> in3 in3_prepareTx '{"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}'
+0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_prepareTx",
+  "params": [
+    {
+      "to": "0x63f666a23cbd135a91187499b5cc51d589c302a0",
+      "value": "0x100000000",
+      "from": "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+    }
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080"
+}
+```
+
+### in3_signData
+
+
+signs the given data.
+
+*Parameters:*
+
+1. **msg** : `hex` - the message to sign.
+
+
+2. **account** : `address | bytes32` - the account to sign if the account is a bytes32 it will be used as private key
+
+
+3. **msgType** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
+
+
+*Returns:* `object`
+
+the signature
+
+
+The return value contains the following properties :
+
+* **message** : `bytes` - original message used
+
+
+* **messageHash** : `bytes32` - the hash the signature is based on
+
+
+* **signature** : `bytes` - the signature (65 bytes)
+
+
+* **r** : `bytes32` - the x-value of the EC-Point
+
+
+* **s** : `bytes32` - the y-value of the EC-Point
+
+
+* **v** : `byte` - the recovery value (0|1) + 27
+
+
+*Example:*
+
+```sh
+> in3 in3_signData 0x0102030405060708090a0b0c0d0e0f 0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852 raw | jq
+{
+  "message": "0x0102030405060708090a0b0c0d0e0f",
+  "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
+  "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
+  "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
+  "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
+  "v": 27
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_signData",
+  "params": [
+    "0x0102030405060708090a0b0c0d0e0f",
+    "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852",
+    "raw"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "message": "0x0102030405060708090a0b0c0d0e0f",
+    "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
+    "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
+    "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
+    "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
+    "v": 27
+  }
+}
+```
+
+### in3_signTx
+
+
+signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can be used in `eth_sendRawTransaction` to publish and broadcast the transaction.
+
+*Parameters:*
+
+1. **tx** : `hex` - the raw unsigned transactiondata
+
+
+2. **from** : `address` - the account to sign
+
+
+*Returns:*
+
+the raw transaction with signature.
+
+*Example:*
+
+```sh
+> in3 in3_signTx 0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080 0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f
+0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_signTx",
+  "params": [
+    "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080",
+    "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+}
+```
+
 ## btc
 
 
@@ -1287,6 +1919,304 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
       "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a...52e688"
     }
   }
+}
+```
+
+## config
+
+
+There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
+
+
+The incubed client itself offers special RPC-Methods, which are mostly handled directly inside the client:
+
+
+### in3_config
+
+
+changes the configuration of a client. The configuration is passed as the first param and may contain only the values to change.
+
+*Parameters:*
+
+1. **config** : `object` - a Object with config-params.
+The config object supports the following properties :
+
+    * **chainId** : `string | uint?` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
+    Possible Values are:
+
+        - `mainnet` : Mainnet Chain
+        - `goerli` : Goerli Testnet
+        - `ewc` : Energy WebFoundation
+        - `btc` : Bitcoin
+        - `ipfs` : ipfs
+        - `local` : local-chain
+
+
+        *Example* : chainId: "goerli"
+    
+
+    * **finality** : `int?` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators).
+
+        *Example* : finality: 50
+    
+
+    * **includeCode** : `bool?` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards.
+
+        *Example* : includeCode: true
+    
+
+    * **maxAttempts** : `int?` *(optional)* - max number of attempts in case a response is rejected. (default: `7`)
+
+        *Example* : maxAttempts: 1
+    
+
+    * **keepIn3** : `bool?` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
+
+        *Example* : keepIn3: true
+    
+
+    * **stats** : `bool?` *(optional)* - if true, requests sent will be used for stats. (default: `true`)
+    
+
+    * **useBinary** : `bool?` *(optional)* - if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore.
+
+        *Example* : useBinary: true
+    
+
+    * **experimental** : `bool?` *(optional)* - iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
+
+        *Example* : experimental: true
+    
+
+    * **timeout** : `uint64?` *(optional)* - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. (default: `20000`)
+
+        *Example* : timeout: 100000
+    
+
+    * **proof** : `string?` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
+    Possible Values are:
+
+        - `none` : no proof will be generated or verfiied. This also works with standard rpc-endpoints.
+        - `standard` : Stanbdard Proof means all important properties are verfiied
+        - `full` : In addition to standard, also some rarly needed properties are verfied, like uncles. But this causes a bigger payload.
+
+
+        *Example* : proof: "none"
+    
+
+    * **replaceLatestBlock** : `int?` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
+
+        *Example* : replaceLatestBlock: 6
+    
+
+    * **autoUpdateList** : `bool?` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. (default: `true`)
+    
+
+    * **signatureCount** : `int?` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
+
+        *Example* : signatureCount: 2
+    
+
+    * **bootWeights** : `bool?` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. (default: `true`)
+
+        *Example* : bootWeights: true
+    
+
+    * **useHttp** : `bool?` *(optional)* - if true the client will try to use http instead of https.
+
+        *Example* : useHttp: true
+    
+
+    * **minDeposit** : `uint256?` *(optional)* - min stake of the server. Only nodes owning at least this amount will be chosen.
+
+        *Example* : minDeposit: 10000000
+    
+
+    * **nodeProps** : `hex?` *(optional)* - used to identify the capabilities of the node.
+
+        *Example* : nodeProps: "0xffff"
+    
+
+    * **requestCount** : `int?` *(optional)* - the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. (default: `2`)
+
+        *Example* : requestCount: 3
+    
+
+    * **rpc** : `string?` *(optional)* - url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off.
+
+        *Example* : rpc: "http://loalhost:8545"
+    
+
+    * **nodes** : `object?` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
+The nodes object supports the following properties :
+    
+        * **contract** : `address` - address of the registry contract. (This is the data-contract!)
+        
+
+        * **whiteListContract** : `address?` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
+        
+
+        * **whiteList** : `address[]?` *(optional)* - manual whitelist.
+        
+
+        * **registryId** : `bytes32` - identifier of the registry.
+        
+
+        * **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
+        
+
+        * **avgBlockTime** : `int?` *(optional)* - average block time (seconds) for this chain.
+        
+
+        * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
+The verifiedHashes object supports the following properties :
+        
+            * **block** : `uint64` - block number
+            
+
+            * **hash** : `bytes32` - verified hash corresponding to block number.
+            
+
+        
+
+        * **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
+The nodeList object supports the following properties :
+        
+            * **url** : `string` - URL of the node.
+            
+
+            * **address** : `string` - address of the node
+            
+
+            * **props** : `hex` - used to identify the capabilities of the node (defaults to 0xFFFF).
+            
+
+        
+
+
+        *Example* : nodes: {"contract":"0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f","nodeList":[{"address":"0x45d45e6ff99e6c34a235d263965910298985fcfe","url":"https://in3-v2.slock.it/mainnet/nd-1","props":"0xFFFF"}]}
+    
+
+    * **zksync** : `object` - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is on per default).
+The zksync object supports the following properties :
+    
+        * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
+        
+
+        * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
+        
+
+        * **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+        
+
+        * **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
+        
+
+        * **signer_type** : `string?` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
+        Possible Values are:
+
+            - `pk` : Private matching the account is used ( for EOA)
+            - `contract` : Contract Signature  based EIP 1271
+            - `create2` : create2 optionas are used
+
+        
+
+        * **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+        
+
+        * **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+        
+
+        * **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
+The create2 object supports the following properties :
+        
+            * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
+            
+
+            * **saltarg** : `bytes32` - a salt-argument, which will be added to the pubkeyhash and create the create2-salt.
+            
+
+            * **codehash** : `bytes32` - the hash of the actual deploy-tx including the constructor-arguments.
+            
+
+        
+
+
+        *Example* : zksync: [{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"contract"},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"create2","create2":{"creator":"0x6487c3ae644703c1f07527c18fe5569592654bcb","saltarg":"0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12","codehash":"0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"}},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","signer_type":"pk","musig_pub_keys":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","sync_key":"0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734","musig_urls":[null,"https://approver.service.com"]}]
+    
+
+    * **key** : `bytes32?` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+
+        *Example* : key: "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
+    
+
+    * **pk** : `bytes32|bytes32[]?` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+
+        *Example* : pk: ["0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"]
+    
+
+    * **btc** : `object` - configure the Bitcoin verification
+The btc object supports the following properties :
+    
+        * **maxDAP** : `int?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
+
+            *Example* : maxDAP: 10
+        
+
+        * **maxDiff** : `int?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
+
+            *Example* : maxDiff: 5
+        
+
+
+        *Example* : btc: {"maxDAP":30,"maxDiff":5}
+    
+
+
+
+*Returns:*
+
+an boolean confirming that the config has changed.
+
+*Example:*
+
+```sh
+> in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
+true
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_config",
+  "params": [
+    {
+      "chainId": "0x5",
+      "maxAttempts": 4,
+      "nodeLimit": 10,
+      "nodes": {
+        "nodeList": [
+          {
+            "address": "0x1234567890123456789012345678901234567890",
+            "url": "https://mybootnode-A.com",
+            "props": "0xFFFF"
+          },
+          {
+            "address": "0x1234567890123456789012345678901234567890",
+            "url": "https://mybootnode-B.com",
+            "props": "0xFFFF"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": true
 }
 ```
 
@@ -3763,1032 +4693,112 @@ The logs object supports the following properties :
 * **transactionIndex** : `int` - transactionIndex within the containing block.
 
 
-### eth_sign
+## ipfs
 
 
-The sign method calculates an Ethereum specific signature with: 
+A Node supporting IPFS must support these 2 RPC-Methods for uploading and downloading IPFS-Content. The node itself will run a ipfs-client to handle them.
 
-```js
-sign(keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))).
-```
+Fetching ipfs-content can be easily verified by creating the ipfs-hash based on the received data and comparing it to the requested ipfs-hash. Since there is no chance of manipulating the data, there is also no need to put a deposit or convict a node. That's why the registry-contract allows a zero-deposit fot ipfs-nodes.
 
-By adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature. This prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to impersonate the victim.
 
-For the address to sign a signer must be registered.
+### ipfs_get
 
+
+Fetches the data for a requested ipfs-hash. If the node is not able to resolve the hash or find the data a error should be reported.
 
 *Parameters:*
 
-1. **account** : `address` - the account to sign with
+1. **ipfshash** : `string` - the ipfs multi hash
 
 
-2. **message** : `bytes` - the message to sign
+2. **encoding** : `string` - the encoding used for the response. ( `hex` , `base64` or `utf8`)
 
 
 *Returns:*
 
-the signature (65 bytes) for the given message.
+the content matching the requested hash encoded in the defined encoding.
+
+*Proof:*
+
+No proof or verification needed on the server side. All the verification are done in the client by creating the ipfs multihash and comparing to the requested hash.
 
 *Example:*
 
 ```sh
-> in3 eth_sign 0x9b2055d370f73ec7d8a03e965129118dc8f5bf83 0xdeadbeaf
-0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
+> in3 ipfs_get QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD utf8
+I love Incubed
 ```
 
 ```js
 //---- Request -----
 
 {
-  "method": "eth_sign",
+  "method": "ipfs_get",
   "params": [
-    "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83",
-    "0xdeadbeaf"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-}
-```
-
-### eth_signTransaction
-
-
-Signs a transaction that can be submitted to the network at a later time using with eth_sendRawTransaction.
-
-*Parameters:*
-
-1. **tx** : `transaction` - transaction to sign
-The tx object supports the following properties :
-
-    * **to** : `address` - receipient of the transaction.
-    
-
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
-    
-
-    * **value** : `uint256?` *(optional)* - value in wei to send
-    
-
-    * **gas** : `uint64?` *(optional)* - the gas to be send along (default: `21000`)
-    
-
-    * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
-    
-
-    * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
-    
-
-    * **data** : `bytes?` *(optional)* - the data-section of the transaction
-    
-
-
-
-*Returns:*
-
-the raw signed transaction
-
-*Example:*
-
-```sh
-> in3 eth_signTransaction '{"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}'
-0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "eth_signTransaction",
-  "params": [
-    {
-      "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-      "from": "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
-      "gas": "0x76c0",
-      "gasPrice": "0x9184e72a000",
-      "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-      "value": "0x9184e72a"
-    }
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-}
-```
-
-### in3_createKey
-
-
-Generates 32 random bytes.
-If /dev/urandom is available it will be used and should generate a secure random number.
-If not the number should not be considered sceure or used in production.
-
-
-*Parameters:*
-
-1. **seed** : `bytes?` *(optional)* - the seed. If given the result will be deterministic.
-
-
-*Returns:*
-
-the 32byte random data
-
-*Example:*
-
-```sh
-> in3 in3_createKey 
-0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_createKey",
-  "params": []
-}
-
-//---- Response -----
-
-{
-  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-}
-```
-
-### keccak
-
-
-keccak is just an alias for [web3_sha3](#web3-sha3).See Details there.
-
-
-### net_version
-
-
-the Network Version (currently 1)
-
-*Parameters:* - 
-
-*Returns:*
-
-the Version number
-
-### sha256
-
-
-Returns sha-256 of the given data.
-
-No proof needed, since the client will execute this locally. 
-
-
-*Parameters:*
-
-1. **data** : `bytes` - data to hash
-
-
-*Returns:*
-
-the 32byte hash of the data
-
-*Example:*
-
-```sh
-> in3 sha256 0x1234567890
-0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "sha256",
-  "params": [
-    "0x1234567890"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-}
-```
-
-### web3_clientVersion
-
-
-Returns the underlying client version. See [web3_clientversion](https://eth.wiki/json-rpc/API#web3_clientversion) for spec.
-
-*Parameters:* - 
-
-*Returns:*
-
-when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
-
-### web3_sha3
-
-
-Returns Keccak-256 (not the standardized SHA3-256) of the given data.
-
-See [web3_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
-
-No proof needed, since the client will execute this locally. 
-
-
-*Parameters:*
-
-1. **data** : `bytes` - data to hash
-
-
-*Returns:*
-
-the 32byte hash of the data
-
-*Example:*
-
-```sh
-> in3 web3_sha3 0x1234567890
-0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "web3_sha3",
-  "params": [
-    "0x1234567890"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
-}
-```
-
-## in3
-
-
-There are also some Incubed specific rpc-methods, which will help the clients to bootstrap and update the nodeLists.
-
-
-The incubed client itself offers special RPC-Methods, which are mostly handled directly inside the client:
-
-
-### eth_accounts
-
-
-returns a array of account-addresss the incubed client is able to sign with. In order to add keys, you can use [in3_addRawKey](#in3-addrawkey) or configure them in the config. The result also contains the addresses of any signer signer-supporting the `PLGN_ACT_SIGN_ACCOUNT` action.
-
-*Parameters:* - 
-
-*Returns:*
-
-the array of addresses of all registered signers.
-
-*Example:*
-
-```sh
-> in3 eth_accounts  | jq
-[
-  "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
-  "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
-]
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "eth_accounts",
-  "params": []
-}
-
-//---- Response -----
-
-{
-  "result": [
-    "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
-    "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
-  ]
-}
-```
-
-### in3_abiDecode
-
-
-based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function decodes the bytes given and returns it as array of values.
-
-*Parameters:*
-
-1. **signature** : `string` - the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
-
-
-2. **data** : `hex` - the data to decode (usually the result of a eth_call)
-
-
-*Returns:* `any[]`
-
-a array with the values after decodeing.
-
-*Example:*
-
-```sh
-> in3 in3_abiDecode (address,uint256) 0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005 | jq
-[
-  "0x1234567890123456789012345678901234567890",
-  "0x05"
-]
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_abiDecode",
-  "params": [
-    "(address,uint256)",
-    "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": [
-    "0x1234567890123456789012345678901234567890",
-    "0x05"
-  ]
-}
-```
-
-### in3_abiEncode
-
-
-based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function encodes the value given and returns it as hexstring.
-
-*Parameters:*
-
-1. **signature** : `string` - the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
-
-
-2. **params** : `any[]` - a array of arguments. the number of arguments must match the arguments in the signature.
-
-
-*Returns:* `hex`
-
-the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
-
-*Example:*
-
-```sh
-> in3 in3_abiEncode getBalance(address) '["0x1234567890123456789012345678901234567890"]'
-0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_abiEncode",
-  "params": [
-    "getBalance(address)",
-    [
-      "0x1234567890123456789012345678901234567890"
-    ]
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
-}
-```
-
-### in3_addRawKey
-
-
-adds a raw private key as signer, which allows signing transactions.
-
-*Parameters:*
-
-1. **pk** : `bytes32` - the 32byte long private key as hex string.
-
-
-*Returns:* `address`
-
-the address of given key.
-
-*Example:*
-
-```sh
-> in3 in3_addRawKey 0x1234567890123456789012345678901234567890123456789012345678901234
-0x2e988a386a799f506693793c6a5af6b54dfaabfb
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_addRawKey",
-  "params": [
-    "0x1234567890123456789012345678901234567890123456789012345678901234"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
-}
-```
-
-### in3_cacheClear
-
-
-clears the incubed cache (usually found in the .in3-folder)
-
-*Parameters:* - 
-
-*Returns:*
-
-true indicating the success
-
-*Example:*
-
-```sh
-> in3 in3_cacheClear 
-true
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_cacheClear",
-  "params": []
-}
-
-//---- Response -----
-
-{
-  "result": true
-}
-```
-
-### in3_checksumAddress
-
-
-Will convert an upper or lowercase Ethereum address to a checksum address.  (See [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) )
-
-*Parameters:*
-
-1. **address** : `address` - the address to convert.
-
-
-2. **useChainId** : `bool?` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
-
-
-*Returns:*
-
-the address-string using the upper/lowercase hex characters.
-
-*Example:*
-
-```sh
-> in3 in3_checksumAddress 0x1fe2e9bf29aa1938859af64c413361227d04059a false
-0x1Fe2E9bf29aa1938859Af64C413361227d04059a
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_checksumAddress",
-  "params": [
-    "0x1fe2e9bf29aa1938859af64c413361227d04059a",
-    false
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
-}
-```
-
-### in3_config
-
-
-changes the configuration of a client. The configuration is passed as the first param and may contain only the values to change.
-
-*Parameters:*
-
-1. **config** : `object` - a Object with config-params.
-The config object supports the following properties :
-
-    * **chainId** : `string | uint?` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
-    Possible Values are:
-
-        - `mainnet` : Mainnet Chain
-        - `goerli` : Goerli Testnet
-        - `ewc` : Energy WebFoundation
-        - `btc` : Bitcoin
-        - `ipfs` : ipfs
-        - `local` : local-chain
-
-
-        *Example* : chainId: "goerli"
-    
-
-    * **finality** : `int?` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators).
-
-        *Example* : finality: 50
-    
-
-    * **includeCode** : `bool?` *(optional)* - if true, the request should include the codes of all accounts. otherwise only the the codeHash is returned. In this case the client may ask by calling eth_getCode() afterwards.
-
-        *Example* : includeCode: true
-    
-
-    * **maxAttempts** : `int?` *(optional)* - max number of attempts in case a response is rejected. (default: `7`)
-
-        *Example* : maxAttempts: 1
-    
-
-    * **keepIn3** : `bool?` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
-
-        *Example* : keepIn3: true
-    
-
-    * **stats** : `bool?` *(optional)* - if true, requests sent will be used for stats. (default: `true`)
-    
-
-    * **useBinary** : `bool?` *(optional)* - if true the client will use binary format. This will reduce the payload of the responses by about 60% but should only be used for embedded systems or when using the API, since this format does not include the propertynames anymore.
-
-        *Example* : useBinary: true
-    
-
-    * **experimental** : `bool?` *(optional)* - iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
-
-        *Example* : experimental: true
-    
-
-    * **timeout** : `uint64?` *(optional)* - specifies the number of milliseconds before the request times out. increasing may be helpful if the device uses a slow connection. (default: `20000`)
-
-        *Example* : timeout: 100000
-    
-
-    * **proof** : `string?` *(optional)* - if true the nodes should send a proof of the response. If set to none, verification is turned off completly. (default: `"standard"`)
-    Possible Values are:
-
-        - `none` : no proof will be generated or verfiied. This also works with standard rpc-endpoints.
-        - `standard` : Stanbdard Proof means all important properties are verfiied
-        - `full` : In addition to standard, also some rarly needed properties are verfied, like uncles. But this causes a bigger payload.
-
-
-        *Example* : proof: "none"
-    
-
-    * **replaceLatestBlock** : `int?` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
-
-        *Example* : replaceLatestBlock: 6
-    
-
-    * **autoUpdateList** : `bool?` *(optional)* - if true the nodelist will be automaticly updated if the lastBlock is newer. (default: `true`)
-    
-
-    * **signatureCount** : `int?` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
-
-        *Example* : signatureCount: 2
-    
-
-    * **bootWeights** : `bool?` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. (default: `true`)
-
-        *Example* : bootWeights: true
-    
-
-    * **useHttp** : `bool?` *(optional)* - if true the client will try to use http instead of https.
-
-        *Example* : useHttp: true
-    
-
-    * **minDeposit** : `uint256?` *(optional)* - min stake of the server. Only nodes owning at least this amount will be chosen.
-
-        *Example* : minDeposit: 10000000
-    
-
-    * **nodeProps** : `hex?` *(optional)* - used to identify the capabilities of the node.
-
-        *Example* : nodeProps: "0xffff"
-    
-
-    * **requestCount** : `int?` *(optional)* - the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. (default: `2`)
-
-        *Example* : requestCount: 3
-    
-
-    * **rpc** : `string?` *(optional)* - url of one or more direct rpc-endpoints to use. (list can be comma seperated). If this is used, proof will automaticly be turned off.
-
-        *Example* : rpc: "http://loalhost:8545"
-    
-
-    * **nodes** : `object?` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
-The nodes object supports the following properties :
-    
-        * **contract** : `address` - address of the registry contract. (This is the data-contract!)
-        
-
-        * **whiteListContract** : `address?` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
-        
-
-        * **whiteList** : `address[]?` *(optional)* - manual whitelist.
-        
-
-        * **registryId** : `bytes32` - identifier of the registry.
-        
-
-        * **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
-        
-
-        * **avgBlockTime** : `int?` *(optional)* - average block time (seconds) for this chain.
-        
-
-        * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
-The verifiedHashes object supports the following properties :
-        
-            * **block** : `uint64` - block number
-            
-
-            * **hash** : `bytes32` - verified hash corresponding to block number.
-            
-
-        
-
-        * **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
-The nodeList object supports the following properties :
-        
-            * **url** : `string` - URL of the node.
-            
-
-            * **address** : `string` - address of the node
-            
-
-            * **props** : `hex` - used to identify the capabilities of the node (defaults to 0xFFFF).
-            
-
-        
-
-
-        *Example* : nodes: {"contract":"0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f","nodeList":[{"address":"0x45d45e6ff99e6c34a235d263965910298985fcfe","url":"https://in3-v2.slock.it/mainnet/nd-1","props":"0xFFFF"}]}
-    
-
-    * **zksync** : `object` - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is on per default).
-The zksync object supports the following properties :
-    
-        * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
-        
-
-        * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
-        
-
-        * **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
-        
-
-        * **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
-        
-
-        * **signer_type** : `string?` *(optional)* - type of the account. Must be either `pk`(default), `contract` (using contract signatures) or `create2` using the create2-section. (default: `"pk"`)
-        Possible Values are:
-
-            - `pk` : Private matching the account is used ( for EOA)
-            - `contract` : Contract Signature  based EIP 1271
-            - `create2` : create2 optionas are used
-
-        
-
-        * **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
-        
-
-        * **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
-        
-
-        * **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
-The create2 object supports the following properties :
-        
-            * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
-            
-
-            * **saltarg** : `bytes32` - a salt-argument, which will be added to the pubkeyhash and create the create2-salt.
-            
-
-            * **codehash** : `bytes32` - the hash of the actual deploy-tx including the constructor-arguments.
-            
-
-        
-
-
-        *Example* : zksync: [{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"contract"},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","sync_key":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","signer_type":"create2","create2":{"creator":"0x6487c3ae644703c1f07527c18fe5569592654bcb","saltarg":"0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12","codehash":"0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"}},{"account":"0x995628aa92d6a016da55e7de8b1727e1eb97d337","signer_type":"pk","musig_pub_keys":"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816","sync_key":"0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734","musig_urls":[null,"https://approver.service.com"]}]
-    
-
-    * **key** : `bytes32?` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
-
-        *Example* : key: "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
-    
-
-    * **pk** : `bytes32|bytes32[]?` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
-
-        *Example* : pk: ["0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"]
-    
-
-    * **btc** : `object` - configure the Bitcoin verification
-The btc object supports the following properties :
-    
-        * **maxDAP** : `int?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
-
-            *Example* : maxDAP: 10
-        
-
-        * **maxDiff** : `int?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
-
-            *Example* : maxDiff: 5
-        
-
-
-        *Example* : btc: {"maxDAP":30,"maxDiff":5}
-    
-
-
-
-*Returns:*
-
-an boolean confirming that the config has changed.
-
-*Example:*
-
-```sh
-> in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
-true
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_config",
-  "params": [
-    {
-      "chainId": "0x5",
-      "maxAttempts": 4,
-      "nodeLimit": 10,
-      "nodes": {
-        "nodeList": [
-          {
-            "address": "0x1234567890123456789012345678901234567890",
-            "url": "https://mybootnode-A.com",
-            "props": "0xFFFF"
-          },
-          {
-            "address": "0x1234567890123456789012345678901234567890",
-            "url": "https://mybootnode-B.com",
-            "props": "0xFFFF"
-          }
-        ]
-      }
-    }
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": true
-}
-```
-
-### in3_decryptKey
-
-
-decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition](https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition). The result is the raw private key.
-
-*Parameters:*
-
-1. **key** : `string` - Keydata as object as defined in the keystorefile
-
-
-2. **passphrase** : `string` - the password to decrypt it.
-
-
-*Returns:*
-
-a raw private key (32 bytes)
-
-*Example:*
-
-```sh
-> in3 in3_decryptKey '{"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}' test
-0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_decryptKey",
-  "params": [
-    {
-      "version": "3,",
-      "id": "f6b5c0b1-ba7a-4b67-9086-a01ea54ec638",
-      "address": "08aa30739030f362a8dd597fd3fcde283e36f4a1",
-      "crypto": {
-        "ciphertext": "d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d",
-        "cipherparams": {
-          "iv": "415440d2b1d6811d5c8a3f4c92c73f49"
-        },
-        "cipher": "aes-128-ctr",
-        "kdf": "pbkdf2",
-        "kdfparams": {
-          "dklen": 32,
-          "salt": "691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d",
-          "c": 16384,
-          "prf": "hmac-sha256"
-        },
-        "mac": "de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"
-      }
-    },
-    "test"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
-}
-```
-
-### in3_ecrecover
-
-
-extracts the public key and address from signature.
-
-*Parameters:*
-
-1. **msg** : `hex` - the message the signature is based on.
-
-
-2. **sig** : `bytes` - the 65 bytes signature as hex.
-
-
-3. **sigtype** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data). Default: `raw` (default: `"raw"`)
-
-
-*Returns:* `object`
-
-the extracted public key and address
-
-
-The return value contains the following properties :
-
-* **publicKey** : `bytes` - the public Key of the signer (64 bytes)
-
-
-* **address** : `address` - the address
-
-
-*Example:*
-
-```sh
-> in3 in3_ecrecover 0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999 0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c hash | jq
-{
-  "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
-  "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
-}
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_ecrecover",
-  "params": [
-    "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999",
-    "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c",
-    "hash"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": {
-    "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
-    "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+    "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
+    "utf8"
+  ],
+  "in3": {
+    "verification": "proof"
   }
 }
+
+//---- Response -----
+
+{
+  "result": "I love Incubed"
+}
 ```
 
-### in3_ens
+### ipfs_put
 
 
-resolves a ens-name. 
-the domain names consist of a series of dot-separated labels. Each label must be a valid normalised label as described in [UTS46](https://unicode.org/reports/tr46/) with the options `transitional=false` and `useSTD3AsciiRules=true`. 
-For Javascript implementations, a [library](https://www.npmjs.com/package/idna-uts46) is available that normalises and checks names.
+Stores ipfs-content to the ipfs network.
+Important! As a client there is no garuantee that a node made this content available. ( just like `eth_sendRawTransaction` will only broadcast it). 
+Even if the node stores the content there is no gurantee it will do it forever. 
 
 
 *Parameters:*
 
-1. **name** : `string` - the domain name UTS46 compliant string.
+1. **data** : `bytes | string` - the content encoded with the specified encoding.
 
 
-2. **field** : `string?` *(optional)* - the required data, which could be one of ( `addr` - the address, `resolver` - the address of the resolver, `hash` - the namehash, `owner` - the owner of the domain) (default: `"addr"`)
+2. **encoding** : `string` - the encoding used for the request. ( `hex` , `base64` or `utf8`)
 
 
 *Returns:*
 
-the value of the specified field
+the ipfs multi hash
 
 *Example:*
 
 ```sh
-> in3 in3_ens cryptokitties.eth addr
-0x1Fe2E9bf29aa1938859Af64C413361227d04059a
+> in3 ipfs_put '"I love Incubed"' utf8
+QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
 ```
 
 ```js
 //---- Request -----
 
 {
-  "method": "in3_ens",
+  "method": "ipfs_put",
   "params": [
-    "cryptokitties.eth",
-    "addr"
+    "I love Incubed",
+    "utf8"
   ]
 }
 
 //---- Response -----
 
 {
-  "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+  "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD"
 }
 ```
 
-### in3_fromWei
+## nodelist
 
 
-converts a given uint (also as hex) with a wei-value into a specified unit.
-
-*Parameters:*
-
-1. **value** : `uint256` - the value in wei
-
-    *Example* : value: "0x234324abdef"
-
-
-2. **unit** : `string` - the unit of the target value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
-
-
-3. **digits** : `int?` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
-
-
-*Returns:*
-
-the value as string.
-
-*Example:*
-
-```sh
-> in3 in3_fromWei 0x234324abadefdef eth 3
-0.158
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_fromWei",
-  "params": [
-    "0x234324abadefdef",
-    "eth",
-    3
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0.158"
-}
-```
+special Incubed nodelist-handling functions. Most of those are only used internally.
 
 ### in3_nodeList
 
@@ -4813,7 +4823,7 @@ the current nodelist
 
 The return value contains the following properties :
 
-* **nodes** : `object` - a array of node definitions.
+* **nodes** : `object[]` - a array of node definitions.
 The nodes object supports the following properties :
 
     * **url** : `string` - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
@@ -5082,147 +5092,6 @@ The storageProof object supports the following properties :
 }
 ```
 
-### in3_pk2address
-
-
-extracts the address from a private key.
-
-*Parameters:*
-
-1. **pk** : `bytes32` - the 32 bytes private key as hex.
-
-
-*Returns:*
-
-the address
-
-*Example:*
-
-```sh
-> in3 in3_pk2address 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
-0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_pk2address",
-  "params": [
-    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
-}
-```
-
-### in3_pk2public
-
-
-extracts the public key from a private key.
-
-*Parameters:*
-
-1. **pk** : `bytes32` - the 32 bytes private key as hex.
-
-
-*Returns:*
-
-the public key as 64 bytes
-
-*Example:*
-
-```sh
-> in3 in3_pk2public 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
-0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_pk2public",
-  "params": [
-    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
-}
-```
-
-### in3_prepareTx
-
-
-prepares a Transaction by filling the unspecified values and returens the unsigned raw Transaction.
-
-*Parameters:*
-
-1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-The tx object supports the following properties :
-
-    * **to** : `address` - receipient of the transaction.
-    
-
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
-    
-
-    * **value** : `uint256?` *(optional)* - value in wei to send
-    
-
-    * **gas** : `uint64?` *(optional)* - the gas to be send along (default: `21000`)
-    
-
-    * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
-    
-
-    * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
-    
-
-    * **data** : `bytes?` *(optional)* - the data-section of the transaction
-    
-
-
-
-*Returns:*
-
-the unsigned raw transaction as hex.
-
-*Example:*
-
-```sh
-> in3 in3_prepareTx '{"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}'
-0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_prepareTx",
-  "params": [
-    {
-      "to": "0x63f666a23cbd135a91187499b5cc51d589c302a0",
-      "value": "0x100000000",
-      "from": "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
-    }
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080"
-}
-```
-
 ### in3_sign
 
 
@@ -5313,173 +5182,6 @@ The return value contains the following properties :
       "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
     }
   ]
-}
-```
-
-### in3_signData
-
-
-signs the given data.
-
-*Parameters:*
-
-1. **msg** : `hex` - the message to sign.
-
-
-2. **account** : `address | bytes32` - the account to sign if the account is a bytes32 it will be used as private key
-
-
-3. **msgType** : `string?` *(optional)* - the type of the signature data : `eth_sign` (use the prefix and hash it), `raw` (hash the raw data), `hash` (use the already hashed data) (default: `"raw"`)
-
-
-*Returns:* `object`
-
-the signature
-
-
-The return value contains the following properties :
-
-* **message** : `bytes` - original message used
-
-
-* **messageHash** : `bytes32` - the hash the signature is based on
-
-
-* **signature** : `bytes` - the signature (65 bytes)
-
-
-* **r** : `bytes32` - the x-value of the EC-Point
-
-
-* **s** : `bytes32` - the y-value of the EC-Point
-
-
-* **v** : `byte` - the recovery value (0|1) + 27
-
-
-*Example:*
-
-```sh
-> in3 in3_signData 0x0102030405060708090a0b0c0d0e0f 0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852 raw | jq
-{
-  "message": "0x0102030405060708090a0b0c0d0e0f",
-  "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
-  "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
-  "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
-  "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
-  "v": 27
-}
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_signData",
-  "params": [
-    "0x0102030405060708090a0b0c0d0e0f",
-    "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852",
-    "raw"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": {
-    "message": "0x0102030405060708090a0b0c0d0e0f",
-    "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
-    "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
-    "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
-    "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
-    "v": 27
-  }
-}
-```
-
-### in3_signTx
-
-
-signs the given raw Tx (as prepared by in3_prepareTx ). The resulting data can be used in `eth_sendRawTransaction` to publish and broadcast the transaction.
-
-*Parameters:*
-
-1. **tx** : `hex` - the raw unsigned transactiondata
-
-
-2. **from** : `address` - the account to sign
-
-
-*Returns:*
-
-the raw transaction with signature.
-
-*Example:*
-
-```sh
-> in3 in3_signTx 0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080 0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f
-0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_signTx",
-  "params": [
-    "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080",
-    "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
-}
-```
-
-### in3_toWei
-
-
-converts the given value into wei.
-
-*Parameters:*
-
-1. **value** : `string | uint` - the value, which may be floating number as string
-
-    *Example* : value: "0.9"
-
-
-2. **unit** : `string?` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
-
-
-*Returns:*
-
-the value in wei as hex.
-
-*Example:*
-
-```sh
-> in3 in3_toWei 20.0009123 eth
-0x01159183c4793db800
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "in3_toWei",
-  "params": [
-    "20.0009123",
-    "eth"
-  ]
-}
-
-//---- Response -----
-
-{
-  "result": "0x01159183c4793db800"
 }
 ```
 
@@ -5662,105 +5364,380 @@ The storageProof object supports the following properties :
 }
 ```
 
-## ipfs
+## utils
 
 
-A Node supporting IPFS must support these 2 RPC-Methods for uploading and downloading IPFS-Content. The node itself will run a ipfs-client to handle them.
-
-Fetching ipfs-content can be easily verified by creating the ipfs-hash based on the received data and comparing it to the requested ipfs-hash. Since there is no chance of manipulating the data, there is also no need to put a deposit or convict a node. That's why the registry-contract allows a zero-deposit fot ipfs-nodes.
+a Collection of utility-function.
 
 
-### ipfs_get
+### in3_abiDecode
 
 
-Fetches the data for a requested ipfs-hash. If the node is not able to resolve the hash or find the data a error should be reported.
+based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function decodes the bytes given and returns it as array of values.
 
 *Parameters:*
 
-1. **ipfshash** : `string` - the ipfs multi hash
+1. **signature** : `string` - the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
 
 
-2. **encoding** : `string` - the encoding used for the response. ( `hex` , `base64` or `utf8`)
+2. **data** : `hex` - the data to decode (usually the result of a eth_call)
 
 
-*Returns:*
+*Returns:* `any[]`
 
-the content matching the requested hash encoded in the defined encoding.
-
-*Proof:*
-
-No proof or verification needed on the server side. All the verification are done in the client by creating the ipfs multihash and comparing to the requested hash.
+a array with the values after decodeing.
 
 *Example:*
 
 ```sh
-> in3 ipfs_get QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD utf8
-I love Incubed
+> in3 in3_abiDecode (address,uint256) 0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005 | jq
+[
+  "0x1234567890123456789012345678901234567890",
+  "0x05"
+]
 ```
 
 ```js
 //---- Request -----
 
 {
-  "method": "ipfs_get",
+  "method": "in3_abiDecode",
   "params": [
-    "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
-    "utf8"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
-
-//---- Response -----
-
-{
-  "result": "I love Incubed"
-}
-```
-
-### ipfs_put
-
-
-Stores ipfs-content to the ipfs network.
-Important! As a client there is no garuantee that a node made this content available. ( just like `eth_sendRawTransaction` will only broadcast it). 
-Even if the node stores the content there is no gurantee it will do it forever. 
-
-
-*Parameters:*
-
-1. **data** : `bytes | string` - the content encoded with the specified encoding.
-
-
-2. **encoding** : `string` - the encoding used for the request. ( `hex` , `base64` or `utf8`)
-
-
-*Returns:*
-
-the ipfs multi hash
-
-*Example:*
-
-```sh
-> in3 ipfs_put '"I love Incubed"' utf8
-QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
-```
-
-```js
-//---- Request -----
-
-{
-  "method": "ipfs_put",
-  "params": [
-    "I love Incubed",
-    "utf8"
+    "(address,uint256)",
+    "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005"
   ]
 }
 
 //---- Response -----
 
 {
-  "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD"
+  "result": [
+    "0x1234567890123456789012345678901234567890",
+    "0x05"
+  ]
+}
+```
+
+### in3_abiEncode
+
+
+based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html) used by solidity, this function encodes the value given and returns it as hexstring.
+
+*Parameters:*
+
+1. **signature** : `string` - the signature of the function. e.g. `getBalance(uint256)`. The format is the same as used by solidity to create the functionhash. optional you can also add the return type, which in this case is ignored.
+
+
+2. **params** : `any[]` - a array of arguments. the number of arguments must match the arguments in the signature.
+
+
+*Returns:* `hex`
+
+the ABI-encoded data as hex including the 4 byte function-signature. These data can be used for `eth_call` or to send a transaction.
+
+*Example:*
+
+```sh
+> in3 in3_abiEncode getBalance(address) '["0x1234567890123456789012345678901234567890"]'
+0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_abiEncode",
+  "params": [
+    "getBalance(address)",
+    [
+      "0x1234567890123456789012345678901234567890"
+    ]
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+}
+```
+
+### in3_cacheClear
+
+
+clears the incubed cache (usually found in the .in3-folder)
+
+*Parameters:* - 
+
+*Returns:*
+
+true indicating the success
+
+*Example:*
+
+```sh
+> in3 in3_cacheClear 
+true
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_cacheClear",
+  "params": []
+}
+
+//---- Response -----
+
+{
+  "result": true
+}
+```
+
+### in3_checksumAddress
+
+
+Will convert an upper or lowercase Ethereum address to a checksum address.  (See [EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) )
+
+*Parameters:*
+
+1. **address** : `address` - the address to convert.
+
+
+2. **useChainId** : `bool?` *(optional)* - if true, the chainId is integrated as well (See [EIP1191](https://github.com/ethereum/EIPs/issues/1121) )
+
+
+*Returns:*
+
+the address-string using the upper/lowercase hex characters.
+
+*Example:*
+
+```sh
+> in3 in3_checksumAddress 0x1fe2e9bf29aa1938859af64c413361227d04059a false
+0x1Fe2E9bf29aa1938859Af64C413361227d04059a
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_checksumAddress",
+  "params": [
+    "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+    false
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+}
+```
+
+### in3_fromWei
+
+
+converts a given uint (also as hex) with a wei-value into a specified unit.
+
+*Parameters:*
+
+1. **value** : `uint256` - the value in wei
+
+    *Example* : value: "0x234324abdef"
+
+
+2. **unit** : `string` - the unit of the target value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether`
+
+
+3. **digits** : `int?` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
+
+
+*Returns:*
+
+the value as string.
+
+*Example:*
+
+```sh
+> in3 in3_fromWei 0x234324abadefdef eth 3
+0.158
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_fromWei",
+  "params": [
+    "0x234324abadefdef",
+    "eth",
+    3
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0.158"
+}
+```
+
+### in3_toWei
+
+
+converts the given value into wei.
+
+*Parameters:*
+
+1. **value** : `string | uint` - the value, which may be floating number as string
+
+    *Example* : value: "0.9"
+
+
+2. **unit** : `string?` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
+
+
+*Returns:*
+
+the value in wei as hex.
+
+*Example:*
+
+```sh
+> in3 in3_toWei 20.0009123 eth
+0x01159183c4793db800
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_toWei",
+  "params": [
+    "20.0009123",
+    "eth"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x01159183c4793db800"
+}
+```
+
+### keccak
+
+
+keccak is just an alias for [web3_sha3](#web3-sha3).See Details there.
+
+
+### net_version
+
+
+the Network Version (currently 1)
+
+*Parameters:* - 
+
+*Returns:*
+
+the Version number
+
+### sha256
+
+
+Returns sha-256 of the given data.
+
+No proof needed, since the client will execute this locally. 
+
+
+*Parameters:*
+
+1. **data** : `bytes` - data to hash
+
+
+*Returns:*
+
+the 32byte hash of the data
+
+*Example:*
+
+```sh
+> in3 sha256 0x1234567890
+0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "sha256",
+  "params": [
+    "0x1234567890"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+}
+```
+
+### web3_clientVersion
+
+
+Returns the underlying client version. See [web3_clientversion](https://eth.wiki/json-rpc/API#web3_clientversion) for spec.
+
+*Parameters:* - 
+
+*Returns:*
+
+when connected to the incubed-network, `Incubed/<Version>` will be returned, but in case of a direct enpoint, its's version will be used.
+
+### web3_sha3
+
+
+Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+
+See [web3_sha3](https://eth.wiki/json-rpc/API#web3_sha3) for spec.
+
+No proof needed, since the client will execute this locally. 
+
+
+*Parameters:*
+
+1. **data** : `bytes` - data to hash
+
+
+*Returns:*
+
+the 32byte hash of the data
+
+*Example:*
+
+```sh
+> in3 web3_sha3 0x1234567890
+0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "web3_sha3",
+  "params": [
+    "0x1234567890"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
 }
 ```
 
