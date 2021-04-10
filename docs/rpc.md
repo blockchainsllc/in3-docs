@@ -117,10 +117,10 @@ Signs a transaction that can be submitted to the network at a later time using w
 1. **tx** : `transaction` - transaction to sign
 The tx object supports the following properties :
 
-    * **to** : `address` - receipient of the transaction.
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -460,10 +460,10 @@ prepares a Transaction by filling the unspecified values and returens the unsign
 1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
 The tx object supports the following properties :
 
-    * **to** : `address` - receipient of the transaction.
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -2296,13 +2296,13 @@ calls a function of a contract (or simply executes the evm opcodes) and returns 
 
 *Parameters:*
 
-1. **tx** : `object` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
 The tx object supports the following properties :
 
-    * **to** : `address` - address of the contract
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address?` *(optional)* - sender of the address
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -2317,7 +2317,7 @@ The tx object supports the following properties :
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
-    * **data** : `bytes?` *(optional)* - the data-section of the transaction, which includes the functionhash and the abi-encoded arguments
+    * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
 
@@ -2547,10 +2547,10 @@ calculates the gas needed to execute a transaction. for spec see [eth_estimateGa
 1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
 The tx object supports the following properties :
 
-    * **to** : `address` - receipient of the transaction.
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -2573,7 +2573,7 @@ The tx object supports the following properties :
 2. **block** : `uint64` - the blockNumber or  `latest`
 
 
-*Returns:*
+*Returns:* `uint64`
 
 the amount of gass needed.
 
@@ -2597,7 +2597,7 @@ gets the balance of an account for a given block
 2. **block** : `uint64` - the blockNumber or `latest`
 
 
-*Returns:*
+*Returns:* `uint256`
 
 the balance
 
@@ -3327,6 +3327,46 @@ The filter object supports the following properties :
     * **blockhash** : `bytes32?` *(optional)* - With the addition of EIP-234, blockHash will be a new filter option which restricts the logs returned to the single block with the 32-byte hash blockHash. Using blockHash is equivalent to fromBlock = toBlock = the block number with hash blockHash. If blockHash is present in in the filter criteria, then neither fromBlock nor toBlock are allowed.
     
 
+
+
+*Returns:* `ethlog[]`
+
+array with all found event matching the specified filter
+
+
+The return value contains the following properties :
+
+* **address** : `address` - the address triggering the event.
+
+
+* **blockNumber** : `uint64` - the blockNumber
+
+
+* **blockHash** : `bytes32` - blockhash if ther containing block
+
+
+* **data** : `bytes` - abi-encoded data of the event (all non indexed fields)
+
+
+* **logIndex** : `int` - the index of the even within the block.
+
+
+* **removed** : `bool` - the reorg-status of the event.
+
+
+* **topics** : `bytes32[]` - array of 32byte-topics of the indexed fields.
+
+
+* **transactionHash** : `bytes32` - requested transactionHash
+
+
+* **transactionIndex** : `int` - transactionIndex within the containing block.
+
+
+* **transactionLogIndex** : `int?` *(optional)* - index of the event within the transaction.
+
+
+* **type** : `string?` *(optional)* - mining-status
 
 
 *Proof:*
@@ -4248,7 +4288,7 @@ The return value contains the following properties :
 * **blockHash** : `bytes32` - blockhash if ther containing block
 
 
-* **contractAddress** : `address` - the deployed contract in case the tx did deploy a new contract
+* **contractAddress** : `address?` *(optional)* - the deployed contract in case the tx did deploy a new contract
 
 
 * **cumulativeGasUsed** : `uint64` - gas used for all transaction up to this one in the block
@@ -4257,7 +4297,7 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
-* **logs** : `object` - array of events created during execution of the tx
+* **logs** : `ethlog[]` - array of events created during execution of the tx
 The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
@@ -4287,10 +4327,10 @@ The logs object supports the following properties :
     * **transactionIndex** : `int` - transactionIndex within the containing block.
     
 
-    * **transactionLogIndex** : `int` - index of the event within the transaction.
+    * **transactionLogIndex** : `int?` *(optional)* - index of the event within the transaction.
     
 
-    * **type** : `string` - mining-status
+    * **type** : `string?` *(optional)* - mining-status
     
 
 
@@ -4557,10 +4597,10 @@ signs and sends a Transaction
 1. **tx** : `transaction` - the transactiondata to send
 The tx object supports the following properties :
 
-    * **to** : `address` - receipient of the transaction.
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -4598,10 +4638,10 @@ signs and sends a Transaction, but then waits until the transaction receipt can 
 1. **tx** : `transaction` - the transactiondata to send
 The tx object supports the following properties :
 
-    * **to** : `address` - receipient of the transaction.
+    * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
-    * **from** : `address` - sender of the address (if not sepcified, the first signer will be the sender)
+    * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -4634,7 +4674,7 @@ The return value contains the following properties :
 * **blockHash** : `bytes32` - blockhash if ther containing block
 
 
-* **contractAddress** : `address` - the deployed contract in case the tx did deploy a new contract
+* **contractAddress** : `address?` *(optional)* - the deployed contract in case the tx did deploy a new contract
 
 
 * **cumulativeGasUsed** : `uint64` - gas used for all transaction up to this one in the block
@@ -4643,7 +4683,7 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
-* **logs** : `object` - array of events created during execution of the tx
+* **logs** : `ethlog[]` - array of events created during execution of the tx
 The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
@@ -4673,10 +4713,10 @@ The logs object supports the following properties :
     * **transactionIndex** : `int` - transactionIndex within the containing block.
     
 
-    * **transactionLogIndex** : `int` - index of the event within the transaction.
+    * **transactionLogIndex** : `int?` *(optional)* - index of the event within the transaction.
     
 
-    * **type** : `string` - mining-status
+    * **type** : `string?` *(optional)* - mining-status
     
 
 
@@ -5380,7 +5420,10 @@ based on the [ABI-encoding](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.h
 1. **signature** : `string` - the signature of the function. e.g. `uint256`, `(address,string,uint256)` or `getBalance(address):uint256`. If the complete functionhash is given, only the return-part will be used.
 
 
-2. **data** : `hex` - the data to decode (usually the result of a eth_call)
+2. **data** : `bytes` - the data to decode (usually the result of a eth_call)
+
+
+3. **topics** : `bytes?` *(optional)* - in case of an even the topics (concatinated to max 4x32bytes). This is used if indexed.arguments are used.
 
 
 *Returns:* `any[]`
@@ -5492,6 +5535,48 @@ true
 
 {
   "result": true
+}
+```
+
+### in3_calcDeployAddress
+
+
+calculates the address of a contract about to deploy. The address depends on the senders nonce.
+
+*Parameters:*
+
+1. **sender** : `address` - the sender of the transaction
+
+
+2. **nonce** : `uint64?` *(optional)* - the nonce of the sender during deployment
+
+
+*Returns:* `address`
+
+the address of the deployed contract
+
+*Example:*
+
+```sh
+> in3 in3_calcDeployAddress 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c 6054986
+0xba866e7bd2573be3eaf5077b557751bb6d58076e
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_calcDeployAddress",
+  "params": [
+    "0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c",
+    6054986
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": "0xba866e7bd2573be3eaf5077b557751bb6d58076e"
 }
 ```
 
@@ -6056,7 +6141,7 @@ The return value contains the following properties :
 * **blockHash** : `bytes32` - blockhash if ther containing block
 
 
-* **contractAddress** : `address` - the deployed contract in case the tx did deploy a new contract
+* **contractAddress** : `address?` *(optional)* - the deployed contract in case the tx did deploy a new contract
 
 
 * **cumulativeGasUsed** : `uint64` - gas used for all transaction up to this one in the block
@@ -6065,7 +6150,7 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
-* **logs** : `object` - array of events created during execution of the tx
+* **logs** : `ethlog[]` - array of events created during execution of the tx
 The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
@@ -6095,10 +6180,10 @@ The logs object supports the following properties :
     * **transactionIndex** : `int` - transactionIndex within the containing block.
     
 
-    * **transactionLogIndex** : `int` - index of the event within the transaction.
+    * **transactionLogIndex** : `int?` *(optional)* - index of the event within the transaction.
     
 
-    * **type** : `string` - mining-status
+    * **type** : `string?` *(optional)* - mining-status
     
 
 
