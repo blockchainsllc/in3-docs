@@ -77,6 +77,26 @@ const in3 = new IN3({
 ```
 
 
+## debug
+
+if true, debug messages will be written to stderr. *This config is optional.*
+
+ Type: `bool?`
+
+*Example:*
+
+```sh
+> in3 --debug  ....
+
+```
+
+```js
+const in3 = new IN3({
+  "debug": true
+})
+```
+
+
 ## maxAttempts
 
 max number of attempts in case a response is rejected. *This config is optional.* (default: `7`)
@@ -161,7 +181,7 @@ const in3 = new IN3({
 
 ## experimental
 
-iif true the client allows to use use experimental features, otherwise a exception is thrown if those would be used. *This config is optional.*
+if true the client allows to use use experimental features, otherwise a exception is thrown if those would be used. *This config is optional.*
 
  Type: `bool?`
 
@@ -419,7 +439,7 @@ defining the nodelist. collection of JSON objects with chain Id (hex string) as 
  Type: `object?`
 The nodes object supports the following properties :
 
-* **contract** : `address` - address of the registry contract. (This is the data-contract!)
+* **contract** : `address?` *(optional)* - address of the registry contract. (This is the data-contract!)
 
 
 * **whiteListContract** : `address?` *(optional)* - address of the whiteList contract. This cannot be combined with whiteList!
@@ -428,7 +448,7 @@ The nodes object supports the following properties :
 * **whiteList** : `address[]?` *(optional)* - manual whitelist.
 
 
-* **registryId** : `bytes32` - identifier of the registry.
+* **registryId** : `bytes32?` *(optional)* - identifier of the registry.
 
 
 * **needsUpdate** : `bool?` *(optional)* - if set, the nodeList will be updated before next request.
@@ -526,6 +546,12 @@ Possible Values are:
     * **codehash** : `bytes32` - the hash of the actual deploy-tx including the constructor-arguments.
     
 
+
+
+* **verify_proof_method** : `string` - rpc-method, which will be used to verify the incomming proof before cosigning.
+
+
+* **create_proof_method** : `string` - rpc-method, which will be used to create the proof needed for cosigning.
 
 
 
@@ -1155,7 +1181,7 @@ a coma seperated list of urls (or address:url) to be used as boot nodes
 
 ### onlysign
 
-only sign, don't send the raw Transaction
+only sign, do not send the raw Transaction
 
  Type: `bool`
 
