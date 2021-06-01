@@ -218,7 +218,7 @@ As methods, the following can be used:
         Extracts the public key from a private key.
      ecrecover <msg> <signature>
         Extracts the address and public key from a signature.
-     createkey
+     createKey
         Generates a random raw private key.
      key <keyfile>
         Reads the private key from JSON keystore file from the first argument and returns the private key. This may ask the user to enter the passphrase (unless provided with ``-pwd``).
