@@ -102,16 +102,19 @@ const in3 = new In3Client({
     chainId       : 'mainnet'
 })
 
+const myTokenContract = in3.eth.contractAt(myContractABI, myContractDeployedAddress);
+
 // use the API to call a function..
 const myBalance = await in3.eth.callFn(myTokenContract, 'balanceOf(address):uint', myAccount)
 
-// ot to send a transaction..
+// or to send a transaction..
+// the to field has to be an address, in this case it would the myTokenContract address
 const receipt = await in3.eth.sendTransaction({ 
-  to           : myTokenContract, 
+  to           : myTokenContract._address, // Once you get the contract instance, then the address is availabe at contractInstance._address key 
   method       : 'transfer(address,uint256)',
   args         : [target,amount],
   confirmations: 2,
-  pk           : myKey
+  pk           : myKey // Private Key of the account through which transaction has to be sent
 })
 
 ...
