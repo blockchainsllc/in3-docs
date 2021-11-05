@@ -3935,6 +3935,7 @@ dotnet build
   - [NewLogFilter(filter)](#M-In3-Eth1-Api-NewLogFilter-In3-Eth1-LogFilter- 'In3.Eth1.Api.NewLogFilter(In3.Eth1.LogFilter)')
   - [SendRawTransaction(transactionData)](#M-In3-Eth1-Api-SendRawTransaction-System-String- 'In3.Eth1.Api.SendRawTransaction(System.String)')
   - [SendTransaction(tx)](#M-In3-Eth1-Api-SendTransaction-In3-Eth1-TransactionRequest- 'In3.Eth1.Api.SendTransaction(In3.Eth1.TransactionRequest)')
+  - [SendTransactionAndWait(tx)](#M-In3-Eth1-Api-SendTransactionAndWait-In3-Eth1-TransactionRequest- 'In3.Eth1.Api.SendTransactionAndWait(In3.Eth1.TransactionRequest)')
   - [UninstallFilter(filterId)](#M-In3-Eth1-Api-UninstallFilter-System-Int64- 'In3.Eth1.Api.UninstallFilter(System.Int64)')
   - [Get(multihash)](#M-In3-Ipfs-Api-Get-System-String- 'In3.Ipfs.Api.Get(System.String)')
   - [Put(content)](#M-In3-Ipfs-Api-Put-System-String- 'In3.Ipfs.Api.Put(System.String)')
@@ -3984,28 +3985,17 @@ dotnet build
   - [Weight](#P-In3-Btc-Block`1-Weight 'In3.Btc.Block`1.Weight')
 - [Chain](#T-In3-Chain 'In3.Chain')
   - [Btc](#F-In3-Chain-Btc 'In3.Chain.Btc')
-  - [Evan](#F-In3-Chain-Evan 'In3.Chain.Evan')
   - [Ewc](#F-In3-Chain-Ewc 'In3.Chain.Ewc')
   - [Goerli](#F-In3-Chain-Goerli 'In3.Chain.Goerli')
   - [Ipfs](#F-In3-Chain-Ipfs 'In3.Chain.Ipfs')
-  - [Kovan](#F-In3-Chain-Kovan 'In3.Chain.Kovan')
   - [Local](#F-In3-Chain-Local 'In3.Chain.Local')
   - [Mainnet](#F-In3-Chain-Mainnet 'In3.Chain.Mainnet')
-  - [Multichain](#F-In3-Chain-Multichain 'In3.Chain.Multichain')
   - [Tobalaba](#F-In3-Chain-Tobalaba 'In3.Chain.Tobalaba')
   - [Volta](#F-In3-Chain-Volta 'In3.Chain.Volta')
-- [ChainConfiguration](#T-In3-Configuration-ChainConfiguration 'In3.Configuration.ChainConfiguration')
-  - [#ctor(chain,clientConfiguration)](#M-In3-Configuration-ChainConfiguration-#ctor-In3-Chain,In3-Configuration-ClientConfiguration- 'In3.Configuration.ChainConfiguration.#ctor(In3.Chain,In3.Configuration.ClientConfiguration)')
-  - [Contract](#P-In3-Configuration-ChainConfiguration-Contract 'In3.Configuration.ChainConfiguration.Contract')
-  - [NeedsUpdate](#P-In3-Configuration-ChainConfiguration-NeedsUpdate 'In3.Configuration.ChainConfiguration.NeedsUpdate')
-  - [NodesConfiguration](#P-In3-Configuration-ChainConfiguration-NodesConfiguration 'In3.Configuration.ChainConfiguration.NodesConfiguration')
-  - [RegistryId](#P-In3-Configuration-ChainConfiguration-RegistryId 'In3.Configuration.ChainConfiguration.RegistryId')
-  - [WhiteList](#P-In3-Configuration-ChainConfiguration-WhiteList 'In3.Configuration.ChainConfiguration.WhiteList')
-  - [WhiteListContract](#P-In3-Configuration-ChainConfiguration-WhiteListContract 'In3.Configuration.ChainConfiguration.WhiteListContract')
 - [ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration')
   - [AutoUpdateList](#P-In3-Configuration-ClientConfiguration-AutoUpdateList 'In3.Configuration.ClientConfiguration.AutoUpdateList')
   - [BootWeights](#P-In3-Configuration-ClientConfiguration-BootWeights 'In3.Configuration.ClientConfiguration.BootWeights')
-  - [ChainsConfiguration](#P-In3-Configuration-ClientConfiguration-ChainsConfiguration 'In3.Configuration.ClientConfiguration.ChainsConfiguration')
+  - [Experimental](#P-In3-Configuration-ClientConfiguration-Experimental 'In3.Configuration.ClientConfiguration.Experimental')
   - [Finality](#P-In3-Configuration-ClientConfiguration-Finality 'In3.Configuration.ClientConfiguration.Finality')
   - [IncludeCode](#P-In3-Configuration-ClientConfiguration-IncludeCode 'In3.Configuration.ClientConfiguration.IncludeCode')
   - [KeepIn3](#P-In3-Configuration-ClientConfiguration-KeepIn3 'In3.Configuration.ClientConfiguration.KeepIn3')
@@ -4013,6 +4003,7 @@ dotnet build
   - [MinDeposit](#P-In3-Configuration-ClientConfiguration-MinDeposit 'In3.Configuration.ClientConfiguration.MinDeposit')
   - [NodeLimit](#P-In3-Configuration-ClientConfiguration-NodeLimit 'In3.Configuration.ClientConfiguration.NodeLimit')
   - [NodeProps](#P-In3-Configuration-ClientConfiguration-NodeProps 'In3.Configuration.ClientConfiguration.NodeProps')
+  - [NodeRegistry](#P-In3-Configuration-ClientConfiguration-NodeRegistry 'In3.Configuration.ClientConfiguration.NodeRegistry')
   - [Proof](#P-In3-Configuration-ClientConfiguration-Proof 'In3.Configuration.ClientConfiguration.Proof')
   - [ReplaceLatestBlock](#P-In3-Configuration-ClientConfiguration-ReplaceLatestBlock 'In3.Configuration.ClientConfiguration.ReplaceLatestBlock')
   - [RequestCount](#P-In3-Configuration-ClientConfiguration-RequestCount 'In3.Configuration.ClientConfiguration.RequestCount')
@@ -4034,11 +4025,12 @@ dotnet build
   - [HandleSign()](#M-In3-Context-Context-HandleSign 'In3.Context.Context.HandleSign')
   - [IsValid()](#M-In3-Context-Context-IsValid 'In3.Context.Context.IsValid')
   - [ReportError()](#M-In3-Context-Context-ReportError-System-String- 'In3.Context.Context.ReportError(System.String)')
+- [ContextException](#T-In3-Error-ContextException 'In3.Error.ContextException')
 - [DataTypeConverter](#T-In3-Utils-DataTypeConverter 'In3.Utils.DataTypeConverter')
   - [HexStringToBigint(source)](#M-In3-Utils-DataTypeConverter-HexStringToBigint-System-String- 'In3.Utils.DataTypeConverter.HexStringToBigint(System.String)')
 - [DefaultTransport](#T-In3-Transport-DefaultTransport 'In3.Transport.DefaultTransport')
   - [#ctor()](#M-In3-Transport-DefaultTransport-#ctor 'In3.Transport.DefaultTransport.#ctor')
-  - [Handle(url,payload)](#M-In3-Transport-DefaultTransport-Handle-System-String,System-String- 'In3.Transport.DefaultTransport.Handle(System.String,System.String)')
+  - [Handle(url,payload)](#M-In3-Transport-DefaultTransport-Handle-System-String,System-String,System-Byte[],System-String[]- 'In3.Transport.DefaultTransport.Handle(System.String,System.String,System.Byte[],System.String[])')
 - [ENSParameter](#T-In3-ENSParameter 'In3.ENSParameter')
   - [Addr](#P-In3-ENSParameter-Addr 'In3.ENSParameter.Addr')
   - [Hash](#P-In3-ENSParameter-Hash 'In3.ENSParameter.Hash')
@@ -4057,11 +4049,14 @@ dotnet build
   - [Finalize()](#M-In3-IN3-Finalize 'In3.IN3.Finalize')
   - [ForChain(chain)](#M-In3-IN3-ForChain-In3-Chain- 'In3.IN3.ForChain(In3.Chain)')
   - [SendRpc(method,args,in3)](#M-In3-IN3-SendRpc-System-String,System-Object[],System-Collections-Generic-Dictionary{System-String,System-Object}- 'In3.IN3.SendRpc(System.String,System.Object[],System.Collections.Generic.Dictionary{System.String,System.Object})')
+- [In3Exception](#T-In3-Error-In3Exception 'In3.Error.In3Exception')
 - [InMemoryStorage](#T-In3-Storage-InMemoryStorage 'In3.Storage.InMemoryStorage')
   - [#ctor()](#M-In3-Storage-InMemoryStorage-#ctor 'In3.Storage.InMemoryStorage.#ctor')
   - [Clear()](#M-In3-Storage-InMemoryStorage-Clear 'In3.Storage.InMemoryStorage.Clear')
   - [GetItem(key)](#M-In3-Storage-InMemoryStorage-GetItem-System-String- 'In3.Storage.InMemoryStorage.GetItem(System.String)')
   - [SetItem(key,content)](#M-In3-Storage-InMemoryStorage-SetItem-System-String,System-Byte[]- 'In3.Storage.InMemoryStorage.SetItem(System.String,System.Byte[])')
+- [InvalidSignerException](#T-In3-Error-InvalidSignerException 'In3.Error.InvalidSignerException')
+- [InvalidTransactionRequestException](#T-In3-Error-InvalidTransactionRequestException 'In3.Error.InvalidTransactionRequestException')
 - [Log](#T-In3-Eth1-Log 'In3.Eth1.Log')
   - [Address](#P-In3-Eth1-Log-Address 'In3.Eth1.Log.Address')
   - [BlockHash](#P-In3-Eth1-Log-BlockHash 'In3.Eth1.Log.BlockHash')
@@ -4081,10 +4076,17 @@ dotnet build
   - [ToBlock](#P-In3-Eth1-LogFilter-ToBlock 'In3.Eth1.LogFilter.ToBlock')
   - [Topics](#P-In3-Eth1-LogFilter-Topics 'In3.Eth1.LogFilter.Topics')
 - [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration')
-  - [#ctor(config)](#M-In3-Configuration-NodeConfiguration-#ctor-In3-Configuration-ChainConfiguration- 'In3.Configuration.NodeConfiguration.#ctor(In3.Configuration.ChainConfiguration)')
+  - [#ctor(config)](#M-In3-Configuration-NodeConfiguration-#ctor-In3-Configuration-NodeRegistryConfiguration- 'In3.Configuration.NodeConfiguration.#ctor(In3.Configuration.NodeRegistryConfiguration)')
   - [Address](#P-In3-Configuration-NodeConfiguration-Address 'In3.Configuration.NodeConfiguration.Address')
   - [Props](#P-In3-Configuration-NodeConfiguration-Props 'In3.Configuration.NodeConfiguration.Props')
   - [Url](#P-In3-Configuration-NodeConfiguration-Url 'In3.Configuration.NodeConfiguration.Url')
+- [NodeRegistryConfiguration](#T-In3-Configuration-NodeRegistryConfiguration 'In3.Configuration.NodeRegistryConfiguration')
+  - [Contract](#P-In3-Configuration-NodeRegistryConfiguration-Contract 'In3.Configuration.NodeRegistryConfiguration.Contract')
+  - [NeedsUpdate](#P-In3-Configuration-NodeRegistryConfiguration-NeedsUpdate 'In3.Configuration.NodeRegistryConfiguration.NeedsUpdate')
+  - [NodesConfiguration](#P-In3-Configuration-NodeRegistryConfiguration-NodesConfiguration 'In3.Configuration.NodeRegistryConfiguration.NodesConfiguration')
+  - [RegistryId](#P-In3-Configuration-NodeRegistryConfiguration-RegistryId 'In3.Configuration.NodeRegistryConfiguration.RegistryId')
+  - [WhiteList](#P-In3-Configuration-NodeRegistryConfiguration-WhiteList 'In3.Configuration.NodeRegistryConfiguration.WhiteList')
+  - [WhiteListContract](#P-In3-Configuration-NodeRegistryConfiguration-WhiteListContract 'In3.Configuration.NodeRegistryConfiguration.WhiteListContract')
 - [Proof](#T-In3-Configuration-Proof 'In3.Configuration.Proof')
   - [Full](#P-In3-Configuration-Proof-Full 'In3.Configuration.Proof.Full')
   - [None](#P-In3-Configuration-Proof-None 'In3.Configuration.Proof.None')
@@ -4100,7 +4102,8 @@ dotnet build
   - [NodePropProof](#F-In3-Configuration-Props-NodePropProof 'In3.Configuration.Props.NodePropProof')
   - [NodePropSigner](#F-In3-Configuration-Props-NodePropSigner 'In3.Configuration.Props.NodePropSigner')
   - [NodePropStats](#F-In3-Configuration-Props-NodePropStats 'In3.Configuration.Props.NodePropStats')
-- [RpcException](#T-In3-Exceptions-RpcException 'In3.Exceptions.RpcException')
+- [RpcException](#T-In3-Error-RpcException 'In3.Error.RpcException')
+  - [Code](#P-In3-Error-RpcException-Code 'In3.Error.RpcException.Code')
 - [ScriptPubKey](#T-In3-Btc-ScriptPubKey 'In3.Btc.ScriptPubKey')
   - [Addresses](#P-In3-Btc-ScriptPubKey-Addresses 'In3.Btc.ScriptPubKey.Addresses')
   - [Asm](#P-In3-Btc-ScriptPubKey-Asm 'In3.Btc.ScriptPubKey.Asm')
@@ -4111,6 +4114,7 @@ dotnet build
   - [Asm](#P-In3-Btc-ScriptSig-Asm 'In3.Btc.ScriptSig.Asm')
   - [Hex](#P-In3-Btc-ScriptSig-Hex 'In3.Btc.ScriptSig.Hex')
 - [SignatureType](#T-In3-Crypto-SignatureType 'In3.Crypto.SignatureType')
+  - [Btc](#P-In3-Crypto-SignatureType-Btc 'In3.Crypto.SignatureType.Btc')
   - [EthSign](#P-In3-Crypto-SignatureType-EthSign 'In3.Crypto.SignatureType.EthSign')
   - [Hash](#P-In3-Crypto-SignatureType-Hash 'In3.Crypto.SignatureType.Hash')
   - [Raw](#P-In3-Crypto-SignatureType-Raw 'In3.Crypto.SignatureType.Raw')
@@ -4208,7 +4212,7 @@ dotnet build
   - [To](#P-In3-Eth1-TransactionRequest-To 'In3.Eth1.TransactionRequest.To')
   - [Value](#P-In3-Eth1-TransactionRequest-Value 'In3.Eth1.TransactionRequest.Value')
 - [Transport](#T-In3-Transport-Transport 'In3.Transport.Transport')
-  - [Handle(url,payload)](#M-In3-Transport-Transport-Handle-System-String,System-String- 'In3.Transport.Transport.Handle(System.String,System.String)')
+  - [Handle(url,payload)](#M-In3-Transport-Transport-Handle-System-String,System-String,System-Byte[],System-String[]- 'In3.Transport.Transport.Handle(System.String,System.String,System.Byte[],System.String[])')
 
 <a name='T-In3-Crypto-Account'></a>
 ### Account `type`
@@ -5138,6 +5142,7 @@ Client will add the other required fields, gas and chaind id.
 Signs and sends the assigned transaction. The [Signer](#T-In3-Crypto-Signer 'In3.Crypto.Signer') used to sign the transaction is the one set by [Signer](#P-In3-IN3-Signer 'In3.IN3.Signer').
 Transactions change the state of an account, just the balance, or additionally, the storage and the code.
 Every transaction has a cost, gas, paid in Wei. The transaction gas is calculated over estimated gas times the gas cost, plus an additional miner fee, if the sender wants to be sure that the transaction will be mined in the latest block.
+See [SendTransactionAndWait](#M-In3-Eth1-Api-SendTransactionAndWait-In3-Eth1-TransactionRequest- 'In3.Eth1.Api.SendTransactionAndWait(In3.Eth1.TransactionRequest)') to wait for the [TransactionReceipt](#T-In3-Eth1-TransactionReceipt 'In3.Eth1.TransactionReceipt') in the same call.
 
 ###### Returns
 
@@ -5159,6 +5164,38 @@ Transaction hash, used to get the receipt and check if the transaction was mined
  tx.Gas = 21000;
  tx.Value = 100000000;
  client.Eth1.SendTransaction(tx);
+```
+
+<a name='M-In3-Eth1-Api-SendTransactionAndWait-In3-Eth1-TransactionRequest-'></a>
+#### SendTransactionAndWait(tx) `method`
+
+
+
+Signs and sends the assigned transaction. The [Signer](#T-In3-Crypto-Signer 'In3.Crypto.Signer') used to sign the transaction is the one set by [Signer](#P-In3-IN3-Signer 'In3.IN3.Signer').
+Transactions change the state of an account, just the balance, or additionally, the storage and the code.
+Every transaction has a cost, gas, paid in Wei. The transaction gas is calculated over estimated gas times the gas cost, plus an additional miner fee, if the sender wants to be sure that the transaction will be mined in the latest block.
+In this particular case, the transaction will wait the receipt. See [SendTransaction](#M-In3-Eth1-Api-SendTransaction-In3-Eth1-TransactionRequest- 'In3.Eth1.Api.SendTransaction(In3.Eth1.TransactionRequest)') if that is not desirable.
+
+###### Returns
+
+The receipt associated with the performed transaction.
+
+###### Parameters
+
+
+
+-  [In3.Eth1.TransactionRequest](#T-In3-Eth1-TransactionRequest 'In3.Eth1.TransactionRequest')  **tx** -  All information needed to perform a transaction. 
+
+###### Example
+
+```
+ SimpleWallet wallet = (SimpleWallet) client.Signer;
+ TransactionRequest tx = new TransactionRequest();
+ tx.From = wallet.AddRawKey(pk);;
+ tx.To = "0x3940256B93c4BE0B1d5931A6A036608c25706B0c";
+ tx.Gas = 21000;
+ tx.Value = 100000000;
+ client.Eth1.SendTransactionAndWait(tx);
 ```
 
 <a name='M-In3-Eth1-Api-UninstallFilter-System-Int64-'></a>
@@ -5572,13 +5609,6 @@ Represents the multiple chains supported by Incubed.
 
 Bitcoin chain.
 
-<a name='F-In3-Chain-Evan'></a>
-#### Evan `constants`
-
-
-
-Evan testnet.
-
 <a name='F-In3-Chain-Ewc'></a>
 #### Ewc `constants`
 
@@ -5600,13 +5630,6 @@ Goerli testnet.
 
 Ipfs (InterPlanetary File System).
 
-<a name='F-In3-Chain-Kovan'></a>
-#### Kovan `constants`
-
-
-
-Kovan testnet.
-
 <a name='F-In3-Chain-Local'></a>
 #### Local `constants`
 
@@ -5620,13 +5643,6 @@ Local client.
 
 
 Ethereum mainnet.
-
-<a name='F-In3-Chain-Multichain'></a>
-#### Multichain `constants`
-
-
-
-Support for multiple chains, a client can then switch between different chains (but consumes more memory).
 
 <a name='F-In3-Chain-Tobalaba'></a>
 #### Tobalaba `constants`
@@ -5642,84 +5658,6 @@ Tobalaba testnet.
 
 Volta testnet.
 
-<a name='T-In3-Configuration-ChainConfiguration'></a>
-### ChainConfiguration `type`
-
-
-
-In3.Configuration
-
-
-
-Class that represents part of the configuration to be applied on the [IN3](#T-In3-IN3 'In3.IN3') (in particular to each chain).
-This is a child of [ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration') and have many [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration').
-
-<a name='M-In3-Configuration-ChainConfiguration-#ctor-In3-Chain,In3-Configuration-ClientConfiguration-'></a>
-#### #ctor(chain,clientConfiguration) `constructor`
-
-
-
-Constructor.
-
-###### Parameters
-
-
-
--  [In3.Chain](#T-In3-Chain 'In3.Chain')  **chain** -  One of [Chain](#T-In3-Chain 'In3.Chain'). The chain that this configuration is related to. 
--  [In3.Configuration.ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration')  **clientConfiguration** -  The configuration for the client whose the chain configuration belongs to. 
-
-###### Example
-
-```
-ChainConfiguration goerliConfiguration = new ChainConfiguration(Chain.Goerli, in3Client.Configuration);
-```
-
-<a name='P-In3-Configuration-ChainConfiguration-Contract'></a>
-#### Contract `property`
-
-
-
-Incubed registry contract from which the list was taken.
-
-<a name='P-In3-Configuration-ChainConfiguration-NeedsUpdate'></a>
-#### NeedsUpdate `property`
-
-
-
-Preemptively update the node list.
-
-<a name='P-In3-Configuration-ChainConfiguration-NodesConfiguration'></a>
-#### NodesConfiguration `property`
-
-
-
-Getter for the list of elements that represent the configuration for each node.
-
-###### Remarks
-
-This is a read-only property. To add configuration for nodes, Use [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration') constructor.
-
-<a name='P-In3-Configuration-ChainConfiguration-RegistryId'></a>
-#### RegistryId `property`
-
-
-
-Uuid of this incubed network. one chain could contain more than one incubed networks.
-
-<a name='P-In3-Configuration-ChainConfiguration-WhiteList'></a>
-#### WhiteList `property`
-
-
-
-Node addresses that constitute the white list of nodes.
-
-<a name='P-In3-Configuration-ChainConfiguration-WhiteListContract'></a>
-#### WhiteListContract `property`
-
-
-
-Address of whiteList contract.
-
 <a name='T-In3-Configuration-ClientConfiguration'></a>
 ### ClientConfiguration `type`
 
@@ -5734,7 +5672,7 @@ Due to the 1-to-1 relationship with the client, this class should never be insta
 
 ###### Remarks
 
-Use in conjunction with [ChainConfiguration](#T-In3-Configuration-ChainConfiguration 'In3.Configuration.ChainConfiguration') and [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration').
+Use in conjunction with [NodeRegistryConfiguration](#T-In3-Configuration-NodeRegistryConfiguration 'In3.Configuration.NodeRegistryConfiguration') and [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration').
 
 <a name='P-In3-Configuration-ClientConfiguration-AutoUpdateList'></a>
 #### AutoUpdateList `property`
@@ -5751,12 +5689,12 @@ If `true` the nodelist will be automatically updated. False may compromise data 
 if true, the first request (updating the nodelist) will also fetch the current health status
  and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache.
 
-<a name='P-In3-Configuration-ClientConfiguration-ChainsConfiguration'></a>
-#### ChainsConfiguration `property`
+<a name='P-In3-Configuration-ClientConfiguration-Experimental'></a>
+#### Experimental `property`
 
 
 
-Configuration for the chains. Read-only attribute.
+allow experimental features to be used.
 
 <a name='P-In3-Configuration-ClientConfiguration-Finality'></a>
 #### Finality `property`
@@ -5812,6 +5750,13 @@ Props define the capabilities of the nodes. Accepts a combination of values.
 ```
 clientConfiguration.NodeProps = Props.NodePropProof | Props.NodePropArchive;
 ```
+
+<a name='P-In3-Configuration-ClientConfiguration-NodeRegistry'></a>
+#### NodeRegistry `property`
+
+
+
+NodeRegistry for the chain passed to the client constructor.
 
 <a name='P-In3-Configuration-ClientConfiguration-Proof'></a>
 #### Proof `property`
@@ -5913,7 +5858,7 @@ Native rpc pointer
 
 | Name | Description |
 
-| [In3.Exceptions.RpcException](#T-In3-Exceptions-RpcException 'In3.Exceptions.RpcException') |  |
+| [In3.Error.ContextException](#T-In3-Error-ContextException 'In3.Error.ContextException') |  |
 
 <a name='M-In3-Context-Context-Dispose'></a>
 #### Dispose() `method`
@@ -6067,6 +6012,17 @@ Setter for the error on the current context. Proxies it to the native context.
 
 This method has no parameters.
 
+<a name='T-In3-Error-ContextException'></a>
+### ContextException `type`
+
+
+
+In3.Error
+
+
+
+Exception thrown when there is an issue with the Context engine.
+
 <a name='T-In3-Utils-DataTypeConverter'></a>
 ### DataTypeConverter `type`
 
@@ -6117,7 +6073,7 @@ Standard construction.
 
 This constructor has no parameters.
 
-<a name='M-In3-Transport-DefaultTransport-Handle-System-String,System-String-'></a>
+<a name='M-In3-Transport-DefaultTransport-Handle-System-String,System-String,System-Byte[],System-String[]-'></a>
 #### Handle(url,payload) `method`
 
 
@@ -6309,6 +6265,17 @@ The result of the Rpc operation as JSON.
 -  [System.Object[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Object[] 'System.Object[]')  **args** -  Arguments to the operation. 
 -  [System.Collections.Generic.Dictionary{System.String,System.Object}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.Dictionary 'System.Collections.Generic.Dictionary{System.String,System.Object}')  **in3** -  Internal parameters to be repassed to the server or to change the client behavior. 
 
+<a name='T-In3-Error-In3Exception'></a>
+### In3Exception `type`
+
+
+
+In3.Error
+
+
+
+General purpose, all-encompassing, Incubed specific Exception class.
+
 <a name='T-In3-Storage-InMemoryStorage'></a>
 ### InMemoryStorage `type`
 
@@ -6376,6 +6343,28 @@ Stores a value in memory for a given key.
 
 -  [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String')  **key** -  A unique identifier for the data that is being cached. 
 -  [System.Byte[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Byte[] 'System.Byte[]')  **content** -  The value that is being cached. 
+
+<a name='T-In3-Error-InvalidSignerException'></a>
+### InvalidSignerException `type`
+
+
+
+In3.Error
+
+
+
+Exception thrown when there is no available [Signer](#T-In3-Crypto-Signer 'In3.Crypto.Signer') to sign.
+
+<a name='T-In3-Error-InvalidTransactionRequestException'></a>
+### InvalidTransactionRequestException `type`
+
+
+
+In3.Error
+
+
+
+Exception thrown when the state of [TransactionRequest](#T-In3-Eth1-TransactionRequest 'In3.Eth1.TransactionRequest') is invalid.
 
 <a name='T-In3-Eth1-Log'></a>
 ### Log `type`
@@ -6529,9 +6518,9 @@ In3.Configuration
 
 
 Class that represents part of the configuration to be applied on the [IN3](#T-In3-IN3 'In3.IN3') (in particular to each boot node).
-This is a child of [ChainConfiguration](#T-In3-Configuration-ChainConfiguration 'In3.Configuration.ChainConfiguration').
+This is a child of [NodeRegistryConfiguration](#T-In3-Configuration-NodeRegistryConfiguration 'In3.Configuration.NodeRegistryConfiguration').
 
-<a name='M-In3-Configuration-NodeConfiguration-#ctor-In3-Configuration-ChainConfiguration-'></a>
+<a name='M-In3-Configuration-NodeConfiguration-#ctor-In3-Configuration-NodeRegistryConfiguration-'></a>
 #### #ctor(config) `constructor`
 
 
@@ -6542,7 +6531,7 @@ Constructor for the node configuration.
 
 
 
--  [In3.Configuration.ChainConfiguration](#T-In3-Configuration-ChainConfiguration 'In3.Configuration.ChainConfiguration')  **config** -  The [ChainConfiguration](#T-In3-Configuration-ChainConfiguration 'In3.Configuration.ChainConfiguration') of which this node belongs to. 
+-  [In3.Configuration.NodeRegistryConfiguration](#T-In3-Configuration-NodeRegistryConfiguration 'In3.Configuration.NodeRegistryConfiguration')  **config** -  The [NodeRegistryConfiguration](#T-In3-Configuration-NodeRegistryConfiguration 'In3.Configuration.NodeRegistryConfiguration') of which this node belongs to. 
 
 ###### Example
 
@@ -6576,6 +6565,64 @@ nodeConfiguration.Props = Props.NodePropProof | Props.NodePropArchive;
 
 
 Url of the bootnode which the client can connect to.
+
+<a name='T-In3-Configuration-NodeRegistryConfiguration'></a>
+### NodeRegistryConfiguration `type`
+
+
+
+In3.Configuration
+
+
+
+Class that represents part of the configuration to be applied on the [IN3](#T-In3-IN3 'In3.IN3') (in particular to each chain).
+This is a child of [ClientConfiguration](#T-In3-Configuration-ClientConfiguration 'In3.Configuration.ClientConfiguration') and have many [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration').
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-Contract'></a>
+#### Contract `property`
+
+
+
+Incubed registry contract from which the list was taken.
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-NeedsUpdate'></a>
+#### NeedsUpdate `property`
+
+
+
+Preemptively update the node list.
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-NodesConfiguration'></a>
+#### NodesConfiguration `property`
+
+
+
+Getter for the list of elements that represent the configuration for each node.
+
+###### Remarks
+
+This is a read-only property. To add configuration for nodes, Use [NodeConfiguration](#T-In3-Configuration-NodeConfiguration 'In3.Configuration.NodeConfiguration') constructor.
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-RegistryId'></a>
+#### RegistryId `property`
+
+
+
+Uuid of this incubed network. one chain could contain more than one incubed networks.
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-WhiteList'></a>
+#### WhiteList `property`
+
+
+
+Node addresses that constitute the white list of nodes.
+
+<a name='P-In3-Configuration-NodeRegistryConfiguration-WhiteListContract'></a>
+#### WhiteListContract `property`
+
+
+
+Address of whiteList contract.
 
 <a name='T-In3-Configuration-Proof'></a>
 ### Proof `type`
@@ -6690,16 +6737,23 @@ filter out non-signer nodes.
 
 filter out nodes that do not provide stats.
 
-<a name='T-In3-Exceptions-RpcException'></a>
+<a name='T-In3-Error-RpcException'></a>
 ### RpcException `type`
 
 
 
-In3.Exceptions
+In3.Error
 
 
 
-Custom Exception to be thrown during the
+Custom Exception to be thrown in case of Rpc errors.
+
+<a name='P-In3-Error-RpcException-Code'></a>
+#### Code `property`
+
+
+
+Json-rpc code for the error.
 
 <a name='T-In3-Btc-ScriptPubKey'></a>
 ### ScriptPubKey `type`
@@ -6786,6 +6840,13 @@ In3.Crypto
 
 
 Group of constants to be used along with the methods of [Api](#T-In3-Crypto-Api 'In3.Crypto.Api').
+
+<a name='P-In3-Crypto-SignatureType-Btc'></a>
+#### Btc `property`
+
+
+
+For data hashed twice with sha256 and signed.
 
 <a name='P-In3-Crypto-SignatureType-EthSign'></a>
 #### EthSign `property`
@@ -7633,7 +7694,7 @@ In3.Transport
 
 Minimum interface for a custom transport. Transport is a mean of communication with the Incubed server.
 
-<a name='M-In3-Transport-Transport-Handle-System-String,System-String-'></a>
+<a name='M-In3-Transport-Transport-Handle-System-String,System-String,System-Byte[],System-String[]-'></a>
 #### Handle(url,payload) `method`
 
 

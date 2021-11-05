@@ -512,6 +512,9 @@ The zksync object supports the following properties :
 * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
 
 
+* **rest_api** : `string?` *(optional)* - url of the zksync rest api (if not defined it will be choosen depending on the chain)
+
+
 * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
 
 
@@ -548,10 +551,10 @@ Possible Values are:
 
 
 
-* **verify_proof_method** : `string` - rpc-method, which will be used to verify the incomming proof before cosigning.
+* **verify_proof_method** : `string?` *(optional)* - rpc-method, which will be used to verify the incomming proof before cosigning.
 
 
-* **create_proof_method** : `string` - rpc-method, which will be used to create the proof needed for cosigning.
+* **create_proof_method** : `string?` *(optional)* - rpc-method, which will be used to create the proof needed for cosigning.
 
 
 
@@ -638,7 +641,7 @@ const in3 = new IN3({
 
 registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default) *This config is optional.*
 
- Type: `bytes32|bytes32[]?`
+ Type: `bytes32[]?`
 
 *Example:*
 
@@ -841,6 +844,12 @@ the gas limit to use when sending transactions. (default: 100000)
 
 ```
 
+
+### token
+
+the address of the erc20-token contract.
+
+ Type: `string`
 
 ### nonce
 
