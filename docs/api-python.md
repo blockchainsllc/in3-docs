@@ -440,7 +440,7 @@ python example.py
 Client(self,
 chain: str = 'mainnet',
 in3_config: ClientConfig = None,
-transport=<function https_transport at 0x105aec430>,
+transport=<function https_transport at 0x101cd8430>,
 cache_enabled: bool = True,
 test_instance: bool = False)
 ```
@@ -1342,7 +1342,7 @@ C Bytes struct
 ```python
 libin3_register_plugin(instance: int,
 actions: PluginAction,
-action_fn: <function CFUNCTYPE at 0x105981dc0>,
+action_fn: <function CFUNCTYPE at 0x101bdedc0>,
 data=None,
 replace_old=True)
 ```
