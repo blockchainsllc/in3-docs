@@ -528,36 +528,12 @@ This is the main class creating the incubed client.
 
 The client can then be configured. 
 
-##### forChain
+##### IN3
 
-create a Incubed client using the chain-config. 
+creates a client with the default config. 
 
-if chainId is Chain.MULTICHAIN, the client can later be switched between different chains, for all other chains, it will be initialized only with the chainspec for this one chain (safes memory) 
+ > public  IN3();
 
- > public static [`IN3`](#class-in3) forChain([`long`](#class-long) chainId);
-
-arguments:
-```eval_rst
-======== ============= 
-``long``  **chainId**  
-======== ============= 
-```
-##### getVersion
-
-returns the current incubed version. 
-
- > public static `native String` getVersion();
-
-##### main
-
- > public static `void` main([`String[]`](#class-string[]) args);
-
-arguments:
-```eval_rst
-============ ========== 
-``String[]``  **args**  
-============ ========== 
-```
 ##### getConfig
 
 returns the current configuration. 
@@ -768,6 +744,36 @@ arguments:
 `BlockID[] <#class-blockid>`_  **blocks**            
 ``String[]``                   **dataNodeAdresses**  
 ============================= ====================== 
+```
+##### forChain
+
+create a Incubed client using the chain-config. 
+
+if chainId is Chain.MULTICHAIN, the client can later be switched between different chains, for all other chains, it will be initialized only with the chainspec for this one chain (safes memory) 
+
+ > public static [`IN3`](#class-in3) forChain([`long`](#class-long) chainId);
+
+arguments:
+```eval_rst
+======== ============= 
+``long``  **chainId**  
+======== ============= 
+```
+##### getVersion
+
+returns the current incubed version. 
+
+ > public static `native String` getVersion();
+
+##### main
+
+ > public static `void` main([`String[]`](#class-string[]) args);
+
+arguments:
+```eval_rst
+============ ========== 
+``String[]``  **args**  
+============ ========== 
 ```
 
 #### class IN3DefaultTransport
@@ -1966,10 +1972,12 @@ use `Block.LATEST` for getting the lastest block.
 
 arguments:
 ```eval_rst
-=========== ========================= ================================================================================================
+=========== ========================= ==============================================================================
 ``long``     **block**                
-``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
-=========== ========================= ================================================================================================
+``boolean``  **includeTransactions**  < the Blocknumber
+                                      
+                                      < if true all Transactions will be includes, if not only the transactionhashes
+=========== ========================= ==============================================================================
 ```
 ##### getBlockByHash
 
@@ -1979,10 +1987,12 @@ Returns information about a block by hash.
 
 arguments:
 ```eval_rst
-=========== ========================= ================================================================================================
+=========== ========================= ==============================================================================
 ``String``   **blockHash**            
-``boolean``  **includeTransactions**  < the Blocknumber < if true all Transactions will be includes, if not only the transactionhashes
-=========== ========================= ================================================================================================
+``boolean``  **includeTransactions**  < the Blocknumber
+                                      
+                                      < if true all Transactions will be includes, if not only the transactionhashes
+=========== ========================= ==============================================================================
 ```
 ##### getBlockNumber
 
@@ -2012,10 +2022,12 @@ calls a function of a smart contract and returns the result.
 
 arguments:
 ```eval_rst
-================================================= ============= =============================================================
+================================================= ============= ==================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
-``long``                                           **block**    < the transaction to call. < the Block used to for the state.
-================================================= ============= =============================================================
+``long``                                           **block**    < the transaction to call.
+                                                                
+                                                                < the Block used to for the state.
+================================================= ============= ==================================
 ```
 returns: `Object` : the decoded result. if only one return value is expected the Object will be returned, if not an array of objects will be the result. 
 
@@ -2029,10 +2041,12 @@ Makes a call or transaction, which won't be added to the blockchain and returns 
 
 arguments:
 ```eval_rst
-================================================= ============= =============================================================
+================================================= ============= ==================================
 `TransactionRequest <#class-transactionrequest>`_  **request**  
-``long``                                           **block**    < the transaction to call. < the Block used to for the state.
-================================================= ============= =============================================================
+``long``                                           **block**    < the transaction to call.
+                                                                
+                                                                < the Block used to for the state.
+================================================= ============= ==================================
 ```
 returns: `long` : the gas required to call the function. 
 
@@ -2733,6 +2747,12 @@ creates a JSON-String.
 
 a simple Implementation for holding private keys to sing data or transactions. 
 
+##### getAccounts
+
+returns the accounts supported by the wallet. 
+
+ > public `String[]` getAccounts();
+
 ##### addRawKey
 
 adds a key to the wallet and returns its public address. 
@@ -2773,30 +2793,21 @@ arguments:
 `TransactionRequest <#class-transactionrequest>`_  **tx**   
 ================================================= ========= 
 ```
-##### canSign
-
-returns true if the account is supported (or unlocked) 
-
- > public `boolean` canSign([`String`](#class-string) address);
-
-arguments:
-```eval_rst
-========== ============= 
-``String``  **address**  
-========== ============= 
-```
 ##### sign
 
 signing of the raw data. 
 
- > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
+ > public `byte[]` sign([`String`](#class-string) data, [`String`](#class-string) address, [`SignatureType`](#class-signaturetype) signatureType, [`PayloadType`](#class-payloadtype) j, [`JSON`](#class-json) payload);
 
 arguments:
 ```eval_rst
-========== ============= 
-``String``  **data**     
-``String``  **address**  
-========== ============= 
+======================================= =================== 
+``String``                               **data**           
+``String``                               **address**        
+`SignatureType <#class-signaturetype>`_  **signatureType**  
+`PayloadType <#class-payloadtype>`_      **j**              
+`JSON <#class-json>`_                    **payload**        
+======================================= =================== 
 ```
 
 #### class Transaction
@@ -3347,6 +3358,10 @@ internal helper tool to represent a JSON-Object.
 
 Since the internal representation of JSON in incubed uses hashes instead of name, the getter will creates these hashes. 
 
+##### JSON
+
+ > public  JSON();
+
 ##### get
 
 gets the property 
@@ -3426,6 +3441,22 @@ arguments:
 ========== ========= ================
 ```
 returns: `long` : the long value 
+
+
+
+##### getDouble
+
+returns the property as double 
+
+ > public `double` getDouble([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= ================
+``String``  **key**  the propertyName
+========== ========= ================
+```
+returns: `double` : the long value 
 
 
 
@@ -3513,6 +3544,29 @@ returns: `String` : the hexstring
 
  > public `String` toString();
 
+##### addProperty
+
+ > public `void` addProperty([`StringBuilder`](#class-stringbuilder) sb, [`String`](#class-string) key);
+
+arguments:
+```eval_rst
+================= ========= 
+``StringBuilder``  **sb**   
+``String``         **key**  
+================= ========= 
+```
+##### addPropertyJson
+
+ > public `void` addPropertyJson([`StringBuilder`](#class-stringbuilder) sb, [`String`](#class-string) key, [`String`](#class-string) json);
+
+arguments:
+```eval_rst
+================= ========== 
+``StringBuilder``  **sb**    
+``String``         **key**   
+``String``         **json**  
+================= ========== 
+```
 ##### hashCode
 
  > public `int` hashCode();
@@ -3569,6 +3623,16 @@ arguments:
 ``Object``  **o**  
 ========== ======= 
 ```
+##### asDouble
+
+ > public static `double` asDouble([`Object`](#class-object) o);
+
+arguments:
+```eval_rst
+========== ======= 
+``Object``  **o**  
+========== ======= 
+```
 ##### asBoolean
 
  > public static `boolean` asBoolean([`Object`](#class-object) o);
@@ -3611,6 +3675,24 @@ arguments:
 ``Object``         **value**  
 ================= =========== 
 ```
+##### parse
+
+parses a String to a json-object. 
+
+If the json represents
+
+- a object : JSON is returned
+- a Array : a Array is returned
+- other types the wrapped primative typed (Boolean, Integer, Long or String) will be returned.
+
+ > public static `native Object` parse([`String`](#class-string) json);
+
+arguments:
+```eval_rst
+========== ========== 
+``String``  **json**  
+========== ========== 
+```
 
 #### class Signature
 
@@ -3638,6 +3720,66 @@ arguments:
 
  > public `long` getV();
 
+
+#### class Signer
+
+a Interface responsible for signing data or transactions. 
+
+##### getAccounts
+
+returns the accounts supported by the wallet 
+
+ > public `abstract String[]` getAccounts();
+
+##### sign
+
+signing of the raw data. 
+
+ > public `abstract byte[]` sign([`String`](#class-string) data, [`String`](#class-string) address, [`SignatureType`](#class-signaturetype) signtype, [`PayloadType`](#class-payloadtype) payloadType, [`JSON`](#class-json) meta);
+
+arguments:
+```eval_rst
+======================================= ================= 
+``String``                               **data**         
+``String``                               **address**      
+`SignatureType <#class-signaturetype>`_  **signtype**     
+`PayloadType <#class-payloadtype>`_      **payloadType**  
+`JSON <#class-json>`_                    **meta**         
+======================================= ================= 
+```
+##### getAddressFromKey
+
+ > public static `native String` getAddressFromKey([`String`](#class-string) key);
+
+arguments:
+```eval_rst
+========== ========= 
+``String``  **key**  
+========== ========= 
+```
+##### signData
+
+ > public static `native byte[]` signData([`String`](#class-string) key, [`String`](#class-string) data, [`SignatureType`](#class-signaturetype) signatureType);
+
+arguments:
+```eval_rst
+======================================= =================== 
+``String``                               **key**            
+``String``                               **data**           
+`SignatureType <#class-signaturetype>`_  **signatureType**  
+======================================= =================== 
+```
+##### decodeKeystore
+
+ > public static `native String` decodeKeystore([`String`](#class-string) keystore, [`String`](#class-string) passwd);
+
+arguments:
+```eval_rst
+========== ============== 
+``String``  **keystore**  
+``String``  **passwd**    
+========== ============== 
+```
 
 #### class TempStorageProvider
 
@@ -3710,62 +3852,53 @@ the http-status
 returns: `int` : 
 
 
+#### enum PayloadType
+
+The enum type contains the following values:
+
+```eval_rst
+==================== === ======================================================
+ **PL_SIGN_ANY**     (0) custom data to be signed
+ **PL_SIGN_ETHTX**   (1) the payload is a ethereum-tx
+ **PL_SIGN_BTCTX**   (2) the payload is a BTC-Tx-Input
+ **PL_SIGN_SAFETX**  (3) The payload is a rlp-encoded data of a Gnosys Safe Tx.
+ **val**             4   
+==================== === ======================================================
+```
+
 #### enum SignatureType
 
 The enum type contains the following values:
 
 ```eval_rst
-============== = 
- **eth_sign**  0 
- **raw**       1 
- **hash**      2 
-============== = 
+============== === =============================================================
+ **eth_sign**  (2) 
+ **raw**       (0) < add Ethereum Signed Message-Proefix, hash and sign the data
+ **hash**      (1) < sign the data directly
+ **val**       3   < hash and sign the data
+============== === =============================================================
 ```
 
-#### interface Signer
+#### interface Converter
 
-a Interface responsible for signing data or transactions. 
+a Interface for converting values. 
 
-##### prepareTransaction
+##### apply
 
-optiional method which allows to change the transaction-data before sending it. 
+Applies this function to the given argument. 
 
-This can be used for redirecting it through a multisig. 
-
- > public [`TransactionRequest`](#class-transactionrequest) prepareTransaction([`IN3`](#class-in3) in3, [`TransactionRequest`](#class-transactionrequest) tx);
+ > public `R` apply([`T`](#class-t) t);
 
 arguments:
 ```eval_rst
-================================================= ========= 
-`IN3 <#class-in3>`_                                **in3**  
-`TransactionRequest <#class-transactionrequest>`_  **tx**   
-================================================= ========= 
+===== ======= 
+``T``  **t**  
+===== ======= 
 ```
-##### canSign
+returns: `R` : the function result 
 
-returns true if the account is supported (or unlocked) 
 
- > public `boolean` canSign([`String`](#class-string) address);
 
-arguments:
-```eval_rst
-========== ============= 
-``String``  **address**  
-========== ============= 
-```
-##### sign
-
-signing of the raw data. 
-
- > public `String` sign([`String`](#class-string) data, [`String`](#class-string) address);
-
-arguments:
-```eval_rst
-========== ============= 
-``String``  **data**     
-``String``  **address**  
-========== ============= 
-```
 
 #### interface StorageProvider
 

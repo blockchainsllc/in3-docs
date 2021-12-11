@@ -11,10 +11,10 @@ echo "update swift"
 cd ../build
 rm -rf *
 MACOSX_DEPLOYMENT_TARGET=10.15 cmake -DCMAKE_BUILD_TYPE=release -DTRANSPORTS=false -DUSE_CURL=false  -DCMD=false .. && make -j 8 && rm -f lib/libin3.dylib
-cd ../swift
+cd ../../in3-swift
 swift doc generate . --module-name In3
 rm -rf .build/documentation/_* .build/documentation/Home.md ".build/documentation/allTests().md"
-res=../../../doc/docs/api-swift.md 
+res=../../doc/docs/api-swift.md 
 cat docs/*.md > $res
 for type in class struct enum protocol ; do
    echo "## $type" | sed s/class/Classes/ | sed s/struct/Structs/  | sed s/enum/Enums/  | sed s/protocol/Interfaces/  >> $res
@@ -26,7 +26,7 @@ for type in class struct enum protocol ; do
 done;
 
 echo "generate python"
-cd ../build
+cd ../in3-core/build
 rm -rf *
 cmake -DTEST=false -DBUILD_DOC=true -DJAVA=true -DZKSYNC=true -DBTC=true -DIPFS=true -DCMAKE_BUILD_TYPE=DEBUG .. && make -j8
 cd ../python
@@ -50,7 +50,7 @@ cp ../c/in3-core/python/docs/documentation.md docs/api-python.md
 echo "### buildomg WASM - API"
 cd ../c/in3-core/build
 rm -rf *
-source ~/ws/tools/emsdk/emsdk_env.sh > /dev/null
+#source ~/ws/tools/emsdk/emsdk_env.sh > /dev/null
 emcmake cmake -DWASM=true -DASMJS=false -DWASM_EMMALLOC=true -DIPFS=true -DZKSYNC=true -DBTC=true -DWASM_EMBED=false -DCMAKE_BUILD_TYPE=Release .. && make -j8 in3_wasm
 
 PRE_DOC=`cat ../wasm/docs/*.md`

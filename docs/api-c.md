@@ -173,6 +173,12 @@ if true, the bitcoin verifiers will be build
 
 Default-Value: `-DBTC=ON`
 
+#### BTC_PRE_BPI34
+
+Enable BTC-Verfification for blocks before BIP34 was activated
+
+Default-Value: `-DBTC_PRE_BPI34=ON`
+
 #### BUILD_DOC
 
 generates the documenation with doxygen.
@@ -197,11 +203,11 @@ Enable color codes for debug
 
 Default-Value: `-DCOLOR=ON`
 
-#### DEV_NO_INTRN_PTR
+#### CORE_API
 
-(*dev option*) if true the client will NOT include a void pointer (named internal) for use by devs)
+registers a chain independend rpc-methods util-functions
 
-Default-Value: `-DDEV_NO_INTRN_PTR=ON`
+Default-Value: `-DCORE_API=ON`
 
 #### ESP_IDF
 
@@ -297,7 +303,19 @@ Default-Value: `-DLOGGING=ON`
 
 add capapbility to sign with a multig. Currrently only gnosis safe is supported
 
-Default-Value: `-DMULTISIG=OFF`
+Default-Value: `-DMULTISIG=ON`
+
+#### NODESELECT_DEF
+
+Enable default nodeselect implementation
+
+Default-Value: `-DNODESELECT_DEF=ON`
+
+#### NODESELECT_DEF_WL
+
+Enable default nodeselect whitelist implementation
+
+Default-Value: `-DNODESELECT_DEF_WL=ON`
 
 #### PAY_ETH
 
@@ -309,7 +327,19 @@ Default-Value: `-DPAY_ETH=OFF`
 
 pkg-config executable
 
-Default-Value: `-DPKG_CONFIG_EXECUTABLE=/opt/local/bin/pkg-config`
+Default-Value: `-DPKG_CONFIG_EXECUTABLE=/opt/homebrew/bin/pkg-config`
+
+#### PK_SIGNER
+
+Enable Signing with private keys
+
+Default-Value: `-DPK_SIGNER=ON`
+
+#### PLGN_CLIENT_DATA
+
+Enable client-data plugin
+
+Default-Value: `-DPLGN_CLIENT_DATA=OFF`
 
 #### POA
 
@@ -317,11 +347,35 @@ support POA verification including validatorlist updates
 
 Default-Value: `-DPOA=OFF`
 
+#### RECORDER
+
+enable recording option for reproduce executions
+
+Default-Value: `-DRECORDER=ON`
+
+#### RPC_ONLY
+
+specifies a coma-seperqted list of rpc-methods which should be supported. all other rpc-methods will be removed reducing the size of executable a lot.
+
+Default-Value: `-DRPC_ONLY=OFF`
+
 #### SEGGER_RTT
 
 Use the segger real time transfer terminal as the logging mechanism
 
 Default-Value: `-DSEGGER_RTT=OFF`
+
+#### SENTRY
+
+Enable Sentry
+
+Default-Value: `-DSENTRY=OFF`
+
+#### SWIFT
+
+swift API for swift bindings
+
+Default-Value: `-DSWIFT=OFF`
 
 #### TAG_VERSION
 
@@ -334,6 +388,12 @@ Default-Value: `-DTAG_VERSION=OFF`
 builds the tests and also adds special memory-management, which detects memory leaks, but will cause slower performance
 
 Default-Value: `-DTEST=OFF`
+
+#### THREADSAFE
+
+uses mutex to protect shared nodelist access
+
+Default-Value: `-DTHREADSAFE=ON`
 
 #### TRANSPORTS
 
@@ -359,6 +419,12 @@ integrate scrypt into the build in order to allow decrypt_key for scrypt encoded
 
 Default-Value: `-DUSE_SCRYPT=ON`
 
+#### USE_WINHTTP
+
+if true the winhttp transport will be built (with a dependency to winhttp)
+
+Default-Value: `-DUSE_WINHTTP=OFF`
+
 #### WASM
 
 Includes the WASM-Build. In order to build it you need emscripten as toolchain. Usually you also want to turn off other builds in this case.
@@ -383,11 +449,17 @@ intiaializes the WASM synchronisly, which allows to require and use it the same 
 
 Default-Value: `-DWASM_SYNC=OFF`
 
+#### ZKCRYPTO_LIB
+
+Path to the static zkcrypto-lib
+
+Default-Value: `-DZKCRYPTO_LIB=OFF`
+
 #### ZKSYNC
 
-add RPC-functioin to handle zksync-payments
+add RPC-function to handle zksync-payments
 
-Default-Value: `-DZKSYNC=OFF` 
+Default-Value: `-DZKSYNC=ON` 
 
 
 
@@ -2732,6 +2804,33 @@ arguments:
 returns: [`btc_block_txdata_t *`](#btc-block-txdata-t)
 
 
+### core_api.h
+
+Ethereum API. 
+
+This header-file defines easy to use function, which are preparing the JSON-RPC-Request, which is then executed and verified by the incubed-client. 
+
+File: [c/src/api/core/core_api.h](https://github.com/slockit/in3-c/blob/master/c/src/api/core/core_api.h)
+
+#### in3_register_core_api
+
+```c
+in3_ret_t in3_register_core_api(in3_t *c);
+```
+
+register core-api 
+
+arguments:
+```eval_rst
+=================== ======= 
+`in3_t * <#in3-t>`_  **c**  
+=================== ======= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 ### eth_api.h
 
 Ethereum API. 
@@ -4317,44 +4416,47 @@ plugin action list
 The enum type contains the following values:
 
 ```eval_rst
-================================ ========= ==========================================================================================================================================================
- **PLGN_ACT_INIT**               0x1       initialize plugin - use for allocating/setting-up internal resources . 
-                                           
-                                           Plugins will be initialized before first used. The plgn_ctx will be the first request ctx in3_req_t
- **PLGN_ACT_TERM**               0x2       terminate plugin - use for releasing internal resources and cleanup.
- **PLGN_ACT_TRANSPORT_SEND**     0x4       sends out a request - the transport plugin will receive a request_t as plgn_ctx, it may set a cptr which will be passed back when fetching more responses.
- **PLGN_ACT_TRANSPORT_RECEIVE**  0x8       fetch next response - the transport plugin will receive a request_t as plgn_ctx, which contains a cptr if set previously
- **PLGN_ACT_TRANSPORT_CLEAN**    0x10      free-up transport resources - the transport plugin will receive a request_t as plgn_ctx if the cptr was set.
- **PLGN_ACT_SIGN_ACCOUNT**       0x20      returns the default account of the signer
- **PLGN_ACT_SIGN_PREPARE**       0x40      allows a wallet to manipulate the payload before signing - the plgn_ctx will be in3_sign_ctx_t. 
-                                           
-                                           This way a tx can be send through a multisig
- **PLGN_ACT_SIGN**               0x80      signs the payload - the plgn_ctx will be in3_sign_ctx_t.
- **PLGN_ACT_RPC_HANDLE**         0x100     a plugin may respond to a rpc-request directly (without sending it to the node).
- **PLGN_ACT_RPC_VERIFY**         0x200     verifies the response. 
-                                           
-                                           the plgn_ctx will be a in3_vctx_t holding all data
- **PLGN_ACT_CACHE_SET**          0x400     stores data to be reused later - the plgn_ctx will be a in3_cache_ctx_t containing the data
- **PLGN_ACT_CACHE_GET**          0x800     reads data to be previously stored - the plgn_ctx will be a in3_cache_ctx_t containing the key. 
-                                           
-                                           if the data was found the data-property needs to be set.
- **PLGN_ACT_CACHE_CLEAR**        0x1000    clears all stored data - plgn_ctx will be NULL
- **PLGN_ACT_CONFIG_SET**         0x2000    gets a config-token and reads data from it
- **PLGN_ACT_CONFIG_GET**         0x4000    gets a string-builder and adds all config to it.
- **PLGN_ACT_PAY_PREPARE**        0x8000    prepares a payment
- **PLGN_ACT_PAY_FOLLOWUP**       0x10000   called after a request to update stats.
- **PLGN_ACT_PAY_HANDLE**         0x20000   handles the payment
- **PLGN_ACT_PAY_SIGN_REQ**       0x40000   signs a request
- **PLGN_ACT_LOG_ERROR**          0x80000   report an error
- **PLGN_ACT_NL_PICK**            0x100000  picks the data nodes, plgn_ctx will be a pointer to in3_req_t
- **PLGN_ACT_NL_PICK_FOLLOWUP**   0x200000  called after receiving a response in order to decide whether a update is needed, plgn_ctx will be a pointer to in3_req_t
- **PLGN_ACT_NL_BLACKLIST**       0x400000  blacklist a particular node in the nodelist, plgn_ctx will be a pointer to the node's address.
- **PLGN_ACT_NL_FAILABLE**        0x800000  handle fail-able request, plgn_ctx will be a pointer to in3_req_t
- **PLGN_ACT_NL_OFFLINE**         0x1000000 mark a particular node in the nodelist as offline, plgn_ctx will be a pointer to in3_nl_offline_ctx_t.
- **PLGN_ACT_CHAIN_CHANGE**       0x2000000 chain id change event, called after setting new chain id
- **PLGN_ACT_GET_DATA**           0x4000000 get access to plugin data as a void ptr
- **PLGN_ACT_ADD_PAYLOAD**        0x8000000 add plugin specific metadata to payload, plgn_ctx will be a sb_t pointer, make sure to begin with a comma
-================================ ========= ==========================================================================================================================================================
+================================ ========== ==========================================================================================================================================================
+ **PLGN_ACT_INIT**               0x1        initialize plugin - use for allocating/setting-up internal resources . 
+                                            
+                                            Plugins will be initialized before first used. The plgn_ctx will be the first request ctx in3_req_t
+ **PLGN_ACT_TERM**               0x2        terminate plugin - use for releasing internal resources and cleanup. 
+                                            
+                                            ( ctx: in3_t )
+ **PLGN_ACT_TRANSPORT_SEND**     0x4        sends out a request - the transport plugin will receive a request_t as plgn_ctx, it may set a cptr which will be passed back when fetching more responses.
+ **PLGN_ACT_TRANSPORT_RECEIVE**  0x8        fetch next response - the transport plugin will receive a request_t as plgn_ctx, which contains a cptr if set previously
+ **PLGN_ACT_TRANSPORT_CLEAN**    0x10       free-up transport resources - the transport plugin will receive a request_t as plgn_ctx if the cptr was set.
+ **PLGN_ACT_SIGN_ACCOUNT**       0x20       returns the accounts or addresses of the signer
+ **PLGN_ACT_SIGN_PUBLICKEY**     0x40       returns the public key for a given address ( ctx: in3_sign_public_key_ctx_t )
+ **PLGN_ACT_SIGN_PREPARE**       0x80       allows a wallet to manipulate the payload before signing - the plgn_ctx will be in3_sign_ctx_t. 
+                                            
+                                            This way a tx can be send through a multisig
+ **PLGN_ACT_SIGN**               0x100      signs the payload - the plgn_ctx will be in3_sign_ctx_t.
+ **PLGN_ACT_RPC_HANDLE**         0x200      a plugin may respond to a rpc-request directly (without sending it to the node).
+ **PLGN_ACT_RPC_VERIFY**         0x400      verifies the response. 
+                                            
+                                            the plgn_ctx will be a in3_vctx_t holding all data
+ **PLGN_ACT_CACHE_SET**          0x800      stores data to be reused later - the plgn_ctx will be a in3_cache_ctx_t containing the data
+ **PLGN_ACT_CACHE_GET**          0x1000     reads data to be previously stored - the plgn_ctx will be a in3_cache_ctx_t containing the key. 
+                                            
+                                            if the data was found the data-property needs to be set.
+ **PLGN_ACT_CACHE_CLEAR**        0x2000     clears all stored data - plgn_ctx will be NULL
+ **PLGN_ACT_CONFIG_SET**         0x4000     gets a config-token and reads data from it
+ **PLGN_ACT_CONFIG_GET**         0x8000     gets a string-builder and adds all config to it.
+ **PLGN_ACT_PAY_PREPARE**        0x10000    prepares a payment
+ **PLGN_ACT_PAY_FOLLOWUP**       0x20000    called after a request to update stats.
+ **PLGN_ACT_PAY_HANDLE**         0x40000    handles the payment
+ **PLGN_ACT_PAY_SIGN_REQ**       0x80000    signs a request
+ **PLGN_ACT_LOG_ERROR**          0x100000   report an error
+ **PLGN_ACT_NL_PICK**            0x200000   picks the data nodes, plgn_ctx will be a pointer to in3_req_t
+ **PLGN_ACT_NL_PICK_FOLLOWUP**   0x400000   called after receiving a response in order to decide whether a update is needed, plgn_ctx will be a pointer to in3_req_t
+ **PLGN_ACT_NL_BLACKLIST**       0x800000   blacklist a particular node in the nodelist, plgn_ctx will be a pointer to the node's address.
+ **PLGN_ACT_NL_FAILABLE**        0x1000000  handle fail-able request, plgn_ctx will be a pointer to in3_req_t
+ **PLGN_ACT_NL_OFFLINE**         0x2000000  mark a particular node in the nodelist as offline, plgn_ctx will be a pointer to in3_nl_offline_ctx_t.
+ **PLGN_ACT_CHAIN_CHANGE**       0x4000000  chain id change event, called after setting new chain id
+ **PLGN_ACT_GET_DATA**           0x8000000  get access to plugin data as a void ptr
+ **PLGN_ACT_ADD_PAYLOAD**        0x10000000 add plugin specific metadata to payload, plgn_ctx will be a sb_t pointer, make sure to begin with a comma
+================================ ========== ==========================================================================================================================================================
 ```
 
 #### chain_id_t
@@ -4678,6 +4780,50 @@ checks if a plugin for specified action is registered with the client
 ```
 
 
+#### CNF_ERROR (msg)
+
+raises a error during config by setting the error-message and returning a error-code. 
+
+```c
+#define CNF_ERROR (msg)   {                                     \
+    ctx->error_msg = _strdupn(msg, -1); \
+    return IN3_EINVAL;                  \
+  }
+```
+
+
+#### CNF_SET_BYTES (dst,token,property,l)
+
+sets the bytes as taken from the given property to the target and raises an error if the len does not fit. 
+
+```c
+#define CNF_SET_BYTES (dst,token,property,l)   {                                                                 \
+    const bytes_t tmp = d_to_bytes(d_get(token, key(property)));    \
+    if (tmp.data) {                                                 \
+      if (tmp.len != l) CNF_ERROR(property " must be " #l " bytes") \
+      memcpy(dst, tmp.data, l);                                     \
+    }                                                               \
+  }
+```
+
+
+#### CNF_SET_STRING (dst,token,property)
+
+sets the string as taken from the given property to the target and raises an error if the len does not fit. 
+
+```c
+#define CNF_SET_STRING (dst,token,property)   {                                                                                                 \
+    const d_token_t* t = d_get(token, key(property));                                               \
+    if (d_type(t) != T_NULL && d_type(t) != T_STRING) CNF_ERROR("Invalid config for " property "!") \
+    const char* tmp = d_string(t);                                                                  \
+    if (tmp) {                                                                                      \
+      if (dst) _free(dst);                                                                          \
+      dst = _strdupn(tmp, -1);                                                                      \
+    }                                                                                               \
+  }
+```
+
+
 #### in3_signer_type_t
 
 defines the type of signer used 
@@ -4698,10 +4844,29 @@ type of the requested signature
 The enum type contains the following values:
 
 ```eval_rst
-================== = ======================
- **SIGN_EC_RAW**   0 sign the data directly
- **SIGN_EC_HASH**  1 hash and sign the data
-================== = ======================
+==================== = ===========================================================
+ **SIGN_EC_RAW**     0 sign the data directly
+ **SIGN_EC_HASH**    1 hash and sign the data
+ **SIGN_EC_PREFIX**  2 add Ethereum Signed Message-Proefix, hash and sign the data
+ **SIGN_EC_BTC**     3 hashes the data twice with sha256 and signs it
+==================== = ===========================================================
+```
+
+#### d_payload_type_t
+
+payload type of the requested signature. 
+
+It describes how to deserialize the payload. 
+
+The enum type contains the following values:
+
+```eval_rst
+==================== = ======================================================
+ **PL_SIGN_ANY**     0 custom data to be signed
+ **PL_SIGN_ETHTX**   1 the payload is a ethereum-tx
+ **PL_SIGN_BTCTX**   2 the payload is a BTC-Tx-Input
+ **PL_SIGN_SAFETX**  3 The payload is a rlp-encoded data of a Gnosys Safe Tx.
+==================== = ======================================================
 ```
 
 #### in3_nl_pick_type_t
@@ -4778,7 +4943,7 @@ returns: [`in3_ret_t(*`](#in3-ret-t) the [result-status](#in3-ret-t) of the func
 
 #### in3_sign_account_ctx_t
 
-action context when retrieving the account of a signer. 
+action context when retrieving the addresses or accounts of a signer. 
 
 
 The stuct contains following fields:
@@ -4792,6 +4957,21 @@ The stuct contains following fields:
 ========================================= ================== =================================================
 ```
 
+#### in3_sign_public_key_ctx_t
+
+action context when retrieving the public key of the signer. 
+
+
+The stuct contains following fields:
+
+```eval_rst
+=============================== ================ =================================================
+`in3_reqstruct , * <#in3-req>`_  **req**         the context of the request in order report errors
+``uint8_t *``                    **account**     the account to use for the signature
+``uint8_t``                      **public_key**  the public key in case the plugin returns IN3_OK
+=============================== ================ =================================================
+```
+
 #### in3_sign_prepare_ctx_t
 
 action context when retrieving the account of a signer. 
@@ -4800,12 +4980,14 @@ action context when retrieving the account of a signer.
 The stuct contains following fields:
 
 ```eval_rst
-=============================== ============= =================================================
+=============================== ============= ========================================================================================================================================================================
 `in3_reqstruct , * <#in3-req>`_  **req**      the context of the request in order report errors
 `address_t <#address-t>`_        **account**  the account to use for the signature
-`bytes_t <#bytes-t>`_            **old_tx**   
-`bytes_t <#bytes-t>`_            **new_tx**   
-=============================== ============= =================================================
+`d_token_t * <#d-token-t>`_      **tx**       the tx-definition, which may contain additional properties
+`bytes_t <#bytes-t>`_            **old_tx**   the source-transaction
+`bytes_t <#bytes-t>`_            **new_tx**   the new-transaction, if the transaction should not changed, the data-ptr must be NULL otherwise a new allocated memory is expected, which will be cleaned by the caller.
+`sb_t * <#sb-t>`_                **output**   if this is not NULL, the transaction will not be send, but returns only the state
+=============================== ============= ========================================================================================================================================================================
 ```
 
 #### in3_sign_ctx_t
@@ -4818,13 +5000,15 @@ This Context is passed to the signer-function.
 The stuct contains following fields:
 
 ```eval_rst
-=========================================== =============== =================================================
-`bytes_t <#bytes-t>`_                        **signature**  the resulting signature
-`d_signature_type_t <#d-signature-type-t>`_  **type**       the type of signature
-`in3_reqstruct , * <#in3-req>`_              **req**        the context of the request in order report errors
-`bytes_t <#bytes-t>`_                        **message**    the message to sign
-`bytes_t <#bytes-t>`_                        **account**    the account to use for the signature
-=========================================== =============== =================================================
+=========================================== ================== ================================================================================================
+`bytes_t <#bytes-t>`_                        **signature**     the resulting signature
+`d_signature_type_t <#d-signature-type-t>`_  **type**          the type of signature
+`d_payload_type_t <#d-payload-type-t>`_      **payload_type**  the type of payload in order to deserialize the payload
+`in3_reqstruct , * <#in3-req>`_              **req**           the context of the request in order report errors
+`bytes_t <#bytes-t>`_                        **message**       the message to sign
+`bytes_t <#bytes-t>`_                        **account**       the account to use for the signature
+`d_token_t * <#d-token-t>`_                  **meta**          optional metadata to pass a long, which could include data to present to the user before signing
+=========================================== ================== ================================================================================================
 ```
 
 #### in3_configure_ctx_t
@@ -4901,7 +5085,7 @@ The stuct contains following fields:
 ```eval_rst
 =========================== ============= ===================
 `in3_req_t * <#in3-req-t>`_  **req**      the request context
-``char *``                   **key**      the key to fetch
+``const char *``             **key**      the key to fetch
 `bytes_t * <#bytes-t>`_      **content**  the content to set
 =========================== ============= ===================
 ```
@@ -5085,6 +5269,26 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 *Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
+#### in3_rpc_handle_with_json
+
+```c
+NONULL in3_ret_t in3_rpc_handle_with_json(in3_rpc_handle_ctx_t *ctx, d_token_t *result);
+```
+
+creates a response with a json token. 
+
+arguments:
+```eval_rst
+================================================= ============ 
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**     
+`d_token_t * <#d-token-t>`_                        **result**  
+================================================= ============ 
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
 #### in3_rpc_handle_with_string
 
 ```c
@@ -5119,6 +5323,26 @@ arguments:
 `in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **hctx**   
 ``uint64_t``                                       **value**  
 ================================================= =========== 
+```
+returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### in3_rpc_handle_with_uint256
+
+```c
+NONULL in3_ret_t in3_rpc_handle_with_uint256(in3_rpc_handle_ctx_t *hctx, bytes_t data);
+```
+
+creates a response with bytes but without a leading 0. 
+
+arguments:
+```eval_rst
+================================================= ========== 
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **hctx**  
+`bytes_t <#bytes-t>`_                              **data**  
+================================================= ========== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -5443,6 +5667,50 @@ This is used for each request holding request and response-pointers but also con
 
 File: [c/src/core/client/request.h](https://github.com/slockit/in3-c/blob/master/c/src/core/client/request.h)
 
+#### TRY_SUB_REQUEST (req,name,res,fmt,...)
+
+```c
+#define TRY_SUB_REQUEST (req,name,res,fmt,...)   {                                                                          \
+    sb_t sb = {0};                                                           \
+    sb_printx(&sb, fmt, __VA_ARGS__);                                        \
+    in3_ret_t r = req_send_sub_request(req, name, sb.data, NULL, res, NULL); \
+    _free(sb.data);                                                          \
+    if (r) return r;                                                         \
+  }
+```
+
+
+#### TRY_CATCH_SUB_REQUEST (req,name,res,_catch,fmt,...)
+
+```c
+#define TRY_CATCH_SUB_REQUEST (req,name,res,_catch,fmt,...)   {                                                                          \
+    sb_t sb = {0};                                                           \
+    sb_printx(&sb, fmt, __VA_ARGS__);                                        \
+    in3_ret_t r = req_send_sub_request(req, name, sb.data, NULL, res, NULL); \
+    _free(sb.data);                                                          \
+    if (r) {                                                                 \
+      _catch;                                                                \
+      return r;                                                              \
+    }                                                                        \
+  }
+```
+
+
+#### TRY_FINAL_SUB_REQUEST (req,name,res,_catch,fmt,...)
+
+```c
+#define TRY_FINAL_SUB_REQUEST (req,name,res,_catch,fmt,...)   {                                                                          \
+    sb_t sb = {0};                                                           \
+    sb_printx(&sb, fmt, __VA_ARGS__);                                        \
+    in3_ret_t r = req_send_sub_request(req, name, sb.data, NULL, res, NULL); \
+    _free(sb.data);                                                          \
+    _catch;                                                                  \
+    if (r)                                                                   \
+      return r;                                                              \
+  }
+```
+
+
 #### ctx_type
 
 type of the request context, 
@@ -5717,7 +5985,7 @@ The caller is responsible for delivering the required responses. After calling y
       exec -> waiting[label="IN3_WAITING"]
     
       waiting -> sign[label=RT_SIGN]
-      waiting -> request[label=RT_RPC] 
+      waiting -> request[label=RT_RPC]
     
       sign -> exec [label="in3_ctx_add_response()"]
       request -> exec[label="in3_ctx_add_response()"]
@@ -5789,7 +6057,7 @@ Here is a example how to use this function:
             sb_init(&ctx->raw_response[0].error);
             sb_init(&ctx->raw_response[0].result);
 
-            // data for the signature 
+            // data for the signature
             uint8_t sig[65];
             // use the signer to create the signature
             ret = ctx->client->signer->sign(ctx, SIGN_EC_HASH, data, from, sig);
@@ -6183,6 +6451,15 @@ creates a new bytes_builder with a initial size of 32 bytes
 
 ```c
 #define b_readl (_b_,_i_,_vptr_,_l_) memcpy(_vptr_, (_b_)->data + (_i_), (_l_))
+```
+
+
+#### NULL_BYTES
+
+empty bytes as struct 
+
+```c
+#define NULL_BYTES ((bytes_t){0})
 ```
 
 
@@ -7219,13 +7496,30 @@ arguments:
 returns: [`bytes_t **`](#bytes-t)
 
 
+#### d_token_size
+
+```c
+size_t d_token_size(const d_token_t *item);
+```
+
+creates a array of bytes from JOSN-array 
+
+arguments:
+```eval_rst
+================================== ========== 
+`d_token_tconst , * <#d-token-t>`_  **item**  
+================================== ========== 
+```
+returns: `size_t`
+
+
 #### d_type
 
 ```c
 static d_type_t d_type(const d_token_t *item);
 ```
 
-creates a array of bytes from JOSN-array 
+returns the size (number of tokens ) of the token 
 
 type of the token 
 
@@ -7434,6 +7728,25 @@ arguments:
 ================ ========== 
 ```
 returns: [`json_ctx_tNONULL , *`](#json-ctx-t)
+
+
+#### parse_json_error
+
+```c
+NONULL char* parse_json_error(const char *js);
+```
+
+parses the json, but only return an error if the json is invalid. 
+
+The returning string must be freed! 
+
+arguments:
+```eval_rst
+================ ======== 
+``const char *``  **js**  
+================ ======== 
+```
+returns: `NONULL char *`
 
 
 #### parse_json
@@ -7663,6 +7976,24 @@ arguments:
 returns: `NONULL void`
 
 
+#### json_create_ref_item
+
+```c
+NONULL d_token_t* json_create_ref_item(json_ctx_t *jp, d_type_t type, void *data, int len);
+```
+
+arguments:
+```eval_rst
+============================= ========== 
+`json_ctx_t * <#json-ctx-t>`_  **jp**    
+`d_type_t <#d-type-t>`_        **type**  
+``void *``                     **data**  
+``int``                        **len**   
+============================= ========== 
+```
+returns: [`d_token_tNONULL , *`](#d-token-t)
+
+
 #### json_array_add_value
 
 ```c
@@ -7678,6 +8009,43 @@ arguments:
 ============================= ================== 
 ```
 returns: `NONULL void`
+
+
+#### token_from_string
+
+```c
+NONULL d_token_t* token_from_string(char *val, d_token_t *d, bytes32_t buffer);
+```
+
+returns a token ptr using the val without allocating memory in the heap, which can be used to pass values as token 
+
+arguments:
+```eval_rst
+=========================== ============ 
+``char *``                   **val**     
+`d_token_t * <#d-token-t>`_  **d**       
+`bytes32_t <#bytes32-t>`_    **buffer**  
+=========================== ============ 
+```
+returns: [`d_token_tNONULL , *`](#d-token-t)
+
+
+#### token_from_bytes
+
+```c
+NONULL d_token_t* token_from_bytes(bytes_t b, d_token_t *d);
+```
+
+returns a token ptr using the val without allocating memory in the heap, which can be used to pass values as token 
+
+arguments:
+```eval_rst
+=========================== ======= 
+`bytes_t <#bytes-t>`_        **b**  
+`d_token_t * <#d-token-t>`_  **d**  
+=========================== ======= 
+```
+returns: [`d_token_tNONULL , *`](#d-token-t)
 
 
 #### d_get_keystr
@@ -8141,101 +8509,6 @@ logs a debug-message without the filename
 ```
 
 
-#### CHECK_PARAMS_LEN (ctx,params,len)
-
-```c
-#define CHECK_PARAMS_LEN (ctx,params,len)   if (d_type(params) != T_ARRAY || d_len(params) < len) return req_set_error(ctx, "arguments need to be a array with at least " #len " arguments", IN3_EINVAL);
-```
-
-
-#### CHECK_PARAM_TYPE (ctx,params,index,type)
-
-```c
-#define CHECK_PARAM_TYPE (ctx,params,index,type)   if (d_type(d_get_at(params, index)) != type) return req_set_error(ctx, "argument at index " #index " must be a " #type, IN3_EINVAL);
-```
-
-
-#### CHECK_PARAM_NUMBER (ctx,params,index)
-
-```c
-#define CHECK_PARAM_NUMBER (ctx,params,index)   switch (d_type(d_get_at(params, index))) {                                                         \
-    case T_INTEGER:                                                                                  \
-    case T_BYTES: break;                                                                             \
-    default: return req_set_error(ctx, "argument at index " #index " must be a number", IN3_EINVAL); \
-  }
-```
-
-
-#### CHECK_PARAM_ADDRESS (ctx,params,index)
-
-```c
-#define CHECK_PARAM_ADDRESS (ctx,params,index)   {                                                                                                                                              \
-    const d_token_t* val = d_get_at(params, index);                                                                                              \
-    if (d_type(val) != T_BYTES || val->len != 20) return req_set_error(ctx, "argument at index " #index " must be a valid address", IN3_EINVAL); \
-  }
-```
-
-
-#### CHECK_PARAM_LEN (ctx,params,index,len)
-
-```c
-#define CHECK_PARAM_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) != len) return req_set_error(ctx, "argument at index " #index " must have a length of " #len, IN3_EINVAL);
-```
-
-
-#### CHECK_PARAM_MAX_LEN (ctx,params,index,len)
-
-```c
-#define CHECK_PARAM_MAX_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) > len) return req_set_error(ctx, "argument at index " #index " must be smaller than " #len, IN3_EINVAL);
-```
-
-
-#### CHECK_PARAM_MIN_LEN (ctx,params,index,len)
-
-```c
-#define CHECK_PARAM_MIN_LEN (ctx,params,index,len)   if (d_len(d_get_at(params, index)) < len) return req_set_error(ctx, "argument at index " #index " must be at least " #len, IN3_EINVAL);
-```
-
-
-#### CHECK_PARAM (ctx,params,index,cond)
-
-```c
-#define CHECK_PARAM (ctx,params,index,cond)   {                                                                                                       \
-    const d_token_t* val = d_get_at(params, index);                                                       \
-    if (!(cond)) return req_set_error(ctx, "argument at index " #index " must match " #cond, IN3_EINVAL); \
-  }
-```
-
-
-#### TRY_RPC (name,fn)
-
-used for exeuting a function based on the name. 
-
-This macro will return if the name matches. 
-
-```c
-#define TRY_RPC (name,fn)   if (strcmp(ctx->method, name) == 0) return fn;
-```
-
-
-#### VERIFY_RPC (name)
-
-used in if-conditions and returns true if the vc->method mathes the name. 
-
-It is also used as marker. 
-
-```c
-#define VERIFY_RPC (name) (strcmp(vc->method, name) == 0)
-```
-
-
-#### CONFIG_KEY (name)
-
-```c
-#define CONFIG_KEY (name) key(name)
-```
-
-
 #### msg_dump
 
 ```c
@@ -8473,6 +8746,7 @@ The enum type contains the following values:
  **IN3_ENODEVICE**                -19  harware wallet device not connected
  **IN3_EAPDU**                    -20  error in hardware wallet communication
  **IN3_EPLGN_NONE**               -21  no plugin could handle specified action
+ **IN3_ERETRY**                   -22  request to retry all plugins again
  **IN3_HTTP_BAD_REQUEST**         -400 Bad Request.
  **IN3_HTTP_UNAUTHORIZED**        -401 Unauthorized.
  **IN3_HTTP_PAYMENT_REQUIRED**    -402 Unauthorized.
@@ -8521,13 +8795,15 @@ File: [c/src/core/util/scache.h](https://github.com/slockit/in3-c/blob/master/c/
 The enum type contains the following values:
 
 ```eval_rst
-============================== ==== ==============================================================
- **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
- **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
- **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
- **CACHE_PROP_JSON**           0x8  indicates the content is a json_ctxt and must be freed as such
- **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
-============================== ==== ==============================================================
+================================== ==== =================================================================
+ **CACHE_PROP_MUST_FREE**          0x1  indicates the content must be freed
+ **CACHE_PROP_SRC_REQ**            0x2  the value holds the src-request
+ **CACHE_PROP_ONLY_EXTERNAL**      0x4  should only be freed if the context is external
+ **CACHE_PROP_ONLY_NOT_EXTERNAL**  0x20 should only be freed if the context is not external
+ **CACHE_PROP_JSON**               0x8  indicates the content is a json_ctxt and must be freed as such
+ **CACHE_PROP_INHERIT**            0x10 indicates the content will be inherited when creating sub_request
+ **CACHE_PROP_PAYMENT**            0x80 This cache-entry is a payment.data.
+================================== ==== =================================================================
 ```
 
 #### cache_props_t
@@ -8536,13 +8812,15 @@ The enum type contains the following values:
 The enum type contains the following values:
 
 ```eval_rst
-============================== ==== ==============================================================
- **CACHE_PROP_MUST_FREE**      0x1  indicates the content must be freed
- **CACHE_PROP_SRC_REQ**        0x2  the value holds the src-request
- **CACHE_PROP_ONLY_EXTERNAL**  0x4  should only be freed if the context is external
- **CACHE_PROP_JSON**           0x8  indicates the content is a json_ctxt and must be freed as such
- **CACHE_PROP_PAYMENT**        0x80 This cache-entry is a payment.data.
-============================== ==== ==============================================================
+================================== ==== =================================================================
+ **CACHE_PROP_MUST_FREE**          0x1  indicates the content must be freed
+ **CACHE_PROP_SRC_REQ**            0x2  the value holds the src-request
+ **CACHE_PROP_ONLY_EXTERNAL**      0x4  should only be freed if the context is external
+ **CACHE_PROP_ONLY_NOT_EXTERNAL**  0x20 should only be freed if the context is not external
+ **CACHE_PROP_JSON**               0x8  indicates the content is a json_ctxt and must be freed as such
+ **CACHE_PROP_INHERIT**            0x10 indicates the content will be inherited when creating sub_request
+ **CACHE_PROP_PAYMENT**            0x80 This cache-entry is a payment.data.
+================================== ==== =================================================================
 ```
 
 #### cache_entry_t
@@ -8580,6 +8858,24 @@ arguments:
 =================================== =========== ==================================
 ```
 returns: [`bytes_t *`](#bytes-t)
+
+
+#### in3_cache_get_entry_by_prop
+
+```c
+cache_entry_t* in3_cache_get_entry_by_prop(cache_entry_t *cache, cache_props_t prop);
+```
+
+get the entry for a given property. 
+
+arguments:
+```eval_rst
+=================================== =========== ==================================
+`cache_entry_t * <#cache-entry-t>`_  **cache**  the root entry of the linked list.
+``cache_props_t``                    **prop**   the prop, which must match exactly
+=================================== =========== ==================================
+```
+returns: [`cache_entry_t *`](#cache-entry-t)
 
 
 #### in3_cache_add_entry
@@ -8964,6 +9260,40 @@ arguments:
 returns: [`sb_t *`](#sb-t)
 
 
+#### sb_add_json
+
+```c
+sb_t* sb_add_json(sb_t *sb, const char *prefix, d_token_t *token);
+```
+
+arguments:
+```eval_rst
+=========================== ============ 
+`sb_t * <#sb-t>`_            **sb**      
+``const char *``             **prefix**  
+`d_token_t * <#d-token-t>`_  **token**   
+=========================== ============ 
+```
+returns: [`sb_t *`](#sb-t)
+
+
+#### sb_printx
+
+```c
+sb_t* sb_printx(sb_t *sb, const char *fmt,...);
+```
+
+arguments:
+```eval_rst
+================= ========= 
+`sb_t * <#sb-t>`_  **sb**   
+``const char *``   **fmt**  
+``...``                     
+================= ========= 
+```
+returns: [`sb_t *`](#sb-t)
+
+
 ### utils.h
 
 utility functions. 
@@ -9109,6 +9439,31 @@ if the return value is negative it will stop and return this value otherwise con
 ```
 
 
+#### TRY_RPC (name,fn)
+
+```c
+#define TRY_RPC (name,fn)   if (strcmp(ctx->method, name) == 0) return fn;
+```
+
+
+#### VERIFY_RPC (name)
+
+used in if-conditions and returns true if the vc->method mathes the name. 
+
+It is also used as marker. 
+
+```c
+#define VERIFY_RPC (name) (strcmp(vc->method, name) == 0)
+```
+
+
+#### CONFIG_KEY (name)
+
+```c
+#define CONFIG_KEY (name) key(name)
+```
+
+
 #### EXPECT_EQ (exp,val)
 
 executes the expression and expects value to equal val. 
@@ -9145,6 +9500,89 @@ if the return value is negative it will stop and jump (goto) to a marked positio
     res = (exp);             \
     if (res < 0) goto clean; \
   }
+```
+
+
+#### WORD_ADR (index,right)
+
+calculates the address of a word in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define WORD_ADR (index,right) (res.data + 4 + (index) *32 + 32 - (right))
+```
+
+
+#### ABI_ADDRESS (index,adr)
+
+sets an address at the word index in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_ADDRESS (index,adr) memcpy(WORD_ADR(index, 20), adr, 20)
+```
+
+
+#### ABI_UINT32 (index,val)
+
+sets an int at the word index in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_UINT32 (index,val) int_to_bytes(val, WORD_ADR(index, 4))
+```
+
+
+#### ABI_UINT256 (index,data,len)
+
+sets an uint256 as bytes at the word index in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_UINT256 (index,data,len) memcpy(WORD_ADR(index, len), data, len)
+```
+
+
+#### ABI_BYTES (index,bytes)
+
+writes the bytes at the word index in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_BYTES (index,bytes)   {                                                                     \
+    if (bytes.data) memcpy(WORD_ADR(index, 32), bytes.data, bytes.len); \
+  }
+```
+
+
+#### ABI_FNC (hash)
+
+writes the functionhash in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_FNC (hash) memcpy(res.data, (void*) hash, 4)
+```
+
+
+#### ABI_BYTES_CALLOC (words)
+
+allocates memory filled with zeros with the size words*32 +4 for e3ncoding abi-data 
+
+```c
+#define ABI_BYTES_CALLOC (words) bytes(_calloc(4 + (words) *32, 1), 4 + (words) *32)
+```
+
+
+#### ABI_WORDS (byte_len)
+
+calculates the number of words (32 bytes) needed to hold the specified bytes 
+
+```c
+#define ABI_WORDS (byte_len) ((byte_len + 31) / 32)
+```
+
+
+#### ABI_OFFSET (index,word)
+
+writes the offset (as word) at the word index in a abi-encoded data (assuming data = bytes_t res exists) 
+
+```c
+#define ABI_OFFSET (index,word) ABI_UINT32(index, (word * 32))
 ```
 
 
@@ -9671,6 +10109,26 @@ arguments:
 ========================= =========== 
 ```
 
+#### bytes_to_hex_string
+
+```c
+char* bytes_to_hex_string(char *out, const char *prefix, const bytes_t b, const char *postfix);
+```
+
+prints a bytes into a string 
+
+arguments:
+```eval_rst
+=========================== ============= 
+``char *``                   **out**      
+``const char *``             **prefix**   
+`bytes_tconst  <#bytes-t>`_  **b**        
+``const char *``             **postfix**  
+=========================== ============= 
+```
+returns: `char *`
+
+
 ## Module init 
 
 
@@ -9931,6 +10389,7 @@ The stuct contains following fields:
 ```eval_rst
 ============================================= ========================= ================================================================================
 ``char *``                                     **provider_url**         url of the zksync-server
+``char *``                                     **rest_api**             url of the zksync-rest-api
 ``uint8_t *``                                  **account**              address of the account
 ``uint8_t *``                                  **main_contract**        address of the main zksync contract
 ``uint8_t *``                                  **gov_contract**         address of the government contract
@@ -9944,7 +10403,7 @@ The stuct contains following fields:
 `zksync_token_t * <#zksync-token-t>`_          **tokens**               the token-list
 `zk_sign_type_t <#zk-sign-type-t>`_            **sign_type**            the signature-type to use
 ``uint32_t``                                   **version**              zksync version
-`zk_create2_t * <#zk-create2-t>`_              **create2**              create2 args
+`zk_create2_t <#zk-create2-t>`_                **create2**              create2 args
 `bytes_t <#bytes-t>`_                          **musig_pub_keys**       the public keys of all participants of a schnorr musig signature
 `zk_musig_session_t * <#zk-musig-session-t>`_  **musig_sessions**       linked list of open musig sessions
 ``char **``                                    **musig_urls**           urls to get signatureshares, the order must be in the same order as the pub_keys
@@ -9952,6 +10411,18 @@ The stuct contains following fields:
 ``char *``                                     **proof_verify_method**  the rpc-method used to verify the proof before creating a signature
 ``char *``                                     **proof_create_method**  the rpc-method used to create the proof before creating a signature
 ============================================= ========================= ================================================================================
+```
+
+#### zksync_valid_t
+
+
+The stuct contains following fields:
+
+```eval_rst
+============ ========== 
+``uint64_t``  **from**  
+``uint64_t``  **to**    
+============ ========== 
 ```
 
 #### pay_criteria_t
@@ -9990,17 +10461,18 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_set_key
 
 ```c
-NONULL in3_ret_t zksync_set_key(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
+NONULL in3_ret_t zksync_set_key(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx, bool only_update);
 ```
 
 sets a PubKeyHash for the current Account 
 
 arguments:
 ```eval_rst
-================================================= ========== 
-`zksync_config_t * <#zksync-config-t>`_            **conf**  
-`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
-================================================= ========== 
+================================================= ================= 
+`zksync_config_t * <#zksync-config-t>`_            **conf**         
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**          
+``bool``                                           **only_update**  
+================================================= ================= 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -10093,7 +10565,7 @@ returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the
 #### zksync_sign_change_pub_key
 
 ```c
-NONULL in3_ret_t zksync_sign_change_pub_key(sb_t *sb, in3_req_t *req, uint8_t *sync_pub_key, uint32_t nonce, zksync_config_t *conf, zk_fee_t fee, zksync_token_t *token);
+NONULL in3_ret_t zksync_sign_change_pub_key(sb_t *sb, in3_req_t *req, uint8_t *sync_pub_key, uint32_t nonce, zksync_config_t *conf, zk_fee_t fee, zksync_token_t *token, zksync_valid_t valid);
 ```
 
 creates message data and signs a change_pub_key-message 
@@ -10108,6 +10580,7 @@ arguments:
 `zksync_config_t * <#zksync-config-t>`_  **conf**          
 ``zk_fee_t``                             **fee**           
 `zksync_token_t * <#zksync-token-t>`_    **token**         
+`zksync_valid_t <#zksync-valid-t>`_      **valid**         
 ======================================= ================== 
 ```
 returns: [`in3_ret_tNONULL `](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
@@ -10238,6 +10711,57 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_tx_data
+
+```c
+in3_ret_t zksync_tx_data(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
+```
+
+arguments:
+```eval_rst
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_account_history
+
+```c
+in3_ret_t zksync_account_history(zksync_config_t *conf, in3_rpc_handle_ctx_t *ctx);
+```
+
+arguments:
+```eval_rst
+================================================= ========== 
+`zksync_config_t * <#zksync-config-t>`_            **conf**  
+`in3_rpc_handle_ctx_t * <#in3-rpc-handle-ctx-t>`_  **ctx**   
+================================================= ========== 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### zksync_get_conf
+
+```c
+NONULL zksync_config_t* zksync_get_conf(in3_req_t *req);
+```
+
+arguments:
+```eval_rst
+=========================== ========= 
+`in3_req_t * <#in3-req-t>`_  **req**  
+=========================== ========= 
+```
+returns: [`zksync_config_tNONULL , *`](#zksync-config-t)
 
 
 ## Module signer 
@@ -10501,6 +11025,41 @@ arguments:
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
 *Please make sure you check if it was successfull (`==IN3_OK`)*
+
+
+#### eth_create_prefixed_msg_hash
+
+```c
+void eth_create_prefixed_msg_hash(bytes32_t dst, bytes_t msg);
+```
+
+hashes the msg by adding the Ethereum Signed Message-Prefix 
+
+arguments:
+```eval_rst
+========================= ========= 
+`bytes32_t <#bytes32-t>`_  **dst**  
+`bytes_t <#bytes-t>`_      **msg**  
+========================= ========= 
+```
+
+#### sign_with_pk
+
+```c
+bytes_t sign_with_pk(const bytes32_t pk, const bytes_t data, const d_signature_type_t type);
+```
+
+signs with a pk bases on the type 
+
+arguments:
+```eval_rst
+================================================= ========== 
+`bytes32_tconst  <#bytes32-t>`_                    **pk**    
+`bytes_tconst  <#bytes-t>`_                        **data**  
+`d_signature_type_tconst  <#d-signature-type-t>`_  **type**  
+================================================= ========== 
+```
+returns: [`bytes_t`](#bytes-t)
 
 
 ## Module transport 
@@ -10916,7 +11475,7 @@ returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the functi
 #### eth_prepare_unsigned_tx
 
 ```c
-in3_ret_t eth_prepare_unsigned_tx(d_token_t *tx, in3_req_t *req, bytes_t *dst);
+in3_ret_t eth_prepare_unsigned_tx(d_token_t *tx, in3_req_t *req, bytes_t *dst, sb_t *meta);
 ```
 
 prepares a transaction and writes the data to the dst-bytes. 
@@ -10925,11 +11484,12 @@ In case of success, you MUST free only the data-pointer of the dst.
 
 arguments:
 ```eval_rst
-=========================== ========= ======================================
-`d_token_t * <#d-token-t>`_  **tx**   a json-token desribing the transaction
-`in3_req_t * <#in3-req-t>`_  **req**  the current context
-`bytes_t * <#bytes-t>`_      **dst**  the bytes to write the result to.
-=========================== ========= ======================================
+=========================== ========== =================================================================================
+`d_token_t * <#d-token-t>`_  **tx**    a json-token desribing the transaction
+`in3_req_t * <#in3-req-t>`_  **req**   the current context
+`bytes_t * <#bytes-t>`_      **dst**   the bytes to write the result to.
+`sb_t * <#sb-t>`_            **meta**  a stringbuilder in order write the wallet_state and metadata depending on the tx.
+=========================== ========== =================================================================================
 ```
 returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
 
@@ -11009,6 +11569,29 @@ arguments:
 ================ ========== 
 ```
 returns: `RETURNS_NONULL NONULL char *`
+
+
+#### get_from_address
+
+```c
+in3_ret_t get_from_address(d_token_t *tx, in3_req_t *ctx, address_t res);
+```
+
+determines the from-address in case no from-address has been specified. 
+
+determines the from-address in case no from-address has been specified. 
+
+arguments:
+```eval_rst
+=========================== ========= 
+`d_token_t * <#d-token-t>`_  **tx**   
+`in3_req_t * <#in3-req-t>`_  **ctx**  
+`address_t <#address-t>`_    **res**  
+=========================== ========= 
+```
+returns: [`in3_ret_t`](#in3-ret-t) the [result-status](#in3-ret-t) of the function. 
+
+*Please make sure you check if it was successfull (`==IN3_OK`)*
 
 
 ### trie.h
@@ -13572,7 +14155,7 @@ bytes_builder_t* rlp_encode_to_item(bytes_builder_t *bb);
 
 converts the data in the builder to a rlp-encoded item. 
 
-This function is optimized to not increase the memory more than needed and is fastet than creating a second builder to encode the data.
+This function is optimized to not increase the memory more than needed and is faster than creating a second builder to encode the data.
 
 arguments:
 ```eval_rst
@@ -13719,6 +14302,13 @@ File: [c/src/verifier/eth1/nano/serialize.h](https://github.com/slockit/in3-c/bl
 
 ```c
 #define BLOCKHEADER_SEALED_FIELD3 15
+```
+
+
+#### BLOCKHEADER_BASE_GAS_FEE
+
+```c
+#define BLOCKHEADER_BASE_GAS_FEE 15
 ```
 
 
