@@ -458,6 +458,8 @@ The nodes object supports the following properties :
 
 
 * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
+    The verifiedHashes object supports the following properties :
+
     * **block** : `uint64` - block number
     
 
@@ -467,6 +469,8 @@ The nodes object supports the following properties :
 
 
 * **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
+    The nodeList object supports the following properties :
+
     * **url** : `string` - URL of the node.
     
 
@@ -510,12 +514,25 @@ configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, wh
 The zksync object supports the following properties :
 
 * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
+This option can also be used in its short-form in the comandline client `-zks` .
+
+
+* **rest_api** : `string?` *(optional)* - url of the zksync rest api (if not defined it will be choosen depending on the chain)
+This option can also be used in its short-form in the comandline client `-zkr` .
+```sh
+> in3 -zkr https://rinkeby-api.zksync.io/api/v0.1/  ....
+> in3 --zksync.rest_api=https://rinkeby-api.zksync.io/api/v0.1/  ....
+
+```
+
 
 
 * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
+This option can also be used in its short-form in the comandline client `-zka` .
 
 
 * **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+This option can also be used in its short-form in the comandline client `-zsk` .
 
 
 * **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
@@ -528,15 +545,21 @@ Possible Values are:
     - `contract` : Contract Signature  based EIP 1271
     - `create2` : create2 optionas are used
 
+This option can also be used in its short-form in the comandline client `-zkat` .
 
 
 * **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+This option can also be used in its short-form in the comandline client `-zms` .
 
 
 * **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+This option can also be used in its short-form in the comandline client `-zmu` .
 
 
 * **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
+This option can also be used in its short-form in the comandline client `-zc2` .
+    The create2 object supports the following properties :
+
     * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
     
 
@@ -548,10 +571,12 @@ Possible Values are:
 
 
 
-* **verify_proof_method** : `string` - rpc-method, which will be used to verify the incomming proof before cosigning.
+* **verify_proof_method** : `string?` *(optional)* - rpc-method, which will be used to verify the incomming proof before cosigning.
+This option can also be used in its short-form in the comandline client `-zvpm` .
 
 
-* **create_proof_method** : `string` - rpc-method, which will be used to create the proof needed for cosigning.
+* **create_proof_method** : `string?` *(optional)* - rpc-method, which will be used to create the proof needed for cosigning.
+This option can also be used in its short-form in the comandline client `-zcpm` .
 
 
 
@@ -638,7 +663,7 @@ const in3 = new IN3({
 
 registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default) *This config is optional.*
 
- Type: `bytes32|bytes32[]?`
+ Type: `bytes32[]?`
 
 *Example:*
 
@@ -663,9 +688,19 @@ configure the Bitcoin verification
 The btc object supports the following properties :
 
 * **maxDAP** : `int?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
+```sh
+> in3 --btc.maxDAP=10  ....
+
+```
+
 
 
 * **maxDiff** : `int?` *(optional)* - max increase (in percent) of the difference between targets when accepting new targets. (default: `10`)
+```sh
+> in3 --btc.maxDiff=5  ....
+
+```
+
 
 
 
@@ -841,6 +876,12 @@ the gas limit to use when sending transactions. (default: 100000)
 
 ```
 
+
+### token
+
+the address of the erc20-token contract.
+
+ Type: `string`
 
 ### nonce
 

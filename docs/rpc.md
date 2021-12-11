@@ -114,13 +114,16 @@ Signs a transaction that can be submitted to the network at a later time using w
 
 *Parameters:*
 
-1. **tx** : `transaction` - transaction to sign
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - transaction to sign
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -132,10 +135,33 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
     
 
 
@@ -259,7 +285,60 @@ decrypts a JSON Keystore file as defined in the [Web3 Secret Storage Definition]
 
 *Parameters:*
 
-1. **key** : `string` - Keydata as object as defined in the keystorefile
+1. **key** : `keyparams` - the keyparams
+    The key object supports the following properties :
+
+    * **version** : `string` - the version
+    
+
+    * **id** : `string` - the id
+    
+
+    * **address** : `string` - the address
+    
+
+    * **crypto** : `cryptoParams` - the cryptoparams
+        The crypto object supports the following properties :
+    
+        * **ciphertext** : `string` - the cipher text
+        
+
+        * **cipherparams** : `cipherParams` - the cipherparams
+            The cipherparams object supports the following properties :
+        
+            * **iv** : `string` - the iv
+            
+
+        
+
+        * **cipher** : `string` - the cipher
+        
+
+        * **kdf** : `string` - the kdf
+        
+
+        * **kdfparams** : `kdfParams` - the kdfparams
+            The kdfparams object supports the following properties :
+        
+            * **dklen** : `uint64` - the dklen
+            
+
+            * **salt** : `string` - the salt
+            
+
+            * **c** : `uint64` - the c
+            
+
+            * **prf** : `string` - the prf
+            
+
+        
+
+        * **mac** : `string` - the mac
+        
+
+    
+
 
 
 2. **passphrase** : `string` - the password to decrypt it.
@@ -457,13 +536,16 @@ prepares a Transaction by filling the unspecified values and returens the unsign
 
 *Parameters:*
 
-1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -475,10 +557,33 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
     
 
 
@@ -553,7 +658,7 @@ The return value contains the following properties :
 * **s** : `bytes32` - the y-value of the EC-Point
 
 
-* **v** : `byte` - the recovery value (0|1) + 27
+* **v** : `uint32` - the recovery value (0|1) + 27
 
 
 *Example:*
@@ -1002,7 +1107,7 @@ The return value contains the following properties :
 * **bits** : `bytes4` - The bits ( 4 bytes as hex) representing the target
 
 
-* **difficulty** : `uint256` - The difficulty
+* **difficulty** : `double` - The difficulty
 
 
 * **chainwork** : `hex` - Expected number of hashes required to produce the current chain (in hex)
@@ -1011,13 +1116,10 @@ The return value contains the following properties :
 * **nTx** : `int` - The number of transactions in the block.
 
 
-* **tx** : `btctransaction[]` - the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
-The tx object supports the following properties :
+* **tx** : `btcblocktransaction[]` - the array of transactions either as ids (verbose=1) or full transaction (verbose=2)
+    The tx object supports the following properties :
 
     * **txid** : `bytes32` - txid
-    
-
-    * **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
     
 
     * **hex** : `bytes` - The serialized, hex-encoded data for `txid`
@@ -1042,16 +1144,16 @@ The tx object supports the following properties :
     
 
     * **vin** : `object[]` - array of json objects of incoming txs to be used
-The vin object supports the following properties :
+        The vin object supports the following properties :
     
-        * **txid** : `bytes32` - the transaction id
+        * **txid** : `bytes32?` *(optional)* - the transaction id
         
 
-        * **vout** : `uint64` - the index of the transaction out to be used
+        * **vout** : `uint64?` *(optional)* - the index of the transaction out to be used
         
 
-        * **scriptSig** : `object` - the script
-The scriptSig object supports the following properties :
+        * **scriptSig** : `object?` *(optional)* - the script
+            The scriptSig object supports the following properties :
         
             * **asm** : `string` - the asm-codes
             
@@ -1064,13 +1166,16 @@ The scriptSig object supports the following properties :
         * **sequence** : `uint64` - The script sequence number
         
 
-        * **txinwitness** : `string[]` - hex-encoded witness data (if any)
+        * **txinwitness** : `string[]?` *(optional)* - hex-encoded witness data (if any)
+        
+
+        * **coinbase** : `bytes32?` *(optional)* - the coinbase
         
 
     
 
     * **vout** : `object[]` - array of json objects describing the tx outputs
-The vout object supports the following properties :
+        The vout object supports the following properties :
     
         * **value** : `float` - The Value in BTC
         
@@ -1079,7 +1184,7 @@ The vout object supports the following properties :
         
 
         * **scriptPubKey** : `object` - the script pubkey
-The scriptPubKey object supports the following properties :
+            The scriptPubKey object supports the following properties :
         
             * **asm** : `string` - asm
             
@@ -1087,29 +1192,17 @@ The scriptPubKey object supports the following properties :
             * **hex** : `string` - hex representation of the script
             
 
-            * **reqSigs** : `int` - the required signatures
+            * **reqSigs** : `int?` *(optional)* - the required signatures
             
 
             * **type** : `string` - The type, eg 'pubkeyhash'
             
 
-            * **addresses** : `string[]` - Array of address(each representing a bitcoin adress)
+            * **addresses** : `string[]?` *(optional)* - Array of address(each representing a bitcoin adress)
             
 
         
 
-    
-
-    * **blockhash** : `bytes32` - the block hash
-    
-
-    * **confirmations** : `int` - The confirmations
-    
-
-    * **blocktime** : `uint64` - The block time in seconds since epoch (Jan 1 1970 GMT)
-    
-
-    * **time** : `uint64` - Same as "blocktime"
     
 
 
@@ -1118,6 +1211,15 @@ The scriptPubKey object supports the following properties :
 
 
 * **nextblockhash** : `bytes32` - The hash of the next block
+
+
+* **strippedsize** : `int` - The block size excluding witness data
+
+
+* **weight** : `int` - The block weight as defined in BIP 141
+
+
+* **size** : `int` - The block size
 
 
 *Proof:*
@@ -1291,7 +1393,7 @@ Returns data of block header for given block hash. The returned level of details
 1. **hash** : `bytes32` - The block hash
 
 
-2. **verbosity** : `int` - 0 or false for the hex-encoded data, 1 or true for a json object
+2. **verbosity** : `bool` - 0 or false for the hex-encoded data, 1 or true for a json object
 
 
 The following in3-configuration will have an impact on the result:
@@ -1472,10 +1574,7 @@ This proof section contains the following properties:
 
 Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
 
-*Parameters:*
-
-1. **blocknumber** : `uint64` - Can be the number of a certain block to get its difficulty. To get the difficulty of the latest block use `latest`, `earliest`, `pending` or leave `params` empty (Hint: Latest block always means `actual latest block` minus `in3.finality`)
-
+*Parameters:* - 
 
 The following in3-configuration will have an impact on the result:
 
@@ -1489,7 +1588,7 @@ The following in3-configuration will have an impact on the result:
 * **preBIP34** : `bool` - defines if the client wants to verify blocks before BIP34 (height < 227836)
 
 
-*Returns:* `uint256`
+*Returns:* `double`
 
 - `blocknumber` is a certain number: the difficulty of this block
 - `blocknumber` is `latest`, `earliest`, `pending` or empty: the difficulty of the latest block (`actual latest block` minus `in3.finality`)
@@ -1542,7 +1641,7 @@ This proof section contains the following properties:
 *Example:*
 
 ```sh
-> in3 -x -c btc -f 8 getdifficulty 631910
+> in3 -x -c btc -f 8 getdifficulty 
 15138043247082.88
 ```
 
@@ -1551,9 +1650,7 @@ This proof section contains the following properties:
 
 {
   "method": "getdifficulty",
-  "params": [
-    631910
-  ],
+  "params": [],
   "in3": {
     "verification": "proof",
     "finality": 8
@@ -1615,7 +1712,7 @@ The return value contains the following properties :
 * **txid** : `bytes32` - txid
 
 
-* **in_active_chain** : `bool` - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+* **in_active_chain** : `bool?` *(optional)* - Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
 
 
 * **hex** : `bytes` - The serialized, hex-encoded data for `txid`
@@ -1640,16 +1737,16 @@ The return value contains the following properties :
 
 
 * **vin** : `object[]` - array of json objects of incoming txs to be used
-The vin object supports the following properties :
+    The vin object supports the following properties :
 
-    * **txid** : `bytes32` - the transaction id
+    * **txid** : `bytes32?` *(optional)* - the transaction id
     
 
-    * **vout** : `uint64` - the index of the transaction out to be used
+    * **vout** : `uint64?` *(optional)* - the index of the transaction out to be used
     
 
-    * **scriptSig** : `object` - the script
-The scriptSig object supports the following properties :
+    * **scriptSig** : `object?` *(optional)* - the script
+        The scriptSig object supports the following properties :
     
         * **asm** : `string` - the asm-codes
         
@@ -1662,13 +1759,16 @@ The scriptSig object supports the following properties :
     * **sequence** : `uint64` - The script sequence number
     
 
-    * **txinwitness** : `string[]` - hex-encoded witness data (if any)
+    * **txinwitness** : `string[]?` *(optional)* - hex-encoded witness data (if any)
+    
+
+    * **coinbase** : `bytes32?` *(optional)* - the coinbase
     
 
 
 
 * **vout** : `object[]` - array of json objects describing the tx outputs
-The vout object supports the following properties :
+    The vout object supports the following properties :
 
     * **value** : `float` - The Value in BTC
     
@@ -1677,7 +1777,7 @@ The vout object supports the following properties :
     
 
     * **scriptPubKey** : `object` - the script pubkey
-The scriptPubKey object supports the following properties :
+        The scriptPubKey object supports the following properties :
     
         * **asm** : `string` - asm
         
@@ -1743,7 +1843,7 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
 *Example:*
 
 ```sh
-> in3 -x -c btc -f 8 getrawtransaction f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf true 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220 | jq
+> in3 -x -c btc -f 8 getrawtransaction f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf | jq
 {
   "in_active_chain": true,
   "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
@@ -1824,9 +1924,7 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
 {
   "method": "getrawtransaction",
   "params": [
-    "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
-    true,
-    "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220"
+    "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf"
   ],
   "in3": {
     "verification": "proof",
@@ -1922,6 +2020,68 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
 }
 ```
 
+### sendrawtransaction
+
+
+sends a transaction to a btc node
+
+*Parameters:*
+
+1. **transaction** : `string` - the signed raw transaction
+
+
+*Returns:* `bytes32`
+
+the transactionhash
+
+### sendtransaction
+
+
+sends a transaction to a btc node
+
+*Parameters:*
+
+1. **from** : `address` - the public key derived from the private key used to sign
+
+
+2. **outputs** : `output[]` - the desired outputs of the transaction
+    The outputs object supports the following properties :
+
+    * **tx_index** : `uint` - the block hash (same as provided)
+    
+
+    * **value** : `uint64` - the block hash (same as provided)
+    
+
+    * **tx_hash** : `string` - the block hash (same as provided)
+    
+
+    * **script** : `string` - the block hash (same as provided)
+    
+
+
+
+3. **utxo** : `utxo[]` - the utxo used to proove liquidity for the transaction
+    The utxo object supports the following properties :
+
+    * **tx_index** : `uint` - the transaction index that this utxo refers to
+    
+
+    * **value** : `uint64` - the value
+    
+
+    * **tx_hash** : `string` - the transaction hash (same as provided)
+    
+
+    * **script** : `string` - the script
+    
+
+
+
+*Returns:* `bytes32`
+
+the transactionhash
+
 ## config
 
 
@@ -1939,7 +2099,7 @@ changes the configuration of a client. The configuration is passed as the first 
 *Parameters:*
 
 1. **config** : `object` - a Object with config-params.
-The config object supports the following properties :
+    The config object supports the following properties :
 
     * **chainId** : `string | uint?` *(optional)* - the chainId or the name of a known chain. It defines the nodelist to connect to. (default: `"mainnet"`)
     Possible Values are:
@@ -1951,11 +2111,13 @@ The config object supports the following properties :
         - `ipfs` : ipfs
         - `local` : local-chain
 
+    This option can also be used in its short-form in the comandline client `-c` .
 
         *Example* : chainId: "goerli"
     
 
     * **finality** : `int?` *(optional)* - the number in percent needed in order reach finality (% of signature of the validators).
+    This option can also be used in its short-form in the comandline client `-f` .
 
         *Example* : finality: 50
     
@@ -1971,11 +2133,13 @@ The config object supports the following properties :
     
 
     * **maxAttempts** : `int?` *(optional)* - max number of attempts in case a response is rejected. (default: `7`)
+    This option can also be used in its short-form in the comandline client `-a` .
 
         *Example* : maxAttempts: 1
     
 
     * **keepIn3** : `bool?` *(optional)* - if true, requests sent to the input sream of the comandline util will be send theor responses in the same form as the server did.
+    This option can also be used in its short-form in the comandline client `-kin3` .
 
         *Example* : keepIn3: true
     
@@ -1989,6 +2153,7 @@ The config object supports the following properties :
     
 
     * **experimental** : `bool?` *(optional)* - if true the client allows to use use experimental features, otherwise a exception is thrown if those would be used.
+    This option can also be used in its short-form in the comandline client `-x` .
 
         *Example* : experimental: true
     
@@ -2005,11 +2170,13 @@ The config object supports the following properties :
         - `standard` : Stanbdard Proof means all important properties are verfiied
         - `full` : In addition to standard, also some rarly needed properties are verfied, like uncles. But this causes a bigger payload.
 
+    This option can also be used in its short-form in the comandline client `-p` .
 
         *Example* : proof: "none"
     
 
     * **replaceLatestBlock** : `int?` *(optional)* - if specified, the blocknumber *latest* will be replaced by blockNumber- specified value.
+    This option can also be used in its short-form in the comandline client `-l` .
 
         *Example* : replaceLatestBlock: 6
     
@@ -2018,11 +2185,13 @@ The config object supports the following properties :
     
 
     * **signatureCount** : `int?` *(optional)* - number of signatures requested in order to verify the blockhash. (default: `1`)
+    This option can also be used in its short-form in the comandline client `-s` .
 
         *Example* : signatureCount: 2
     
 
     * **bootWeights** : `bool?` *(optional)* - if true, the first request (updating the nodelist) will also fetch the current health status and use it for blacklisting unhealthy nodes. This is used only if no nodelist is availabkle from cache. (default: `true`)
+    This option can also be used in its short-form in the comandline client `-bw` .
 
         *Example* : bootWeights: true
     
@@ -2043,6 +2212,7 @@ The config object supports the following properties :
     
 
     * **requestCount** : `int?` *(optional)* - the number of request send in parallel when getting an answer. More request will make it more expensive, but increase the chances to get a faster answer, since the client will continue once the first verifiable response was received. (default: `2`)
+    This option can also be used in its short-form in the comandline client `-rc` .
 
         *Example* : requestCount: 3
     
@@ -2053,7 +2223,7 @@ The config object supports the following properties :
     
 
     * **nodes** : `object?` *(optional)* - defining the nodelist. collection of JSON objects with chain Id (hex string) as key.
-The nodes object supports the following properties :
+        The nodes object supports the following properties :
     
         * **contract** : `address?` *(optional)* - address of the registry contract. (This is the data-contract!)
         
@@ -2074,7 +2244,7 @@ The nodes object supports the following properties :
         
 
         * **verifiedHashes** : `object[]?` *(optional)* - if the client sends an array of blockhashes the server will not deliver any signatures or blockheaders for these blocks, but only return a string with a number. This is automaticly updated by the cache, but can be overriden per request.
-The verifiedHashes object supports the following properties :
+            The verifiedHashes object supports the following properties :
         
             * **block** : `uint64` - block number
             
@@ -2085,7 +2255,7 @@ The verifiedHashes object supports the following properties :
         
 
         * **nodeList** : `object[]?` *(optional)* - manual nodeList. As Value a array of Node-Definitions is expected.
-The nodeList object supports the following properties :
+            The nodeList object supports the following properties :
         
             * **url** : `string` - URL of the node.
             
@@ -2103,15 +2273,24 @@ The nodeList object supports the following properties :
     
 
     * **zksync** : `object` - configuration for zksync-api  ( only available if build with `-DZKSYNC=true`, which is on per default).
-The zksync object supports the following properties :
+        The zksync object supports the following properties :
     
         * **provider_url** : `string?` *(optional)* - url of the zksync-server (if not defined it will be choosen depending on the chain) (default: `"https://api.zksync.io/jsrpc"`)
+        This option can also be used in its short-form in the comandline client `-zks` .
+        
+
+        * **rest_api** : `string?` *(optional)* - url of the zksync rest api (if not defined it will be choosen depending on the chain)
+        This option can also be used in its short-form in the comandline client `-zkr` .
+
+            *Example* : rest_api: "https://rinkeby-api.zksync.io/api/v0.1/"
         
 
         * **account** : `address?` *(optional)* - the account to be used. if not specified, the first signer will be used.
+        This option can also be used in its short-form in the comandline client `-zka` .
         
 
         * **sync_key** : `bytes32?` *(optional)* - the seed used to generate the sync_key. This way you can explicitly set the pk instead of derriving it from a signer.
+        This option can also be used in its short-form in the comandline client `-zsk` .
         
 
         * **main_contract** : `address?` *(optional)* - address of the main contract- If not specified it will be taken from the server.
@@ -2124,16 +2303,20 @@ The zksync object supports the following properties :
             - `contract` : Contract Signature  based EIP 1271
             - `create2` : create2 optionas are used
 
+        This option can also be used in its short-form in the comandline client `-zkat` .
         
 
         * **musig_pub_keys** : `bytes?` *(optional)* - concatenated packed public keys (32byte) of the musig signers. if set the pubkey and pubkeyhash will based on the aggregated pubkey. Also the signing will use multiple keys.
+        This option can also be used in its short-form in the comandline client `-zms` .
         
 
         * **musig_urls** : `string[]?` *(optional)* - a array of strings with urls based on the `musig_pub_keys`. It is used so generate the combined signature by exchaing signature data (commitment and signatureshares) if the local client does not hold this key.
+        This option can also be used in its short-form in the comandline client `-zmu` .
         
 
         * **create2** : `object?` *(optional)* - create2-arguments for sign_type `create2`. This will allow to sign for contracts which are not deployed yet.
-The create2 object supports the following properties :
+        This option can also be used in its short-form in the comandline client `-zc2` .
+            The create2 object supports the following properties :
         
             * **creator** : `address` - The address of contract or EOA deploying the contract ( for example the GnosisSafeFactory )
             
@@ -2146,10 +2329,12 @@ The create2 object supports the following properties :
 
         
 
-        * **verify_proof_method** : `string` - rpc-method, which will be used to verify the incomming proof before cosigning.
+        * **verify_proof_method** : `string?` *(optional)* - rpc-method, which will be used to verify the incomming proof before cosigning.
+        This option can also be used in its short-form in the comandline client `-zvpm` .
         
 
-        * **create_proof_method** : `string` - rpc-method, which will be used to create the proof needed for cosigning.
+        * **create_proof_method** : `string?` *(optional)* - rpc-method, which will be used to create the proof needed for cosigning.
+        This option can also be used in its short-form in the comandline client `-zcpm` .
         
 
 
@@ -2157,17 +2342,19 @@ The create2 object supports the following properties :
     
 
     * **key** : `bytes32?` *(optional)* - the client key to sign requests. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    This option can also be used in its short-form in the comandline client `-k` .
 
         *Example* : key: "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
     
 
-    * **pk** : `bytes32|bytes32[]?` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    * **pk** : `bytes32[]?` *(optional)* - registers raw private keys as signers for transactions. (only availble if build with `-DPK_SIGNER=true` , which is on per default)
+    This option can also be used in its short-form in the comandline client `-pk` .
 
         *Example* : pk: ["0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"]
     
 
     * **btc** : `object` - configure the Bitcoin verification
-The btc object supports the following properties :
+        The btc object supports the following properties :
     
         * **maxDAP** : `int?` *(optional)* - max number of DAPs (Difficulty Adjustment Periods) allowed when accepting new targets. (default: `20`)
 
@@ -2307,13 +2494,16 @@ calls a function of a contract (or simply executes the evm opcodes) and returns 
 
 *Parameters:*
 
-1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -2325,10 +2515,33 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
     
 
 
@@ -2416,7 +2629,7 @@ This proof section contains the following properties:
 
 
 * **accounts** : `object` - Object with the addresses of all accounts required to run the call as keys. This includes also all storage values (SLOAD) including proof used. The DataStructure of the Proof for each account is exactly the same as the result of - [`eth_getProof`](https://eth.wiki/json-rpc/API#eth_getproof).
-The accounts object supports the following properties :
+    The accounts object supports the following properties :
 
     * **address** : `address` - address of the account
     
@@ -2437,7 +2650,7 @@ The accounts object supports the following properties :
     
 
     * **storageProof** : `object[]` - Array of Proofs for all required storage values
-The storageProof object supports the following properties :
+        The storageProof object supports the following properties :
     
         * **key** : `bytes32` - the storage key (or hash)
         
@@ -2555,13 +2768,16 @@ calculates the gas needed to execute a transaction. for spec see [eth_estimateGa
 
 *Parameters:*
 
-1. **tx** : `transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - the tx-object, which is the same as specified in [eth_sendTransaction](https://eth.wiki/json-rpc/API#eth_sendTransaction).
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -2573,10 +2789,33 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
     
 
 
@@ -2594,6 +2833,77 @@ the amount of gass needed.
 
 The proof will be calculated as described in [eth_call](#eth-call). See Details there.
 
+
+### eth_feeHistory
+
+
+base fee per gas and transaction effective priority fee per gas history for the requested block range if available. 
+The range between headBlock-4 and headBlock is guaranteed to be available while retrieving data from the pending block and older history are optional to support. 
+For pre-EIP-1559 blocks the gas prices are returned as rewards and zeroes are returned for the base fee per gas
+
+
+*Parameters:*
+
+1. **blockCount** : `uint64` - Number of blocks in the requested range. Between 1 and 1024 blocks can be requested in a single query. Less than requested may be returned if not all blocks are available.
+
+
+2. **newestBlock** : `uint64?` *(optional)* - the Highest blockNumber or one of `latest`, `earliest`or `pending`
+
+
+3. **rewardPercentiles** : `double[]?` *(optional)* - A monotonically increasing list of percentile values to sample from each block's effective priority fees per gas in ascending order, weighted by gas used.
+
+
+*Returns:* `object`
+
+Fee history for the returned block range. This can be a subsection of the requested range if not all blocks are available.
+
+
+The return value contains the following properties :
+
+* **oldestBlock** : `uint64` - Lowest number block of the returned range.
+
+
+* **baseFeePerGas** : `uint64[]` - An array of block base fees per gas. This includes the next block after the newest of the returned range, because this value can be derived from the newest block. Zeroes are returned for pre-EIP-1559 blocks.
+
+
+* **gasUsedRatio** : `double[]` - An array of block gas used ratios. These are calculated as the ratio of gasUsed and gasLimit.
+
+
+* **reward** : `uint64[]` - An array of rewards
+
+
+### eth_gasPrice
+
+
+returns the current gasPrice in wei per gas
+
+*Parameters:*
+
+*Returns:* `uint64`
+
+the current gasPrice in wei per gas
+
+*Example:*
+
+```sh
+> in3 eth_gasPrice 
+0x0625900800
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "eth_gasPrice",
+  "params": []
+}
+
+//---- Response -----
+
+{
+  "result": "0x0625900800"
+}
+```
 
 ### eth_getBalance
 
@@ -2690,15 +3000,15 @@ See [eth_getBlockByHash](https://eth.wiki/json-rpc/API#eth_getBlockByHash) for s
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
 
 
-*Returns:* `blockdata?`
+*Returns:* `eth_blockdata?`
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
 
 The return value contains the following properties :
 
-* **transactions** : `transactiondata[]` - Array of transaction objects
-The transactions object supports the following properties :
+* **transactions** : `eth_transactiondata[]` - Array of transaction objects
+    The transactions object supports the following properties :
 
     * **to** : `address` - receipient of the transaction.
     
@@ -2742,6 +3052,29 @@ The transactions object supports the following properties :
     * **s** : `bytes32` - y-value of the EC-Point of the signature
     
 
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the list of storage keys accesses as defined in EIP-2930 transactions of type 0x1 or 0x2. Will only be included if the type>0
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
+    * **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+    
+
+    * **chainId** : `uint64?` *(optional)* - the chainId the transaction is to operate on.
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max Fee gas as defined in EIP-1559
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max priority Fee gas as defined in EIP-1559
+    
+
 
 
 * **number** : `uint64` - the block number. `null` when its pending block.
@@ -2753,7 +3086,7 @@ The transactions object supports the following properties :
 * **parentHash** : `bytes32` - hash of the parent block.
 
 
-* **nonce** : `uint256` - hash of the generated proof-of-work. `null` when its pending block.
+* **nonce** : `uint256?` *(optional)* - hash of the generated proof-of-work. `null` when its pending block.
 
 
 * **sha3Uncles** : `bytes32` - SHA3 of the uncles Merkle root in the block.
@@ -2796,6 +3129,9 @@ The transactions object supports the following properties :
 
 
 * **uncles** : `bytes32[]` - Array of uncle hashes.
+
+
+* **baseFeePerGas** : `uint64?` *(optional)* - block fees based on EIP 1559 starting with the London hard fork
 
 
 *Proof:*
@@ -2925,15 +3261,15 @@ See [eth_getBlockByNumber](https://eth.wiki/json-rpc/API#eth_getBlockByNumber) f
 2. **fullTx** : `bool` - if true the full transactions are contained in the result.
 
 
-*Returns:* `blockdata?`
+*Returns:* `eth_blockdata?`
 
 the blockdata, or in case the block with that number does not exist, `null` will be returned.
 
 
 The return value contains the following properties :
 
-* **transactions** : `transactiondata[]` - Array of transaction objects
-The transactions object supports the following properties :
+* **transactions** : `eth_transactiondata[]` - Array of transaction objects
+    The transactions object supports the following properties :
 
     * **to** : `address` - receipient of the transaction.
     
@@ -2977,6 +3313,29 @@ The transactions object supports the following properties :
     * **s** : `bytes32` - y-value of the EC-Point of the signature
     
 
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the list of storage keys accesses as defined in EIP-2930 transactions of type 0x1 or 0x2. Will only be included if the type>0
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
+    * **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+    
+
+    * **chainId** : `uint64?` *(optional)* - the chainId the transaction is to operate on.
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max Fee gas as defined in EIP-1559
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max priority Fee gas as defined in EIP-1559
+    
+
 
 
 * **number** : `uint64` - the block number. `null` when its pending block.
@@ -2988,7 +3347,7 @@ The transactions object supports the following properties :
 * **parentHash** : `bytes32` - hash of the parent block.
 
 
-* **nonce** : `uint256` - hash of the generated proof-of-work. `null` when its pending block.
+* **nonce** : `uint256?` *(optional)* - hash of the generated proof-of-work. `null` when its pending block.
 
 
 * **sha3Uncles** : `bytes32` - SHA3 of the uncles Merkle root in the block.
@@ -3031,6 +3390,9 @@ The transactions object supports the following properties :
 
 
 * **uncles** : `bytes32[]` - Array of uncle hashes.
+
+
+* **baseFeePerGas** : `uint64?` *(optional)* - block fees based on EIP 1559 starting with the London hard fork
 
 
 *Proof:*
@@ -3202,7 +3564,7 @@ returns the number of transactions. For Spec, see [eth_getBlockTransactionCountB
 1. **blockHash** : `bytes32` - the blockHash of the block
 
 
-*Returns:* `int`
+*Returns:* `int?`
 
 the number of transactions in the block
 
@@ -3223,7 +3585,7 @@ returns the number of transactions. For Spec, see [eth_getBlockTransactionCountB
 1. **blockNumber** : `uint64` - the blockNumber of the block
 
 
-*Returns:* `int`
+*Returns:* `int?`
 
 the number of transactions in the block
 
@@ -3321,7 +3683,7 @@ searches for events matching the given criteria. See [eth_getLogs](https://eth.w
 *Parameters:*
 
 1. **filter** : `object` - The filter criteria for the events.
-The filter object supports the following properties :
+    The filter object supports the following properties :
 
     * **fromBlock** : `uint64?` *(optional)* - Integer block number, or "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. (default: `"latest"`)
     
@@ -3424,13 +3786,13 @@ This proof section contains the following properties:
 
 
 * **logProof** : `object` - The proof for all the receipts. This structure contains an object with the blockNumbers as keys. Each block contains the blockheader and the receipt proofs.
-The logProof object supports the following properties :
+    The logProof object supports the following properties :
 
     * **block** : `bytes` - serialized blockheader
     
 
     * **receipts** : `object` - array of proofs for the transayctionreceipts within the block
-The receipts object supports the following properties :
+        The receipts object supports the following properties :
     
         * **txIndex** : `int` - transactionIndex within the block
         
@@ -3586,7 +3948,7 @@ This proof section contains the following properties:
 
 
 * **accounts** : `object` - object with all required accounts (using the address as keys)
-The accounts object supports the following properties :
+    The accounts object supports the following properties :
 
     * **address** : `address` - address of the account
     
@@ -3607,7 +3969,7 @@ The accounts object supports the following properties :
     
 
     * **storageProof** : `object` - Array of Proofs for all required storage values
-The storageProof object supports the following properties :
+        The storageProof object supports the following properties :
     
         * **key** : `bytes32` - the storage key (or hash)
         
@@ -3714,7 +4076,7 @@ See JSON-RPC-Spec for [eth_getTransactionByBlockHashAndIndex](https://eth.wiki/j
 2. **index** : `int` - the transactionIndex
 
 
-*Returns:* `transactiondata`
+*Returns:* `eth_transactiondata?`
 
 the transactiondata or `null` if it does not exist
 
@@ -3761,6 +4123,29 @@ The return value contains the following properties :
 
 
 * **s** : `bytes32` - y-value of the EC-Point of the signature
+
+
+* **accessList** : `eth_accesslist[]?` *(optional)* - the list of storage keys accesses as defined in EIP-2930 transactions of type 0x1 or 0x2. Will only be included if the type>0
+    The accessList object supports the following properties :
+
+    * **address** : `address` - the address of the contract
+    
+
+    * **storageKeys** : `bytes32[]` - list of storageKeys
+    
+
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **chainId** : `uint64?` *(optional)* - the chainId the transaction is to operate on.
+
+
+* **maxFeePerGas** : `uint64?` *(optional)* - the max Fee gas as defined in EIP-1559
+
+
+* **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max priority Fee gas as defined in EIP-1559
 
 
 *Proof:*
@@ -3829,7 +4214,7 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
   },
   "in3": {
     "proof": {
-      "type": "transactionProof",
+      "type": "eth_transactionProof",
       "block": "0xf90212a033a7afd1b9...fa16cf2",
       "merkleProof": [
         "0xf90131a0...91604f2f58080808080808080",
@@ -3861,7 +4246,7 @@ See JSON-RPC-Spec for [eth_getTransactionByBlockNumberAndIndex](https://eth.wiki
 2. **index** : `int` - the transactionIndex
 
 
-*Returns:* `transactiondata`
+*Returns:* `eth_transactiondata?`
 
 the transactiondata or `null` if it does not exist
 
@@ -3908,6 +4293,29 @@ The return value contains the following properties :
 
 
 * **s** : `bytes32` - y-value of the EC-Point of the signature
+
+
+* **accessList** : `eth_accesslist[]?` *(optional)* - the list of storage keys accesses as defined in EIP-2930 transactions of type 0x1 or 0x2. Will only be included if the type>0
+    The accessList object supports the following properties :
+
+    * **address** : `address` - the address of the contract
+    
+
+    * **storageKeys** : `bytes32[]` - list of storageKeys
+    
+
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **chainId** : `uint64?` *(optional)* - the chainId the transaction is to operate on.
+
+
+* **maxFeePerGas** : `uint64?` *(optional)* - the max Fee gas as defined in EIP-1559
+
+
+* **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max priority Fee gas as defined in EIP-1559
 
 
 *Proof:*
@@ -3976,7 +4384,7 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
   },
   "in3": {
     "proof": {
-      "type": "transactionProof",
+      "type": "eth_transactionProof",
       "block": "0xf90212a033a7afd1b9...fa16cf2",
       "merkleProof": [
         "0xf90131a0...91604f2f58080808080808080",
@@ -4005,7 +4413,7 @@ See JSON-RPC-Spec for [eth_getTransactionByHash](https://eth.wiki/json-rpc/API#e
 1. **txHash** : `bytes32` - the transactionHash of the transaction.
 
 
-*Returns:* `transactiondata`
+*Returns:* `eth_transactiondata?`
 
 the transactiondata or `null` if it does not exist
 
@@ -4052,6 +4460,29 @@ The return value contains the following properties :
 
 
 * **s** : `bytes32` - y-value of the EC-Point of the signature
+
+
+* **accessList** : `eth_accesslist[]?` *(optional)* - the list of storage keys accesses as defined in EIP-2930 transactions of type 0x1 or 0x2. Will only be included if the type>0
+    The accessList object supports the following properties :
+
+    * **address** : `address` - the address of the contract
+    
+
+    * **storageKeys** : `bytes32[]` - list of storageKeys
+    
+
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **chainId** : `uint64?` *(optional)* - the chainId the transaction is to operate on.
+
+
+* **maxFeePerGas** : `uint64?` *(optional)* - the max Fee gas as defined in EIP-1559
+
+
+* **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max priority Fee gas as defined in EIP-1559
 
 
 *Proof:*
@@ -4181,7 +4612,7 @@ While there is no proof for a non existing transaction, if the request was a  `e
   },
   "in3": {
     "proof": {
-      "type": "transactionProof",
+      "type": "eth_transactionProof",
       "block": "0xf90212a033a7afd1b9...fa16cf2",
       "merkleProof": [
         "0xf90131a0...91604f2f58080808080808080",
@@ -4286,7 +4717,7 @@ The Receipt of a Transaction. For Details, see [eth_getTransactionReceipt](https
 1. **txHash** : `bytes32` - the transactionHash
 
 
-*Returns:* `transactionReceipt?`
+*Returns:* `eth_transactionReceipt?`
 
 the TransactionReceipt or `null`  if it does not exist.
 
@@ -4308,8 +4739,11 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
+* **effectiveGasPrice** : `uint256?` *(optional)* - the efficte gas price
+
+
 * **logs** : `ethlog[]` - array of events created during execution of the tx
-The logs object supports the following properties :
+    The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
     
@@ -4356,6 +4790,15 @@ The logs object supports the following properties :
 
 
 * **transactionIndex** : `int` - transactionIndex within the containing block.
+
+
+* **from** : `address` - address of the sender.
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **to** : `address?` *(optional)* - address of the receiver. null when its a contract creation transaction.
 
 
 *Proof:*
@@ -4547,7 +4990,7 @@ returns the number of uncles. For Spec, see [eth_getUncleCountByBlockHash](https
 1. **blockHash** : `bytes32` - the blockHash of the block
 
 
-*Returns:* `int`
+*Returns:* `int?`
 
 the number of uncles
 
@@ -4568,7 +5011,7 @@ returns the number of uncles. For Spec, see [eth_getUncleCountByBlockNumber](htt
 1. **blockNumber** : `uint64` - the blockNumber of the block
 
 
-*Returns:* `int`
+*Returns:* `int?`
 
 the number of uncles
 
@@ -4605,13 +5048,16 @@ signs and sends a Transaction
 
 *Parameters:*
 
-1. **tx** : `transaction` - the transactiondata to send
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - the transactiondata to send
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -4623,10 +5069,33 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
+    
+
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
     
 
 
@@ -4646,13 +5115,16 @@ signs and sends a Transaction, but then waits until the transaction receipt can 
 
 *Parameters:*
 
-1. **tx** : `transaction` - the transactiondata to send
-The tx object supports the following properties :
+1. **tx** : `eth_transaction` - the transactiondata to send
+    The tx object supports the following properties :
 
     * **to** : `address?` *(optional)* - receipient of the transaction.
     
 
     * **from** : `address?` *(optional)* - sender of the address (if not sepcified, the first signer will be the sender)
+    
+
+    * **wallet** : `address?` *(optional)* - if specified, the transaction will be send through the specified wallet.
     
 
     * **value** : `uint256?` *(optional)* - value in wei to send
@@ -4664,15 +5136,38 @@ The tx object supports the following properties :
     * **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. If not specified it will be fetched using `eth_gasPrice`
     
 
+    * **type** : `uint32?` *(optional)* - the transaction type ( See EIP- 1559 ) , 0 (default), 1 or 2
+    
+
+    * **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+    
+
+    * **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+    
+
+    * **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+        The accessList object supports the following properties :
+    
+        * **address** : `address` - the address of the contract
+        
+
+        * **storageKeys** : `bytes32[]` - list of storageKeys
+        
+
+    
+
     * **nonce** : `uint64?` *(optional)* - the current nonce of the sender. If not specified it will be fetched using `eth_getTransactionCount`
     
 
     * **data** : `bytes?` *(optional)* - the data-section of the transaction
     
 
+    * **signatures** : `bytes?` *(optional)* - additional signatures which should be used when sending through a multisig
+    
 
 
-*Returns:* `transactionReceipt`
+
+*Returns:* `eth_transactionReceipt`
 
 the transactionReceipt
 
@@ -4694,8 +5189,11 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
+* **effectiveGasPrice** : `uint256?` *(optional)* - the efficte gas price
+
+
 * **logs** : `ethlog[]` - array of events created during execution of the tx
-The logs object supports the following properties :
+    The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
     
@@ -4742,6 +5240,15 @@ The logs object supports the following properties :
 
 
 * **transactionIndex** : `int` - transactionIndex within the containing block.
+
+
+* **from** : `address` - address of the sender.
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **to** : `address?` *(optional)* - address of the receiver. null when its a contract creation transaction.
 
 
 ## ipfs
@@ -4875,7 +5382,7 @@ the current nodelist
 The return value contains the following properties :
 
 * **nodes** : `object[]` - a array of node definitions.
-The nodes object supports the following properties :
+    The nodes object supports the following properties :
 
     * **url** : `string` - the url of the node. Currently only http/https is supported, but in the future this may even support onion-routing or any other protocols.
     
@@ -4972,7 +5479,7 @@ This proof section contains the following properties:
 
 
 * **accounts** : `{key:object}` - a Object with the addresses of the db-contract as key and Proof as value. The Data Structure of the Proof is exactly the same as the result of - [`eth_getProof`](https://eth.wiki/json-rpc/API#eth_getproof), but it must contain the above described keys. with accountAdr as keys in the object
-The accounts object supports the following properties :
+    The accounts object supports the following properties :
 
     * **address** : `address` - the address of the account
     
@@ -4993,7 +5500,7 @@ The accounts object supports the following properties :
     
 
     * **storageProof** : `object` - Array of Proofs for all required storage values
-The storageProof object supports the following properties :
+        The storageProof object supports the following properties :
     
         * **key** : `bytes32` - the storage key (or hash)
         
@@ -5157,7 +5664,7 @@ per default nodes will and should not sign blockHash of the last `minBlockHeight
 *Parameters:*
 
 1. **blocks** : `object` - array of requested blocks.
-The blocks object supports the following properties :
+    The blocks object supports the following properties :
 
     * **blockNumber** : `uint64` - the blockNumber to sign
     
@@ -5288,7 +5795,7 @@ This proof section contains the following properties:
 
 
 * **accounts** : `{key:object}` - a Object with the addresses of the db-contract as key and Proof as value. The Data Structure of the Proof is exactly the same as the result of - [`eth_getProof`](https://eth.wiki/json-rpc/API#eth_getproof), but it must contain the above described keys. with the account Adress as keys in the object
-The accounts object supports the following properties :
+    The accounts object supports the following properties :
 
     * **address** : `address` - the address of the account
     
@@ -5309,7 +5816,7 @@ The accounts object supports the following properties :
     
 
     * **storageProof** : `object` - Array of Proofs for all required storage values
-The storageProof object supports the following properties :
+        The storageProof object supports the following properties :
     
         * **key** : `bytes32` - the storage key (or hash)
         
@@ -5633,6 +6140,150 @@ the address-string using the upper/lowercase hex characters.
 }
 ```
 
+### in3_decodeTx
+
+
+decodes a raw transaction and returns the values. The transaction may be a signed or unsigned tx. In case of a signed transaction, the from-address will be calculated along with many other helpful values.
+
+*Parameters:*
+
+1. **data** : `bytes` - input data
+
+
+*Returns:* `eth_tx_decoded`
+
+the decoded transaction.
+
+
+The return value contains the following properties :
+
+* **hash** : `bytes32` - the hash of the raw transaction. In case of a signed tx, this is the the tx-hash
+
+
+* **type** : `uint32` - the eth-transaction-type (0=legacy, 1 or 2 EIP1559)
+
+
+* **to** : `address` - receipient of the transaction or a 0x for a deployment tx.
+
+
+* **from** : `address?` *(optional)* - address of the sender (only available if the tx is signed)
+
+
+* **value** : `uint256` - value in wei to send
+
+
+* **gas** : `uint64` - the gas to be send along
+
+
+* **gasPrice** : `uint64?` *(optional)* - the price in wei for one gas-unit. only available for tx type 1 and 2.
+
+
+* **maxFeePerGas** : `uint64?` *(optional)* - the max fees per gas ( See EIP- 1559 )
+
+
+* **maxPriorityFeePerGas** : `uint64?` *(optional)* - the max Prioritiyfees per gas ( See EIP- 1559 )
+
+
+* **accessList** : `eth_accesslist[]?` *(optional)* - the access list of storage values
+    The accessList object supports the following properties :
+
+    * **address** : `address` - the address of the contract
+    
+
+    * **storageKeys** : `bytes32[]` - list of storageKeys
+    
+
+
+
+* **nonce** : `uint64` - the used nonce of the sender.
+
+
+* **data** : `bytes` - the data-section of the transaction
+
+
+* **signature** : `bytes?` *(optional)* - the 65 bytes signature
+
+
+* **chainId** : `uint64?` *(optional)* - the chainId as encoded in the transaction. (only missing in legacy tx if EIP-155 is not used)
+
+
+* **v** : `uint32?` *(optional)* - the recovery-byte. For legacy-tx ( this will be either + 27 or chain_id*2 + 35 - See EIP 155)
+
+
+* **r** : `bytes32?` *(optional)* - r-value of the sifgnature ( the R.y value)
+
+
+* **s** : `bytes32?` *(optional)* - s-value of the sifgnature
+
+
+* **publicKey** : `bytes?` *(optional)* - the public Key of the sender as 64 bytes
+
+
+* **unsigned** : `bytes?` *(optional)* - the raw unsigned transaction to extract the hash for the signature
+
+
+*Example:*
+
+```sh
+> in3 in3_decodeTx 0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce | jq
+{
+  "type": 2,
+  "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
+  "chainId": "0x1",
+  "nonce": "0x3f",
+  "maxPriorityFeePerGas": "0x59682f00",
+  "maxFeePerGas": "0x18c2cdf189",
+  "gas": "0xbcbb",
+  "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+  "value": "0x0",
+  "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+  "accessList": [],
+  "v": "0x",
+  "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
+  "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
+  "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
+  "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
+  "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
+  "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_decodeTx",
+  "params": [
+    "0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "type": 2,
+    "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
+    "chainId": "0x1",
+    "nonce": "0x3f",
+    "maxPriorityFeePerGas": "0x59682f00",
+    "maxFeePerGas": "0x18c2cdf189",
+    "gas": "0xbcbb",
+    "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+    "value": "0x0",
+    "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+    "accessList": [],
+    "v": "0x",
+    "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
+    "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
+    "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
+    "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
+    "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
+    "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
+  }
+}
+```
+
 ### in3_fromWei
 
 
@@ -5651,7 +6302,7 @@ converts a given uint (also as hex) with a wei-value into a specified unit.
 3. **digits** : `int?` *(optional)* - fix number of digits after the comma. If left out, only as many as needed will be included.
 
 
-*Returns:*
+*Returns:* `float`
 
 the value as string.
 
@@ -5677,7 +6328,117 @@ the value as string.
 //---- Response -----
 
 {
-  "result": "0.158"
+  "result": 0.158
+}
+```
+
+### in3_parse_tx_url
+
+
+parse a ethereum-url based on EIP 681 (https://eips.ethereum.org/EIPS/eip-681)
+
+*Parameters:*
+
+1. **url** : `string` - the url with the tx-params
+
+
+*Returns:* `tx_input`
+
+undefined
+
+*Example:*
+
+```sh
+> in3 in3_parse_tx_url ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1 | jq
+{
+  "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
+  "fn_sig": "transfer(address,uint256)",
+  "fn_args": [
+    "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
+    1
+  ]
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_parse_tx_url",
+  "params": [
+    "ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
+    "fn_sig": "transfer(address,uint256)",
+    "fn_args": [
+      "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
+      1
+    ]
+  }
+}
+```
+
+### in3_rlpDecode
+
+
+rlp decode the data
+
+*Parameters:*
+
+1. **data** : `bytes` - input data
+
+
+*Returns:* `any[]`
+
+a array with the values after decodeing. The result is either a hex-string or an array.
+
+*Example:*
+
+```sh
+> in3 in3_rlpDecode 0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080 | jq
+[
+  "0x",
+  "0x08e1409836",
+  "0x9c40",
+  "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
+  "0xff",
+  "0xbbbb",
+  "0x01",
+  "0x",
+  "0x"
+]
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "in3_rlpDecode",
+  "params": [
+    "0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": [
+    "0x",
+    "0x08e1409836",
+    "0x9c40",
+    "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
+    "0xff",
+    "0xbbbb",
+    "0x01",
+    "0x",
+    "0x"
+  ]
 }
 ```
 
@@ -5696,7 +6457,7 @@ converts the given value into wei.
 2. **unit** : `string?` *(optional)* - the unit of the value, which must be one of `wei`, `kwei`,  `Kwei`,  `babbage`,  `femtoether`,  `mwei`,  `Mwei`,  `lovelace`,  `picoether`,  `gwei`,  `Gwei`,  `shannon`,  `nanoether`,  `nano`,  `szabo`,  `microether`,  `micro`,  `finney`,  `milliether`,  `milli`,  `ether`,  `eth`,  `kether`,  `grand`,  `mether`,  `gether` or  `tether` (default: `"eth"`)
 
 
-*Returns:*
+*Returns:* `uint256`
 
 the value in wei as hex.
 
@@ -5734,13 +6495,13 @@ keccak is just an alias for [web3_sha3](#web3-sha3).See Details there.
 ### net_version
 
 
-the Network Version (currently 1)
+Returns the current network id.
 
 *Parameters:* - 
 
-*Returns:*
+*Returns:* `uint64`
 
-the Version number
+the network id
 
 ### sha256
 
@@ -5882,6 +6643,387 @@ the account used.
 }
 ```
 
+### zksync_account_history
+
+
+returns the history of transaction for a given account.
+
+*Parameters:*
+
+1. **account** : `address` - the address of the account
+
+
+2. **ref** : `string?` *(optional)* - the reference or start. this could be a tx_id prefixed with `<` or `>`for newer or older than the specified  tx or `pending` returning all pending tx.
+
+
+3. **limit** : `int?` *(optional)* - the max number of entries to return
+
+
+*Returns:* `zk_history[]`
+
+the data and state of the requested tx.
+
+
+The return value contains the following properties :
+
+* **tx_id** : `string` - the transaction id based on the block-number and the index
+
+
+* **hash** : `string` - the transaction hash
+
+
+* **eth_block** : `uint64?` *(optional)* - the blockNumber of a priority-operation like `Deposit` otherwise this is null
+
+
+* **pq_id** : `uint64?` *(optional)* - the priority-operation id (for tx like `Deposit`) otherwise this is null
+
+
+* **success** : `bool?` *(optional)* - the result of the operation
+
+
+* **fail_reason** : `string?` *(optional)* - the error message if failed, otherwise null
+
+
+* **commited** : `bool` - true if the tx was received and verified by the zksync-server
+
+
+* **verified** : `bool` - true if the tx was received and verified by the zksync-server
+
+
+* **created_at** : `string` - UTC-Time when the transaction was created
+
+
+* **tx** : `object` - the transaction data
+    The tx object supports the following properties :
+
+    * **type** : `string` - Type of the transaction. `Transfer`, `ChangePubKey` or `Withdraw`
+    
+
+    * **from** : `address?` *(optional)* - The sender of the address
+    
+
+    * **to** : `address?` *(optional)* - The recipient of the address
+    
+
+    * **token** : `string?` *(optional)* - The token id
+    
+
+    * **amount** : `uint256?` *(optional)* - the amount sent
+    
+
+    * **account** : `address?` *(optional)* - the account sent from
+    
+
+    * **accountId** : `uint64?` *(optional)* - the account id used
+    
+
+    * **newPkHash** : `string?` *(optional)* - the new public Key Hash (only used if the type is CHangePubKey)
+    
+
+    * **validFrom** : `uint64?` *(optional)* - timestamp set by the sender when the valid range starts
+    
+
+    * **validUntil** : `uint64?` *(optional)* - timestamp set by the sender when the valid range ends
+    
+
+    * **signature** : `object?` *(optional)* - the sync signature
+        The signature object supports the following properties :
+    
+        * **pubKey** : `bytes32` - the public key of the signer
+        
+
+        * **signature** : `bytes` - the signature
+        
+
+    
+
+    * **fee** : `uint256?` *(optional)* - the fee payed
+    
+
+    * **feeToken** : `uint64?` *(optional)* - the token the fee was payed
+    
+
+    * **nonce** : `uint64?` *(optional)* - the nonce of the account
+    
+
+    * **priority_op** : `object?` *(optional)* - the description of a priority operation like `Deposit`
+        The priority_op object supports the following properties :
+    
+        * **from** : `address` - The sender of the address
+        
+
+        * **to** : `address` - The recipient of the address
+        
+
+        * **token** : `string` - The token id
+        
+
+        * **amount** : `uint256` - the amount sent
+        
+
+    
+
+    * **ethAuthData** : `object?` *(optional)* - the 2fa euth authorition
+        The ethAuthData object supports the following properties :
+    
+        * **type** : `string` - the type which should be CREATE2, ECDSA
+        
+
+        * **saltArg** : `bytes32?` *(optional)* - the hash component (only if type=CREATE2)
+        
+
+        * **codeHash** : `bytes32?` *(optional)* - the hash of the deployment-data (only if type=CREATE2)
+        
+
+        * **creatorAddress** : `address?` *(optional)* - the address of the the deploying contract (only if type=CREATE2)
+        
+
+    
+
+
+
+*Example:*
+
+```sh
+> in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_account_history 0x9df215737e137acddd0ad99e32f9a6b980ea526d | jq
+[
+  {
+    "tx_id": "29411,1",
+    "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
+    "eth_block": null,
+    "pq_id": null,
+    "tx": {
+      "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+      "fee": "11060000000000",
+      "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
+      "type": "Transfer",
+      "nonce": 1,
+      "token": "ETH",
+      "amount": "1000000000000000",
+      "accountId": 161418,
+      "signature": {
+        "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
+        "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
+      },
+      "validFrom": 0,
+      "validUntil": 4294967295
+    },
+    "success": true,
+    "fail_reason": null,
+    "commited": true,
+    "verified": true,
+    "created_at": "2021-05-31T11:54:56.248569Z"
+  },
+  {
+    "tx_id": "29376,10",
+    "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
+    "eth_block": null,
+    "pq_id": null,
+    "tx": {
+      "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
+      "fee": "10450000000000",
+      "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+      "type": "Transfer",
+      "nonce": 1,
+      "token": "ETH",
+      "amount": "10000000000000000",
+      "accountId": 161391,
+      "signature": {
+        "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+        "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
+      },
+      "validFrom": 0,
+      "validUntil": 4294967295
+    },
+    "success": true,
+    "fail_reason": null,
+    "commited": true,
+    "verified": true,
+    "created_at": "2021-05-31T08:11:17.250144Z"
+  },
+  {
+    "tx_id": "29376,5",
+    "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
+    "eth_block": null,
+    "pq_id": null,
+    "tx": {
+      "fee": "37500000000000",
+      "type": "ChangePubKey",
+      "nonce": 0,
+      "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+      "feeToken": 0,
+      "accountId": 161391,
+      "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
+      "signature": {
+        "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+        "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
+      },
+      "validFrom": 0,
+      "validUntil": 4294967295,
+      "ethAuthData": {
+        "type": "CREATE2",
+        "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
+        "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
+        "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
+      },
+      "ethSignature": null
+    },
+    "success": true,
+    "fail_reason": null,
+    "commited": true,
+    "verified": true,
+    "created_at": "2021-05-31T08:09:11.249472Z"
+  },
+  {
+    "tx_id": "29376,0",
+    "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
+    "eth_block": 8680840,
+    "pq_id": 57181,
+    "tx": {
+      "type": "Deposit",
+      "account_id": 161391,
+      "priority_op": {
+        "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+        "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
+        "token": "ETH",
+        "amount": "500000000000000000"
+      }
+    },
+    "success": true,
+    "fail_reason": null,
+    "commited": true,
+    "verified": true,
+    "created_at": "2021-05-31T08:07:31.237817Z"
+  }
+]
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "zksync_account_history",
+  "params": [
+    "0x9df215737e137acddd0ad99e32f9a6b980ea526d"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": [
+    {
+      "tx_id": "29411,1",
+      "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
+      "eth_block": null,
+      "pq_id": null,
+      "tx": {
+        "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+        "fee": "11060000000000",
+        "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
+        "type": "Transfer",
+        "nonce": 1,
+        "token": "ETH",
+        "amount": "1000000000000000",
+        "accountId": 161418,
+        "signature": {
+          "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
+          "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
+        },
+        "validFrom": 0,
+        "validUntil": 4294967295
+      },
+      "success": true,
+      "fail_reason": null,
+      "commited": true,
+      "verified": true,
+      "created_at": "2021-05-31T11:54:56.248569Z"
+    },
+    {
+      "tx_id": "29376,10",
+      "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
+      "eth_block": null,
+      "pq_id": null,
+      "tx": {
+        "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
+        "fee": "10450000000000",
+        "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+        "type": "Transfer",
+        "nonce": 1,
+        "token": "ETH",
+        "amount": "10000000000000000",
+        "accountId": 161391,
+        "signature": {
+          "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+          "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
+        },
+        "validFrom": 0,
+        "validUntil": 4294967295
+      },
+      "success": true,
+      "fail_reason": null,
+      "commited": true,
+      "verified": true,
+      "created_at": "2021-05-31T08:11:17.250144Z"
+    },
+    {
+      "tx_id": "29376,5",
+      "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
+      "eth_block": null,
+      "pq_id": null,
+      "tx": {
+        "fee": "37500000000000",
+        "type": "ChangePubKey",
+        "nonce": 0,
+        "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+        "feeToken": 0,
+        "accountId": 161391,
+        "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
+        "signature": {
+          "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+          "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
+        },
+        "validFrom": 0,
+        "validUntil": 4294967295,
+        "ethAuthData": {
+          "type": "CREATE2",
+          "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
+          "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
+          "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
+        },
+        "ethSignature": null
+      },
+      "success": true,
+      "fail_reason": null,
+      "commited": true,
+      "verified": true,
+      "created_at": "2021-05-31T08:09:11.249472Z"
+    },
+    {
+      "tx_id": "29376,0",
+      "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
+      "eth_block": 8680840,
+      "pq_id": 57181,
+      "tx": {
+        "type": "Deposit",
+        "account_id": 161391,
+        "priority_op": {
+          "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+          "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
+          "token": "ETH",
+          "amount": "500000000000000000"
+        }
+      },
+      "success": true,
+      "fail_reason": null,
+      "commited": true,
+      "verified": true,
+      "created_at": "2021-05-31T08:07:31.237817Z"
+    }
+  ]
+}
+```
+
 ### zksync_account_info
 
 
@@ -5902,8 +7044,8 @@ The return value contains the following properties :
 * **address** : `address` - the address of the account
 
 
-* **commited** : `object` - the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
-The commited object supports the following properties :
+* **committed** : `object` - the state of the zksync operator after executing transactions successfully, but not not verified on L1 yet.
+    The committed object supports the following properties :
 
     * **balances** : `{key:uint256}` - the token-balance with the token as keys in the object
     
@@ -5914,21 +7056,27 @@ The commited object supports the following properties :
     * **pubKeyHash** : `address` - the pubKeyHash set for the requested account or `0x0000...` if not set yet.
     
 
+    * **mintedNfts** : `{key:uint256}` - the minted NFTs with the token as keys in the object
+    
+
+    * **nfts** : `{key:uint256}` - the minted NFTs with the token as keys in the object
+    
+
 
 
 * **depositing** : `object` - the state of all depositing-tx.
-The depositing object supports the following properties :
+    The depositing object supports the following properties :
 
     * **balances** : `{key:uint256}` - the token-values. with the token as keys in the object
     
 
 
 
-* **id** : `uint64` - the assigned id of the account, which will be used when encoding it into the rollup.
+* **id** : `uint64?` *(optional)* - the assigned id of the account, which will be used when encoding it into the rollup.
 
 
 * **verified** : `object` - the state after the rollup was verified in L1.
-The verified object supports the following properties :
+    The verified object supports the following properties :
 
     * **balances** : `{key:uint256}` - the token-balances. with the token as keys in the object
     
@@ -5937,6 +7085,12 @@ The verified object supports the following properties :
     
 
     * **pubKeyHash** : `address` - the pubKeyHash set for the requested account or `0x0000...` if not set yet.
+    
+
+    * **mintedNfts** : `{key:uint256}` - the minted NFTs with the token as keys in the object
+    
+
+    * **nfts** : `{key:uint256}` - the minted NFTs with the token as keys in the object
     
 
 
@@ -6100,15 +7254,136 @@ sends a deposit-transaction and returns the opId, which can be used to tradck pr
 4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-*Returns:* `uint64`
+*Returns:* `object`
 
-the opId. You can use `zksync_ethop_info` to follow the state-changes.
+the receipt and the receipopId. You can use `zksync_ethop_info` to follow the state-changes.
+
+
+The return value contains the following properties :
+
+* **receipt** : `eth_transactionReceipt` - the transactionreceipt
+    The receipt object supports the following properties :
+
+    * **blockNumber** : `uint64` - the blockNumber
+    
+
+    * **blockHash** : `bytes32` - blockhash if ther containing block
+    
+
+    * **contractAddress** : `address?` *(optional)* - the deployed contract in case the tx did deploy a new contract
+    
+
+    * **cumulativeGasUsed** : `uint64` - gas used for all transaction up to this one in the block
+    
+
+    * **gasUsed** : `uint64` - gas used by this transaction.
+    
+
+    * **effectiveGasPrice** : `uint256?` *(optional)* - the efficte gas price
+    
+
+    * **logs** : `ethlog[]` - array of events created during execution of the tx
+        The logs object supports the following properties :
+    
+        * **address** : `address` - the address triggering the event.
+        
+
+        * **blockNumber** : `uint64` - the blockNumber
+        
+
+        * **blockHash** : `bytes32` - blockhash if ther containing block
+        
+
+        * **data** : `bytes` - abi-encoded data of the event (all non indexed fields)
+        
+
+        * **logIndex** : `int` - the index of the even within the block.
+        
+
+        * **removed** : `bool` - the reorg-status of the event.
+        
+
+        * **topics** : `bytes32[]` - array of 32byte-topics of the indexed fields.
+        
+
+        * **transactionHash** : `bytes32` - requested transactionHash
+        
+
+        * **transactionIndex** : `int` - transactionIndex within the containing block.
+        
+
+        * **transactionLogIndex** : `int?` *(optional)* - index of the event within the transaction.
+        
+
+        * **type** : `string?` *(optional)* - mining-status
+        
+
+    
+
+    * **logsBloom** : `bytes128` - bloomfilter used to detect events for `eth_getLogs`
+    
+
+    * **status** : `int` - error-status of the tx.  0x1 = success 0x0 = failure
+    
+
+    * **transactionHash** : `bytes32` - requested transactionHash
+    
+
+    * **transactionIndex** : `int` - transactionIndex within the containing block.
+    
+
+    * **from** : `address` - address of the sender.
+    
+
+    * **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+    
+
+    * **to** : `address?` *(optional)* - address of the receiver. null when its a contract creation transaction.
+    
+
+
+
+* **priorityOpId** : `uint64` - the operationId to rack to progress
+
 
 *Example:*
 
 ```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_deposit 1000 WBTC
-74
+> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_deposit 1000 WBTC | jq
+{
+  "receipt": {
+    "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+    "blockNumber": "0x8c1e39",
+    "contractAddress": null,
+    "cumulativeGasUsed": "0x2466d",
+    "gasUsed": "0x2466d",
+    "logs": [
+      {
+        "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+        "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+        "blockNumber": "0x8c1e39",
+        "data": "0x00000000000...",
+        "logIndex": "0x0",
+        "removed": false,
+        "topics": [
+          "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+          "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+          "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+        ],
+        "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+        "transactionIndex": "0x0",
+        "transactionLogIndex": "0x0",
+        "type": "mined"
+      }
+    ],
+    "logsBloom": "0x00000000000000000000200000...",
+    "root": null,
+    "status": "0x1",
+    "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+    "transactionIndex": "0x0"
+  },
+  "priorityOpId": 74
+}
 ```
 
 ```js
@@ -6125,7 +7400,40 @@ the opId. You can use `zksync_ethop_info` to follow the state-changes.
 //---- Response -----
 
 {
-  "result": 74
+  "result": {
+    "receipt": {
+      "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+      "blockNumber": "0x8c1e39",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0x2466d",
+      "gasUsed": "0x2466d",
+      "logs": [
+        {
+          "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+          "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+          "blockNumber": "0x8c1e39",
+          "data": "0x00000000000...",
+          "logIndex": "0x0",
+          "removed": false,
+          "topics": [
+            "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+            "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+            "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+          ],
+          "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+          "transactionIndex": "0x0",
+          "transactionLogIndex": "0x0",
+          "type": "mined"
+        }
+      ],
+      "logsBloom": "0x00000000000000000000200000...",
+      "root": null,
+      "status": "0x1",
+      "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+      "transactionIndex": "0x0"
+    },
+    "priorityOpId": 74
+  }
 }
 ```
 
@@ -6139,7 +7447,7 @@ withdraws all tokens for the specified token as a onchain-transaction. This is u
 1. **token** : `string` - the token as symbol or address
 
 
-*Returns:* `transactionReceipt`
+*Returns:* `eth_transactionReceipt`
 
 the transactionReceipt
 
@@ -6161,8 +7469,11 @@ The return value contains the following properties :
 * **gasUsed** : `uint64` - gas used by this transaction.
 
 
+* **effectiveGasPrice** : `uint256?` *(optional)* - the efficte gas price
+
+
 * **logs** : `ethlog[]` - array of events created during execution of the tx
-The logs object supports the following properties :
+    The logs object supports the following properties :
 
     * **address** : `address` - the address triggering the event.
     
@@ -6209,6 +7520,15 @@ The logs object supports the following properties :
 
 
 * **transactionIndex** : `int` - transactionIndex within the containing block.
+
+
+* **from** : `address` - address of the sender.
+
+
+* **type** : `int?` *(optional)* - the transaction type (0 = legacy tx, 1 = EIP-2930, 2= EIP-1559)
+
+
+* **to** : `address?` *(optional)* - address of the receiver. null when its a contract creation transaction.
 
 
 *Example:*
@@ -6304,6 +7624,68 @@ returns the state or receipt of the the PriorityOperation
 
 1. **opId** : `uint64` - the opId of a layer-operstion (like depositing)
 
+
+*Returns:* `object`
+
+state of the PriorityOperation
+
+
+The return value contains the following properties :
+
+* **block** : `object?` *(optional)* - the block
+    The block object supports the following properties :
+
+    * **committed** : `bool` - state of the operation
+    
+
+    * **verified** : `bool` - if the opteration id has been included in the rollup block
+    
+
+    * **blockNumber** : `uint64?` *(optional)* - the blocknumber of the block that included the operation
+    
+
+
+
+* **executed** : `bool` - if the operation was executed
+
+
+*Example:*
+
+```sh
+> in3 -x zksync_ethop_info 1 | jq
+{
+  "block": {
+    "committed": true,
+    "blockNumber": 4,
+    "verified": true
+  },
+  "executed": true
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "zksync_ethop_info",
+  "params": [
+    1
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "block": {
+      "committed": true,
+      "blockNumber": 4,
+      "verified": true
+    },
+    "executed": true
+  }
+}
+```
 
 ### zksync_get_token_price
 
@@ -6745,15 +8127,64 @@ sends a zksync-transaction and returns data including the transactionHash.
 4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-*Returns:* `bytes32`
+*Returns:* `zk_receipt`
 
-the transactionHash. use `zksync_tx_info` to check the progress.
+the transactionReceipt. use `zksync_tx_info` to check the progress.
+
+
+The return value contains the following properties :
+
+* **type** : `string` - the Transaction-Type (`Withdraw`  or `Transfer`)
+
+
+* **accountId** : `uint64` - the id of the sender account
+
+
+* **from** : `address` - the address of the sender
+
+
+* **to** : `address` - the address of the receipient
+
+
+* **token** : `uint64` - the id of the token used
+
+
+* **amount** : `uint256` - the amount sent
+
+
+* **fee** : `uint256` - the fees paid
+
+
+* **nonce** : `uint64` - the fees paid
+
+
+* **txHash** : `string` - the transactionHash, which can be used to track the tx
+
+
+* **tokenId** : `uint64` - the token id
+
+
+* **validFrom** : `uint64` - valid from
+
+
+* **validUntil** : `uint64` - valid until
+
 
 *Example:*
 
 ```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_transfer 9.814684447173249e+47 100 WBTC
-0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1
+> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_transfer 9.814684447173249e+47 100 WBTC | jq
+{
+  "type": "Transfer",
+  "accountId": 1,
+  "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+  "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+  "token": 0,
+  "amount": 10,
+  "fee": 3780000000000000,
+  "nonce": 4,
+  "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+}
 ```
 
 ```js
@@ -6771,7 +8202,188 @@ the transactionHash. use `zksync_tx_info` to check the progress.
 //---- Response -----
 
 {
-  "result": "0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1"
+  "result": {
+    "type": "Transfer",
+    "accountId": 1,
+    "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+    "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+    "token": 0,
+    "amount": 10,
+    "fee": 3780000000000000,
+    "nonce": 4,
+    "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+  }
+}
+```
+
+### zksync_tx_data
+
+
+returns the full input data of a transaction. In order to use this, the `rest_api` needs to be set in the config.
+
+*Parameters:*
+
+1. **tx** : `bytes32` - the txHash of the send tx
+
+
+*Returns:* `object`
+
+the data and state of the requested tx.
+
+
+The return value contains the following properties :
+
+* **block_number** : `uint64?` *(optional)* - the blockNumber containing the tx or `null` if still pending
+
+
+* **tx_type** : `string` - Type of the transaction. `Transfer`, `ChangePubKey` or `Withdraw`
+
+
+* **from** : `address` - The sender of the address
+
+
+* **to** : `address` - The recipient of the address
+
+
+* **token** : `uint64` - The token id
+
+
+* **amount** : `uint256` - the amount sent
+
+
+* **fee** : `uint256` - the fee payed
+
+
+* **nonce** : `uint64` - the nonce of the account
+
+
+* **created_at** : `string` - the timestamp as UTC
+
+
+* **tx** : `zk_tx` - the tx input data
+    The tx object supports the following properties :
+
+    * **accountId** : `uint64` - the id of the sender account
+    
+
+    * **from** : `address` - the address of the sender
+    
+
+    * **to** : `address` - the address of the receipient
+    
+
+    * **token** : `uint64` - the id of the token used
+    
+
+    * **amount** : `uint256` - the amount sent
+    
+
+    * **fee** : `uint256` - the fees paid
+    
+
+    * **nonce** : `uint64` - the fees paid
+    
+
+    * **validFrom** : `uint64` - timestamp set by the sender when the valid range starts
+    
+
+    * **validUntil** : `uint64` - timestamp set by the sender when the valid range ends
+    
+
+    * **signature** : `object` - the sync signature
+        The signature object supports the following properties :
+    
+        * **pubKey** : `bytes32` - the public key of the signer
+        
+
+        * **signature** : `bytes` - the signature
+        
+
+    
+
+    * **type** : `string?` *(optional)* - the transaction type
+    
+
+
+
+* **fail_reason** : `string?` *(optional)* - the fail reason
+
+
+*Example:*
+
+```sh
+> in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_tx_data 0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec | jq
+{
+  "tx_type": "Transfer",
+  "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+  "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+  "token": 1,
+  "amount": "5000000",
+  "fee": "2190",
+  "block_number": 29588,
+  "nonce": 20,
+  "created_at": "2021-06-01T10:32:16.248564",
+  "fail_reason": null,
+  "tx": {
+    "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+    "fee": "2190",
+    "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+    "type": "Transfer",
+    "nonce": 20,
+    "token": 1,
+    "amount": "5000000",
+    "accountId": 161578,
+    "signature": {
+      "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
+      "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
+    },
+    "validFrom": 0,
+    "validUntil": 4294967295
+  }
+}
+```
+
+```js
+//---- Request -----
+
+{
+  "method": "zksync_tx_data",
+  "params": [
+    "0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec"
+  ]
+}
+
+//---- Response -----
+
+{
+  "result": {
+    "tx_type": "Transfer",
+    "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+    "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+    "token": 1,
+    "amount": "5000000",
+    "fee": "2190",
+    "block_number": 29588,
+    "nonce": 20,
+    "created_at": "2021-06-01T10:32:16.248564",
+    "fail_reason": null,
+    "tx": {
+      "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+      "fee": "2190",
+      "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+      "type": "Transfer",
+      "nonce": 20,
+      "token": 1,
+      "amount": "5000000",
+      "accountId": 161578,
+      "signature": {
+        "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
+        "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
+      },
+      "validFrom": 0,
+      "validUntil": 4294967295
+    }
+  }
 }
 ```
 
@@ -6792,16 +8404,27 @@ the current state of the requested tx.
 
 The return value contains the following properties :
 
-* **block** : `uint64` - the blockNumber containing the tx or `null` if still pending
+* **block** : `object?` *(optional)* - the block
+    The block object supports the following properties :
+
+    * **blockNumber** : `uint64` - the blockNumber containing the tx or `null` if still pending
+    
+
+    * **committed** : `bool` - true, if the block has been commited
+    
+
+    * **verified** : `bool` - true, if the block has been verified
+    
+
 
 
 * **executed** : `bool` - true, if the tx has been executed by the operator. If false it is still in the txpool of the operator.
 
 
-* **success** : `bool` - if executed, this property marks the success of the tx.
+* **success** : `bool?` *(optional)* - if executed, this property marks the success of the tx.
 
 
-* **failReason** : `string` - if executed and failed this will include an error message
+* **failReason** : `string?` *(optional)* - if executed and failed this will include an error message
 
 
 *Example:*
@@ -6902,15 +8525,64 @@ withdraws the amount to the given `ethAddress` for the given token.
 4. **account** : `address?` *(optional)* - address of the account to send the tx from. if not specified, the first available signer will be used.
 
 
-*Returns:* `bytes32`
+*Returns:* `zk_receipt`
 
-the transactionHash. use `zksync_tx_info` to check the progress.
+the transactionReceipt. use `zksync_tx_info` to check the progress.
+
+
+The return value contains the following properties :
+
+* **type** : `string` - the Transaction-Type (`Withdraw`  or `Transfer`)
+
+
+* **accountId** : `uint64` - the id of the sender account
+
+
+* **from** : `address` - the address of the sender
+
+
+* **to** : `address` - the address of the receipient
+
+
+* **token** : `uint64` - the id of the token used
+
+
+* **amount** : `uint256` - the amount sent
+
+
+* **fee** : `uint256` - the fees paid
+
+
+* **nonce** : `uint64` - the fees paid
+
+
+* **txHash** : `string` - the transactionHash, which can be used to track the tx
+
+
+* **tokenId** : `uint64` - the token id
+
+
+* **validFrom** : `uint64` - valid from
+
+
+* **validUntil** : `uint64` - valid until
+
 
 *Example:*
 
 ```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_withdraw 9.814684447173249e+47 100 WBTC
-0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1
+> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_withdraw 9.814684447173249e+47 100 WBTC | jq
+{
+  "type": "Transfer",
+  "accountId": 1,
+  "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+  "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+  "token": 0,
+  "amount": 10,
+  "fee": 3780000000000000,
+  "nonce": 4,
+  "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+}
 ```
 
 ```js
@@ -6928,17 +8600,17 @@ the transactionHash. use `zksync_tx_info` to check the progress.
 //---- Response -----
 
 {
-  "result": "0x58ba1537596739d990a33e4fba3a6fb4e0d612c5de30843a2c415dd1e5edcef1"
+  "result": {
+    "type": "Transfer",
+    "accountId": 1,
+    "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+    "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+    "token": 0,
+    "amount": 10,
+    "fee": 3780000000000000,
+    "nonce": 4,
+    "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+  }
 }
 ```
 
-The verifiedHashes object supports the following properties :
-
-The nodeList object supports the following properties :
-
-The create2 object supports the following properties :
-
-
-    *Example* : maxDAP: 10
-
-    *Example* : maxDiff: 5
