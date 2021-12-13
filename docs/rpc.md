@@ -44,7 +44,7 @@ the array of addresses of all registered signers.
            "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -117,7 +117,7 @@ the signature (65 bytes) for the given message.
          > in3 eth_sign 0x9b2055d370f73ec7d8a03e965129118dc8f5bf83 0xdeadbeaf
          0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -228,7 +228,7 @@ the raw signed transaction
          > in3 eth_signTransaction '{"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}'
          0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -301,7 +301,7 @@ the address of given key.
          > in3 in3_addRawKey 0x1234567890123456789012345678901234567890123456789012345678901234
          0x2e988a386a799f506693793c6a5af6b54dfaabfb
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -363,7 +363,7 @@ the 32byte random data
          > in3 in3_createKey 
          0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -475,7 +475,7 @@ a raw private key (32 bytes)
          > in3 in3_decryptKey '{"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}' test
          0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -587,7 +587,7 @@ The return value contains the following properties :
            "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -657,7 +657,7 @@ the address
          > in3 in3_pk2address 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
          0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -716,7 +716,7 @@ the public key as 64 bytes
          > in3 in3_pk2public 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
          0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -825,7 +825,7 @@ the unsigned raw transaction as hex.
          > in3 in3_prepareTx '{"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}'
          0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -925,7 +925,7 @@ The return value contains the following properties :
            "v": 27
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1005,7 +1005,7 @@ the raw transaction with signature.
          > in3 in3_signTx 0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080 0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f
          0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1210,7 +1210,7 @@ The goal is to verify the target of the `target_dap`. We will use the daps of th
            }
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1372,7 +1372,7 @@ The actual latest block is block `#640395` and `in3.finality` is set to `8`. The
          > in3 -x -c btc -f 8 getbestblockhash 
          000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1643,7 +1643,7 @@ The proof will be calculated as described in [getblockheader](#getblockheader). 
            "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1792,7 +1792,7 @@ The actual latest block is block `#640395` and `in3.finality` is set to `8`. The
          > in3 -x -c btc -f 8 getblockcount 
          640387
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -1988,7 +1988,7 @@ This proof section contains the following properties:
            "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -2156,7 +2156,7 @@ This proof section contains the following properties:
          > in3 -x -c btc -f 8 getdifficulty 
          15138043247082.88
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -2458,7 +2458,7 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
            "blocktime": 1586333924
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3007,7 +3007,7 @@ an boolean confirming that the config has changed.
          > in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
          true
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3127,7 +3127,7 @@ the highest known blocknumber
          > in3 eth_blockNumber 
          0xb8a2a5
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3356,7 +3356,7 @@ This proof section contains the following properties:
          > in3 eth_call '{"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"}' latest
          0x0000000000000000000000000...
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3631,7 +3631,7 @@ the current gasPrice in wei per gas
          > in3 eth_gasPrice 
          0x0625900800
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3697,7 +3697,7 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
          > in3 eth_getBalance 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
          0x20599832af6ec00
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -3986,7 +3986,7 @@ The proof will be calculated as described in [eth_getBlockByNumber](#eth-getbloc
            "uncles": []
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -4358,7 +4358,7 @@ Requests requiring proof for blocks will return a proof of type `blockProof`. De
            "uncles": []
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -4560,7 +4560,7 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
          > in3 eth_getCode 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f latest
          0x6080604052348...6c634300050a0040
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -4979,7 +4979,7 @@ This proof section contains the following properties:
          > in3 eth_getStorageAt 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f 0x0 latest
          0x19
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -5212,7 +5212,7 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
            "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -5433,7 +5433,7 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
            "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -5713,7 +5713,7 @@ While there is no proof for a non existing transaction, if the request was a  `e
            "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -5845,7 +5845,7 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
          > in3 eth_getTransactionCount 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
          0x5
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -6143,7 +6143,7 @@ This proof section contains the following properties:
            "transactionIndex": "0x0"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -6580,7 +6580,7 @@ No proof or verification needed on the server side. All the verification are don
          > in3 ipfs_get QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD utf8
          I love Incubed
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -6652,7 +6652,7 @@ the ipfs multi hash
          > in3 ipfs_put '"I love Incubed"' utf8
          QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -6893,7 +6893,7 @@ This proof section contains the following properties:
            ]
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7135,7 +7135,7 @@ The return value contains the following properties :
            }
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7296,7 +7296,7 @@ This proof section contains the following properties:
            ]
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7467,7 +7467,7 @@ a array with the values after decodeing.
            "0x05"
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7537,7 +7537,7 @@ the ABI-encoded data as hex including the 4 byte function-signature. These data 
          > in3 in3_abiEncode getBalance(address) '["0x1234567890123456789012345678901234567890"]'
          0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7597,7 +7597,7 @@ true indicating the success
          > in3 in3_cacheClear 
          true
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7656,7 +7656,7 @@ the address of the deployed contract
          > in3 in3_calcDeployAddress 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c 6054986
          0xba866e7bd2573be3eaf5077b557751bb6d58076e
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7720,7 +7720,7 @@ the address-string using the upper/lowercase hex characters.
          > in3 in3_checksumAddress 0x1fe2e9bf29aa1938859af64c413361227d04059a false
          0x1Fe2E9bf29aa1938859Af64C413361227d04059a
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7868,7 +7868,7 @@ The return value contains the following properties :
            "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -7978,7 +7978,7 @@ the value as string.
          > in3 in3_fromWei 0x234324abadefdef eth 3
          0.158
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8048,7 +8048,7 @@ undefined
            ]
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8129,7 +8129,7 @@ a array with the values after decodeing. The result is either a hex-string or an
            "0x"
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8214,7 +8214,7 @@ the value in wei as hex.
          > in3 in3_toWei 20.0009123 eth
          0x01159183c4793db800
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8295,7 +8295,7 @@ the 32byte hash of the data
          > in3 sha256 0x1234567890
          0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8370,7 +8370,7 @@ the 32byte hash of the data
          > in3 web3_sha3 0x1234567890
          0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8438,7 +8438,7 @@ the account used.
          > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_address 
          0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -8728,7 +8728,7 @@ The return value contains the following properties :
            }
          ]
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9060,7 +9060,7 @@ The return value contains the following properties :
            }
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9144,7 +9144,7 @@ the compact public Key
          > in3 -x zksync_aggregate_pubkey 0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409
          0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9213,7 +9213,7 @@ The return value contains the following properties :
            "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9404,7 +9404,7 @@ The return value contains the following properties :
            "priorityOpId": 74
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9635,7 +9635,7 @@ The return value contains the following properties :
            "transactionIndex": "0x0"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9776,7 +9776,7 @@ The return value contains the following properties :
            "executed": true
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9847,7 +9847,7 @@ the token price
          > in3 -x zksync_get_token_price WBTC
          11320.002167
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -9940,7 +9940,7 @@ The return value contains the following properties :
            "zkpFee": "18378682992117666"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10016,7 +10016,7 @@ the pubKey
          > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkey 
          0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10072,7 +10072,7 @@ the pubKeyHash
          > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkeyhash 
          sync:4dcd9bb4463121470c7232efb9ff23ec21398e58
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10143,7 +10143,7 @@ the pubKeyHash, if it was executed successfully
          > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_set_key eth
          sync:e41d2489571d322189246dafa5ebde1f4699f498
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10210,7 +10210,7 @@ The return value are 96 bytes of signature:
          > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_sign 0xaabbccddeeff
          0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10268,7 +10268,7 @@ the raw private key configured based on the signers seed
          > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_sync_key 
          0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10361,7 +10361,7 @@ The return value contains the following properties :
            }
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10520,7 +10520,7 @@ The return value contains the following properties :
            "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10708,7 +10708,7 @@ The return value contains the following properties :
            }
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10849,7 +10849,7 @@ The return value contains the following properties :
            "success": null
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -10923,7 +10923,7 @@ if the `musig_pubkeys` are set it will also verify against the given public keys
          > in3 -x zksync_verify 0xaabbccddeeff 0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
          1
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
@@ -11044,7 +11044,7 @@ The return value contains the following properties :
            "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
          }
 
-   .. code-tab:: json
+   .. code-tab:: js jsonrpc
 
          //---- Request -----
 
