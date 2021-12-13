@@ -46,7 +46,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
-    'plantweb.directive'
+    'plantweb.directive',
+    'sphinx_tabs.tabs'
     #    'sphinxcontrib.mermaid',
     #    'recommonmark',
     #    'sphinxcontrib.inkscapeconverter'
