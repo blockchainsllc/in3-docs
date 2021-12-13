@@ -30,30 +30,52 @@ the array of addresses of all registered signers.
 
 *Example:*
 
-```sh
-> in3 eth_accounts  | jq
-[
-  "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
-  "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_accounts",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": [
-    "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
-    "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 eth_accounts  | jq
+         [
+           "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
+           "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_accounts",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             "0x2e988a386a799f506693793c6a5af6b54dfaabfb",
+             "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_accounts
+         params: []
+         
+
+         //---- Response -----
+
+         result:
+           - "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+           - "0x93793c6a5af6b54dfaabfb2e988a386a799f5066"
+         
 ```
 
 ### eth_sign
@@ -84,27 +106,50 @@ the signature (65 bytes) for the given message.
 
 *Example:*
 
-```sh
-> in3 eth_sign 0x9b2055d370f73ec7d8a03e965129118dc8f5bf83 0xdeadbeaf
-0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_sign",
-  "params": [
-    "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83",
-    "0xdeadbeaf"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-}
+   .. code-tab:: sh
+
+         > in3 eth_sign 0x9b2055d370f73ec7d8a03e965129118dc8f5bf83 0xdeadbeaf
+         0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_sign",
+           "params": [
+             "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83",
+             "0xdeadbeaf"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_sign
+         params:
+           - "0x9b2055d370f73ec7d8a03e965129118dc8f5bf83"
+           - "0xdeadbeaf"
+         
+
+         //---- Response -----
+
+         result: "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d88\
+           7fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+         
 ```
 
 ### eth_signTransaction
@@ -172,33 +217,61 @@ the raw signed transaction
 
 *Example:*
 
-```sh
-> in3 eth_signTransaction '{"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}'
-0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_signTransaction",
-  "params": [
-    {
-      "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-      "from": "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
-      "gas": "0x76c0",
-      "gasPrice": "0x9184e72a000",
-      "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-      "value": "0x9184e72a"
-    }
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
-}
+   .. code-tab:: sh
+
+         > in3 eth_signTransaction '{"data":"0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675","from":"0xb60e8dd61c5d32be8058bb8eb970870f07233155","gas":"0x76c0","gasPrice":"0x9184e72a000","to":"0xd46e8dd67c5d32be8058bb8eb970870f07244567","value":"0x9184e72a"}'
+         0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_signTransaction",
+           "params": [
+             {
+               "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+               "from": "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+               "gas": "0x76c0",
+               "gasPrice": "0x9184e72a000",
+               "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+               "value": "0x9184e72a"
+             }
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d887fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_signTransaction
+         params:
+           - data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb9708\
+               70f072445675"
+             from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155"
+             gas: "0x76c0"
+             gasPrice: "0x9184e72a000"
+             to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567"
+             value: "0x9184e72a"
+         
+
+         //---- Response -----
+
+         result: "0xa3f20717a250c2b0b729b7e5becbff67fdaef7e0699da4de7ca5895b02a170a12d88\
+           7fd3b17bfdce3481f10bea41f45ba9f709d39ce8325427b57afcfc994cee1b"
+         
 ```
 
 ### in3_addRawKey
@@ -217,26 +290,47 @@ the address of given key.
 
 *Example:*
 
-```sh
-> in3 in3_addRawKey 0x1234567890123456789012345678901234567890123456789012345678901234
-0x2e988a386a799f506693793c6a5af6b54dfaabfb
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_addRawKey",
-  "params": [
-    "0x1234567890123456789012345678901234567890123456789012345678901234"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
-}
+   .. code-tab:: sh
+
+         > in3 in3_addRawKey 0x1234567890123456789012345678901234567890123456789012345678901234
+         0x2e988a386a799f506693793c6a5af6b54dfaabfb
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_addRawKey",
+           "params": [
+             "0x1234567890123456789012345678901234567890123456789012345678901234"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_addRawKey
+         params:
+           - "0x1234567890123456789012345678901234567890123456789012345678901234"
+         
+
+         //---- Response -----
+
+         result: "0x2e988a386a799f506693793c6a5af6b54dfaabfb"
+         
 ```
 
 ### in3_createKey
@@ -258,24 +352,44 @@ the 32byte random data
 
 *Example:*
 
-```sh
-> in3 in3_createKey 
-0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_createKey",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-}
+   .. code-tab:: sh
+
+         > in3 in3_createKey 
+         0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_createKey",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_createKey
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+         
 ```
 
 ### in3_decryptKey
@@ -350,46 +464,82 @@ a raw private key (32 bytes)
 
 *Example:*
 
-```sh
-> in3 in3_decryptKey '{"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}' test
-0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_decryptKey",
-  "params": [
-    {
-      "version": "3,",
-      "id": "f6b5c0b1-ba7a-4b67-9086-a01ea54ec638",
-      "address": "08aa30739030f362a8dd597fd3fcde283e36f4a1",
-      "crypto": {
-        "ciphertext": "d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d",
-        "cipherparams": {
-          "iv": "415440d2b1d6811d5c8a3f4c92c73f49"
-        },
-        "cipher": "aes-128-ctr",
-        "kdf": "pbkdf2",
-        "kdfparams": {
-          "dklen": 32,
-          "salt": "691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d",
-          "c": 16384,
-          "prf": "hmac-sha256"
-        },
-        "mac": "de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"
-      }
-    },
-    "test"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
-}
+   .. code-tab:: sh
+
+         > in3 in3_decryptKey '{"version":"3,","id":"f6b5c0b1-ba7a-4b67-9086-a01ea54ec638","address":"08aa30739030f362a8dd597fd3fcde283e36f4a1","crypto":{"ciphertext":"d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d","cipherparams":{"iv":"415440d2b1d6811d5c8a3f4c92c73f49"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d","c":16384,"prf":"hmac-sha256"},"mac":"de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"}}' test
+         0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_decryptKey",
+           "params": [
+             {
+               "version": "3,",
+               "id": "f6b5c0b1-ba7a-4b67-9086-a01ea54ec638",
+               "address": "08aa30739030f362a8dd597fd3fcde283e36f4a1",
+               "crypto": {
+                 "ciphertext": "d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d",
+                 "cipherparams": {
+                   "iv": "415440d2b1d6811d5c8a3f4c92c73f49"
+                 },
+                 "cipher": "aes-128-ctr",
+                 "kdf": "pbkdf2",
+                 "kdfparams": {
+                   "dklen": 32,
+                   "salt": "691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d",
+                   "c": 16384,
+                   "prf": "hmac-sha256"
+                 },
+                 "mac": "de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610"
+               }
+             },
+             "test"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_decryptKey
+         params:
+           - version: 3,
+             id: f6b5c0b1-ba7a-4b67-9086-a01ea54ec638
+             address: 08aa30739030f362a8dd597fd3fcde283e36f4a1
+             crypto:
+               ciphertext: d5c5aafdee81d25bb5ac4048c8c6954dd50c595ee918f120f5a2066951ef992d
+               cipherparams:
+                 iv: 415440d2b1d6811d5c8a3f4c92c73f49
+               cipher: aes-128-ctr
+               kdf: pbkdf2
+               kdfparams:
+                 dklen: 32
+                 salt: 691e9ad0da2b44404f65e0a60cf6aabe3e92d2c23b7410fd187eeeb2c1de4a0d
+                 c: 16384
+                 prf: hmac-sha256
+               mac: de651c04fc67fd552002b4235fa23ab2178d3a500caa7070b554168e73359610
+           - test
+         
+
+         //---- Response -----
+
+         result: "0x1ff25594a5e12c1e31ebd8112bdf107d217c1393da8dc7fc9d57696263457546"
+         
 ```
 
 ### in3_ecrecover
@@ -423,34 +573,61 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 in3_ecrecover 0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999 0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c hash | jq
-{
-  "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
-  "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_ecrecover",
-  "params": [
-    "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999",
-    "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c",
-    "hash"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
-    "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_ecrecover 0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999 0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c hash | jq
+         {
+           "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
+           "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_ecrecover",
+           "params": [
+             "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999",
+             "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee5564310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c",
+             "hash"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "publicKey": "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb",
+             "address": "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_ecrecover
+         params:
+           - "0x487b2cbb7997e45b4e9771d14c336b47c87dc2424b11590e32b3a8b9ab327999"
+           - "0x0f804ff891e97e8a1c35a2ebafc5e7f129a630a70787fb86ad5aec0758d98c7b454dee55\
+             64310d497ddfe814839c8babd3a727692be40330b5b41e7693a445b71c"
+           - hash
+         
+
+         //---- Response -----
+
+         result:
+           publicKey: "0x94b26bafa6406d7b636fbb4de4edd62a2654eeecda9505e9a478a66c4f42e504c\
+             4481bad171e5ba6f15a5f11c26acfc620f802c6768b603dbcbe5151355bbffb"
+           address: "0xf68a4703314e9a9cf65be688bd6d9b3b34594ab4"
+         
 ```
 
 ### in3_pk2address
@@ -469,26 +646,47 @@ the address
 
 *Example:*
 
-```sh
-> in3 in3_pk2address 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
-0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_pk2address",
-  "params": [
-    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
-}
+   .. code-tab:: sh
+
+         > in3 in3_pk2address 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
+         0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_pk2address",
+           "params": [
+             "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_pk2address
+         params:
+           - "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+         
+
+         //---- Response -----
+
+         result: "0xdc5c4280d8a286f0f9c8f7f55a5a0c67125efcfd"
+         
 ```
 
 ### in3_pk2public
@@ -507,26 +705,48 @@ the public key as 64 bytes
 
 *Example:*
 
-```sh
-> in3 in3_pk2public 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
-0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_pk2public",
-  "params": [
-    "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
-}
+   .. code-tab:: sh
+
+         > in3 in3_pk2public 0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a
+         0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_pk2public",
+           "params": [
+             "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_pk2public
+         params:
+           - "0x0fd65f7da55d811634495754f27ab318a3309e8b4b8a978a50c20a661117435a"
+         
+
+         //---- Response -----
+
+         result: "0x0903329708d9380aca47b02f3955800179e18bffbb29be3a644593c5f87e4c7fa960\
+           983f78186577eccc909cec71cb5763acd92ef4c74e5fa3c43f3a172c6de1"
+         
 ```
 
 ### in3_prepareTx
@@ -594,30 +814,54 @@ the unsigned raw transaction as hex.
 
 *Example:*
 
-```sh
-> in3 in3_prepareTx '{"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}'
-0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_prepareTx",
-  "params": [
-    {
-      "to": "0x63f666a23cbd135a91187499b5cc51d589c302a0",
-      "value": "0x100000000",
-      "from": "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
-    }
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080"
-}
+   .. code-tab:: sh
+
+         > in3 in3_prepareTx '{"to":"0x63f666a23cbd135a91187499b5cc51d589c302a0","value":"0x100000000","from":"0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"}'
+         0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_prepareTx",
+           "params": [
+             {
+               "to": "0x63f666a23cbd135a91187499b5cc51d589c302a0",
+               "value": "0x100000000",
+               "from": "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+             }
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_prepareTx
+         params:
+           - to: "0x63f666a23cbd135a91187499b5cc51d589c302a0"
+             value: "0x100000000"
+             from: "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+         
+
+         //---- Response -----
+
+         result: "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501\
+           0000000080018080"
+         
 ```
 
 ### in3_signData
@@ -663,42 +907,72 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 in3_signData 0x0102030405060708090a0b0c0d0e0f 0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852 raw | jq
-{
-  "message": "0x0102030405060708090a0b0c0d0e0f",
-  "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
-  "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
-  "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
-  "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
-  "v": 27
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_signData",
-  "params": [
-    "0x0102030405060708090a0b0c0d0e0f",
-    "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852",
-    "raw"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "message": "0x0102030405060708090a0b0c0d0e0f",
-    "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
-    "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
-    "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
-    "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
-    "v": 27
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_signData 0x0102030405060708090a0b0c0d0e0f 0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852 raw | jq
+         {
+           "message": "0x0102030405060708090a0b0c0d0e0f",
+           "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
+           "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
+           "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
+           "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
+           "v": 27
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_signData",
+           "params": [
+             "0x0102030405060708090a0b0c0d0e0f",
+             "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852",
+             "raw"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "message": "0x0102030405060708090a0b0c0d0e0f",
+             "messageHash": "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67",
+             "signature": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b",
+             "r": "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579",
+             "s": "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152",
+             "v": 27
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_signData
+         params:
+           - "0x0102030405060708090a0b0c0d0e0f"
+           - "0xa8b8759ec8b59d7c13ef3630e8530f47ddb47eba12f00f9024d3d48247b62852"
+           - raw
+         
+
+         //---- Response -----
+
+         result:
+           message: "0x0102030405060708090a0b0c0d0e0f"
+           messageHash: "0x1d4f6fccf1e27711667605e29b6f15adfda262e5aedfc5db904feea2baa75e67"
+           signature: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e95792\
+             264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e1521b"
+           r: "0xa5dea9537d27e4e20b6dfc89fa4b3bc4babe9a2375d64fb32a2eab04559e9579"
+           s: "0x2264ad1fb83be70c145aec69045da7986b95ee957fb9c5b6d315daa5c0c3e152"
+           v: 27
+         
 ```
 
 ### in3_signTx
@@ -720,27 +994,52 @@ the raw transaction with signature.
 
 *Example:*
 
-```sh
-> in3 in3_signTx 0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080 0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f
-0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_signTx",
-  "params": [
-    "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080",
-    "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
-}
+   .. code-tab:: sh
+
+         > in3 in3_signTx 0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080 0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f
+         0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_signTx",
+           "params": [
+             "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000000080018080",
+             "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a08501000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_signTx
+         params:
+           - "0xe980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085010000\
+             000080018080"
+           - "0xc2b2f4ad0d234b8c135c39eea8409b448e5e496f"
+         
+
+         //---- Response -----
+
+         result: "0xf86980851a13b865b38252089463f666a23cbd135a91187499b5cc51d589c302a085\
+           01000000008026a03c5b094078383f3da3f65773ab1314e89ee76bc41f827f2ef211b2d3449e4\
+           435a077755f8d9b32966e1ad8f6c0e8c9376a4387ed237bdbf2db6e6b94016407e276"
+         
 ```
 
 ## btc
@@ -864,105 +1163,157 @@ The goal is to verify the target of the `target_dap`. We will use the daps of th
 
 *Example:*
 
-```sh
-> in3 -x -c btc -f 8 btc_proofTarget 230 200 5 5 15 | jq
-[
-  {
-    "dap": 205,
-    "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
-    "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
-    "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
-    "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
-  },
-  {
-    "dap": 210,
-    "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
-    "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
-    "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
-    "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
-  },
-  {
-    "dap": 215,
-    "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
-    "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
-    "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
-    "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
-  },
-  {
-    "dap": 220,
-    "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
-    "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
-    "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
-    "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
-  },
-  {
-    "dap": 225,
-    "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
-    "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
-    "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
-    "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
-  }
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "btc_proofTarget",
-  "params": [
-    230,
-    200,
-    5,
-    5,
-    15
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": [
-    {
-      "dap": 205,
-      "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
-      "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
-      "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
-      "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
-    },
-    {
-      "dap": 210,
-      "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
-      "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
-      "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
-      "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
-    },
-    {
-      "dap": 215,
-      "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
-      "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
-      "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
-      "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
-    },
-    {
-      "dap": 220,
-      "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
-      "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
-      "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
-      "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
-    },
-    {
-      "dap": 225,
-      "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
-      "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
-      "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
-      "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
-    }
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 btc_proofTarget 230 200 5 5 15 | jq
+         [
+           {
+             "dap": 205,
+             "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
+             "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
+             "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
+             "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
+           },
+           {
+             "dap": 210,
+             "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
+             "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
+             "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
+             "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
+           },
+           {
+             "dap": 215,
+             "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
+             "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
+             "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
+             "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
+           },
+           {
+             "dap": 220,
+             "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
+             "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
+             "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
+             "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
+           },
+           {
+             "dap": 225,
+             "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
+             "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
+             "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
+             "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
+           }
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "btc_proofTarget",
+           "params": [
+             230,
+             200,
+             5,
+             5,
+             15
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             {
+               "dap": 205,
+               "block": "0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284",
+               "final": "0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b",
+               "cbtx": "0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000",
+               "cbtxMerkleProof": "0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4"
+             },
+             {
+               "dap": 210,
+               "block": "0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce",
+               "final": "0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d",
+               "cbtx": "0x01000000...c075061b4b6e434d696e657242332d50314861...000000",
+               "cbtxMerkleProof": "0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d"
+             },
+             {
+               "dap": 215,
+               "block": "0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64",
+               "final": "0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e",
+               "cbtx": "0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000",
+               "cbtxMerkleProof": "0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61"
+             },
+             {
+               "dap": 220,
+               "block": "0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e",
+               "final": "0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5",
+               "cbtx": "0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000",
+               "cbtxMerkleProof": "0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4"
+             },
+             {
+               "dap": 225,
+               "block": "0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f",
+               "final": "0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240",
+               "cbtx": "0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000",
+               "cbtxMerkleProof": "0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46"
+             }
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: btc_proofTarget
+         params:
+           - 230
+           - 200
+           - 5
+           - 5
+           - 15
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           - dap: 205
+             block: 0x04000000e62ef28cb9793f4f9cd2a67a58c1e7b593129b9b...0ab284
+             final: 0x04000000cc69b68b702321adf4b0c485fdb1f3d6c1ddd140...090a5b
+             cbtx: 0x01000000...1485ce370573be63d7cc1b9efbad3489eb57c8...000000
+             cbtxMerkleProof: 0xc72dffc1cb4cbeab960d0d2bdb80012acf7f9c...affcf4
+           - dap: 210
+             block: 0x0000003021622c26a4e62cafa8e434c7e083f540bccc8392...b374ce
+             final: 0x00000020858f8e5124cd516f4d5e6a078f7083c12c48e8cd...308c3d
+             cbtx: 0x01000000...c075061b4b6e434d696e657242332d50314861...000000
+             cbtxMerkleProof: 0xf2885d0bac15fca7e1644c1162899ecd43d52b...93761d
+           - dap: 215
+             block: 0x000000202509b3b8e4f98290c7c9551d180eb2a463f0b978...f97b64
+             final: 0x0000002014c7c0ed7c33c59259b7b508bebfe3974e1c99a5...eb554e
+             cbtx: 0x01000000...90133cf94b1b1c40fae077a7833c0fe0ccc474...000000
+             cbtxMerkleProof: 0x628c8d961adb157f800be7cfb03ffa1b53d3ad...ca5a61
+           - dap: 220
+             block: 0x00000020ff45c783d09706e359dcc76083e15e51839e4ed5...ddfe0e
+             final: 0x0000002039d2f8a1230dd0bee50034e8c63951ab812c0b89...5670c5
+             cbtx: 0x01000000...b98e79fb3e4b88aefbc8ce59e82e99293e5b08...000000
+             cbtxMerkleProof: 0x16adb7aeec2cf254db0bab0f4a5083fb0e0a3f...63a4f4
+           - dap: 225
+             block: 0x02000020170fad0b6b1ccbdc4401d7b1c8ee868c6977d6ce...1e7f8f
+             final: 0x0400000092945abbd7b9f0d407fcccbf418e4fc20570040c...a9b240
+             cbtx: 0x01000000...cf6e8f930acb8f38b588d76cd8c3da3258d5a7...000000
+             cbtxMerkleProof: 0x25575bcaf3e11970ccf835e88d6f97bedd6b85...bfdf46
+         
 ```
 
 ### getbestblockhash
@@ -1010,36 +1361,65 @@ The client can set `in3.finality` equal to `0` to get the actual latest block ha
 
 The actual latest block is block `#640395` and `in3.finality` is set to `8`. The server is going to calculate `640395` - `8` and returns the hash of block `#640387` to the client. The headers of block `640388`..`640395` will be returned as finality headers.
 
-```sh
-> in3 -x -c btc -f 8 getbestblockhash 
-000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getbestblockhash",
-  "params": [],
-  "in3": {
-    "verification": "proof",
-    "finality": 8
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6",
-  "in3": {
-    "proof": {
-      "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
-      "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
-      "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
-      "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getbestblockhash 
+         000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getbestblockhash",
+           "params": [],
+           "in3": {
+             "verification": "proof",
+             "finality": 8
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6",
+           "in3": {
+             "proof": {
+               "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
+               "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
+               "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
+               "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getbestblockhash
+         params: []
+         in3:
+           verification: proof
+           finality: 8
+         
+
+         //---- Response -----
+
+         result: 000000000000000000039cbb4e842de0de9651852122b117d7ae6d7ac4fc1df6
+         in3:
+           proof:
+             block: 0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18
+             final: 0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c
+             cbtx: 0x02000000000101000000000000000000000000000000000000000...000000
+             cbtxMerkleProof: 0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297
+         
 ```
 
 ### getblock
@@ -1231,81 +1611,131 @@ The proof will be calculated as described in [getblockheader](#getblockheader). 
 
 *Example:*
 
-```sh
-> in3 -x -c btc -f 8 getblock 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220 1 | jq
-{
-  "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-  "confirmations": 8268,
-  "height": 624958,
-  "version": 536928256,
-  "versionHex": 2000,
-  "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
-  "time": 1586333924,
-  "mediantime": 1586332639,
-  "nonce": 1985217615,
-  "bits": "17143b41",
-  "difficulty": 13912524048945.91,
-  "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
-  "tx": [
-    "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
-    "...",
-    "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
-  ],
-  "nTx": 33,
-  "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
-  "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getblock",
-  "params": [
-    "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-    1
-  ],
-  "in3": {
-    "verification": "proof",
-    "finality": 8,
-    "preBIP34": true
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-    "confirmations": 8268,
-    "height": 624958,
-    "version": 536928256,
-    "versionHex": 2000,
-    "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
-    "time": 1586333924,
-    "mediantime": 1586332639,
-    "nonce": 1985217615,
-    "bits": "17143b41",
-    "difficulty": 13912524048945.91,
-    "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
-    "tx": [
-      "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
-      "...",
-      "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
-    ],
-    "nTx": 33,
-    "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
-    "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
-  },
-  "in3": {
-    "proof": {
-      "final": "0x00e0ff2720723034053c305058beb92ed010...276470",
-      "cbtx": "0x0100000000010100000000000000000000000...39da2fc",
-      "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getblock 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220 1 | jq
+         {
+           "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+           "confirmations": 8268,
+           "height": 624958,
+           "version": 536928256,
+           "versionHex": 2000,
+           "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
+           "time": 1586333924,
+           "mediantime": 1586332639,
+           "nonce": 1985217615,
+           "bits": "17143b41",
+           "difficulty": 13912524048945.91,
+           "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
+           "tx": [
+             "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
+             "...",
+             "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
+           ],
+           "nTx": 33,
+           "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
+           "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getblock",
+           "params": [
+             "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+             1
+           ],
+           "in3": {
+             "verification": "proof",
+             "finality": 8,
+             "preBIP34": true
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+             "confirmations": 8268,
+             "height": 624958,
+             "version": 536928256,
+             "versionHex": 2000,
+             "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
+             "time": 1586333924,
+             "mediantime": 1586332639,
+             "nonce": 1985217615,
+             "bits": "17143b41",
+             "difficulty": 13912524048945.91,
+             "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
+             "tx": [
+               "d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290",
+               "...",
+               "6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919"
+             ],
+             "nTx": 33,
+             "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
+             "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
+           },
+           "in3": {
+             "proof": {
+               "final": "0x00e0ff2720723034053c305058beb92ed010...276470",
+               "cbtx": "0x0100000000010100000000000000000000000...39da2fc",
+               "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getblock
+         params:
+           - 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+           - 1
+         in3:
+           verification: proof
+           finality: 8
+           preBIP34: true
+         
+
+         //---- Response -----
+
+         result:
+           hash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+           confirmations: 8268
+           height: 624958
+           version: 536928256
+           versionHex: 2000
+           merkleroot: d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb
+           time: 1586333924
+           mediantime: 1586332639
+           nonce: 1985217615
+           bits: 17143b41
+           difficulty: 13912524048945.91
+           chainwork: 00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494
+           tx:
+             - d79ffc80e07fe9e0083319600c59d47afe69995b1357be6e5dba035675780290
+             - ...
+             - 6456819bfa019ba30788620153ea9a361083cb888b3662e2ff39c0f7adf16919
+           nTx: 33
+           previousblockhash: 00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49
+           nextblockhash: 0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343
+         in3:
+           proof:
+             final: 0x00e0ff2720723034053c305058beb92ed010...276470
+             cbtx: 0x0100000000010100000000000000000000000...39da2fc
+             cbtxMerkleProof: 0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688
+         
 ```
 
 ### getblockcount
@@ -1351,36 +1781,65 @@ The client can set `in3.finality` equal to `0` to get the actual latest block nu
 
 The actual latest block is block `#640395` and `in3.finality` is set to `8`. The server is going to calculate `640395` - `8` and returns `640387` as the latest block number to the client. The headers of block `640388`..`640395` will be returned as finality headers.
 
-```sh
-> in3 -x -c btc -f 8 getblockcount 
-640387
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getblockcount",
-  "params": [],
-  "in3": {
-    "verification": "proof",
-    "finality": 8
-  }
-}
 
-//---- Response -----
 
-{
-  "result": 640387,
-  "in3": {
-    "proof": {
-      "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
-      "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
-      "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
-      "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getblockcount 
+         640387
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getblockcount",
+           "params": [],
+           "in3": {
+             "verification": "proof",
+             "finality": 8
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": 640387,
+           "in3": {
+             "proof": {
+               "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
+               "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
+               "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
+               "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getblockcount
+         params: []
+         in3:
+           verification: proof
+           finality: 8
+         
+
+         //---- Response -----
+
+         result: 640387
+         in3:
+           proof:
+             block: 0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18
+             final: 0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c
+             cbtx: 0x02000000000101000000000000000000000000000000000000000...000000
+             cbtxMerkleProof: 0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297
+         
 ```
 
 ### getblockheader
@@ -1502,71 +1961,117 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 -x -c btc -f 8 getblockheader 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220 true | jq
-{
-  "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-  "confirmations": 8268,
-  "height": 624958,
-  "version": 536928256,
-  "versionHex": 2000,
-  "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
-  "time": 1586333924,
-  "mediantime": 1586332639,
-  "nonce": 1985217615,
-  "bits": "17143b41",
-  "difficulty": 13912524048945.91,
-  "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
-  "nTx": 33,
-  "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
-  "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getblockheader",
-  "params": [
-    "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-    true
-  ],
-  "in3": {
-    "verification": "proof",
-    "finality": 8,
-    "preBIP34": true
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-    "confirmations": 8268,
-    "height": 624958,
-    "version": 536928256,
-    "versionHex": 2000,
-    "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
-    "time": 1586333924,
-    "mediantime": 1586332639,
-    "nonce": 1985217615,
-    "bits": "17143b41",
-    "difficulty": 13912524048945.91,
-    "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
-    "nTx": 33,
-    "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
-    "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
-  },
-  "in3": {
-    "proof": {
-      "final": "0x00e0ff2720723034053c305058beb92ed010...276470",
-      "cbtx": "0x0100000000010100000000000000000000000...39da2fc",
-      "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getblockheader 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220 true | jq
+         {
+           "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+           "confirmations": 8268,
+           "height": 624958,
+           "version": 536928256,
+           "versionHex": 2000,
+           "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
+           "time": 1586333924,
+           "mediantime": 1586332639,
+           "nonce": 1985217615,
+           "bits": "17143b41",
+           "difficulty": 13912524048945.91,
+           "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
+           "nTx": 33,
+           "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
+           "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getblockheader",
+           "params": [
+             "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+             true
+           ],
+           "in3": {
+             "verification": "proof",
+             "finality": 8,
+             "preBIP34": true
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "hash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+             "confirmations": 8268,
+             "height": 624958,
+             "version": 536928256,
+             "versionHex": 2000,
+             "merkleroot": "d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb",
+             "time": 1586333924,
+             "mediantime": 1586332639,
+             "nonce": 1985217615,
+             "bits": "17143b41",
+             "difficulty": 13912524048945.91,
+             "chainwork": "00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494",
+             "nTx": 33,
+             "previousblockhash": "00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49",
+             "nextblockhash": "0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343"
+           },
+           "in3": {
+             "proof": {
+               "final": "0x00e0ff2720723034053c305058beb92ed010...276470",
+               "cbtx": "0x0100000000010100000000000000000000000...39da2fc",
+               "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getblockheader
+         params:
+           - 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+           - true
+         in3:
+           verification: proof
+           finality: 8
+           preBIP34: true
+         
+
+         //---- Response -----
+
+         result:
+           hash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+           confirmations: 8268
+           height: 624958
+           version: 536928256
+           versionHex: 2000
+           merkleroot: d786a334ea8c65f39272d5b9be505ac3170f3904842bd52525538a9377b359cb
+           time: 1586333924
+           mediantime: 1586332639
+           nonce: 1985217615
+           bits: 17143b41
+           difficulty: 13912524048945.91
+           chainwork: 00000000000000000000000000000000000000000e4c88b66c5ee78deff0d494
+           nTx: 33
+           previousblockhash: 00000000000000000013cba040837778744ce66961cfcf2e7c34bb3d194c7f49
+           nextblockhash: 0000000000000000000c799dc0e36302db7fbb471711f140dc308508ef19e343
+         in3:
+           proof:
+             final: 0x00e0ff2720723034053c305058beb92ed010...276470
+             cbtx: 0x0100000000010100000000000000000000000...39da2fc
+             cbtxMerkleProof: 0x6a8077bb4ce76b71d7742ddd368770279a64667b...52e688
+         
 ```
 
 ### getdifficulty
@@ -1640,36 +2145,65 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 -x -c btc -f 8 getdifficulty 
-15138043247082.88
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getdifficulty",
-  "params": [],
-  "in3": {
-    "verification": "proof",
-    "finality": 8
-  }
-}
 
-//---- Response -----
 
-{
-  "result": 15138043247082.88,
-  "in3": {
-    "proof": {
-      "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
-      "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
-      "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
-      "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getdifficulty 
+         15138043247082.88
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getdifficulty",
+           "params": [],
+           "in3": {
+             "verification": "proof",
+             "finality": 8
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": 15138043247082.88,
+           "in3": {
+             "proof": {
+               "block": "0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18",
+               "final": "0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c",
+               "cbtx": "0x02000000000101000000000000000000000000000000000000000...000000",
+               "cbtxMerkleProof": "0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getdifficulty
+         params: []
+         in3:
+           verification: proof
+           finality: 8
+         
+
+         //---- Response -----
+
+         result: 15138043247082.88
+         in3:
+           proof:
+             block: 0x0000e020bd3eecbd741522e1aa78cd7b375744590502939aef9b...9c8b18
+             final: 0x00008020f61dfcc47a6daed717b12221855196dee02d844ebb9c...774f4c
+             cbtx: 0x02000000000101000000000000000000000000000000000000000...000000
+             cbtxMerkleProof: 0xa3d607b274770911e53f06dbdb76440580ff968239...0ba297
+         
 ```
 
 ### getrawtransaction
@@ -1842,182 +2376,266 @@ Transactions of old blocks (height < 227836) with `in3.preBIP34` disabled cannot
 
 *Example:*
 
-```sh
-> in3 -x -c btc -f 8 getrawtransaction f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf | jq
-{
-  "in_active_chain": true,
-  "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
-  "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
-  "version": 1,
-  "size": 518,
-  "vsize": 518,
-  "weight": 2072,
-  "locktime": 0,
-  "vin": [
-    {
-      "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
-      "vout": 0,
-      "scriptSig": {
-        "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874",
-        "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874"
-      },
-      "sequence": 4294967295
-    },
-    {
-      "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
-      "vout": 0,
-      "scriptSig": {
-        "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d",
-        "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d"
-      },
-      "sequence": 4294967295
-    },
-    {
-      "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
-      "vout": 1,
-      "scriptSig": {
-        "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da",
-        "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da"
-      },
-      "sequence": 4294967295
-    }
-  ],
-  "vout": [
-    {
-      "value": 0.00017571,
-      "n": 0,
-      "scriptPubKey": {
-        "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
-        "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
-        "reqSigs": 1,
-        "type": "pubkeyhash",
-        "addresses": [
-          "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
-        ]
-      }
-    },
-    {
-      "value": 0.00915732,
-      "n": 1,
-      "scriptPubKey": {
-        "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
-        "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
-        "reqSigs": 1,
-        "type": "scripthash",
-        "addresses": [
-          "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
-        ]
-      }
-    }
-  ],
-  "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000",
-  "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-  "confirmations": 15307,
-  "time": 1586333924,
-  "blocktime": 1586333924
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "getrawtransaction",
-  "params": [
-    "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf"
-  ],
-  "in3": {
-    "verification": "proof",
-    "finality": 8
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "in_active_chain": true,
-    "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
-    "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
-    "version": 1,
-    "size": 518,
-    "vsize": 518,
-    "weight": 2072,
-    "locktime": 0,
-    "vin": [
-      {
-        "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
-        "vout": 0,
-        "scriptSig": {
-          "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874",
-          "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874"
-        },
-        "sequence": 4294967295
-      },
-      {
-        "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
-        "vout": 0,
-        "scriptSig": {
-          "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d",
-          "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d"
-        },
-        "sequence": 4294967295
-      },
-      {
-        "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
-        "vout": 1,
-        "scriptSig": {
-          "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da",
-          "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da"
-        },
-        "sequence": 4294967295
-      }
-    ],
-    "vout": [
-      {
-        "value": 0.00017571,
-        "n": 0,
-        "scriptPubKey": {
-          "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
-          "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
-          "reqSigs": 1,
-          "type": "pubkeyhash",
-          "addresses": [
-            "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
-          ]
-        }
-      },
-      {
-        "value": 0.00915732,
-        "n": 1,
-        "scriptPubKey": {
-          "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
-          "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
-          "reqSigs": 1,
-          "type": "scripthash",
-          "addresses": [
-            "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
-          ]
-        }
-      }
-    ],
-    "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000",
-    "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
-    "confirmations": 15307,
-    "time": 1586333924,
-    "blocktime": 1586333924
-  },
-  "in3": {
-    "proof": {
-      "block": "0x00e00020497f4c193dbb347c2ecfcf6169e64c747877...045476",
-      "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cd...276470",
-      "txIndex": 7,
-      "merkleProof": "0x348d4bb04943400a80f162c4ef64b746bc4af0...52e688",
-      "cbtx": "0x010000000001010000000000000000000000000000000...9da2fc",
-      "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a...52e688"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -c btc -f 8 getrawtransaction f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf | jq
+         {
+           "in_active_chain": true,
+           "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+           "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+           "version": 1,
+           "size": 518,
+           "vsize": 518,
+           "weight": 2072,
+           "locktime": 0,
+           "vin": [
+             {
+               "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
+               "vout": 0,
+               "scriptSig": {
+                 "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874",
+                 "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874"
+               },
+               "sequence": 4294967295
+             },
+             {
+               "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
+               "vout": 0,
+               "scriptSig": {
+                 "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d",
+                 "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d"
+               },
+               "sequence": 4294967295
+             },
+             {
+               "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
+               "vout": 1,
+               "scriptSig": {
+                 "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da",
+                 "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da"
+               },
+               "sequence": 4294967295
+             }
+           ],
+           "vout": [
+             {
+               "value": 0.00017571,
+               "n": 0,
+               "scriptPubKey": {
+                 "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
+                 "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
+                 "reqSigs": 1,
+                 "type": "pubkeyhash",
+                 "addresses": [
+                   "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
+                 ]
+               }
+             },
+             {
+               "value": 0.00915732,
+               "n": 1,
+               "scriptPubKey": {
+                 "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
+                 "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
+                 "reqSigs": 1,
+                 "type": "scripthash",
+                 "addresses": [
+                   "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
+                 ]
+               }
+             }
+           ],
+           "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000",
+           "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+           "confirmations": 15307,
+           "time": 1586333924,
+           "blocktime": 1586333924
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "getrawtransaction",
+           "params": [
+             "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf"
+           ],
+           "in3": {
+             "verification": "proof",
+             "finality": 8
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "in_active_chain": true,
+             "txid": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+             "hash": "f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf",
+             "version": 1,
+             "size": 518,
+             "vsize": 518,
+             "weight": 2072,
+             "locktime": 0,
+             "vin": [
+               {
+                 "txid": "0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c",
+                 "vout": 0,
+                 "scriptSig": {
+                   "asm": "30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874",
+                   "hex": "4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874"
+                 },
+                 "sequence": 4294967295
+               },
+               {
+                 "txid": "869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044",
+                 "vout": 0,
+                 "scriptSig": {
+                   "asm": "3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d",
+                   "hex": "483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d"
+                 },
+                 "sequence": 4294967295
+               },
+               {
+                 "txid": "8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff",
+                 "vout": 1,
+                 "scriptSig": {
+                   "asm": "304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da",
+                   "hex": "47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da"
+                 },
+                 "sequence": 4294967295
+               }
+             ],
+             "vout": [
+               {
+                 "value": 0.00017571,
+                 "n": 0,
+                 "scriptPubKey": {
+                   "asm": "OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY OP_CHECKSIG",
+                   "hex": "76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac",
+                   "reqSigs": 1,
+                   "type": "pubkeyhash",
+                   "addresses": [
+                     "18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU"
+                   ]
+                 }
+               },
+               {
+                 "value": 0.00915732,
+                 "n": 1,
+                 "scriptPubKey": {
+                   "asm": "OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL",
+                   "hex": "a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87",
+                   "reqSigs": 1,
+                   "type": "scripthash",
+                   "addresses": [
+                     "3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw"
+                   ]
+                 }
+               }
+             ],
+             "hex": "01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000",
+             "blockhash": "000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220",
+             "confirmations": 15307,
+             "time": 1586333924,
+             "blocktime": 1586333924
+           },
+           "in3": {
+             "proof": {
+               "block": "0x00e00020497f4c193dbb347c2ecfcf6169e64c747877...045476",
+               "final": "0x00e0ff2720723034053c305058beb92ed0101b2294cd...276470",
+               "txIndex": 7,
+               "merkleProof": "0x348d4bb04943400a80f162c4ef64b746bc4af0...52e688",
+               "cbtx": "0x010000000001010000000000000000000000000000000...9da2fc",
+               "cbtxMerkleProof": "0x6a8077bb4ce76b71d7742ddd368770279a...52e688"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: getrawtransaction
+         params:
+           - f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf
+         in3:
+           verification: proof
+           finality: 8
+         
+
+         //---- Response -----
+
+         result:
+           in_active_chain: true
+           txid: f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf
+           hash: f3c06e17b04ef748ce6604ad68e5b9f68ca96914b57c2118a1bb9a09a194ddaf
+           version: 1
+           size: 518
+           vsize: 518
+           weight: 2072
+           locktime: 0
+           vin:
+             - txid: 0a74f6e5f99bc69af80da9f0d9878ea6afbfb5fbb2d43f1ff899bcdd641a098c
+               vout: 0
+               scriptSig:
+                 asm: 30440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228cc...254874
+                 hex: 4730440220481f2b3a49b202e26c73ac1b7bce022e4a74aff08473228...254874
+               sequence: 4294967295
+             - txid: 869c5e82d4dfc3139c8a153d2ee126e30a467cf791718e6ea64120e5b19e5044
+               vout: 0
+               scriptSig:
+                 asm: 3045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745e4...f3255d
+                 hex: 483045022100ae5bd019a63aed404b743c9ebcc77fbaa657e481f745...f3255d
+               sequence: 4294967295
+             - txid: 8a03d29a1b8ae408c94a2ae15bef8329bc3d6b04c063d36b2e8c997273fa8eff
+               vout: 1
+               scriptSig:
+                 asm: 304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d1284...0045da
+                 hex: 47304402200bf7c5c7caec478bf6d7e9c5127c71505034302056d12...0045da
+               sequence: 4294967295
+           vout:
+             - value: 0.00017571
+               n: 0
+               scriptPubKey:
+                 asm: OP_DUP OP_HASH160 53196749b85367db9443ef9a5aec25cf0bdceedf OP_EQUALVERIFY
+                   OP_CHECKSIG
+                 hex: 76a91453196749b85367db9443ef9a5aec25cf0bdceedf88ac
+                 reqSigs: 1
+                 type: pubkeyhash
+                 addresses:
+                   - 18aPWzBTq1nzs9o86oC9m3BQbxZWmV82UU
+             - value: 0.00915732
+               n: 1
+               scriptPubKey:
+                 asm: OP_HASH160 8bb2b4b848d0b6336cc64ea57ae989630f447cba OP_EQUAL
+                 hex: a9148bb2b4b848d0b6336cc64ea57ae989630f447cba87
+                 reqSigs: 1
+                 type: scripthash
+                 addresses:
+                   - 3ERfvuzAYPPpACivh1JnwYbBdrAjupTzbw
+           hex: 01000000038c091a64ddbc99f81f3fd4b2fbb5bfafa68e8...000000
+           blockhash: 000000000000000000103b2395f6cd94221b10d02eb9be5850303c0534307220
+           confirmations: 15307
+           time: 1586333924
+           blocktime: 1586333924
+         in3:
+           proof:
+             block: 0x00e00020497f4c193dbb347c2ecfcf6169e64c747877...045476
+             final: 0x00e0ff2720723034053c305058beb92ed0101b2294cd...276470
+             txIndex: 7
+             merkleProof: 0x348d4bb04943400a80f162c4ef64b746bc4af0...52e688
+             cbtx: 0x010000000001010000000000000000000000000000000...9da2fc
+             cbtxMerkleProof: 0x6a8077bb4ce76b71d7742ddd368770279a...52e688
+         
 ```
 
 ### sendrawtransaction
@@ -2378,44 +2996,75 @@ an boolean confirming that the config has changed.
 
 *Example:*
 
-```sh
-> in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
-true
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_config",
-  "params": [
-    {
-      "chainId": "0x5",
-      "maxAttempts": 4,
-      "nodeLimit": 10,
-      "nodes": {
-        "nodeList": [
-          {
-            "address": "0x1234567890123456789012345678901234567890",
-            "url": "https://mybootnode-A.com",
-            "props": "0xFFFF"
-          },
-          {
-            "address": "0x1234567890123456789012345678901234567890",
-            "url": "https://mybootnode-B.com",
-            "props": "0xFFFF"
-          }
-        ]
-      }
-    }
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": true
-}
+   .. code-tab:: sh
+
+         > in3 in3_config '{"chainId":"0x5","maxAttempts":4,"nodeLimit":10,"nodes":{"nodeList":[{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-A.com","props":"0xFFFF"},{"address":"0x1234567890123456789012345678901234567890","url":"https://mybootnode-B.com","props":"0xFFFF"}]}}'
+         true
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_config",
+           "params": [
+             {
+               "chainId": "0x5",
+               "maxAttempts": 4,
+               "nodeLimit": 10,
+               "nodes": {
+                 "nodeList": [
+                   {
+                     "address": "0x1234567890123456789012345678901234567890",
+                     "url": "https://mybootnode-A.com",
+                     "props": "0xFFFF"
+                   },
+                   {
+                     "address": "0x1234567890123456789012345678901234567890",
+                     "url": "https://mybootnode-B.com",
+                     "props": "0xFFFF"
+                   }
+                 ]
+               }
+             }
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": true
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_config
+         params:
+           - chainId: "0x5"
+             maxAttempts: 4
+             nodeLimit: 10
+             nodes:
+               nodeList:
+                 - address: "0x1234567890123456789012345678901234567890"
+                   url: https://mybootnode-A.com
+                   props: "0xFFFF"
+                 - address: "0x1234567890123456789012345678901234567890"
+                   url: https://mybootnode-B.com
+                   props: "0xFFFF"
+         
+
+         //---- Response -----
+
+         result: true
+         
 ```
 
 ## eth
@@ -2467,24 +3116,44 @@ the highest known blocknumber
 
 *Example:*
 
-```sh
-> in3 eth_blockNumber 
-0xb8a2a5
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_blockNumber",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0xb8a2a5"
-}
+   .. code-tab:: sh
+
+         > in3 eth_blockNumber 
+         0xb8a2a5
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_blockNumber",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xb8a2a5"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_blockNumber
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0xb8a2a5"
+         
 ```
 
 ### eth_call
@@ -2676,89 +3345,155 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 eth_call '{"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"}' latest
-0x0000000000000000000000000...
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_call",
-  "params": [
-    {
-      "to": "0x2736D225f85740f42D17987100dc8d58e9e16252",
-      "data": "0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"
-    },
-    "latest"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "0x0000000000000000000000000...",
-  "in3": {
-    "proof": {
-      "type": "callProof",
-      "block": "0xf90215a0c...",
-      "signatures": [
-        "..."
-      ],
-      "accounts": {
-        "0x2736D225f85740f42D17987100dc8d58e9e16252": {
-          "accountProof": [
-            "0xf90211a095...",
-            "0xf90211a010...",
-            "0xf90211a062...",
-            "0xf90211a091...",
-            "0xf90211a03a...",
-            "0xf901f1a0d1...",
-            "0xf8b18080808..."
-          ],
-          "address": "0x2736d225f85740f42d17987100dc8d58e9e16252",
-          "balance": "0x4fffb",
-          "codeHash": "0x2b8bdc59ce78fd8c248da7b5f82709e04f2149c39e899c4cdf4587063da8dc69",
-          "nonce": "0x1",
-          "storageHash": "0xbf904e79d4ebf851b2380d81aab081334d79e231295ae1b87f2dd600558f126e",
-          "storageProof": [
-            {
-              "key": "0x0",
-              "proof": [
-                "0xf901f1a0db74...",
-                "0xf87180808080...",
-                "0xe2a0200decd9....05"
-              ],
-              "value": "0x5"
-            },
-            {
-              "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e569",
-              "proof": [
-                "0xf901f1a0db74...",
-                "0xf891a0795a99...",
-                "0xe2a020ab8540...43"
-              ],
-              "value": "0x43"
-            },
-            {
-              "key": "0xaaab8540682e3a537d17674663ea013e92c83fdd69958f314b4521edb3b76f1a",
-              "proof": [
-                "0xf901f1a0db747...",
-                "0xf891808080808...",
-                "0xf843a0207bd5ee..."
-              ],
-              "value": "0x68747470733a2f2f696e332e736c6f636b2e69742f6d61696e6e65742f6e642d"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_call '{"to":"0x2736D225f85740f42D17987100dc8d58e9e16252","data":"0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"}' latest
+         0x0000000000000000000000000...
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_call",
+           "params": [
+             {
+               "to": "0x2736D225f85740f42D17987100dc8d58e9e16252",
+               "data": "0x5cf0f3570000000000000000000000000000000000000000000000000000000000000001"
+             },
+             "latest"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x0000000000000000000000000...",
+           "in3": {
+             "proof": {
+               "type": "callProof",
+               "block": "0xf90215a0c...",
+               "signatures": [
+                 "..."
+               ],
+               "accounts": {
+                 "0x2736D225f85740f42D17987100dc8d58e9e16252": {
+                   "accountProof": [
+                     "0xf90211a095...",
+                     "0xf90211a010...",
+                     "0xf90211a062...",
+                     "0xf90211a091...",
+                     "0xf90211a03a...",
+                     "0xf901f1a0d1...",
+                     "0xf8b18080808..."
+                   ],
+                   "address": "0x2736d225f85740f42d17987100dc8d58e9e16252",
+                   "balance": "0x4fffb",
+                   "codeHash": "0x2b8bdc59ce78fd8c248da7b5f82709e04f2149c39e899c4cdf4587063da8dc69",
+                   "nonce": "0x1",
+                   "storageHash": "0xbf904e79d4ebf851b2380d81aab081334d79e231295ae1b87f2dd600558f126e",
+                   "storageProof": [
+                     {
+                       "key": "0x0",
+                       "proof": [
+                         "0xf901f1a0db74...",
+                         "0xf87180808080...",
+                         "0xe2a0200decd9....05"
+                       ],
+                       "value": "0x5"
+                     },
+                     {
+                       "key": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e569",
+                       "proof": [
+                         "0xf901f1a0db74...",
+                         "0xf891a0795a99...",
+                         "0xe2a020ab8540...43"
+                       ],
+                       "value": "0x43"
+                     },
+                     {
+                       "key": "0xaaab8540682e3a537d17674663ea013e92c83fdd69958f314b4521edb3b76f1a",
+                       "proof": [
+                         "0xf901f1a0db747...",
+                         "0xf891808080808...",
+                         "0xf843a0207bd5ee..."
+                       ],
+                       "value": "0x68747470733a2f2f696e332e736c6f636b2e69742f6d61696e6e65742f6e642d"
+                     }
+                   ]
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_call
+         params:
+           - to: "0x2736D225f85740f42D17987100dc8d58e9e16252"
+             data: "0x5cf0f35700000000000000000000000000000000000000000000000000000000000000\
+               01"
+           - latest
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: 0x0000000000000000000000000...
+         in3:
+           proof:
+             type: callProof
+             block: 0xf90215a0c...
+             signatures:
+               - ...
+             accounts:
+               "0x2736D225f85740f42D17987100dc8d58e9e16252":
+                 accountProof:
+                   - 0xf90211a095...
+                   - 0xf90211a010...
+                   - 0xf90211a062...
+                   - 0xf90211a091...
+                   - 0xf90211a03a...
+                   - 0xf901f1a0d1...
+                   - 0xf8b18080808...
+                 address: "0x2736d225f85740f42d17987100dc8d58e9e16252"
+                 balance: "0x4fffb"
+                 codeHash: "0x2b8bdc59ce78fd8c248da7b5f82709e04f2149c39e899c4cdf4587063da8dc69"
+                 nonce: "0x1"
+                 storageHash: "0xbf904e79d4ebf851b2380d81aab081334d79e231295ae1b87f2dd600558f126e"
+                 storageProof:
+                   - key: "0x0"
+                     proof:
+                       - 0xf901f1a0db74...
+                       - 0xf87180808080...
+                       - 0xe2a0200decd9....05
+                     value: "0x5"
+                   - key: "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e569"
+                     proof:
+                       - 0xf901f1a0db74...
+                       - 0xf891a0795a99...
+                       - 0xe2a020ab8540...43
+                     value: "0x43"
+                   - key: "0xaaab8540682e3a537d17674663ea013e92c83fdd69958f314b4521edb3b76f1a"
+                     proof:
+                       - 0xf901f1a0db747...
+                       - 0xf891808080808...
+                       - 0xf843a0207bd5ee...
+                     value: "0x68747470733a2f2f696e332e736c6f636b2e69742f6d61696e6e65742f6e642d"
+         
 ```
 
 ### eth_estimateGas
@@ -2885,24 +3620,44 @@ the current gasPrice in wei per gas
 
 *Example:*
 
-```sh
-> in3 eth_gasPrice 
-0x0625900800
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_gasPrice",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0x0625900800"
-}
+   .. code-tab:: sh
+
+         > in3 eth_gasPrice 
+         0x0625900800
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_gasPrice",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x0625900800"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_gasPrice
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0x0625900800"
+         
 ```
 
 ### eth_getBalance
@@ -2931,57 +3686,103 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
 
 *Example:*
 
-```sh
-> in3 eth_getBalance 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
-0x20599832af6ec00
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getBalance",
-  "params": [
-    "0x2e333ec090f1028df0a3c39a918063443be82b2b",
-    "latest"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "0x20599832af6ec00",
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf90212a0af...5643f426d",
-      "signatures": [],
-      "accounts": {
-        "0x2e333EC090f1028df0a3c39a918063443Be82B2b": {
-          "address": "0x2e333ec090f1028df0a3c39a918063443be82b2b",
-          "accountProof": [
-            "0xf90211a099a5e...6d9f924480",
-            "0xf90211a052b61...b19ff23445180",
-            "0xf90211a0cc125...7e7afd9170280",
-            "0xf90211a088c91...555f0b76fc6ec80",
-            "0xf90211a0641a3...477d355d557a180",
-            "0xf90211a0619e5...5977318c9487280",
-            "0xf90111a0e25a1...641683d34adae808080",
-            "0xf86e9d3f681a18...2273b7bfad8045d85a470"
-          ],
-          "balance": "0x20599832af6ec00",
-          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-          "nonce": "0x5",
-          "storageHash": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-          "storageProof": []
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getBalance 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
+         0x20599832af6ec00
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getBalance",
+           "params": [
+             "0x2e333ec090f1028df0a3c39a918063443be82b2b",
+             "latest"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x20599832af6ec00",
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf90212a0af...5643f426d",
+               "signatures": [],
+               "accounts": {
+                 "0x2e333EC090f1028df0a3c39a918063443Be82B2b": {
+                   "address": "0x2e333ec090f1028df0a3c39a918063443be82b2b",
+                   "accountProof": [
+                     "0xf90211a099a5e...6d9f924480",
+                     "0xf90211a052b61...b19ff23445180",
+                     "0xf90211a0cc125...7e7afd9170280",
+                     "0xf90211a088c91...555f0b76fc6ec80",
+                     "0xf90211a0641a3...477d355d557a180",
+                     "0xf90211a0619e5...5977318c9487280",
+                     "0xf90111a0e25a1...641683d34adae808080",
+                     "0xf86e9d3f681a18...2273b7bfad8045d85a470"
+                   ],
+                   "balance": "0x20599832af6ec00",
+                   "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                   "nonce": "0x5",
+                   "storageHash": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+                   "storageProof": []
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getBalance
+         params:
+           - "0x2e333ec090f1028df0a3c39a918063443be82b2b"
+           - latest
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: "0x20599832af6ec00"
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf90212a0af...5643f426d
+             signatures: []
+             accounts:
+               "0x2e333EC090f1028df0a3c39a918063443Be82B2b":
+                 address: "0x2e333ec090f1028df0a3c39a918063443be82b2b"
+                 accountProof:
+                   - 0xf90211a099a5e...6d9f924480
+                   - 0xf90211a052b61...b19ff23445180
+                   - 0xf90211a0cc125...7e7afd9170280
+                   - 0xf90211a088c91...555f0b76fc6ec80
+                   - 0xf90211a0641a3...477d355d557a180
+                   - 0xf90211a0619e5...5977318c9487280
+                   - 0xf90111a0e25a1...641683d34adae808080
+                   - 0xf86e9d3f681a18...2273b7bfad8045d85a470
+                 balance: "0x20599832af6ec00"
+                 codeHash: "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+                 nonce: "0x5"
+                 storageHash: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+                 storageProof: []
+         
 ```
 
 ### eth_getBlockByHash
@@ -3143,106 +3944,169 @@ The proof will be calculated as described in [eth_getBlockByNumber](#eth-getbloc
 
 *Example:*
 
-```sh
-> in3 eth_getBlockByHash 0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585 false | jq
-{
-  "author": "0x0000000000000000000000000000000000000000",
-  "difficulty": "0x2",
-  "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
-  "gasLimit": "0x7a1200",
-  "gasUsed": "0x20e145",
-  "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
-  "logsBloom": "0x000008000000000000...00400100000000080",
-  "miner": "0x0000000000000000000000000000000000000000",
-  "number": "0x449956",
-  "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
-  "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
-  "sealFields": [
-    "0xa00000000000000000000000000000000000000000000000000000000000000000",
-    "0x880000000000000000"
-  ],
-  "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-  "size": "0x74b",
-  "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
-  "timestamp": "0x605aec86",
-  "totalDifficulty": "0x6564de",
-  "transactions": [
-    "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
-    "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
-    "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
-    "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
-    "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
-    "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
-  ],
-  "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
-  "uncles": []
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getBlockByHash",
-  "params": [
-    "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
-    false
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "author": "0x0000000000000000000000000000000000000000",
-    "difficulty": "0x2",
-    "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
-    "gasLimit": "0x7a1200",
-    "gasUsed": "0x20e145",
-    "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
-    "logsBloom": "0x000008000000000000...00400100000000080",
-    "miner": "0x0000000000000000000000000000000000000000",
-    "number": "0x449956",
-    "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
-    "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
-    "sealFields": [
-      "0xa00000000000000000000000000000000000000000000000000000000000000000",
-      "0x880000000000000000"
-    ],
-    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-    "size": "0x74b",
-    "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
-    "timestamp": "0x605aec86",
-    "totalDifficulty": "0x6564de",
-    "transactions": [
-      "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
-      "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
-      "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
-      "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
-      "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
-      "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
-    ],
-    "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
-    "uncles": []
-  },
-  "in3": {
-    "proof": {
-      "type": "blockProof",
-      "signatures": [],
-      "transactions": [
-        "0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc",
-        "0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77",
-        "0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139",
-        "0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a",
-        "0xf8c680843b9aca008305573094309906d7b701...78289116eac194e",
-        "0xf9014b82020a843b9aca0083010f6894786f8d72...b649"
-      ]
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getBlockByHash 0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585 false | jq
+         {
+           "author": "0x0000000000000000000000000000000000000000",
+           "difficulty": "0x2",
+           "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
+           "gasLimit": "0x7a1200",
+           "gasUsed": "0x20e145",
+           "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
+           "logsBloom": "0x000008000000000000...00400100000000080",
+           "miner": "0x0000000000000000000000000000000000000000",
+           "number": "0x449956",
+           "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
+           "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
+           "sealFields": [
+             "0xa00000000000000000000000000000000000000000000000000000000000000000",
+             "0x880000000000000000"
+           ],
+           "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+           "size": "0x74b",
+           "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
+           "timestamp": "0x605aec86",
+           "totalDifficulty": "0x6564de",
+           "transactions": [
+             "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
+             "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
+             "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
+             "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
+             "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
+             "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+           ],
+           "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
+           "uncles": []
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getBlockByHash",
+           "params": [
+             "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
+             false
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "author": "0x0000000000000000000000000000000000000000",
+             "difficulty": "0x2",
+             "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
+             "gasLimit": "0x7a1200",
+             "gasUsed": "0x20e145",
+             "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
+             "logsBloom": "0x000008000000000000...00400100000000080",
+             "miner": "0x0000000000000000000000000000000000000000",
+             "number": "0x449956",
+             "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
+             "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
+             "sealFields": [
+               "0xa00000000000000000000000000000000000000000000000000000000000000000",
+               "0x880000000000000000"
+             ],
+             "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+             "size": "0x74b",
+             "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
+             "timestamp": "0x605aec86",
+             "totalDifficulty": "0x6564de",
+             "transactions": [
+               "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
+               "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
+               "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
+               "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
+               "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
+               "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+             ],
+             "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
+             "uncles": []
+           },
+           "in3": {
+             "proof": {
+               "type": "blockProof",
+               "signatures": [],
+               "transactions": [
+                 "0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc",
+                 "0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77",
+                 "0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139",
+                 "0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a",
+                 "0xf8c680843b9aca008305573094309906d7b701...78289116eac194e",
+                 "0xf9014b82020a843b9aca0083010f6894786f8d72...b649"
+               ]
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getBlockByHash
+         params:
+           - "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+           - false
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           author: "0x0000000000000000000000000000000000000000"
+           difficulty: "0x2"
+           extraData: 0x696e667572612d696f0000000000000...31570f1e500
+           gasLimit: "0x7a1200"
+           gasUsed: "0x20e145"
+           hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+           logsBloom: 0x000008000000000000...00400100000000080
+           miner: "0x0000000000000000000000000000000000000000"
+           number: "0x449956"
+           parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+           receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+           sealFields:
+             - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+             - "0x880000000000000000"
+           sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+           size: "0x74b"
+           stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+           timestamp: "0x605aec86"
+           totalDifficulty: "0x6564de"
+           transactions:
+             - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+             - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+             - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+             - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+             - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+             - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+           transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+           uncles: []
+         in3:
+           proof:
+             type: blockProof
+             signatures: []
+             transactions:
+               - 0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc
+               - 0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77
+               - 0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139
+               - 0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a
+               - 0xf8c680843b9aca008305573094309906d7b701...78289116eac194e
+               - 0xf9014b82020a843b9aca0083010f6894786f8d72...b649
+         
 ```
 
 ### eth_getBlockByNumber
@@ -3452,106 +4316,169 @@ Requests requiring proof for blocks will return a proof of type `blockProof`. De
 
 *Example:*
 
-```sh
-> in3 eth_getBlockByNumber latest false | jq
-{
-  "author": "0x0000000000000000000000000000000000000000",
-  "difficulty": "0x2",
-  "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
-  "gasLimit": "0x7a1200",
-  "gasUsed": "0x20e145",
-  "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
-  "logsBloom": "0x000008000000000000...00400100000000080",
-  "miner": "0x0000000000000000000000000000000000000000",
-  "number": "0x449956",
-  "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
-  "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
-  "sealFields": [
-    "0xa00000000000000000000000000000000000000000000000000000000000000000",
-    "0x880000000000000000"
-  ],
-  "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-  "size": "0x74b",
-  "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
-  "timestamp": "0x605aec86",
-  "totalDifficulty": "0x6564de",
-  "transactions": [
-    "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
-    "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
-    "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
-    "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
-    "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
-    "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
-  ],
-  "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
-  "uncles": []
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getBlockByNumber",
-  "params": [
-    "latest",
-    false
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "author": "0x0000000000000000000000000000000000000000",
-    "difficulty": "0x2",
-    "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
-    "gasLimit": "0x7a1200",
-    "gasUsed": "0x20e145",
-    "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
-    "logsBloom": "0x000008000000000000...00400100000000080",
-    "miner": "0x0000000000000000000000000000000000000000",
-    "number": "0x449956",
-    "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
-    "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
-    "sealFields": [
-      "0xa00000000000000000000000000000000000000000000000000000000000000000",
-      "0x880000000000000000"
-    ],
-    "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-    "size": "0x74b",
-    "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
-    "timestamp": "0x605aec86",
-    "totalDifficulty": "0x6564de",
-    "transactions": [
-      "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
-      "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
-      "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
-      "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
-      "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
-      "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
-    ],
-    "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
-    "uncles": []
-  },
-  "in3": {
-    "proof": {
-      "type": "blockProof",
-      "signatures": [],
-      "transactions": [
-        "0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc",
-        "0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77",
-        "0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139",
-        "0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a",
-        "0xf8c680843b9aca008305573094309906d7b701...78289116eac194e",
-        "0xf9014b82020a843b9aca0083010f6894786f8d72...b649"
-      ]
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getBlockByNumber latest false | jq
+         {
+           "author": "0x0000000000000000000000000000000000000000",
+           "difficulty": "0x2",
+           "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
+           "gasLimit": "0x7a1200",
+           "gasUsed": "0x20e145",
+           "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
+           "logsBloom": "0x000008000000000000...00400100000000080",
+           "miner": "0x0000000000000000000000000000000000000000",
+           "number": "0x449956",
+           "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
+           "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
+           "sealFields": [
+             "0xa00000000000000000000000000000000000000000000000000000000000000000",
+             "0x880000000000000000"
+           ],
+           "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+           "size": "0x74b",
+           "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
+           "timestamp": "0x605aec86",
+           "totalDifficulty": "0x6564de",
+           "transactions": [
+             "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
+             "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
+             "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
+             "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
+             "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
+             "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+           ],
+           "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
+           "uncles": []
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getBlockByNumber",
+           "params": [
+             "latest",
+             false
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "author": "0x0000000000000000000000000000000000000000",
+             "difficulty": "0x2",
+             "extraData": "0x696e667572612d696f0000000000000...31570f1e500",
+             "gasLimit": "0x7a1200",
+             "gasUsed": "0x20e145",
+             "hash": "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585",
+             "logsBloom": "0x000008000000000000...00400100000000080",
+             "miner": "0x0000000000000000000000000000000000000000",
+             "number": "0x449956",
+             "parentHash": "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694",
+             "receiptsRoot": "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff",
+             "sealFields": [
+               "0xa00000000000000000000000000000000000000000000000000000000000000000",
+               "0x880000000000000000"
+             ],
+             "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+             "size": "0x74b",
+             "stateRoot": "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910",
+             "timestamp": "0x605aec86",
+             "totalDifficulty": "0x6564de",
+             "transactions": [
+               "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58",
+               "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641",
+               "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75",
+               "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d",
+               "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5",
+               "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+             ],
+             "transactionsRoot": "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc",
+             "uncles": []
+           },
+           "in3": {
+             "proof": {
+               "type": "blockProof",
+               "signatures": [],
+               "transactions": [
+                 "0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc",
+                 "0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77",
+                 "0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139",
+                 "0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a",
+                 "0xf8c680843b9aca008305573094309906d7b701...78289116eac194e",
+                 "0xf9014b82020a843b9aca0083010f6894786f8d72...b649"
+               ]
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getBlockByNumber
+         params:
+           - latest
+           - false
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           author: "0x0000000000000000000000000000000000000000"
+           difficulty: "0x2"
+           extraData: 0x696e667572612d696f0000000000000...31570f1e500
+           gasLimit: "0x7a1200"
+           gasUsed: "0x20e145"
+           hash: "0x2baa54adcd8a105cdedfd9c6635d48d07b8f0e805af0a5853190c179e5a18585"
+           logsBloom: 0x000008000000000000...00400100000000080
+           miner: "0x0000000000000000000000000000000000000000"
+           number: "0x449956"
+           parentHash: "0x2c2a4fcd11aa9aea6b9767651a10e7dbd2bcddbdaba703c74458ad6faf7c2694"
+           receiptsRoot: "0x0240b90272b5600bef7e25d0894868f85125174c2f387ef3236fc9ed9bfb3eff"
+           sealFields:
+             - "0xa00000000000000000000000000000000000000000000000000000000000000000"
+             - "0x880000000000000000"
+           sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+           size: "0x74b"
+           stateRoot: "0xf44699575afd2668060be5ba77e66e1e80edb77ad1b5070969ddfa63da6a4910"
+           timestamp: "0x605aec86"
+           totalDifficulty: "0x6564de"
+           transactions:
+             - "0xcb7edfdb3229c9beeb418ab1ef1a3c9210ecfb22f0157791c3287085d798da58"
+             - "0x0fb803696521ba109c40b3eecb773c93dc6ee891172af0f620c8d44c05198641"
+             - "0x3ef6725cab4470889c3c7d53609a5d4b263701f5891aa98c9ed48b73b6b2fb75"
+             - "0x4010c4c112514756dcdcf14f91117503826dcbe15b03a1636c07aa713da24b8d"
+             - "0xd9c14daa5e2e9cc955534865365ef6bde3045c70e3a984a74c298606c4d67bb5"
+             - "0xfa2326237ba5dcca2127241562be16b68c48fed93d29add8d62f79a00518c2d8"
+           transactionsRoot: "0xddbbd7bf723abdfe885539406540671c2c0eb97684972175ad199258c75416cc"
+           uncles: []
+         in3:
+           proof:
+             type: blockProof
+             signatures: []
+             transactions:
+               - 0xf8ac830331f78449504f80830186a094f74a...8a83ce8dc
+               - 0xf8ac830331f88449504f80830186a094f74a...a81c2f1fee77
+               - 0xf8a91e843b9aca008315a92594f0277caffea...c30d64dd139
+               - 0xf8c601843b9aca008305573094309906d7b701...62f5e7a2319a
+               - 0xf8c680843b9aca008305573094309906d7b701...78289116eac194e
+               - 0xf9014b82020a843b9aca0083010f6894786f8d72...b649
+         
 ```
 
 ### eth_getBlockTransactionCountByHash
@@ -3622,57 +4549,103 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
 
 *Example:*
 
-```sh
-> in3 eth_getCode 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f latest
-0x6080604052348...6c634300050a0040
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getCode",
-  "params": [
-    "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
-    "latest"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "0x6080604052348...6c634300050a0040",
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf9020da02776...8ba1d5458be3b98",
-      "signatures": [],
-      "accounts": {
-        "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F": {
-          "address": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
-          "accountProof": [
-            "0xf90211a03...c41e862bd80",
-            "0xf90211a02...c5766ac3ec9180",
-            "0xf90211a0f...cdad27ecdfbc1c4c66e680",
-            "0xf90211a08...84621739c3777ea1d5080",
-            "0xf90211a00...02388c08615b82ef0320614380",
-            "0xf90211a03...1b16a8c050f61d80",
-            "0xf8f18080a...cafe05823be8080",
-            "0xf8669d3ad8...903305697a1"
-          ],
-          "balance": "0x0",
-          "codeHash": "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1",
-          "nonce": "0x1",
-          "storageHash": "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed",
-          "storageProof": []
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getCode 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f latest
+         0x6080604052348...6c634300050a0040
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getCode",
+           "params": [
+             "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+             "latest"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x6080604052348...6c634300050a0040",
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf9020da02776...8ba1d5458be3b98",
+               "signatures": [],
+               "accounts": {
+                 "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F": {
+                   "address": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+                   "accountProof": [
+                     "0xf90211a03...c41e862bd80",
+                     "0xf90211a02...c5766ac3ec9180",
+                     "0xf90211a0f...cdad27ecdfbc1c4c66e680",
+                     "0xf90211a08...84621739c3777ea1d5080",
+                     "0xf90211a00...02388c08615b82ef0320614380",
+                     "0xf90211a03...1b16a8c050f61d80",
+                     "0xf8f18080a...cafe05823be8080",
+                     "0xf8669d3ad8...903305697a1"
+                   ],
+                   "balance": "0x0",
+                   "codeHash": "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1",
+                   "nonce": "0x1",
+                   "storageHash": "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed",
+                   "storageProof": []
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getCode
+         params:
+           - "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f"
+           - latest
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: 0x6080604052348...6c634300050a0040
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf9020da02776...8ba1d5458be3b98
+             signatures: []
+             accounts:
+               "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F":
+                 address: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f"
+                 accountProof:
+                   - 0xf90211a03...c41e862bd80
+                   - 0xf90211a02...c5766ac3ec9180
+                   - 0xf90211a0f...cdad27ecdfbc1c4c66e680
+                   - 0xf90211a08...84621739c3777ea1d5080
+                   - 0xf90211a00...02388c08615b82ef0320614380
+                   - 0xf90211a03...1b16a8c050f61d80
+                   - 0xf8f18080a...cafe05823be8080
+                   - 0xf8669d3ad8...903305697a1
+                 balance: "0x0"
+                 codeHash: "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1"
+                 nonce: "0x1"
+                 storageHash: "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed"
+                 storageProof: []
+         
 ```
 
 ### eth_getLogs
@@ -3995,69 +4968,124 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 eth_getStorageAt 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f 0x0 latest
-0x19
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getStorageAt",
-  "params": [
-    "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
-    "0x0",
-    "latest"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "0x19",
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf90218a0e625bee...87a38707dbbc",
-      "signatures": [],
-      "accounts": {
-        "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F": {
-          "address": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
-          "accountProof": [
-            "0xf90211a0cef18...56e5cfcf3ef70de80",
-            "0xf90211a0b67e01...2a13db20dcf291d533480",
-            "0xf90211a05df65...be23ffb94580",
-            "0xf90211a0825413...75d61184621739c3777ea1d5080",
-            "0xf90211a000a403...82ef0320614380",
-            "0xf90211a03b0114...a6e41b16a8c050f61d80",
-            "0xf8f18080a01a27...96fcdfe84cafe05823be8080",
-            "0xf8669d3ad8a871b...d82903305697a1"
-          ],
-          "balance": "0x0",
-          "codeHash": "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1",
-          "nonce": "0x1",
-          "storageHash": "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed",
-          "storageProof": [
-            {
-              "key": "0x0",
-              "value": "0x19",
-              "proof": [
-                "0xf90211a084b9482...1ad85a4f2f1680",
-                "0xf901b1a0625f8d3...6e0788855d2780",
-                "0xf851a08a14eff77...08080808080808080",
-                "0xe19f3decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e56319"
-              ]
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getStorageAt 0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f 0x0 latest
+         0x19
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getStorageAt",
+           "params": [
+             "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+             "0x0",
+             "latest"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x19",
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf90218a0e625bee...87a38707dbbc",
+               "signatures": [],
+               "accounts": {
+                 "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F": {
+                   "address": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+                   "accountProof": [
+                     "0xf90211a0cef18...56e5cfcf3ef70de80",
+                     "0xf90211a0b67e01...2a13db20dcf291d533480",
+                     "0xf90211a05df65...be23ffb94580",
+                     "0xf90211a0825413...75d61184621739c3777ea1d5080",
+                     "0xf90211a000a403...82ef0320614380",
+                     "0xf90211a03b0114...a6e41b16a8c050f61d80",
+                     "0xf8f18080a01a27...96fcdfe84cafe05823be8080",
+                     "0xf8669d3ad8a871b...d82903305697a1"
+                   ],
+                   "balance": "0x0",
+                   "codeHash": "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1",
+                   "nonce": "0x1",
+                   "storageHash": "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed",
+                   "storageProof": [
+                     {
+                       "key": "0x0",
+                       "value": "0x19",
+                       "proof": [
+                         "0xf90211a084b9482...1ad85a4f2f1680",
+                         "0xf901b1a0625f8d3...6e0788855d2780",
+                         "0xf851a08a14eff77...08080808080808080",
+                         "0xe19f3decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e56319"
+                       ]
+                     }
+                   ]
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getStorageAt
+         params:
+           - "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f"
+           - "0x0"
+           - latest
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: "0x19"
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf90218a0e625bee...87a38707dbbc
+             signatures: []
+             accounts:
+               "0xaC1b824795E1EB1F6e609FE0dA9b9af8bEaAb60F":
+                 address: "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f"
+                 accountProof:
+                   - 0xf90211a0cef18...56e5cfcf3ef70de80
+                   - 0xf90211a0b67e01...2a13db20dcf291d533480
+                   - 0xf90211a05df65...be23ffb94580
+                   - 0xf90211a0825413...75d61184621739c3777ea1d5080
+                   - 0xf90211a000a403...82ef0320614380
+                   - 0xf90211a03b0114...a6e41b16a8c050f61d80
+                   - 0xf8f18080a01a27...96fcdfe84cafe05823be8080
+                   - 0xf8669d3ad8a871b...d82903305697a1
+                 balance: "0x0"
+                 codeHash: "0x29140efcd5358d1dd75badfaa179e3df0dd53f17a883a30152d82903305697a1"
+                 nonce: "0x1"
+                 storageHash: "0x4d6c5972bcc0c8229c8b041df4aa70879e37e9f7eb47530e4232b317438524ed"
+                 storageProof:
+                   - key: "0x0"
+                     value: "0x19"
+                     proof:
+                       - 0xf90211a084b9482...1ad85a4f2f1680
+                       - 0xf901b1a0625f8d3...6e0788855d2780
+                       - 0xf851a08a14eff77...08080808080808080
+                       - "0xe19f3decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160e\
+                         f3e56319"
+         
 ```
 
 ### eth_getTransactionByBlockHashAndIndex
@@ -4157,77 +5185,128 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
 
 *Example:*
 
-```sh
-> in3 eth_getTransactionByBlockHashAndIndex 0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee 0xd5 | jq
-{
-  "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-  "blockNumber": "0xb8a4a9",
-  "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-  "gas": "0xac6b",
-  "gasPrice": "0x1bf08eb000",
-  "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-  "input": "0x095ea7b300000000000000000000000...a7640000",
-  "nonce": "0xa",
-  "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-  "transactionIndex": "0xd5",
-  "value": "0x0",
-  "type": "0x0",
-  "v": "0x25",
-  "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-  "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getTransactionByBlockHashAndIndex",
-  "params": [
-    "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-    "0xd5"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-    "blockNumber": "0xb8a4a9",
-    "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-    "gas": "0xac6b",
-    "gasPrice": "0x1bf08eb000",
-    "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-    "input": "0x095ea7b300000000000000000000000...a7640000",
-    "nonce": "0xa",
-    "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-    "transactionIndex": "0xd5",
-    "value": "0x0",
-    "type": "0x0",
-    "v": "0x25",
-    "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-    "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-  },
-  "in3": {
-    "proof": {
-      "type": "eth_transactionProof",
-      "block": "0xf90212a033a7afd1b9...fa16cf2",
-      "merkleProof": [
-        "0xf90131a0...91604f2f58080808080808080",
-        "0xf851a06f...0808080808080808080",
-        "0xf8d18080...8a2ac871c5808080",
-        "0xf90111a05...0808080808080808080",
-        "0xf8ae20b8...000a8ff46d2a2dd78"
-      ],
-      "txIndex": 213,
-      "signatures": []
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getTransactionByBlockHashAndIndex 0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee 0xd5 | jq
+         {
+           "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+           "blockNumber": "0xb8a4a9",
+           "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+           "gas": "0xac6b",
+           "gasPrice": "0x1bf08eb000",
+           "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+           "input": "0x095ea7b300000000000000000000000...a7640000",
+           "nonce": "0xa",
+           "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+           "transactionIndex": "0xd5",
+           "value": "0x0",
+           "type": "0x0",
+           "v": "0x25",
+           "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+           "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getTransactionByBlockHashAndIndex",
+           "params": [
+             "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+             "0xd5"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+             "blockNumber": "0xb8a4a9",
+             "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+             "gas": "0xac6b",
+             "gasPrice": "0x1bf08eb000",
+             "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+             "input": "0x095ea7b300000000000000000000000...a7640000",
+             "nonce": "0xa",
+             "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+             "transactionIndex": "0xd5",
+             "value": "0x0",
+             "type": "0x0",
+             "v": "0x25",
+             "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+             "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+           },
+           "in3": {
+             "proof": {
+               "type": "eth_transactionProof",
+               "block": "0xf90212a033a7afd1b9...fa16cf2",
+               "merkleProof": [
+                 "0xf90131a0...91604f2f58080808080808080",
+                 "0xf851a06f...0808080808080808080",
+                 "0xf8d18080...8a2ac871c5808080",
+                 "0xf90111a05...0808080808080808080",
+                 "0xf8ae20b8...000a8ff46d2a2dd78"
+               ],
+               "txIndex": 213,
+               "signatures": []
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getTransactionByBlockHashAndIndex
+         params:
+           - "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+           - "0xd5"
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+           blockNumber: "0xb8a4a9"
+           from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+           gas: "0xac6b"
+           gasPrice: "0x1bf08eb000"
+           hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+           input: 0x095ea7b300000000000000000000000...a7640000
+           nonce: "0xa"
+           to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+           transactionIndex: "0xd5"
+           value: "0x0"
+           type: "0x0"
+           v: "0x25"
+           r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+           s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         in3:
+           proof:
+             type: eth_transactionProof
+             block: 0xf90212a033a7afd1b9...fa16cf2
+             merkleProof:
+               - 0xf90131a0...91604f2f58080808080808080
+               - 0xf851a06f...0808080808080808080
+               - 0xf8d18080...8a2ac871c5808080
+               - 0xf90111a05...0808080808080808080
+               - 0xf8ae20b8...000a8ff46d2a2dd78
+             txIndex: 213
+             signatures: []
+         
 ```
 
 ### eth_getTransactionByBlockNumberAndIndex
@@ -4327,77 +5406,128 @@ The proof will be calculated as described in [eth_getTransactionByHash](#eth-get
 
 *Example:*
 
-```sh
-> in3 eth_getTransactionByBlockNumberAndIndex 0xb8a4a9 0xd5 | jq
-{
-  "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-  "blockNumber": "0xb8a4a9",
-  "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-  "gas": "0xac6b",
-  "gasPrice": "0x1bf08eb000",
-  "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-  "input": "0x095ea7b300000000000000000000000...a7640000",
-  "nonce": "0xa",
-  "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-  "transactionIndex": "0xd5",
-  "value": "0x0",
-  "type": "0x0",
-  "v": "0x25",
-  "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-  "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getTransactionByBlockNumberAndIndex",
-  "params": [
-    "0xb8a4a9",
-    "0xd5"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-    "blockNumber": "0xb8a4a9",
-    "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-    "gas": "0xac6b",
-    "gasPrice": "0x1bf08eb000",
-    "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-    "input": "0x095ea7b300000000000000000000000...a7640000",
-    "nonce": "0xa",
-    "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-    "transactionIndex": "0xd5",
-    "value": "0x0",
-    "type": "0x0",
-    "v": "0x25",
-    "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-    "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-  },
-  "in3": {
-    "proof": {
-      "type": "eth_transactionProof",
-      "block": "0xf90212a033a7afd1b9...fa16cf2",
-      "merkleProof": [
-        "0xf90131a0...91604f2f58080808080808080",
-        "0xf851a06f...0808080808080808080",
-        "0xf8d18080...8a2ac871c5808080",
-        "0xf90111a05...0808080808080808080",
-        "0xf8ae20b8...000a8ff46d2a2dd78"
-      ],
-      "txIndex": 213,
-      "signatures": []
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getTransactionByBlockNumberAndIndex 0xb8a4a9 0xd5 | jq
+         {
+           "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+           "blockNumber": "0xb8a4a9",
+           "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+           "gas": "0xac6b",
+           "gasPrice": "0x1bf08eb000",
+           "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+           "input": "0x095ea7b300000000000000000000000...a7640000",
+           "nonce": "0xa",
+           "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+           "transactionIndex": "0xd5",
+           "value": "0x0",
+           "type": "0x0",
+           "v": "0x25",
+           "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+           "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getTransactionByBlockNumberAndIndex",
+           "params": [
+             "0xb8a4a9",
+             "0xd5"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+             "blockNumber": "0xb8a4a9",
+             "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+             "gas": "0xac6b",
+             "gasPrice": "0x1bf08eb000",
+             "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+             "input": "0x095ea7b300000000000000000000000...a7640000",
+             "nonce": "0xa",
+             "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+             "transactionIndex": "0xd5",
+             "value": "0x0",
+             "type": "0x0",
+             "v": "0x25",
+             "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+             "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+           },
+           "in3": {
+             "proof": {
+               "type": "eth_transactionProof",
+               "block": "0xf90212a033a7afd1b9...fa16cf2",
+               "merkleProof": [
+                 "0xf90131a0...91604f2f58080808080808080",
+                 "0xf851a06f...0808080808080808080",
+                 "0xf8d18080...8a2ac871c5808080",
+                 "0xf90111a05...0808080808080808080",
+                 "0xf8ae20b8...000a8ff46d2a2dd78"
+               ],
+               "txIndex": 213,
+               "signatures": []
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getTransactionByBlockNumberAndIndex
+         params:
+           - "0xb8a4a9"
+           - "0xd5"
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+           blockNumber: "0xb8a4a9"
+           from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+           gas: "0xac6b"
+           gasPrice: "0x1bf08eb000"
+           hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+           input: 0x095ea7b300000000000000000000000...a7640000
+           nonce: "0xa"
+           to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+           transactionIndex: "0xd5"
+           value: "0x0"
+           type: "0x0"
+           v: "0x25"
+           r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+           s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         in3:
+           proof:
+             type: eth_transactionProof
+             block: 0xf90212a033a7afd1b9...fa16cf2
+             merkleProof:
+               - 0xf90131a0...91604f2f58080808080808080
+               - 0xf851a06f...0808080808080808080
+               - 0xf8d18080...8a2ac871c5808080
+               - 0xf90111a05...0808080808080808080
+               - 0xf8ae20b8...000a8ff46d2a2dd78
+             txIndex: 213
+             signatures: []
+         
 ```
 
 ### eth_getTransactionByHash
@@ -4556,76 +5686,126 @@ While there is no proof for a non existing transaction, if the request was a  `e
 
 *Example:*
 
-```sh
-> in3 eth_getTransactionByHash 0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b | jq
-{
-  "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-  "blockNumber": "0xb8a4a9",
-  "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-  "gas": "0xac6b",
-  "gasPrice": "0x1bf08eb000",
-  "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-  "input": "0x095ea7b300000000000000000000000...a7640000",
-  "nonce": "0xa",
-  "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-  "transactionIndex": "0xd5",
-  "value": "0x0",
-  "type": "0x0",
-  "v": "0x25",
-  "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-  "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getTransactionByHash",
-  "params": [
-    "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
-    "blockNumber": "0xb8a4a9",
-    "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
-    "gas": "0xac6b",
-    "gasPrice": "0x1bf08eb000",
-    "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
-    "input": "0x095ea7b300000000000000000000000...a7640000",
-    "nonce": "0xa",
-    "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-    "transactionIndex": "0xd5",
-    "value": "0x0",
-    "type": "0x0",
-    "v": "0x25",
-    "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
-    "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
-  },
-  "in3": {
-    "proof": {
-      "type": "eth_transactionProof",
-      "block": "0xf90212a033a7afd1b9...fa16cf2",
-      "merkleProof": [
-        "0xf90131a0...91604f2f58080808080808080",
-        "0xf851a06f...0808080808080808080",
-        "0xf8d18080...8a2ac871c5808080",
-        "0xf90111a05...0808080808080808080",
-        "0xf8ae20b8...000a8ff46d2a2dd78"
-      ],
-      "txIndex": 213,
-      "signatures": []
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getTransactionByHash 0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b | jq
+         {
+           "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+           "blockNumber": "0xb8a4a9",
+           "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+           "gas": "0xac6b",
+           "gasPrice": "0x1bf08eb000",
+           "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+           "input": "0x095ea7b300000000000000000000000...a7640000",
+           "nonce": "0xa",
+           "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+           "transactionIndex": "0xd5",
+           "value": "0x0",
+           "type": "0x0",
+           "v": "0x25",
+           "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+           "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getTransactionByHash",
+           "params": [
+             "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "blockHash": "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee",
+             "blockNumber": "0xb8a4a9",
+             "from": "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98",
+             "gas": "0xac6b",
+             "gasPrice": "0x1bf08eb000",
+             "hash": "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea",
+             "input": "0x095ea7b300000000000000000000000...a7640000",
+             "nonce": "0xa",
+             "to": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+             "transactionIndex": "0xd5",
+             "value": "0x0",
+             "type": "0x0",
+             "v": "0x25",
+             "r": "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4",
+             "s": "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+           },
+           "in3": {
+             "proof": {
+               "type": "eth_transactionProof",
+               "block": "0xf90212a033a7afd1b9...fa16cf2",
+               "merkleProof": [
+                 "0xf90131a0...91604f2f58080808080808080",
+                 "0xf851a06f...0808080808080808080",
+                 "0xf8d18080...8a2ac871c5808080",
+                 "0xf90111a05...0808080808080808080",
+                 "0xf8ae20b8...000a8ff46d2a2dd78"
+               ],
+               "txIndex": 213,
+               "signatures": []
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getTransactionByHash
+         params:
+           - "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b"
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           blockHash: "0x4fc08daf8d670a23eba7a1aca1f09591c19147305c64d25e1ddd3dd43ff658ee"
+           blockNumber: "0xb8a4a9"
+           from: "0xcaa6cfc2ca92cabbdbce5a46901ee8b831e00a98"
+           gas: "0xac6b"
+           gasPrice: "0x1bf08eb000"
+           hash: "0xd635a97452d604f735116d9de29ac946e9987a20f99607fb03516ef267ea0eea"
+           input: 0x095ea7b300000000000000000000000...a7640000
+           nonce: "0xa"
+           to: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+           transactionIndex: "0xd5"
+           value: "0x0"
+           type: "0x0"
+           v: "0x25"
+           r: "0xb18e0928c988d898d3217b145d78439072db15ea7de1005a73cf5feaf01a57d4"
+           s: "0x6b530c2613f543f9e26ef9c27a7986c748fbc856aaeacd6000a8ff46d2a2dd78"
+         in3:
+           proof:
+             type: eth_transactionProof
+             block: 0xf90212a033a7afd1b9...fa16cf2
+             merkleProof:
+               - 0xf90131a0...91604f2f58080808080808080
+               - 0xf851a06f...0808080808080808080
+               - 0xf8d18080...8a2ac871c5808080
+               - 0xf90111a05...0808080808080808080
+               - 0xf8ae20b8...000a8ff46d2a2dd78
+             txIndex: 213
+             signatures: []
+         
 ```
 
 ### eth_getTransactionCount
@@ -4654,57 +5834,103 @@ The proof will be calculated as described in [eth_getStorageAt](#eth-getstoragea
 
 *Example:*
 
-```sh
-> in3 eth_getTransactionCount 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
-0x5
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getTransactionCount",
-  "params": [
-    "0x2e333ec090f1028df0a3c39a918063443be82b2b",
-    "latest"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "0x5",
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf90212a0af...5643f426d",
-      "signatures": [],
-      "accounts": {
-        "0x2e333EC090f1028df0a3c39a918063443Be82B2b": {
-          "address": "0x2e333ec090f1028df0a3c39a918063443be82b2b",
-          "accountProof": [
-            "0xf90211a099a5e...6d9f924480",
-            "0xf90211a052b61...b19ff23445180",
-            "0xf90211a0cc125...7e7afd9170280",
-            "0xf90211a088c91...555f0b76fc6ec80",
-            "0xf90211a0641a3...477d355d557a180",
-            "0xf90211a0619e5...5977318c9487280",
-            "0xf90111a0e25a1...641683d34adae808080",
-            "0xf86e9d3f681a18...2273b7bfad8045d85a470"
-          ],
-          "balance": "0x20599832af6ec00",
-          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-          "nonce": "0x5",
-          "storageHash": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-          "storageProof": []
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getTransactionCount 0x2e333ec090f1028df0a3c39a918063443be82b2b latest
+         0x5
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getTransactionCount",
+           "params": [
+             "0x2e333ec090f1028df0a3c39a918063443be82b2b",
+             "latest"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x5",
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf90212a0af...5643f426d",
+               "signatures": [],
+               "accounts": {
+                 "0x2e333EC090f1028df0a3c39a918063443Be82B2b": {
+                   "address": "0x2e333ec090f1028df0a3c39a918063443be82b2b",
+                   "accountProof": [
+                     "0xf90211a099a5e...6d9f924480",
+                     "0xf90211a052b61...b19ff23445180",
+                     "0xf90211a0cc125...7e7afd9170280",
+                     "0xf90211a088c91...555f0b76fc6ec80",
+                     "0xf90211a0641a3...477d355d557a180",
+                     "0xf90211a0619e5...5977318c9487280",
+                     "0xf90111a0e25a1...641683d34adae808080",
+                     "0xf86e9d3f681a18...2273b7bfad8045d85a470"
+                   ],
+                   "balance": "0x20599832af6ec00",
+                   "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                   "nonce": "0x5",
+                   "storageHash": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+                   "storageProof": []
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getTransactionCount
+         params:
+           - "0x2e333ec090f1028df0a3c39a918063443be82b2b"
+           - latest
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: "0x5"
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf90212a0af...5643f426d
+             signatures: []
+             accounts:
+               "0x2e333EC090f1028df0a3c39a918063443Be82B2b":
+                 address: "0x2e333ec090f1028df0a3c39a918063443be82b2b"
+                 accountProof:
+                   - 0xf90211a099a5e...6d9f924480
+                   - 0xf90211a052b61...b19ff23445180
+                   - 0xf90211a0cc125...7e7afd9170280
+                   - 0xf90211a088c91...555f0b76fc6ec80
+                   - 0xf90211a0641a3...477d355d557a180
+                   - 0xf90211a0619e5...5977318c9487280
+                   - 0xf90111a0e25a1...641683d34adae808080
+                   - 0xf86e9d3f681a18...2273b7bfad8045d85a470
+                 balance: "0x20599832af6ec00"
+                 codeHash: "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+                 nonce: "0x5"
+                 storageHash: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+                 storageProof: []
+         
 ```
 
 ### eth_getTransactionReceipt
@@ -4876,108 +6102,169 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 eth_getTransactionReceipt 0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e | jq
-{
-  "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-  "blockNumber": "0x8c1e39",
-  "contractAddress": null,
-  "cumulativeGasUsed": "0x2466d",
-  "gasUsed": "0x2466d",
-  "logs": [
-    {
-      "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-      "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-      "blockNumber": "0x8c1e39",
-      "data": "0x00000000000...",
-      "logIndex": "0x0",
-      "removed": false,
-      "topics": [
-        "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-        "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-        "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-      ],
-      "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-      "transactionIndex": "0x0",
-      "transactionLogIndex": "0x0",
-      "type": "mined"
-    }
-  ],
-  "logsBloom": "0x00000000000000000000200000...",
-  "root": null,
-  "status": "0x1",
-  "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-  "transactionIndex": "0x0"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "eth_getTransactionReceipt",
-  "params": [
-    "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-    "blockNumber": "0x8c1e39",
-    "contractAddress": null,
-    "cumulativeGasUsed": "0x2466d",
-    "gasUsed": "0x2466d",
-    "logs": [
-      {
-        "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-        "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-        "blockNumber": "0x8c1e39",
-        "data": "0x00000000000...",
-        "logIndex": "0x0",
-        "removed": false,
-        "topics": [
-          "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-          "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-          "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-        ],
-        "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-        "transactionIndex": "0x0",
-        "transactionLogIndex": "0x0",
-        "type": "mined"
-      }
-    ],
-    "logsBloom": "0x00000000000000000000200000...",
-    "root": null,
-    "status": "0x1",
-    "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-    "transactionIndex": "0x0"
-  },
-  "in3": {
-    "proof": {
-      "type": "receiptProof",
-      "block": "0xf9023fa019e9d929ab...",
-      "txProof": [
-        "0xf851a083c8446ab932130..."
-      ],
-      "merkleProof": [
-        "0xf851a0b0f5b7429a54b10..."
-      ],
-      "txIndex": 0,
-      "signatures": [
-        "..."
-      ],
-      "merkleProofPrev": [
-        "0xf851a0b0f5b7429a54b10..."
-      ]
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 eth_getTransactionReceipt 0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e | jq
+         {
+           "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+           "blockNumber": "0x8c1e39",
+           "contractAddress": null,
+           "cumulativeGasUsed": "0x2466d",
+           "gasUsed": "0x2466d",
+           "logs": [
+             {
+               "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+               "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+               "blockNumber": "0x8c1e39",
+               "data": "0x00000000000...",
+               "logIndex": "0x0",
+               "removed": false,
+               "topics": [
+                 "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                 "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                 "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+               ],
+               "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+               "transactionIndex": "0x0",
+               "transactionLogIndex": "0x0",
+               "type": "mined"
+             }
+           ],
+           "logsBloom": "0x00000000000000000000200000...",
+           "root": null,
+           "status": "0x1",
+           "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+           "transactionIndex": "0x0"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "eth_getTransactionReceipt",
+           "params": [
+             "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+             "blockNumber": "0x8c1e39",
+             "contractAddress": null,
+             "cumulativeGasUsed": "0x2466d",
+             "gasUsed": "0x2466d",
+             "logs": [
+               {
+                 "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+                 "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+                 "blockNumber": "0x8c1e39",
+                 "data": "0x00000000000...",
+                 "logIndex": "0x0",
+                 "removed": false,
+                 "topics": [
+                   "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                   "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                   "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                 ],
+                 "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+                 "transactionIndex": "0x0",
+                 "transactionLogIndex": "0x0",
+                 "type": "mined"
+               }
+             ],
+             "logsBloom": "0x00000000000000000000200000...",
+             "root": null,
+             "status": "0x1",
+             "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+             "transactionIndex": "0x0"
+           },
+           "in3": {
+             "proof": {
+               "type": "receiptProof",
+               "block": "0xf9023fa019e9d929ab...",
+               "txProof": [
+                 "0xf851a083c8446ab932130..."
+               ],
+               "merkleProof": [
+                 "0xf851a0b0f5b7429a54b10..."
+               ],
+               "txIndex": 0,
+               "signatures": [
+                 "..."
+               ],
+               "merkleProofPrev": [
+                 "0xf851a0b0f5b7429a54b10..."
+               ]
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: eth_getTransactionReceipt
+         params:
+           - "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+           blockNumber: "0x8c1e39"
+           contractAddress: null
+           cumulativeGasUsed: "0x2466d"
+           gasUsed: "0x2466d"
+           logs:
+             - address: "0x85ec283a3ed4b66df4da23656d4bf8a507383bca"
+               blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+               blockNumber: "0x8c1e39"
+               data: 0x00000000000...
+               logIndex: "0x0"
+               removed: false
+               topics:
+                 - "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8"
+                 - "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6"
+                 - "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+               transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+               transactionIndex: "0x0"
+               transactionLogIndex: "0x0"
+               type: mined
+           logsBloom: 0x00000000000000000000200000...
+           root: null
+           status: "0x1"
+           transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+           transactionIndex: "0x0"
+         in3:
+           proof:
+             type: receiptProof
+             block: 0xf9023fa019e9d929ab...
+             txProof:
+               - 0xf851a083c8446ab932130...
+             merkleProof:
+               - 0xf851a0b0f5b7429a54b10...
+             txIndex: 0
+             signatures:
+               - ...
+             merkleProofPrev:
+               - 0xf851a0b0f5b7429a54b10...
+         
 ```
 
 ### eth_getUncleCountByBlockHash
@@ -5282,30 +6569,54 @@ No proof or verification needed on the server side. All the verification are don
 
 *Example:*
 
-```sh
-> in3 ipfs_get QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD utf8
-I love Incubed
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "ipfs_get",
-  "params": [
-    "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
-    "utf8"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": "I love Incubed"
-}
+   .. code-tab:: sh
+
+         > in3 ipfs_get QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD utf8
+         I love Incubed
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "ipfs_get",
+           "params": [
+             "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD",
+             "utf8"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": "I love Incubed"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: ipfs_get
+         params:
+           - QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
+           - utf8
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result: I love Incubed
+         
 ```
 
 ### ipfs_put
@@ -5330,27 +6641,49 @@ the ipfs multi hash
 
 *Example:*
 
-```sh
-> in3 ipfs_put '"I love Incubed"' utf8
-QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "ipfs_put",
-  "params": [
-    "I love Incubed",
-    "utf8"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD"
-}
+   .. code-tab:: sh
+
+         > in3 ipfs_put '"I love Incubed"' utf8
+         QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "ipfs_put",
+           "params": [
+             "I love Incubed",
+             "utf8"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: ipfs_put
+         params:
+           - I love Incubed
+           - utf8
+         
+
+         //---- Response -----
+
+         result: QmSepGsypERjq71BSm4Cjq7j8tyAUnCw6ZDTeNdE8RUssD
+         
 ```
 
 ## nodelist
@@ -5520,134 +6853,215 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 in3_nodeList 2 0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b '[]' | jq
-{
-  "totalServers": 5,
-  "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
-  "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3",
-  "lastBlockNumber": 8669495,
-  "nodes": [
-    {
-      "url": "https://in3-v2.slock.it/mainnet/nd-3",
-      "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
-      "index": 2,
-      "deposit": "10000000000000000",
-      "props": 29,
-      "timeout": 3600,
-      "registerTime": 1570109570,
-      "weight": 2000,
-      "proofHash": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-    },
-    {
-      "url": "https://in3-v2.slock.it/mainnet/nd-5",
-      "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
-      "index": 4,
-      "deposit": "10000000000000000",
-      "props": 29,
-      "timeout": 3600,
-      "registerTime": 1570109690,
-      "weight": 2000,
-      "proofHash": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-    }
-  ]
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_nodeList",
-  "params": [
-    2,
-    "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",
-    []
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "totalServers": 5,
-    "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
-    "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3",
-    "lastBlockNumber": 8669495,
-    "nodes": [
-      {
-        "url": "https://in3-v2.slock.it/mainnet/nd-3",
-        "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
-        "index": 2,
-        "deposit": "10000000000000000",
-        "props": 29,
-        "timeout": 3600,
-        "registerTime": 1570109570,
-        "weight": 2000,
-        "proofHash": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
-      },
-      {
-        "url": "https://in3-v2.slock.it/mainnet/nd-5",
-        "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
-        "index": 4,
-        "deposit": "10000000000000000",
-        "props": 29,
-        "timeout": 3600,
-        "registerTime": 1570109690,
-        "weight": 2000,
-        "proofHash": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
-      }
-    ]
-  },
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf9021ca01....",
-      "accounts": {
-        "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5": {
-          "address": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
-          "balance": "0xb1a2bc2ec50000",
-          "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
-          "nonce": "0x1",
-          "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
-          "accountProof": [
-            "0xf90211a0e822...",
-            "0xf90211a0f6d0...",
-            "0xf90211a04d7b...",
-            "0xf90211a0e749...",
-            "0xf90211a059cb...",
-            "0xf90211a0568f...",
-            "0xf8d1a0ac2433...",
-            "0xf86d9d33b981..."
-          ],
-          "storageProof": [
-            {
-              "key": "0x0",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf871808080808080800...",
-                "0xe2a0200decd9548b62a...05"
-              ],
-              "value": "0x5"
-            },
-            {
-              "key": "0x1",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf871808080808080800...",
-                "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-              ],
-              "value": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_nodeList 2 0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b '[]' | jq
+         {
+           "totalServers": 5,
+           "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
+           "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3",
+           "lastBlockNumber": 8669495,
+           "nodes": [
+             {
+               "url": "https://in3-v2.slock.it/mainnet/nd-3",
+               "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
+               "index": 2,
+               "deposit": "10000000000000000",
+               "props": 29,
+               "timeout": 3600,
+               "registerTime": 1570109570,
+               "weight": 2000,
+               "proofHash": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+             },
+             {
+               "url": "https://in3-v2.slock.it/mainnet/nd-5",
+               "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
+               "index": 4,
+               "deposit": "10000000000000000",
+               "props": 29,
+               "timeout": 3600,
+               "registerTime": 1570109690,
+               "weight": 2000,
+               "proofHash": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+             }
+           ]
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_nodeList",
+           "params": [
+             2,
+             "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b",
+             []
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "totalServers": 5,
+             "contract": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
+             "registryId": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3",
+             "lastBlockNumber": 8669495,
+             "nodes": [
+               {
+                 "url": "https://in3-v2.slock.it/mainnet/nd-3",
+                 "address": "0x945F75c0408C0026a3CD204d36f5e47745182fd4",
+                 "index": 2,
+                 "deposit": "10000000000000000",
+                 "props": 29,
+                 "timeout": 3600,
+                 "registerTime": 1570109570,
+                 "weight": 2000,
+                 "proofHash": "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+               },
+               {
+                 "url": "https://in3-v2.slock.it/mainnet/nd-5",
+                 "address": "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2",
+                 "index": 4,
+                 "deposit": "10000000000000000",
+                 "props": 29,
+                 "timeout": 3600,
+                 "registerTime": 1570109690,
+                 "weight": 2000,
+                 "proofHash": "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+               }
+             ]
+           },
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf9021ca01....",
+               "accounts": {
+                 "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5": {
+                   "address": "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5",
+                   "balance": "0xb1a2bc2ec50000",
+                   "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
+                   "nonce": "0x1",
+                   "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
+                   "accountProof": [
+                     "0xf90211a0e822...",
+                     "0xf90211a0f6d0...",
+                     "0xf90211a04d7b...",
+                     "0xf90211a0e749...",
+                     "0xf90211a059cb...",
+                     "0xf90211a0568f...",
+                     "0xf8d1a0ac2433...",
+                     "0xf86d9d33b981..."
+                   ],
+                   "storageProof": [
+                     {
+                       "key": "0x0",
+                       "proof": [
+                         "0xf90211a0ccb6d2d5786...",
+                         "0xf871808080808080800...",
+                         "0xe2a0200decd9548b62a...05"
+                       ],
+                       "value": "0x5"
+                     },
+                     {
+                       "key": "0x1",
+                       "proof": [
+                         "0xf90211a0ccb6d2d5786...",
+                         "0xf871808080808080800...",
+                         "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+                       ],
+                       "value": "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+                     }
+                   ]
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_nodeList
+         params:
+           - 2
+           - "0xe9c15c3b26342e3287bb069e433de48ac3fa4ddd32a31b48e426d19d761d7e9b"
+           - []
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           totalServers: 5
+           contract: "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5"
+           registryId: "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+           lastBlockNumber: 8669495
+           nodes:
+             - url: https://in3-v2.slock.it/mainnet/nd-3
+               address: "0x945F75c0408C0026a3CD204d36f5e47745182fd4"
+               index: 2
+               deposit: "10000000000000000"
+               props: 29
+               timeout: 3600
+               registerTime: 1570109570
+               weight: 2000
+               proofHash: "0x27ffb9b7dc2c5f800c13731e7c1e43fb438928dd5d69aaa8159c21fb13180a4c"
+             - url: https://in3-v2.slock.it/mainnet/nd-5
+               address: "0xbcdF4E3e90cc7288b578329efd7bcC90655148d2"
+               index: 4
+               deposit: "10000000000000000"
+               props: 29
+               timeout: 3600
+               registerTime: 1570109690
+               weight: 2000
+               proofHash: "0xd0dbb6f1e28a8b90761b973e678cf8ecd6b5b3a9d61fb9797d187be011ee9ec7"
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf9021ca01....
+             accounts:
+               "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5":
+                 address: "0x64abe24afbba64cae47e3dc3ced0fcab95e4edd5"
+                 balance: "0xb1a2bc2ec50000"
+                 codeHash: "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398"
+                 nonce: "0x1"
+                 storageHash: "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f"
+                 accountProof:
+                   - 0xf90211a0e822...
+                   - 0xf90211a0f6d0...
+                   - 0xf90211a04d7b...
+                   - 0xf90211a0e749...
+                   - 0xf90211a059cb...
+                   - 0xf90211a0568f...
+                   - 0xf8d1a0ac2433...
+                   - 0xf86d9d33b981...
+                 storageProof:
+                   - key: "0x0"
+                     proof:
+                       - 0xf90211a0ccb6d2d5786...
+                       - 0xf871808080808080800...
+                       - 0xe2a0200decd9548b62a...05
+                     value: "0x5"
+                   - key: "0x1"
+                     proof:
+                       - 0xf90211a0ccb6d2d5786...
+                       - 0xf871808080808080800...
+                       - 0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3
+                     value: "0x423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+         
 ```
 
 ### in3_sign
@@ -5701,46 +7115,73 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 in3_sign '{"blockNumber":8770580}' | jq
-[
-  {
-    "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
-    "block": 8770580,
-    "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
-    "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
-    "v": 28,
-    "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
-  }
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_sign",
-  "params": [
-    {
-      "blockNumber": 8770580
-    }
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": [
-    {
-      "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
-      "block": 8770580,
-      "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
-      "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
-      "v": 28,
-      "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
-    }
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 in3_sign '{"blockNumber":8770580}' | jq
+         [
+           {
+             "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
+             "block": 8770580,
+             "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
+             "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
+             "v": 28,
+             "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+           }
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_sign",
+           "params": [
+             {
+               "blockNumber": 8770580
+             }
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             {
+               "blockHash": "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8",
+               "block": 8770580,
+               "r": "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337",
+               "s": "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596",
+               "v": 28,
+               "msgHash": "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+             }
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_sign
+         params:
+           - blockNumber: 8770580
+         
+
+         //---- Response -----
+
+         result:
+           - blockHash: "0xd8189793f64567992eaadefc51834f3d787b03e9a6850b8b9b8003d8d84a76c8"
+             block: 8770580
+             r: "0x954ed45416e97387a55b2231bff5dd72e822e4a5d60fa43bc9f9e49402019337"
+             s: "0x277163f586585092d146d0d6885095c35c02b360e4125730c52332cf6b99e596"
+             v: 28
+             msgHash: "0x40c23a32947f40a2560fcb633ab7fa4f3a96e33653096b17ec613fbf41f946ef"
+         
 ```
 
 ### in3_whitelist
@@ -5836,90 +7277,152 @@ This proof section contains the following properties:
 
 *Example:*
 
-```sh
-> in3 in3_whitelist 0x08e97ef0a92EB502a1D7574913E2a6636BeC557b | jq
-{
-  "totalServers": 2,
-  "contract": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
-  "lastBlockNumber": 1546354,
-  "nodes": [
-    "0x1fe2e9bf29aa1938859af64c413361227d04059a",
-    "0x45d45e6ff99e6c34a235d263965910298985fcfe"
-  ]
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_whitelist",
-  "params": [
-    "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
-  ],
-  "in3": {
-    "verification": "proof"
-  }
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "totalServers": 2,
-    "contract": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
-    "lastBlockNumber": 1546354,
-    "nodes": [
-      "0x1fe2e9bf29aa1938859af64c413361227d04059a",
-      "0x45d45e6ff99e6c34a235d263965910298985fcfe"
-    ]
-  },
-  "in3": {
-    "proof": {
-      "type": "accountProof",
-      "block": "0xf9021ca01....",
-      "accounts": {
-        "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b": {
-          "address": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
-          "balance": "0xb1a2bc2ec50000",
-          "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
-          "nonce": "0x1",
-          "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
-          "accountProof": [
-            "0xf90211a0e822...",
-            "0xf90211a0f6d0...",
-            "0xf90211a04d7b...",
-            "0xf90211a0e749...",
-            "0xf90211a059cb...",
-            "0xf90211a0568f...",
-            "0xf8d1a0ac2433...",
-            "0xf86d9d33b981..."
-          ],
-          "storageProof": [
-            {
-              "key": "0x0",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf871808080808080800...",
-                "0xe2a0200decd9548b62a...05"
-              ],
-              "value": "0x5"
-            },
-            {
-              "key": "0x1",
-              "proof": [
-                "0xf90211a0ccb6d2d5786...",
-                "0xf871808080808080800...",
-                "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
-              ],
-              "value": "0x6aa7bbfbb1778efa33da1ba032cc3a79b9ef57b428441b4de4f1c38c3f258874"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_whitelist 0x08e97ef0a92EB502a1D7574913E2a6636BeC557b | jq
+         {
+           "totalServers": 2,
+           "contract": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
+           "lastBlockNumber": 1546354,
+           "nodes": [
+             "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+             "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+           ]
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_whitelist",
+           "params": [
+             "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+           ],
+           "in3": {
+             "verification": "proof"
+           }
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "totalServers": 2,
+             "contract": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
+             "lastBlockNumber": 1546354,
+             "nodes": [
+               "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+               "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+             ]
+           },
+           "in3": {
+             "proof": {
+               "type": "accountProof",
+               "block": "0xf9021ca01....",
+               "accounts": {
+                 "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b": {
+                   "address": "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b",
+                   "balance": "0xb1a2bc2ec50000",
+                   "codeHash": "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398",
+                   "nonce": "0x1",
+                   "storageHash": "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f",
+                   "accountProof": [
+                     "0xf90211a0e822...",
+                     "0xf90211a0f6d0...",
+                     "0xf90211a04d7b...",
+                     "0xf90211a0e749...",
+                     "0xf90211a059cb...",
+                     "0xf90211a0568f...",
+                     "0xf8d1a0ac2433...",
+                     "0xf86d9d33b981..."
+                   ],
+                   "storageProof": [
+                     {
+                       "key": "0x0",
+                       "proof": [
+                         "0xf90211a0ccb6d2d5786...",
+                         "0xf871808080808080800...",
+                         "0xe2a0200decd9548b62a...05"
+                       ],
+                       "value": "0x5"
+                     },
+                     {
+                       "key": "0x1",
+                       "proof": [
+                         "0xf90211a0ccb6d2d5786...",
+                         "0xf871808080808080800...",
+                         "0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3"
+                       ],
+                       "value": "0x6aa7bbfbb1778efa33da1ba032cc3a79b9ef57b428441b4de4f1c38c3f258874"
+                     }
+                   ]
+                 }
+               }
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_whitelist
+         params:
+           - "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+         in3:
+           verification: proof
+         
+
+         //---- Response -----
+
+         result:
+           totalServers: 2
+           contract: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+           lastBlockNumber: 1546354
+           nodes:
+             - "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+             - "0x45d45e6ff99e6c34a235d263965910298985fcfe"
+         in3:
+           proof:
+             type: accountProof
+             block: 0xf9021ca01....
+             accounts:
+               "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b":
+                 address: "0x08e97ef0a92EB502a1D7574913E2a6636BeC557b"
+                 balance: "0xb1a2bc2ec50000"
+                 codeHash: "0x18e64869905158477a607a68e9c0074d78f56a9dd5665a5254f456f89d5be398"
+                 nonce: "0x1"
+                 storageHash: "0x4386ec93bd665ea07d7ed488e8b495b362a31dc4100cf762b22f4346ee925d1f"
+                 accountProof:
+                   - 0xf90211a0e822...
+                   - 0xf90211a0f6d0...
+                   - 0xf90211a04d7b...
+                   - 0xf90211a0e749...
+                   - 0xf90211a059cb...
+                   - 0xf90211a0568f...
+                   - 0xf8d1a0ac2433...
+                   - 0xf86d9d33b981...
+                 storageProof:
+                   - key: "0x0"
+                     proof:
+                       - 0xf90211a0ccb6d2d5786...
+                       - 0xf871808080808080800...
+                       - 0xe2a0200decd9548b62a...05
+                     value: "0x5"
+                   - key: "0x1"
+                     proof:
+                       - 0xf90211a0ccb6d2d5786...
+                       - 0xf871808080808080800...
+                       - 0xf843a0200e2d5276120...423dd84f33a44f60e5d58090dcdcc1c047f57be895415822f211b8cd1fd692e3
+                     value: "0x6aa7bbfbb1778efa33da1ba032cc3a79b9ef57b428441b4de4f1c38c3f258874"
+         
 ```
 
 ## utils
@@ -5950,33 +7453,58 @@ a array with the values after decodeing.
 
 *Example:*
 
-```sh
-> in3 in3_abiDecode (address,uint256) 0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005 | jq
-[
-  "0x1234567890123456789012345678901234567890",
-  "0x05"
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_abiDecode",
-  "params": [
-    "(address,uint256)",
-    "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": [
-    "0x1234567890123456789012345678901234567890",
-    "0x05"
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 in3_abiDecode (address,uint256) 0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005 | jq
+         [
+           "0x1234567890123456789012345678901234567890",
+           "0x05"
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_abiDecode",
+           "params": [
+             "(address,uint256)",
+             "0x00000000000000000000000012345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000005"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             "0x1234567890123456789012345678901234567890",
+             "0x05"
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_abiDecode
+         params:
+           - (address,uint256)
+           - "0x000000000000000000000000123456789012345678901234567890123456789000000000\
+             00000000000000000000000000000000000000000000000000000005"
+         
+
+         //---- Response -----
+
+         result:
+           - "0x1234567890123456789012345678901234567890"
+           - "0x05"
+         
 ```
 
 ### in3_abiEncode
@@ -5998,29 +7526,51 @@ the ABI-encoded data as hex including the 4 byte function-signature. These data 
 
 *Example:*
 
-```sh
-> in3 in3_abiEncode getBalance(address) '["0x1234567890123456789012345678901234567890"]'
-0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_abiEncode",
-  "params": [
-    "getBalance(address)",
-    [
-      "0x1234567890123456789012345678901234567890"
-    ]
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
-}
+   .. code-tab:: sh
+
+         > in3 in3_abiEncode getBalance(address) '["0x1234567890123456789012345678901234567890"]'
+         0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_abiEncode",
+           "params": [
+             "getBalance(address)",
+             [
+               "0x1234567890123456789012345678901234567890"
+             ]
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_abiEncode
+         params:
+           - getBalance(address)
+           - - "0x1234567890123456789012345678901234567890"
+         
+
+         //---- Response -----
+
+         result: "0xf8b2cb4f0000000000000000000000001234567890123456789012345678901234567890"
+         
 ```
 
 ### in3_cacheClear
@@ -6036,24 +7586,44 @@ true indicating the success
 
 *Example:*
 
-```sh
-> in3 in3_cacheClear 
-true
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_cacheClear",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": true
-}
+   .. code-tab:: sh
+
+         > in3 in3_cacheClear 
+         true
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_cacheClear",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": true
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_cacheClear
+         params: []
+         
+
+         //---- Response -----
+
+         result: true
+         
 ```
 
 ### in3_calcDeployAddress
@@ -6075,27 +7645,49 @@ the address of the deployed contract
 
 *Example:*
 
-```sh
-> in3 in3_calcDeployAddress 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c 6054986
-0xba866e7bd2573be3eaf5077b557751bb6d58076e
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_calcDeployAddress",
-  "params": [
-    "0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c",
-    6054986
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xba866e7bd2573be3eaf5077b557751bb6d58076e"
-}
+   .. code-tab:: sh
+
+         > in3 in3_calcDeployAddress 0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c 6054986
+         0xba866e7bd2573be3eaf5077b557751bb6d58076e
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_calcDeployAddress",
+           "params": [
+             "0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c",
+             6054986
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xba866e7bd2573be3eaf5077b557751bb6d58076e"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_calcDeployAddress
+         params:
+           - "0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c"
+           - 6054986
+         
+
+         //---- Response -----
+
+         result: "0xba866e7bd2573be3eaf5077b557751bb6d58076e"
+         
 ```
 
 ### in3_checksumAddress
@@ -6117,27 +7709,49 @@ the address-string using the upper/lowercase hex characters.
 
 *Example:*
 
-```sh
-> in3 in3_checksumAddress 0x1fe2e9bf29aa1938859af64c413361227d04059a false
-0x1Fe2E9bf29aa1938859Af64C413361227d04059a
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_checksumAddress",
-  "params": [
-    "0x1fe2e9bf29aa1938859af64c413361227d04059a",
-    false
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
-}
+   .. code-tab:: sh
+
+         > in3 in3_checksumAddress 0x1fe2e9bf29aa1938859af64c413361227d04059a false
+         0x1Fe2E9bf29aa1938859Af64C413361227d04059a
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_checksumAddress",
+           "params": [
+             "0x1fe2e9bf29aa1938859af64c413361227d04059a",
+             false
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_checksumAddress
+         params:
+           - "0x1fe2e9bf29aa1938859af64c413361227d04059a"
+           - false
+         
+
+         //---- Response -----
+
+         result: "0x1Fe2E9bf29aa1938859Af64C413361227d04059a"
+         
 ```
 
 ### in3_decodeTx
@@ -6207,7 +7821,7 @@ The return value contains the following properties :
 * **chainId** : `uint64?` *(optional)* - the chainId as encoded in the transaction. (only missing in legacy tx if EIP-155 is not used)
 
 
-* **v** : `uint32?` *(optional)* - the recovery-byte. For legacy-tx ( this will be either + 27 or chain_id*2 + 35 - See EIP 155)
+* **v** : `bytes?` *(optional)* - the recovery-byte. For legacy-tx ( this will be either + 27 or chain_id*2 + 35 - See EIP 155)
 
 
 * **r** : `bytes32?` *(optional)* - r-value of the sifgnature ( the R.y value)
@@ -6224,64 +7838,109 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 in3_decodeTx 0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce | jq
-{
-  "type": 2,
-  "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
-  "chainId": "0x1",
-  "nonce": "0x3f",
-  "maxPriorityFeePerGas": "0x59682f00",
-  "maxFeePerGas": "0x18c2cdf189",
-  "gas": "0xbcbb",
-  "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
-  "value": "0x0",
-  "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
-  "accessList": [],
-  "v": "0x",
-  "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
-  "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
-  "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
-  "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
-  "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
-  "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_decodeTx",
-  "params": [
-    "0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "type": 2,
-    "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
-    "chainId": "0x1",
-    "nonce": "0x3f",
-    "maxPriorityFeePerGas": "0x59682f00",
-    "maxFeePerGas": "0x18c2cdf189",
-    "gas": "0xbcbb",
-    "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
-    "value": "0x0",
-    "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
-    "accessList": [],
-    "v": "0x",
-    "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
-    "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
-    "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
-    "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
-    "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
-    "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_decodeTx 0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce | jq
+         {
+           "type": 2,
+           "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
+           "chainId": "0x1",
+           "nonce": "0x3f",
+           "maxPriorityFeePerGas": "0x59682f00",
+           "maxFeePerGas": "0x18c2cdf189",
+           "gas": "0xbcbb",
+           "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+           "value": "0x0",
+           "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+           "accessList": [],
+           "v": "0x",
+           "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
+           "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
+           "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
+           "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
+           "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
+           "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_decodeTx",
+           "params": [
+             "0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "type": 2,
+             "hash": "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42",
+             "chainId": "0x1",
+             "nonce": "0x3f",
+             "maxPriorityFeePerGas": "0x59682f00",
+             "maxFeePerGas": "0x18c2cdf189",
+             "gas": "0xbcbb",
+             "to": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
+             "value": "0x0",
+             "data": "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+             "accessList": [],
+             "v": "0x",
+             "r": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798",
+             "s": "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce",
+             "unsigned": "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41c0",
+             "signature": "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b0658779837b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00",
+             "publicKey": "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576df4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb",
+             "from": "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_decodeTx
+         params:
+           - 0x02f8b0013f8459682f008518c2cdf18982bcbb940...edbc296ce
+         
+
+         //---- Response -----
+
+         result:
+           type: 2
+           hash: "0x0a7f5daa71ad3e0115cae737559d14cdf914510a6a19c16267b8d5142d82de42"
+           chainId: "0x1"
+           nonce: "0x3f"
+           maxPriorityFeePerGas: "0x59682f00"
+           maxFeePerGas: "0x18c2cdf189"
+           gas: "0xbcbb"
+           to: "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e"
+           value: "0x0"
+           data: "0x1896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bdd412ffebe687ddf\
+             820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41"
+           accessList: []
+           v: 0x
+           r: "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b06587798"
+           s: "0x37b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce"
+           unsigned: "0x02f86d013f8459682f008518c2cdf18982bcbb9400000000000c2e074ec69a0dfb\
+             2997ba6c7d2e1e80b8441896f70a978895d45a43dc4d455ecd98702a630d6acce4393cec9bd\
+             d412ffebe687ddf820000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78e\
+             baba41c0"
+           signature: "0x22b7c68abd0d362b0682fb5047e82d4b47acd4f5dc1f1b3556af0a8b065877983\
+             7b4f0d22ec65fad0920d9b24ef1b6b0c088afa20ace41f79188bd1edbc296ce00"
+           publicKey: "0x63cfcd2900a37247214361d0ca3637980af8e4b64acdf2f1e1b11573b502b576d\
+             f4387cbf6f94c6cdc750e3aaa23026c5b0cef0f3bb2f5bb42c093ec394fd1bb"
+           from: "0xd034648eaea1d29f4e9cfa8312feff9783f31fd4"
+         
 ```
 
 ### in3_fromWei
@@ -6308,28 +7967,51 @@ the value as string.
 
 *Example:*
 
-```sh
-> in3 in3_fromWei 0x234324abadefdef eth 3
-0.158
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_fromWei",
-  "params": [
-    "0x234324abadefdef",
-    "eth",
-    3
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": 0.158
-}
+   .. code-tab:: sh
+
+         > in3 in3_fromWei 0x234324abadefdef eth 3
+         0.158
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_fromWei",
+           "params": [
+             "0x234324abadefdef",
+             "eth",
+             3
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": 0.158
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_fromWei
+         params:
+           - "0x234324abadefdef"
+           - eth
+           - 3
+         
+
+         //---- Response -----
+
+         result: 0.158
+         
 ```
 
 ### in3_parse_tx_url
@@ -6348,40 +8030,66 @@ undefined
 
 *Example:*
 
-```sh
-> in3 in3_parse_tx_url ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1 | jq
-{
-  "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
-  "fn_sig": "transfer(address,uint256)",
-  "fn_args": [
-    "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
-    1
-  ]
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_parse_tx_url",
-  "params": [
-    "ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
-    "fn_sig": "transfer(address,uint256)",
-    "fn_args": [
-      "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
-      1
-    ]
-  }
-}
+   .. code-tab:: sh
+
+         > in3 in3_parse_tx_url ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1 | jq
+         {
+           "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
+           "fn_sig": "transfer(address,uint256)",
+           "fn_args": [
+             "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
+             1
+           ]
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_parse_tx_url",
+           "params": [
+             "ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "to": "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7",
+             "fn_sig": "transfer(address,uint256)",
+             "fn_args": [
+               "0x8e23ee67d1332ad560396262c48ffbb01f93d052",
+               1
+             ]
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_parse_tx_url
+         params:
+           - ethereum:0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7/transfer?address=0x8e23ee67d1332ad560396262c48ffbb01f93d052&uint256=1
+         
+
+         //---- Response -----
+
+         result:
+           to: "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
+           fn_sig: transfer(address,uint256)
+           fn_args:
+             - "0x8e23ee67d1332ad560396262c48ffbb01f93d052"
+             - 1
+         
 ```
 
 ### in3_rlpDecode
@@ -6400,46 +8108,78 @@ a array with the values after decodeing. The result is either a hex-string or an
 
 *Example:*
 
-```sh
-> in3 in3_rlpDecode 0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080 | jq
-[
-  "0x",
-  "0x08e1409836",
-  "0x9c40",
-  "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
-  "0xff",
-  "0xbbbb",
-  "0x01",
-  "0x",
-  "0x"
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_rlpDecode",
-  "params": [
-    "0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": [
-    "0x",
-    "0x08e1409836",
-    "0x9c40",
-    "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
-    "0xff",
-    "0xbbbb",
-    "0x01",
-    "0x",
-    "0x"
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 in3_rlpDecode 0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080 | jq
+         [
+           "0x",
+           "0x08e1409836",
+           "0x9c40",
+           "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
+           "0xff",
+           "0xbbbb",
+           "0x01",
+           "0x",
+           "0x"
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_rlpDecode",
+           "params": [
+             "0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338373262343866326537663639356662653681ff82bbbb018080"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             "0x",
+             "0x08e1409836",
+             "0x9c40",
+             "0x61616161356638333532623730346231396533626163383732623438663265376636393566626536",
+             "0xff",
+             "0xbbbb",
+             "0x01",
+             "0x",
+             "0x"
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_rlpDecode
+         params:
+           - "0xf83b808508e1409836829c40a86161616135663833353262373034623139653362616338\
+             373262343866326537663639356662653681ff82bbbb018080"
+         
+
+         //---- Response -----
+
+         result:
+           - 0x
+           - "0x08e1409836"
+           - "0x9c40"
+           - "0x616161613566383335326237303462313965336261633837326234386632653766363935\
+             66626536"
+           - "0xff"
+           - "0xbbbb"
+           - "0x01"
+           - 0x
+           - 0x
+         
 ```
 
 ### in3_toWei
@@ -6463,27 +8203,49 @@ the value in wei as hex.
 
 *Example:*
 
-```sh
-> in3 in3_toWei 20.0009123 eth
-0x01159183c4793db800
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "in3_toWei",
-  "params": [
-    "20.0009123",
-    "eth"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x01159183c4793db800"
-}
+   .. code-tab:: sh
+
+         > in3 in3_toWei 20.0009123 eth
+         0x01159183c4793db800
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "in3_toWei",
+           "params": [
+             "20.0009123",
+             "eth"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x01159183c4793db800"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: in3_toWei
+         params:
+           - "20.0009123"
+           - eth
+         
+
+         //---- Response -----
+
+         result: "0x01159183c4793db800"
+         
 ```
 
 ### keccak
@@ -6522,26 +8284,47 @@ the 32byte hash of the data
 
 *Example:*
 
-```sh
-> in3 sha256 0x1234567890
-0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "sha256",
-  "params": [
-    "0x1234567890"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
-}
+   .. code-tab:: sh
+
+         > in3 sha256 0x1234567890
+         0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "sha256",
+           "params": [
+             "0x1234567890"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: sha256
+         params:
+           - "0x1234567890"
+         
+
+         //---- Response -----
+
+         result: "0x6c450e037e79b76f231a71a22ff40403f7d9b74b15e014e52fe1156d3666c3e6"
+         
 ```
 
 ### web3_clientVersion
@@ -6576,26 +8359,47 @@ the 32byte hash of the data
 
 *Example:*
 
-```sh
-> in3 web3_sha3 0x1234567890
-0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "web3_sha3",
-  "params": [
-    "0x1234567890"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
-}
+   .. code-tab:: sh
+
+         > in3 web3_sha3 0x1234567890
+         0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "web3_sha3",
+           "params": [
+             "0x1234567890"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: web3_sha3
+         params:
+           - "0x1234567890"
+         
+
+         //---- Response -----
+
+         result: "0x3a56b02b60d4990074262f496ac34733f870e1b7815719b46ce155beac5e1a41"
+         
 ```
 
 ## zksync
@@ -6623,24 +8427,44 @@ the account used.
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_address 
-0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_account_address",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_address 
+         0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_account_address",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_account_address
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
+         
 ```
 
 ### zksync_account_history
@@ -6784,244 +8608,356 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_account_history 0x9df215737e137acddd0ad99e32f9a6b980ea526d | jq
-[
-  {
-    "tx_id": "29411,1",
-    "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
-    "eth_block": null,
-    "pq_id": null,
-    "tx": {
-      "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-      "fee": "11060000000000",
-      "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
-      "type": "Transfer",
-      "nonce": 1,
-      "token": "ETH",
-      "amount": "1000000000000000",
-      "accountId": 161418,
-      "signature": {
-        "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
-        "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
-      },
-      "validFrom": 0,
-      "validUntil": 4294967295
-    },
-    "success": true,
-    "fail_reason": null,
-    "commited": true,
-    "verified": true,
-    "created_at": "2021-05-31T11:54:56.248569Z"
-  },
-  {
-    "tx_id": "29376,10",
-    "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
-    "eth_block": null,
-    "pq_id": null,
-    "tx": {
-      "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
-      "fee": "10450000000000",
-      "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-      "type": "Transfer",
-      "nonce": 1,
-      "token": "ETH",
-      "amount": "10000000000000000",
-      "accountId": 161391,
-      "signature": {
-        "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
-        "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
-      },
-      "validFrom": 0,
-      "validUntil": 4294967295
-    },
-    "success": true,
-    "fail_reason": null,
-    "commited": true,
-    "verified": true,
-    "created_at": "2021-05-31T08:11:17.250144Z"
-  },
-  {
-    "tx_id": "29376,5",
-    "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
-    "eth_block": null,
-    "pq_id": null,
-    "tx": {
-      "fee": "37500000000000",
-      "type": "ChangePubKey",
-      "nonce": 0,
-      "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-      "feeToken": 0,
-      "accountId": 161391,
-      "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
-      "signature": {
-        "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
-        "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
-      },
-      "validFrom": 0,
-      "validUntil": 4294967295,
-      "ethAuthData": {
-        "type": "CREATE2",
-        "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
-        "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
-        "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
-      },
-      "ethSignature": null
-    },
-    "success": true,
-    "fail_reason": null,
-    "commited": true,
-    "verified": true,
-    "created_at": "2021-05-31T08:09:11.249472Z"
-  },
-  {
-    "tx_id": "29376,0",
-    "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
-    "eth_block": 8680840,
-    "pq_id": 57181,
-    "tx": {
-      "type": "Deposit",
-      "account_id": 161391,
-      "priority_op": {
-        "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-        "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
-        "token": "ETH",
-        "amount": "500000000000000000"
-      }
-    },
-    "success": true,
-    "fail_reason": null,
-    "commited": true,
-    "verified": true,
-    "created_at": "2021-05-31T08:07:31.237817Z"
-  }
-]
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_account_history",
-  "params": [
-    "0x9df215737e137acddd0ad99e32f9a6b980ea526d"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": [
-    {
-      "tx_id": "29411,1",
-      "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
-      "eth_block": null,
-      "pq_id": null,
-      "tx": {
-        "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-        "fee": "11060000000000",
-        "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
-        "type": "Transfer",
-        "nonce": 1,
-        "token": "ETH",
-        "amount": "1000000000000000",
-        "accountId": 161418,
-        "signature": {
-          "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
-          "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
-        },
-        "validFrom": 0,
-        "validUntil": 4294967295
-      },
-      "success": true,
-      "fail_reason": null,
-      "commited": true,
-      "verified": true,
-      "created_at": "2021-05-31T11:54:56.248569Z"
-    },
-    {
-      "tx_id": "29376,10",
-      "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
-      "eth_block": null,
-      "pq_id": null,
-      "tx": {
-        "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
-        "fee": "10450000000000",
-        "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-        "type": "Transfer",
-        "nonce": 1,
-        "token": "ETH",
-        "amount": "10000000000000000",
-        "accountId": 161391,
-        "signature": {
-          "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
-          "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
-        },
-        "validFrom": 0,
-        "validUntil": 4294967295
-      },
-      "success": true,
-      "fail_reason": null,
-      "commited": true,
-      "verified": true,
-      "created_at": "2021-05-31T08:11:17.250144Z"
-    },
-    {
-      "tx_id": "29376,5",
-      "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
-      "eth_block": null,
-      "pq_id": null,
-      "tx": {
-        "fee": "37500000000000",
-        "type": "ChangePubKey",
-        "nonce": 0,
-        "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-        "feeToken": 0,
-        "accountId": 161391,
-        "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
-        "signature": {
-          "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
-          "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
-        },
-        "validFrom": 0,
-        "validUntil": 4294967295,
-        "ethAuthData": {
-          "type": "CREATE2",
-          "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
-          "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
-          "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
-        },
-        "ethSignature": null
-      },
-      "success": true,
-      "fail_reason": null,
-      "commited": true,
-      "verified": true,
-      "created_at": "2021-05-31T08:09:11.249472Z"
-    },
-    {
-      "tx_id": "29376,0",
-      "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
-      "eth_block": 8680840,
-      "pq_id": 57181,
-      "tx": {
-        "type": "Deposit",
-        "account_id": 161391,
-        "priority_op": {
-          "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
-          "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
-          "token": "ETH",
-          "amount": "500000000000000000"
-        }
-      },
-      "success": true,
-      "fail_reason": null,
-      "commited": true,
-      "verified": true,
-      "created_at": "2021-05-31T08:07:31.237817Z"
-    }
-  ]
-}
+   .. code-tab:: sh
+
+         > in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_account_history 0x9df215737e137acddd0ad99e32f9a6b980ea526d | jq
+         [
+           {
+             "tx_id": "29411,1",
+             "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
+             "eth_block": null,
+             "pq_id": null,
+             "tx": {
+               "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+               "fee": "11060000000000",
+               "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
+               "type": "Transfer",
+               "nonce": 1,
+               "token": "ETH",
+               "amount": "1000000000000000",
+               "accountId": 161418,
+               "signature": {
+                 "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
+                 "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
+               },
+               "validFrom": 0,
+               "validUntil": 4294967295
+             },
+             "success": true,
+             "fail_reason": null,
+             "commited": true,
+             "verified": true,
+             "created_at": "2021-05-31T11:54:56.248569Z"
+           },
+           {
+             "tx_id": "29376,10",
+             "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
+             "eth_block": null,
+             "pq_id": null,
+             "tx": {
+               "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
+               "fee": "10450000000000",
+               "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+               "type": "Transfer",
+               "nonce": 1,
+               "token": "ETH",
+               "amount": "10000000000000000",
+               "accountId": 161391,
+               "signature": {
+                 "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+                 "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
+               },
+               "validFrom": 0,
+               "validUntil": 4294967295
+             },
+             "success": true,
+             "fail_reason": null,
+             "commited": true,
+             "verified": true,
+             "created_at": "2021-05-31T08:11:17.250144Z"
+           },
+           {
+             "tx_id": "29376,5",
+             "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
+             "eth_block": null,
+             "pq_id": null,
+             "tx": {
+               "fee": "37500000000000",
+               "type": "ChangePubKey",
+               "nonce": 0,
+               "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+               "feeToken": 0,
+               "accountId": 161391,
+               "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
+               "signature": {
+                 "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+                 "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
+               },
+               "validFrom": 0,
+               "validUntil": 4294967295,
+               "ethAuthData": {
+                 "type": "CREATE2",
+                 "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
+                 "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
+                 "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
+               },
+               "ethSignature": null
+             },
+             "success": true,
+             "fail_reason": null,
+             "commited": true,
+             "verified": true,
+             "created_at": "2021-05-31T08:09:11.249472Z"
+           },
+           {
+             "tx_id": "29376,0",
+             "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
+             "eth_block": 8680840,
+             "pq_id": 57181,
+             "tx": {
+               "type": "Deposit",
+               "account_id": 161391,
+               "priority_op": {
+                 "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+                 "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
+                 "token": "ETH",
+                 "amount": "500000000000000000"
+               }
+             },
+             "success": true,
+             "fail_reason": null,
+             "commited": true,
+             "verified": true,
+             "created_at": "2021-05-31T08:07:31.237817Z"
+           }
+         ]
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_account_history",
+           "params": [
+             "0x9df215737e137acddd0ad99e32f9a6b980ea526d"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": [
+             {
+               "tx_id": "29411,1",
+               "hash": "sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335",
+               "eth_block": null,
+               "pq_id": null,
+               "tx": {
+                 "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+                 "fee": "11060000000000",
+                 "from": "0x9df215737e137acddd0ad99e32f9a6b980ea526d",
+                 "type": "Transfer",
+                 "nonce": 1,
+                 "token": "ETH",
+                 "amount": "1000000000000000",
+                 "accountId": 161418,
+                 "signature": {
+                   "pubKey": "74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91",
+                   "signature": "407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02"
+                 },
+                 "validFrom": 0,
+                 "validUntil": 4294967295
+               },
+               "success": true,
+               "fail_reason": null,
+               "commited": true,
+               "verified": true,
+               "created_at": "2021-05-31T11:54:56.248569Z"
+             },
+             {
+               "tx_id": "29376,10",
+               "hash": "sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0",
+               "eth_block": null,
+               "pq_id": null,
+               "tx": {
+                 "to": "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873",
+                 "fee": "10450000000000",
+                 "from": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+                 "type": "Transfer",
+                 "nonce": 1,
+                 "token": "ETH",
+                 "amount": "10000000000000000",
+                 "accountId": 161391,
+                 "signature": {
+                   "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+                   "signature": "ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003"
+                 },
+                 "validFrom": 0,
+                 "validUntil": 4294967295
+               },
+               "success": true,
+               "fail_reason": null,
+               "commited": true,
+               "verified": true,
+               "created_at": "2021-05-31T08:11:17.250144Z"
+             },
+             {
+               "tx_id": "29376,5",
+               "hash": "sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e",
+               "eth_block": null,
+               "pq_id": null,
+               "tx": {
+                 "fee": "37500000000000",
+                 "type": "ChangePubKey",
+                 "nonce": 0,
+                 "account": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+                 "feeToken": 0,
+                 "accountId": 161391,
+                 "newPkHash": "sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea",
+                 "signature": {
+                   "pubKey": "06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721",
+                   "signature": "27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500"
+                 },
+                 "validFrom": 0,
+                 "validUntil": 4294967295,
+                 "ethAuthData": {
+                   "type": "CREATE2",
+                   "saltArg": "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7",
+                   "codeHash": "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c",
+                   "creatorAddress": "0xaa8c54c65c14f132804f0809bdbef19970673709"
+                 },
+                 "ethSignature": null
+               },
+               "success": true,
+               "fail_reason": null,
+               "commited": true,
+               "verified": true,
+               "created_at": "2021-05-31T08:09:11.249472Z"
+             },
+             {
+               "tx_id": "29376,0",
+               "hash": "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8",
+               "eth_block": 8680840,
+               "pq_id": 57181,
+               "tx": {
+                 "type": "Deposit",
+                 "account_id": 161391,
+                 "priority_op": {
+                   "to": "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f",
+                   "from": "0x9d646b325787c6d7d612eb37915ca3023eea4dac",
+                   "token": "ETH",
+                   "amount": "500000000000000000"
+                 }
+               },
+               "success": true,
+               "fail_reason": null,
+               "commited": true,
+               "verified": true,
+               "created_at": "2021-05-31T08:07:31.237817Z"
+             }
+           ]
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_account_history
+         params:
+           - "0x9df215737e137acddd0ad99e32f9a6b980ea526d"
+         
+
+         //---- Response -----
+
+         result:
+           - tx_id: 29411,1
+             hash: sync-tx:e83b1b982b4d8a08a21f87717e85a268e3b3a5305bdf5efc465e7fd8f0ad5335
+             eth_block: null
+             pq_id: null
+             tx:
+               to: "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f"
+               fee: "11060000000000"
+               from: "0x9df215737e137acddd0ad99e32f9a6b980ea526d"
+               type: Transfer
+               nonce: 1
+               token: ETH
+               amount: "1000000000000000"
+               accountId: 161418
+               signature:
+                 pubKey: 74835ee6dd9009b67fd4e4aef4a6f63ee2a597ced5e59f33b019905d1df70d91
+                 signature: 407314ebce8ce0217b41a6cf992c7359645215c35afbdf7e18e76c957a14ed20135b7e8e5ca24fb132640141c0b3168b3939571e2363e41639e18b1637f26d02
+               validFrom: 0
+               validUntil: 4294967295
+             success: true
+             fail_reason: null
+             commited: true
+             verified: true
+             created_at: 2021-05-31T11:54:56.248569Z
+           - tx_id: 29376,10
+             hash: sync-tx:5f92999f7bbc5d84fe0d34ebe8b7a0c38f977caece844686d3007bc48e5944e0
+             eth_block: null
+             pq_id: null
+             tx:
+               to: "0xc98fc74a085cd7ecd91d9e8d860a18ef6769d873"
+               fee: "10450000000000"
+               from: "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f"
+               type: Transfer
+               nonce: 1
+               token: ETH
+               amount: "10000000000000000"
+               accountId: 161391
+               signature:
+                 pubKey: 06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721
+                 signature: ef83b1519a737107798aa5740998a515c406510b61f176fbbac6f703231968a563551f74f37bf96c2220fd18a68aca128a155b5083333a13cfbbd348c0a75003
+               validFrom: 0
+               validUntil: 4294967295
+             success: true
+             fail_reason: null
+             commited: true
+             verified: true
+             created_at: 2021-05-31T08:11:17.250144Z
+           - tx_id: 29376,5
+             hash: sync-tx:78550bbcaefdfd4cc4275bd1a0168dd73efb1953bb17a9689381fea6729c924e
+             eth_block: null
+             pq_id: null
+             tx:
+               fee: "37500000000000"
+               type: ChangePubKey
+               nonce: 0
+               account: "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f"
+               feeToken: 0
+               accountId: 161391
+               newPkHash: sync:1ae5a093f285ddd23b54bea2780ef4e9a4e348ea
+               signature:
+                 pubKey: 06cce677912252a9eb87090b795e5bd84a079cb398dfec7f6a6645ee456dc721
+                 signature: 27f42a850de4dcc6527fea0a9baa5991dabf3c2ce30dae5a6112f03cf614da03bdc2ef7ac107337d17f9e4047e5b18b3e4c46acb6af41f8cfbb2fce43247d500
+               validFrom: 0
+               validUntil: 4294967295
+               ethAuthData:
+                 type: CREATE2
+                 saltArg: "0xd32a7ec6157d2433c9ae7f4fdc35dfac9bba6f92831d1ca20b09d04d039d8dd7"
+                 codeHash: "0x96657bf6bdcbffce06518530907d2d729e4659ad3bc7b5cc1f5c5567d964272c"
+                 creatorAddress: "0xaa8c54c65c14f132804f0809bdbef19970673709"
+               ethSignature: null
+             success: true
+             fail_reason: null
+             commited: true
+             verified: true
+             created_at: 2021-05-31T08:09:11.249472Z
+           - tx_id: 29376,0
+             hash: "0xc63566212c1569a0e64b255a07320483ed8476cd36b54aa37d3bd6f93b70f7f8"
+             eth_block: 8680840
+             pq_id: 57181
+             tx:
+               type: Deposit
+               account_id: 161391
+               priority_op:
+                 to: "0xb7b2af693a2362c5c7575841ca6eb72ad2aed77f"
+                 from: "0x9d646b325787c6d7d612eb37915ca3023eea4dac"
+                 token: ETH
+                 amount: "500000000000000000"
+             success: true
+             fail_reason: null
+             commited: true
+             verified: true
+             created_at: 2021-05-31T08:07:31.237817Z
+         
 ```
 
 ### zksync_account_info
@@ -7097,56 +9033,88 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_info  | jq
-{
-  "address": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292",
-  "committed": {
-    "balances": {},
-    "nonce": 0,
-    "pubKeyHash": "sync:0000000000000000000000000000000000000000"
-  },
-  "depositing": {
-    "balances": {}
-  },
-  "id": null,
-  "verified": {
-    "balances": {},
-    "nonce": 0,
-    "pubKeyHash": "sync:0000000000000000000000000000000000000000"
-  }
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_account_info",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "address": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292",
-    "committed": {
-      "balances": {},
-      "nonce": 0,
-      "pubKeyHash": "sync:0000000000000000000000000000000000000000"
-    },
-    "depositing": {
-      "balances": {}
-    },
-    "id": null,
-    "verified": {
-      "balances": {},
-      "nonce": 0,
-      "pubKeyHash": "sync:0000000000000000000000000000000000000000"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_account_info  | jq
+         {
+           "address": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292",
+           "committed": {
+             "balances": {},
+             "nonce": 0,
+             "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+           },
+           "depositing": {
+             "balances": {}
+           },
+           "id": null,
+           "verified": {
+             "balances": {},
+             "nonce": 0,
+             "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+           }
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_account_info",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "address": "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292",
+             "committed": {
+               "balances": {},
+               "nonce": 0,
+               "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+             },
+             "depositing": {
+               "balances": {}
+             },
+             "id": null,
+             "verified": {
+               "balances": {},
+               "nonce": 0,
+               "pubKeyHash": "sync:0000000000000000000000000000000000000000"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_account_info
+         params: []
+         
+
+         //---- Response -----
+
+         result:
+           address: "0x3b2a1bd631d9d7b17e87429a8e78dbbd9b4de292"
+           committed:
+             balances: {}
+             nonce: 0
+             pubKeyHash: sync:0000000000000000000000000000000000000000
+           depositing:
+             balances: {}
+           id: null
+           verified:
+             balances: {}
+             nonce: 0
+             pubKeyHash: sync:0000000000000000000000000000000000000000
+         
 ```
 
 ### zksync_aggregate_pubkey
@@ -7165,26 +9133,48 @@ the compact public Key
 
 *Example:*
 
-```sh
-> in3 -x zksync_aggregate_pubkey 0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409
-0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_aggregate_pubkey",
-  "params": [
-    "0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b"
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_aggregate_pubkey 0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409
+         0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_aggregate_pubkey",
+           "params": [
+             "0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_aggregate_pubkey
+         params:
+           - "0x0f61bfe164cc43b5a112bfbfb0583004e79dbfafc97a7daad14c5d511fea8e2435065ddd\
+             04329ec94be682bf004b03a5a4eeca9bf50a8b8b6023942adc0b3409"
+         
+
+         //---- Response -----
+
+         result: "0x9ce5b6f8db3fbbe66a3bdbd3b4731f19ec27f80ee03ead3c0708798dd949882b"
+         
 ```
 
 ### zksync_contract_address
@@ -7209,30 +9199,52 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x zksync_contract_address  | jq
-{
-  "govContract": "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01",
-  "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_contract_address",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "govContract": "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01",
-    "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_contract_address  | jq
+         {
+           "govContract": "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01",
+           "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_contract_address",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "govContract": "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01",
+             "mainContract": "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_contract_address
+         params: []
+         
+
+         //---- Response -----
+
+         result:
+           govContract: "0x34460C0EB5074C29A9F6FE13b8e7E23A0D08aF01"
+           mainContract: "0xaBEA9132b05A70803a4E85094fD0e1800777fBEF"
+         
 ```
 
 ### zksync_deposit
@@ -7348,93 +9360,142 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_deposit 1000 WBTC | jq
-{
-  "receipt": {
-    "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-    "blockNumber": "0x8c1e39",
-    "contractAddress": null,
-    "cumulativeGasUsed": "0x2466d",
-    "gasUsed": "0x2466d",
-    "logs": [
-      {
-        "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-        "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-        "blockNumber": "0x8c1e39",
-        "data": "0x00000000000...",
-        "logIndex": "0x0",
-        "removed": false,
-        "topics": [
-          "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-          "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-          "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-        ],
-        "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-        "transactionIndex": "0x0",
-        "transactionLogIndex": "0x0",
-        "type": "mined"
-      }
-    ],
-    "logsBloom": "0x00000000000000000000200000...",
-    "root": null,
-    "status": "0x1",
-    "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-    "transactionIndex": "0x0"
-  },
-  "priorityOpId": 74
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_deposit",
-  "params": [
-    1000,
-    "WBTC"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "receipt": {
-      "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-      "blockNumber": "0x8c1e39",
-      "contractAddress": null,
-      "cumulativeGasUsed": "0x2466d",
-      "gasUsed": "0x2466d",
-      "logs": [
-        {
-          "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-          "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-          "blockNumber": "0x8c1e39",
-          "data": "0x00000000000...",
-          "logIndex": "0x0",
-          "removed": false,
-          "topics": [
-            "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-            "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-            "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-          ],
-          "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-          "transactionIndex": "0x0",
-          "transactionLogIndex": "0x0",
-          "type": "mined"
-        }
-      ],
-      "logsBloom": "0x00000000000000000000200000...",
-      "root": null,
-      "status": "0x1",
-      "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-      "transactionIndex": "0x0"
-    },
-    "priorityOpId": 74
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_deposit 1000 WBTC | jq
+         {
+           "receipt": {
+             "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+             "blockNumber": "0x8c1e39",
+             "contractAddress": null,
+             "cumulativeGasUsed": "0x2466d",
+             "gasUsed": "0x2466d",
+             "logs": [
+               {
+                 "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+                 "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+                 "blockNumber": "0x8c1e39",
+                 "data": "0x00000000000...",
+                 "logIndex": "0x0",
+                 "removed": false,
+                 "topics": [
+                   "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                   "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                   "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                 ],
+                 "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+                 "transactionIndex": "0x0",
+                 "transactionLogIndex": "0x0",
+                 "type": "mined"
+               }
+             ],
+             "logsBloom": "0x00000000000000000000200000...",
+             "root": null,
+             "status": "0x1",
+             "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+             "transactionIndex": "0x0"
+           },
+           "priorityOpId": 74
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_deposit",
+           "params": [
+             1000,
+             "WBTC"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "receipt": {
+               "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+               "blockNumber": "0x8c1e39",
+               "contractAddress": null,
+               "cumulativeGasUsed": "0x2466d",
+               "gasUsed": "0x2466d",
+               "logs": [
+                 {
+                   "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+                   "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+                   "blockNumber": "0x8c1e39",
+                   "data": "0x00000000000...",
+                   "logIndex": "0x0",
+                   "removed": false,
+                   "topics": [
+                     "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                     "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                     "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                   ],
+                   "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+                   "transactionIndex": "0x0",
+                   "transactionLogIndex": "0x0",
+                   "type": "mined"
+                 }
+               ],
+               "logsBloom": "0x00000000000000000000200000...",
+               "root": null,
+               "status": "0x1",
+               "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+               "transactionIndex": "0x0"
+             },
+             "priorityOpId": 74
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_deposit
+         params:
+           - 1000
+           - WBTC
+         
+
+         //---- Response -----
+
+         result:
+           receipt:
+             blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+             blockNumber: "0x8c1e39"
+             contractAddress: null
+             cumulativeGasUsed: "0x2466d"
+             gasUsed: "0x2466d"
+             logs:
+               - address: "0x85ec283a3ed4b66df4da23656d4bf8a507383bca"
+                 blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+                 blockNumber: "0x8c1e39"
+                 data: 0x00000000000...
+                 logIndex: "0x0"
+                 removed: false
+                 topics:
+                   - "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8"
+                   - "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6"
+                   - "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                 transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+                 transactionIndex: "0x0"
+                 transactionLogIndex: "0x0"
+                 type: mined
+             logsBloom: 0x00000000000000000000200000...
+             root: null
+             status: "0x1"
+             transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+             transactionIndex: "0x0"
+           priorityOpId: 74
+         
 ```
 
 ### zksync_emergency_withdraw
@@ -7533,86 +9594,132 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_emergency_withdraw WBTC | jq
-{
-  "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-  "blockNumber": "0x8c1e39",
-  "contractAddress": null,
-  "cumulativeGasUsed": "0x2466d",
-  "gasUsed": "0x2466d",
-  "logs": [
-    {
-      "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-      "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-      "blockNumber": "0x8c1e39",
-      "data": "0x00000000000...",
-      "logIndex": "0x0",
-      "removed": false,
-      "topics": [
-        "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-        "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-        "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-      ],
-      "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-      "transactionIndex": "0x0",
-      "transactionLogIndex": "0x0",
-      "type": "mined"
-    }
-  ],
-  "logsBloom": "0x00000000000000000000200000...",
-  "root": null,
-  "status": "0x1",
-  "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-  "transactionIndex": "0x0"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_emergency_withdraw",
-  "params": [
-    "WBTC"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-    "blockNumber": "0x8c1e39",
-    "contractAddress": null,
-    "cumulativeGasUsed": "0x2466d",
-    "gasUsed": "0x2466d",
-    "logs": [
-      {
-        "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
-        "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
-        "blockNumber": "0x8c1e39",
-        "data": "0x00000000000...",
-        "logIndex": "0x0",
-        "removed": false,
-        "topics": [
-          "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
-          "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
-          "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
-        ],
-        "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-        "transactionIndex": "0x0",
-        "transactionLogIndex": "0x0",
-        "type": "mined"
-      }
-    ],
-    "logsBloom": "0x00000000000000000000200000...",
-    "root": null,
-    "status": "0x1",
-    "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
-    "transactionIndex": "0x0"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_emergency_withdraw WBTC | jq
+         {
+           "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+           "blockNumber": "0x8c1e39",
+           "contractAddress": null,
+           "cumulativeGasUsed": "0x2466d",
+           "gasUsed": "0x2466d",
+           "logs": [
+             {
+               "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+               "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+               "blockNumber": "0x8c1e39",
+               "data": "0x00000000000...",
+               "logIndex": "0x0",
+               "removed": false,
+               "topics": [
+                 "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                 "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                 "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+               ],
+               "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+               "transactionIndex": "0x0",
+               "transactionLogIndex": "0x0",
+               "type": "mined"
+             }
+           ],
+           "logsBloom": "0x00000000000000000000200000...",
+           "root": null,
+           "status": "0x1",
+           "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+           "transactionIndex": "0x0"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_emergency_withdraw",
+           "params": [
+             "WBTC"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+             "blockNumber": "0x8c1e39",
+             "contractAddress": null,
+             "cumulativeGasUsed": "0x2466d",
+             "gasUsed": "0x2466d",
+             "logs": [
+               {
+                 "address": "0x85ec283a3ed4b66df4da23656d4bf8a507383bca",
+                 "blockHash": "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304",
+                 "blockNumber": "0x8c1e39",
+                 "data": "0x00000000000...",
+                 "logIndex": "0x0",
+                 "removed": false,
+                 "topics": [
+                   "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8",
+                   "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6",
+                   "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+                 ],
+                 "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+                 "transactionIndex": "0x0",
+                 "transactionLogIndex": "0x0",
+                 "type": "mined"
+               }
+             ],
+             "logsBloom": "0x00000000000000000000200000...",
+             "root": null,
+             "status": "0x1",
+             "transactionHash": "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e",
+             "transactionIndex": "0x0"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_emergency_withdraw
+         params:
+           - WBTC
+         
+
+         //---- Response -----
+
+         result:
+           blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+           blockNumber: "0x8c1e39"
+           contractAddress: null
+           cumulativeGasUsed: "0x2466d"
+           gasUsed: "0x2466d"
+           logs:
+             - address: "0x85ec283a3ed4b66df4da23656d4bf8a507383bca"
+               blockHash: "0xea6ee1e20d3408ad7f6981cfcc2625d80b4f4735a75ca5b20baeb328e41f0304"
+               blockNumber: "0x8c1e39"
+               data: 0x00000000000...
+               logIndex: "0x0"
+               removed: false
+               topics:
+                 - "0x9123e6a7c5d144bd06140643c88de8e01adcbb24350190c02218a4435c7041f8"
+                 - "0xa2f7689fc12ea917d9029117d32b9fdef2a53462c853462ca86b71b97dd84af6"
+                 - "0x55a6ef49ec5dcf6cd006d21f151f390692eedd839c813a150000000000000000"
+               transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+               transactionIndex: "0x0"
+               transactionLogIndex: "0x0"
+               type: mined
+           logsBloom: 0x00000000000000000000200000...
+           root: null
+           status: "0x1"
+           transactionHash: "0x5dc2a9ec73abfe0640f27975126bbaf14624967e2b0b7c2b3a0fb6111f0d3c5e"
+           transactionIndex: "0x0"
+         
 ```
 
 ### zksync_ethop_info
@@ -7651,40 +9758,66 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x zksync_ethop_info 1 | jq
-{
-  "block": {
-    "committed": true,
-    "blockNumber": 4,
-    "verified": true
-  },
-  "executed": true
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_ethop_info",
-  "params": [
-    1
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "block": {
-      "committed": true,
-      "blockNumber": 4,
-      "verified": true
-    },
-    "executed": true
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_ethop_info 1 | jq
+         {
+           "block": {
+             "committed": true,
+             "blockNumber": 4,
+             "verified": true
+           },
+           "executed": true
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_ethop_info",
+           "params": [
+             1
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "block": {
+               "committed": true,
+               "blockNumber": 4,
+               "verified": true
+             },
+             "executed": true
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_ethop_info
+         params:
+           - 1
+         
+
+         //---- Response -----
+
+         result:
+           block:
+             committed: true
+             blockNumber: 4
+             verified: true
+           executed: true
+         
 ```
 
 ### zksync_get_token_price
@@ -7703,26 +9836,47 @@ the token price
 
 *Example:*
 
-```sh
-> in3 -x zksync_get_token_price WBTC
-11320.002167
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_get_token_price",
-  "params": [
-    "WBTC"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": 11320.002167
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_get_token_price WBTC
+         11320.002167
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_get_token_price",
+           "params": [
+             "WBTC"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": 11320.002167
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_get_token_price
+         params:
+           - WBTC
+         
+
+         //---- Response -----
+
+         result: 11320.002167
+         
 ```
 
 ### zksync_get_tx_fee
@@ -7768,42 +9922,71 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x zksync_get_tx_fee Transfer 0xabea9132b05a70803a4e85094fd0e1800777fbef BAT | jq
-{
-  "feeType": "TransferToNew",
-  "gasFee": "47684047990828528",
-  "gasPriceWei": "116000000000",
-  "gasTxAmount": "350",
-  "totalFee": "66000000000000000",
-  "zkpFee": "18378682992117666"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_get_tx_fee",
-  "params": [
-    "Transfer",
-    "0xabea9132b05a70803a4e85094fd0e1800777fbef",
-    "BAT"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "feeType": "TransferToNew",
-    "gasFee": "47684047990828528",
-    "gasPriceWei": "116000000000",
-    "gasTxAmount": "350",
-    "totalFee": "66000000000000000",
-    "zkpFee": "18378682992117666"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_get_tx_fee Transfer 0xabea9132b05a70803a4e85094fd0e1800777fbef BAT | jq
+         {
+           "feeType": "TransferToNew",
+           "gasFee": "47684047990828528",
+           "gasPriceWei": "116000000000",
+           "gasTxAmount": "350",
+           "totalFee": "66000000000000000",
+           "zkpFee": "18378682992117666"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_get_tx_fee",
+           "params": [
+             "Transfer",
+             "0xabea9132b05a70803a4e85094fd0e1800777fbef",
+             "BAT"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "feeType": "TransferToNew",
+             "gasFee": "47684047990828528",
+             "gasPriceWei": "116000000000",
+             "gasTxAmount": "350",
+             "totalFee": "66000000000000000",
+             "zkpFee": "18378682992117666"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_get_tx_fee
+         params:
+           - Transfer
+           - "0xabea9132b05a70803a4e85094fd0e1800777fbef"
+           - BAT
+         
+
+         //---- Response -----
+
+         result:
+           feeType: TransferToNew
+           gasFee: "47684047990828528"
+           gasPriceWei: "116000000000"
+           gasTxAmount: "350"
+           totalFee: "66000000000000000"
+           zkpFee: "18378682992117666"
+         
 ```
 
 ### zksync_pubkey
@@ -7822,24 +10005,44 @@ the pubKey
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkey 
-0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_pubkey",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkey 
+         0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_pubkey",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_pubkey
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc04"
+         
 ```
 
 ### zksync_pubkeyhash
@@ -7858,24 +10061,44 @@ the pubKeyHash
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkeyhash 
-sync:4dcd9bb4463121470c7232efb9ff23ec21398e58
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_pubkeyhash",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "sync:4dcd9bb4463121470c7232efb9ff23ec21398e58"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_pubkeyhash 
+         sync:4dcd9bb4463121470c7232efb9ff23ec21398e58
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_pubkeyhash",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "sync:4dcd9bb4463121470c7232efb9ff23ec21398e58"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_pubkeyhash
+         params: []
+         
+
+         //---- Response -----
+
+         result: sync:4dcd9bb4463121470c7232efb9ff23ec21398e58
+         
 ```
 
 ### zksync_set_key
@@ -7909,26 +10132,47 @@ the pubKeyHash, if it was executed successfully
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_set_key eth
-sync:e41d2489571d322189246dafa5ebde1f4699f498
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_set_key",
-  "params": [
-    "eth"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "sync:e41d2489571d322189246dafa5ebde1f4699f498"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_set_key eth
+         sync:e41d2489571d322189246dafa5ebde1f4699f498
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_set_key",
+           "params": [
+             "eth"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "sync:e41d2489571d322189246dafa5ebde1f4699f498"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_set_key
+         params:
+           - eth
+         
+
+         //---- Response -----
+
+         result: sync:e41d2489571d322189246dafa5ebde1f4699f498
+         
 ```
 
 ### zksync_sign
@@ -7955,26 +10199,49 @@ The return value are 96 bytes of signature:
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_sign 0xaabbccddeeff
-0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_sign",
-  "params": [
-    "0xaabbccddeeff"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xe41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 zksync_sign 0xaabbccddeeff
+         0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_sign",
+           "params": [
+             "0xaabbccddeeff"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_sign
+         params:
+           - "0xaabbccddeeff"
+         
+
+         //---- Response -----
+
+         result: "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f6\
+           9034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0\
+           c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
+         
 ```
 
 ### zksync_sync_key
@@ -7990,24 +10257,44 @@ the raw private key configured based on the signers seed
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_sync_key 
-0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_sync_key",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": "0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6"
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_sync_key 
+         0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_sync_key",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": "0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6"
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_sync_key
+         params: []
+         
+
+         //---- Response -----
+
+         result: "0x019125314fda133d5bf62cb454ee8c60927d55b68eae8b8b8bd13db814389cd6"
+         
 ```
 
 ### zksync_tokens
@@ -8038,74 +10325,114 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x zksync_tokens  | jq
-{
-  "BAT": {
-    "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
-    "decimals": 18,
-    "id": 8,
-    "symbol": "BAT"
-  },
-  "BUSD": {
-    "address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
-    "decimals": 18,
-    "id": 6,
-    "symbol": "BUSD"
-  },
-  "DAI": {
-    "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
-    "decimals": 18,
-    "id": 1,
-    "symbol": "DAI"
-  },
-  "ETH": {
-    "address": "0x0000000000000000000000000000000000000000",
-    "decimals": 18,
-    "id": 0,
-    "symbol": "ETH"
-  }
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_tokens",
-  "params": []
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "BAT": {
-      "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
-      "decimals": 18,
-      "id": 8,
-      "symbol": "BAT"
-    },
-    "BUSD": {
-      "address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
-      "decimals": 18,
-      "id": 6,
-      "symbol": "BUSD"
-    },
-    "DAI": {
-      "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
-      "decimals": 18,
-      "id": 1,
-      "symbol": "DAI"
-    },
-    "ETH": {
-      "address": "0x0000000000000000000000000000000000000000",
-      "decimals": 18,
-      "id": 0,
-      "symbol": "ETH"
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_tokens  | jq
+         {
+           "BAT": {
+             "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
+             "decimals": 18,
+             "id": 8,
+             "symbol": "BAT"
+           },
+           "BUSD": {
+             "address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
+             "decimals": 18,
+             "id": 6,
+             "symbol": "BUSD"
+           },
+           "DAI": {
+             "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+             "decimals": 18,
+             "id": 1,
+             "symbol": "DAI"
+           },
+           "ETH": {
+             "address": "0x0000000000000000000000000000000000000000",
+             "decimals": 18,
+             "id": 0,
+             "symbol": "ETH"
+           }
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_tokens",
+           "params": []
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "BAT": {
+               "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
+               "decimals": 18,
+               "id": 8,
+               "symbol": "BAT"
+             },
+             "BUSD": {
+               "address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
+               "decimals": 18,
+               "id": 6,
+               "symbol": "BUSD"
+             },
+             "DAI": {
+               "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+               "decimals": 18,
+               "id": 1,
+               "symbol": "DAI"
+             },
+             "ETH": {
+               "address": "0x0000000000000000000000000000000000000000",
+               "decimals": 18,
+               "id": 0,
+               "symbol": "ETH"
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_tokens
+         params: []
+         
+
+         //---- Response -----
+
+         result:
+           BAT:
+             address: "0x0d8775f648430679a709e98d2b0cb6250d2887ef"
+             decimals: 18
+             id: 8
+             symbol: BAT
+           BUSD:
+             address: "0x4fabb145d64652a948d72533023f6e7a623c7c53"
+             decimals: 18
+             id: 6
+             symbol: BUSD
+           DAI:
+             address: "0x6b175474e89094c44da98b954eedeac495271d0f"
+             decimals: 18
+             id: 1
+             symbol: DAI
+           ETH:
+             address: "0x0000000000000000000000000000000000000000"
+             decimals: 18
+             id: 0
+             symbol: ETH
+         
 ```
 
 ### zksync_transfer
@@ -8172,48 +10499,80 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_transfer 9.814684447173249e+47 100 WBTC | jq
-{
-  "type": "Transfer",
-  "accountId": 1,
-  "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-  "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-  "token": 0,
-  "amount": 10,
-  "fee": 3780000000000000,
-  "nonce": 4,
-  "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_transfer",
-  "params": [
-    9.814684447173249e+47,
-    100,
-    "WBTC"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "type": "Transfer",
-    "accountId": 1,
-    "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-    "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-    "token": 0,
-    "amount": 10,
-    "fee": 3780000000000000,
-    "nonce": 4,
-    "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_transfer 9.814684447173249e+47 100 WBTC | jq
+         {
+           "type": "Transfer",
+           "accountId": 1,
+           "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+           "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+           "token": 0,
+           "amount": 10,
+           "fee": 3780000000000000,
+           "nonce": 4,
+           "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_transfer",
+           "params": [
+             9.814684447173249e+47,
+             100,
+             "WBTC"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "type": "Transfer",
+             "accountId": 1,
+             "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+             "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+             "token": 0,
+             "amount": 10,
+             "fee": 3780000000000000,
+             "nonce": 4,
+             "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_transfer
+         params:
+           - 9.814684447173249e+47
+           - 100
+           - WBTC
+         
+
+         //---- Response -----
+
+         result:
+           type: Transfer
+           accountId: 1
+           from: "0x8a91dc2d28b689474298d91899f0c1baf62cb85b"
+           to: "0x8a91dc2d28b689474298d91899f0c1baf62cb85b"
+           token: 0
+           amount: 10
+           fee: 3780000000000000
+           nonce: 4
+           txHash: sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668
+         
 ```
 
 ### zksync_tx_data
@@ -8311,80 +10670,125 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_tx_data 0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec | jq
-{
-  "tx_type": "Transfer",
-  "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
-  "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
-  "token": 1,
-  "amount": "5000000",
-  "fee": "2190",
-  "block_number": 29588,
-  "nonce": 20,
-  "created_at": "2021-06-01T10:32:16.248564",
-  "fail_reason": null,
-  "tx": {
-    "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
-    "fee": "2190",
-    "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
-    "type": "Transfer",
-    "nonce": 20,
-    "token": 1,
-    "amount": "5000000",
-    "accountId": 161578,
-    "signature": {
-      "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
-      "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
-    },
-    "validFrom": 0,
-    "validUntil": 4294967295
-  }
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_tx_data",
-  "params": [
-    "0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "tx_type": "Transfer",
-    "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
-    "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
-    "token": 1,
-    "amount": "5000000",
-    "fee": "2190",
-    "block_number": 29588,
-    "nonce": 20,
-    "created_at": "2021-06-01T10:32:16.248564",
-    "fail_reason": null,
-    "tx": {
-      "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
-      "fee": "2190",
-      "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
-      "type": "Transfer",
-      "nonce": 20,
-      "token": 1,
-      "amount": "5000000",
-      "accountId": 161578,
-      "signature": {
-        "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
-        "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
-      },
-      "validFrom": 0,
-      "validUntil": 4294967295
-    }
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -zkr https://rinkeby-api.zksync.io/api/v0.1 zksync_tx_data 0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec | jq
+         {
+           "tx_type": "Transfer",
+           "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+           "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+           "token": 1,
+           "amount": "5000000",
+           "fee": "2190",
+           "block_number": 29588,
+           "nonce": 20,
+           "created_at": "2021-06-01T10:32:16.248564",
+           "fail_reason": null,
+           "tx": {
+             "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+             "fee": "2190",
+             "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+             "type": "Transfer",
+             "nonce": 20,
+             "token": 1,
+             "amount": "5000000",
+             "accountId": 161578,
+             "signature": {
+               "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
+               "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
+             },
+             "validFrom": 0,
+             "validUntil": 4294967295
+           }
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_tx_data",
+           "params": [
+             "0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "tx_type": "Transfer",
+             "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+             "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+             "token": 1,
+             "amount": "5000000",
+             "fee": "2190",
+             "block_number": 29588,
+             "nonce": 20,
+             "created_at": "2021-06-01T10:32:16.248564",
+             "fail_reason": null,
+             "tx": {
+               "to": "0x03e2c10b74a260f46ab5cf881938c5888a6142df",
+               "fee": "2190",
+               "from": "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a",
+               "type": "Transfer",
+               "nonce": 20,
+               "token": 1,
+               "amount": "5000000",
+               "accountId": 161578,
+               "signature": {
+                 "pubKey": "91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6",
+                 "signature": "d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02"
+               },
+               "validFrom": 0,
+               "validUntil": 4294967295
+             }
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_tx_data
+         params:
+           - "0xc06ddc1c0914e8f9ca4d5bc98f609f7d758f6de2733fdcb8e3ec"
+         
+
+         //---- Response -----
+
+         result:
+           tx_type: Transfer
+           from: "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a"
+           to: "0x03e2c10b74a260f46ab5cf881938c5888a6142df"
+           token: 1
+           amount: "5000000"
+           fee: "2190"
+           block_number: 29588
+           nonce: 20
+           created_at: 2021-06-01T10:32:16.248564
+           fail_reason: null
+           tx:
+             to: "0x03e2c10b74a260f46ab5cf881938c5888a6142df"
+             fee: "2190"
+             from: "0x627d8e8c1a663cfea17432ec6dbbd3cc2c8a1f9a"
+             type: Transfer
+             nonce: 20
+             token: 1
+             amount: "5000000"
+             accountId: 161578
+             signature:
+               pubKey: 91b533af2c430d7ad48db3ccc4ccb54befaff48307180c9a19a369099331d0a6
+               signature: d17637db375a7a587474c8fee519fd7520f6ef98e1370e7a13d5de8176a6d0a22309e24a19dae50dad94ac9634ab3398427cf67abe8408e6c965c6b350b80c02
+             validFrom: 0
+             validUntil: 4294967295
+         
 ```
 
 ### zksync_tx_info
@@ -8429,36 +10833,61 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x zksync_tx_info sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 | jq
-{
-  "block": null,
-  "executed": false,
-  "failReason": null,
-  "success": null
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_tx_info",
-  "params": [
-    "sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "block": null,
-    "executed": false,
-    "failReason": null,
-    "success": null
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_tx_info sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000 | jq
+         {
+           "block": null,
+           "executed": false,
+           "failReason": null,
+           "success": null
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_tx_info",
+           "params": [
+             "sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "block": null,
+             "executed": false,
+             "failReason": null,
+             "success": null
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_tx_info
+         params:
+           - sync-tx:e41d2489571d322189246dafa5ebde1f4699f498000000000000000000000000
+         
+
+         //---- Response -----
+
+         result:
+           block: null
+           executed: false
+           failReason: null
+           success: null
+         
 ```
 
 ### zksync_verify
@@ -8483,27 +10912,51 @@ if the `musig_pubkeys` are set it will also verify against the given public keys
 
 *Example:*
 
-```sh
-> in3 -x zksync_verify 0xaabbccddeeff 0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
-1
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_verify",
-  "params": [
-    "0xaabbccddeeff",
-    "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": 1
-}
+   .. code-tab:: sh
+
+         > in3 -x zksync_verify 0xaabbccddeeff 0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01
+         1
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_verify",
+           "params": [
+             "0xaabbccddeeff",
+             "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c202c29a31b69cd0910a432156a0977c3a5baa404547e01"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": 1
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_verify
+         params:
+           - "0xaabbccddeeff"
+           - "0xfca80a469dbb53f8002eb1e2569d66f156f0df24d71bd589432cc7bc647bfc0493f69034\
+             c3980e7352741afa6c171b8e18355e41ed7427f6e706f8432e32e920c3e61e6c3aa00cfe0c2\
+             02c29a31b69cd0910a432156a0977c3a5baa404547e01"
+         
+
+         //---- Response -----
+
+         result: 1
+         
 ```
 
 ### zksync_withdraw
@@ -8570,47 +11023,79 @@ The return value contains the following properties :
 
 *Example:*
 
-```sh
-> in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_withdraw 9.814684447173249e+47 100 WBTC | jq
-{
-  "type": "Transfer",
-  "accountId": 1,
-  "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-  "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-  "token": 0,
-  "amount": 10,
-  "fee": 3780000000000000,
-  "nonce": 4,
-  "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
-}
-```
+```eval_rst
 
-```js
-//---- Request -----
+.. tabs::
 
-{
-  "method": "zksync_withdraw",
-  "params": [
-    9.814684447173249e+47,
-    100,
-    "WBTC"
-  ]
-}
 
-//---- Response -----
 
-{
-  "result": {
-    "type": "Transfer",
-    "accountId": 1,
-    "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-    "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
-    "token": 0,
-    "amount": 10,
-    "fee": 3780000000000000,
-    "nonce": 4,
-    "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
-  }
-}
+   .. code-tab:: sh
+
+         > in3 -x -pk 0xb0f60e4783ccc1f6234deed9e21f16d460c4176fd7adbd4f31d17e283b8cfb1c zksync_withdraw 9.814684447173249e+47 100 WBTC | jq
+         {
+           "type": "Transfer",
+           "accountId": 1,
+           "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+           "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+           "token": 0,
+           "amount": 10,
+           "fee": 3780000000000000,
+           "nonce": 4,
+           "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+         }
+
+   .. code-tab:: json
+
+         //---- Request -----
+
+         {
+           "method": "zksync_withdraw",
+           "params": [
+             9.814684447173249e+47,
+             100,
+             "WBTC"
+           ]
+         }
+
+         //---- Response -----
+
+         {
+           "result": {
+             "type": "Transfer",
+             "accountId": 1,
+             "from": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+             "to": "0x8a91dc2d28b689474298d91899f0c1baf62cb85b",
+             "token": 0,
+             "amount": 10,
+             "fee": 3780000000000000,
+             "nonce": 4,
+             "txHash": "sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668"
+           }
+         }
+
+   .. code-tab:: yaml
+
+         # ---- Request -----
+
+         method: zksync_withdraw
+         params:
+           - 9.814684447173249e+47
+           - 100
+           - WBTC
+         
+
+         //---- Response -----
+
+         result:
+           type: Transfer
+           accountId: 1
+           from: "0x8a91dc2d28b689474298d91899f0c1baf62cb85b"
+           to: "0x8a91dc2d28b689474298d91899f0c1baf62cb85b"
+           token: 0
+           amount: 10
+           fee: 3780000000000000
+           nonce: 4
+           txHash: sync-tx:40008d91ab92f7c539e45b06e708e186a4b906ad10c4b7a29f855fe02e7e7668
+         
 ```
 

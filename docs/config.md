@@ -23,16 +23,43 @@ Possible Values are:
 
 *Example:*
 
-```sh
-> in3 -c goerli  ....
-> in3 --chainId=goerli  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "chainId": "goerli"
-})
+   .. code-tab:: sh
+
+         > in3 -c goerli  ....
+         > in3 --chainId=goerli  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "chainId": "goerli"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"chainId\": \"goerli\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "chainId": "goerli"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( chainId:  "goerli")
+
+
 ```
 
 
@@ -44,16 +71,43 @@ the number in percent needed in order reach finality (% of signature of the vali
 
 *Example:*
 
-```sh
-> in3 -f 50  ....
-> in3 --finality=50  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "finality": 50
-})
+   .. code-tab:: sh
+
+         > in3 -f 50  ....
+         > in3 --finality=50  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "finality": 50
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"finality\": 50\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "finality": 50
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( finality:  50)
+
+
 ```
 
 
@@ -65,15 +119,42 @@ if true, the request should include the codes of all accounts. otherwise only th
 
 *Example:*
 
-```sh
-> in3 --includeCode  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "includeCode": true
-})
+   .. code-tab:: sh
+
+         > in3 --includeCode  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "includeCode": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"includeCode\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "includeCode": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( includeCode:  true)
+
+
 ```
 
 
@@ -85,15 +166,42 @@ if true, debug messages will be written to stderr. *This config is optional.*
 
 *Example:*
 
-```sh
-> in3 --debug  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "debug": true
-})
+   .. code-tab:: sh
+
+         > in3 --debug  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "debug": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"debug\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "debug": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( debug:  true)
+
+
 ```
 
 
@@ -105,16 +213,43 @@ max number of attempts in case a response is rejected. *This config is optional.
 
 *Example:*
 
-```sh
-> in3 -a 1  ....
-> in3 --maxAttempts=1  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "maxAttempts": 1
-})
+   .. code-tab:: sh
+
+         > in3 -a 1  ....
+         > in3 --maxAttempts=1  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "maxAttempts": 1
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"maxAttempts\": 1\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "maxAttempts": 1
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( maxAttempts:  1)
+
+
 ```
 
 
@@ -126,16 +261,43 @@ if true, requests sent to the input sream of the comandline util will be send th
 
 *Example:*
 
-```sh
-> in3 -kin3  ....
-> in3 --keepIn3  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "keepIn3": true
-})
+   .. code-tab:: sh
+
+         > in3 -kin3  ....
+         > in3 --keepIn3  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "keepIn3": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"keepIn3\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "keepIn3": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( keepIn3:  true)
+
+
 ```
 
 
@@ -147,15 +309,42 @@ if true, requests sent will be used for stats. *This config is optional.* (defau
 
 *Example:*
 
-```sh
-> in3 --stats=false  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "stats": false
-})
+   .. code-tab:: sh
+
+         > in3 --stats=false  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "stats": false
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"stats\": false\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "stats": false
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( stats:  false)
+
+
 ```
 
 
@@ -167,15 +356,42 @@ if true the client will use binary format. This will reduce the payload of the r
 
 *Example:*
 
-```sh
-> in3 --useBinary  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "useBinary": true
-})
+   .. code-tab:: sh
+
+         > in3 --useBinary  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "useBinary": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"useBinary\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "useBinary": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( useBinary:  true)
+
+
 ```
 
 
@@ -187,16 +403,43 @@ if true the client allows to use use experimental features, otherwise a exceptio
 
 *Example:*
 
-```sh
-> in3 -x  ....
-> in3 --experimental  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "experimental": true
-})
+   .. code-tab:: sh
+
+         > in3 -x  ....
+         > in3 --experimental  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "experimental": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"experimental\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "experimental": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( experimental:  true)
+
+
 ```
 
 
@@ -208,15 +451,42 @@ specifies the number of milliseconds before the request times out. increasing ma
 
 *Example:*
 
-```sh
-> in3 --timeout=100000  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "timeout": 100000
-})
+   .. code-tab:: sh
+
+         > in3 --timeout=100000  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "timeout": 100000
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"timeout\": 100000\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "timeout": 100000
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( timeout:  100000)
+
+
 ```
 
 
@@ -235,16 +505,43 @@ Possible Values are:
 
 *Example:*
 
-```sh
-> in3 -p none  ....
-> in3 --proof=none  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "proof": "none"
-})
+   .. code-tab:: sh
+
+         > in3 -p none  ....
+         > in3 --proof=none  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "proof": "none"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"proof\": \"none\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "proof": "none"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( proof:  "none")
+
+
 ```
 
 
@@ -256,16 +553,43 @@ if specified, the blocknumber *latest* will be replaced by blockNumber- specifie
 
 *Example:*
 
-```sh
-> in3 -l 6  ....
-> in3 --replaceLatestBlock=6  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "replaceLatestBlock": 6
-})
+   .. code-tab:: sh
+
+         > in3 -l 6  ....
+         > in3 --replaceLatestBlock=6  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "replaceLatestBlock": 6
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"replaceLatestBlock\": 6\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "replaceLatestBlock": 6
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( replaceLatestBlock:  6)
+
+
 ```
 
 
@@ -277,15 +601,42 @@ if true the nodelist will be automaticly updated if the lastBlock is newer. *Thi
 
 *Example:*
 
-```sh
-> in3 --autoUpdateList=false  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "autoUpdateList": false
-})
+   .. code-tab:: sh
+
+         > in3 --autoUpdateList=false  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "autoUpdateList": false
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"autoUpdateList\": false\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "autoUpdateList": false
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( autoUpdateList:  false)
+
+
 ```
 
 
@@ -297,16 +648,43 @@ number of signatures requested in order to verify the blockhash. *This config is
 
 *Example:*
 
-```sh
-> in3 -s 2  ....
-> in3 --signatureCount=2  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "signatureCount": 2
-})
+   .. code-tab:: sh
+
+         > in3 -s 2  ....
+         > in3 --signatureCount=2  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "signatureCount": 2
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"signatureCount\": 2\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "signatureCount": 2
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( signatureCount:  2)
+
+
 ```
 
 
@@ -318,16 +696,43 @@ if true, the first request (updating the nodelist) will also fetch the current h
 
 *Example:*
 
-```sh
-> in3 -bw  ....
-> in3 --bootWeights  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "bootWeights": true
-})
+   .. code-tab:: sh
+
+         > in3 -bw  ....
+         > in3 --bootWeights  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "bootWeights": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"bootWeights\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "bootWeights": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( bootWeights:  true)
+
+
 ```
 
 
@@ -339,15 +744,42 @@ if true the client will try to use http instead of https. *This config is option
 
 *Example:*
 
-```sh
-> in3 --useHttp  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "useHttp": true
-})
+   .. code-tab:: sh
+
+         > in3 --useHttp  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "useHttp": true
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"useHttp\": true\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "useHttp": true
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( useHttp:  true)
+
+
 ```
 
 
@@ -359,15 +791,42 @@ min stake of the server. Only nodes owning at least this amount will be chosen. 
 
 *Example:*
 
-```sh
-> in3 --minDeposit=10000000  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "minDeposit": 10000000
-})
+   .. code-tab:: sh
+
+         > in3 --minDeposit=10000000  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "minDeposit": 10000000
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"minDeposit\": 10000000\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "minDeposit": 10000000
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( minDeposit:  10000000)
+
+
 ```
 
 
@@ -379,15 +838,42 @@ used to identify the capabilities of the node. *This config is optional.*
 
 *Example:*
 
-```sh
-> in3 --nodeProps=0xffff  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "nodeProps": "0xffff"
-})
+   .. code-tab:: sh
+
+         > in3 --nodeProps=0xffff  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "nodeProps": "0xffff"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"nodeProps\": \"0xffff\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "nodeProps": "0xffff"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( nodeProps:  "0xffff")
+
+
 ```
 
 
@@ -399,16 +885,43 @@ the number of request send in parallel when getting an answer. More request will
 
 *Example:*
 
-```sh
-> in3 -rc 3  ....
-> in3 --requestCount=3  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "requestCount": 3
-})
+   .. code-tab:: sh
+
+         > in3 -rc 3  ....
+         > in3 --requestCount=3  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "requestCount": 3
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"requestCount\": 3\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "requestCount": 3
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( requestCount:  3)
+
+
 ```
 
 
@@ -420,15 +933,42 @@ url of one or more direct rpc-endpoints to use. (list can be comma seperated). I
 
 *Example:*
 
-```sh
-> in3 --rpc=http://loalhost:8545  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "rpc": "http://loalhost:8545"
-})
+   .. code-tab:: sh
+
+         > in3 --rpc=http://loalhost:8545  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "rpc": "http://loalhost:8545"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"rpc\": \"http://loalhost:8545\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "rpc": "http://loalhost:8545"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( rpc:  "http: //loalhost: 8545")
+
+
 ```
 
 
@@ -485,24 +1025,74 @@ The nodes object supports the following properties :
 
 *Example:*
 
-```sh
-> in3 --nodes.contract=0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "nodes": {
-    "contract": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
-    "nodeList": [
-      {
-        "address": "0x45d45e6ff99e6c34a235d263965910298985fcfe",
-        "url": "https://in3-v2.slock.it/mainnet/nd-1",
-        "props": "0xFFFF"
-      }
-    ]
-  }
-})
+   .. code-tab:: sh
+
+         > in3 --nodes.contract=0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "nodes": {
+             "contract": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+             "nodeList": [
+               {
+                 "address": "0x45d45e6ff99e6c34a235d263965910298985fcfe",
+                 "url": "https://in3-v2.slock.it/mainnet/nd-1",
+                 "props": "0xFFFF"
+               }
+             ]
+           }
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"nodes\": {\
+                    \"contract\": \"0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f\",\
+                    \"nodeList\": [\
+                      {\
+                        \"address\": \"0x45d45e6ff99e6c34a235d263965910298985fcfe\",\
+                        \"url\": \"https://in3-v2.slock.it/mainnet/nd-1\",\
+                        \"props\": \"0xFFFF\"\
+                      }\
+                    ]\
+                  }\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "nodes": {
+                        "contract": "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+                        "nodeList": [
+                          {
+                            "address": "0x45d45e6ff99e6c34a235d263965910298985fcfe",
+                            "url": "https://in3-v2.slock.it/mainnet/nd-1",
+                            "props": "0xFFFF"
+                          }
+                        ]
+                      }
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( nodes:  {
+                    contract:  "0xac1b824795e1eb1f6e609fe0da9b9af8beaab60f",
+                    nodeList:  [
+                    address:  "0x45d45e6ff99e6c34a235d263965910298985fcfe",
+                    url:  "https: //in3-v2.slock.it/mainnet/nd-1",
+                    props:  "0xFFFF")
+
+
 ```
 
 
@@ -582,59 +1172,200 @@ This option can also be used in its short-form in the comandline client `-zcpm` 
 
 *Example:*
 
-```sh
-> in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.sync_key=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.signer_type=contract  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.sync_key=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.signer_type=contract  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "zksync": {
+             "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+             "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+             "signer_type": "contract"
+           }
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"zksync\": {\
+                    \"account\": \"0x995628aa92d6a016da55e7de8b1727e1eb97d337\",\
+                    \"sync_key\": \"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816\",\
+                    \"signer_type\": \"contract\"\
+                  }\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "zksync": {
+                        "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                        "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                        "signer_type": "contract"
+                      }
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( zksync:  {
+                    account:  "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                    sync_key:  "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                    signer_type:  "contract")
+
 
 ```
 
-```js
-const in3 = new IN3({
-  "zksync": {
-    "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
-    "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
-    "signer_type": "contract"
-  }
-})
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.sync_key=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.signer_type=create2  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "zksync": {
+             "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+             "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+             "signer_type": "create2",
+             "create2": {
+               "creator": "0x6487c3ae644703c1f07527c18fe5569592654bcb",
+               "saltarg": "0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12",
+               "codehash": "0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"
+             }
+           }
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"zksync\": {\
+                    \"account\": \"0x995628aa92d6a016da55e7de8b1727e1eb97d337\",\
+                    \"sync_key\": \"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816\",\
+                    \"signer_type\": \"create2\",\
+                    \"create2\": {\
+                      \"creator\": \"0x6487c3ae644703c1f07527c18fe5569592654bcb\",\
+                      \"saltarg\": \"0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12\",\
+                      \"codehash\": \"0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5\"\
+                    }\
+                  }\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "zksync": {
+                        "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                        "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                        "signer_type": "create2",
+                        "create2": {
+                          "creator": "0x6487c3ae644703c1f07527c18fe5569592654bcb",
+                          "saltarg": "0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12",
+                          "codehash": "0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"
+                        }
+                      }
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( zksync:  {
+                    account:  "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                    sync_key:  "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                    signer_type:  "create2",
+                    create2:  {
+                    creator:  "0x6487c3ae644703c1f07527c18fe5569592654bcb",
+                    saltarg:  "0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12",
+                    codehash:  "0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5")
+
+
 ```
 
-```sh
-> in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.sync_key=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.signer_type=create2  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "zksync": {
-    "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
-    "sync_key": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
-    "signer_type": "create2",
-    "create2": {
-      "creator": "0x6487c3ae644703c1f07527c18fe5569592654bcb",
-      "saltarg": "0xb90306e2391fefe48aa89a8e91acbca502a94b2d734acc3335bb2ff5c266eb12",
-      "codehash": "0xd6af3ee91c96e29ddab0d4cb9b5dd3025caf84baad13bef7f2b87038d38251e5"
-    }
-  }
-})
-```
+   .. code-tab:: sh
 
-```sh
-> in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.signer_type=pk --zksync.musig_pub_keys=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.sync_key=0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734  ....
+         > in3 --zksync.account=0x995628aa92d6a016da55e7de8b1727e1eb97d337 --zksync.signer_type=pk --zksync.musig_pub_keys=0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816 --zksync.sync_key=0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734  ....
 
-```
+   .. code-tab:: js
 
-```js
-const in3 = new IN3({
-  "zksync": {
-    "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
-    "signer_type": "pk",
-    "musig_pub_keys": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
-    "sync_key": "0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734",
-    "musig_urls": [
-      null,
-      "https://approver.service.com"
-    ]
-  }
-})
+         const in3 = new IN3({
+           "zksync": {
+             "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+             "signer_type": "pk",
+             "musig_pub_keys": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+             "sync_key": "0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734",
+             "musig_urls": [
+               null,
+               "https://approver.service.com"
+             ]
+           }
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"zksync\": {\
+                    \"account\": \"0x995628aa92d6a016da55e7de8b1727e1eb97d337\",\
+                    \"signer_type\": \"pk\",\
+                    \"musig_pub_keys\": \"0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816\",\
+                    \"sync_key\": \"0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734\",\
+                    \"musig_urls\": [\
+                      null,\
+                      \"https://approver.service.com\"\
+                    ]\
+                  }\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "zksync": {
+                        "account": "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                        "signer_type": "pk",
+                        "musig_pub_keys": "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                        "sync_key": "0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734",
+                        "musig_urls": [
+                          null,
+                          "https://approver.service.com"
+                        ]
+                      }
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( zksync:  {
+                    account:  "0x995628aa92d6a016da55e7de8b1727e1eb97d337",
+                    signer_type:  "pk",
+                    musig_pub_keys:  "0x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d8160x9ad89ac0643ffdc32b2dab859ad0f9f7e4057ec23c2b17699c9b27eff331d816",
+                    sync_key:  "0xe8f2ee64be83c0ab9466b0490e4888dbf5a070fd1d82b567e33ebc90457a5734",
+                    musig_urls:  [
+                    https: //approver.service.com")
+
+
 ```
 
 
@@ -646,16 +1377,43 @@ the client key to sign requests. (only availble if build with `-DPK_SIGNER=true`
 
 *Example:*
 
-```sh
-> in3 -k 0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
-> in3 --key=0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "key": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
-})
+   .. code-tab:: sh
+
+         > in3 -k 0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+         > in3 --key=0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "key": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"key\": \"0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "key": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( key:  "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe")
+
+
 ```
 
 
@@ -667,16 +1425,43 @@ registers raw private keys as signers for transactions. (only availble if build 
 
 *Example:*
 
-```sh
-> in3 -pk 0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
-> in3 --pk=0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "pk": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
-})
+   .. code-tab:: sh
+
+         > in3 -pk 0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+         > in3 --pk=0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "pk": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"pk\": \"0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe\"\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "pk": "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe"
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( pk:  "0xc9564409cbfca3f486a07996e8015124f30ff8331fc6dcbd610a050f1f983afe")
+
+
 ```
 
 
@@ -706,18 +1491,53 @@ The btc object supports the following properties :
 
 *Example:*
 
-```sh
-> in3 --btc.maxDAP=30 --btc.maxDiff=5  ....
+```eval_rst
 
-```
+.. tabs::
 
-```js
-const in3 = new IN3({
-  "btc": {
-    "maxDAP": 30,
-    "maxDiff": 5
-  }
-})
+   .. code-tab:: sh
+
+         > in3 --btc.maxDAP=30 --btc.maxDiff=5  ....
+
+   .. code-tab:: js
+
+         const in3 = new IN3({
+           "btc": {
+             "maxDAP": 30,
+             "maxDiff": 5
+           }
+         })
+
+
+   .. code-tab:: c
+
+         in3_configure(in3, "{\
+                  \"btc\": {\
+                    \"maxDAP\": 30,\
+                    \"maxDiff\": 5\
+                  }\
+                }");
+
+
+   .. code-tab:: java
+
+         IN3 in3 = new IN3(new ClientConfiguration(JSON.parse("""
+                    {
+                      "btc": {
+                        "maxDAP": 30,
+                        "maxDiff": 5
+                      }
+                    }
+                    """)));
+
+
+   .. code-tab:: swift
+
+         let  in3 = IN3( btc:  {
+                    maxDAP:  30,
+                    maxDiff:  5)
+
+
 ```
 
 
@@ -735,9 +1555,14 @@ clears the cache before performing any operation.
 
 *Example:*
 
-```sh
-> in3 -ccache  ....
-> in3 --clearCache  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -ccache  ....
+         > in3 --clearCache  ....
 
 ```
 
@@ -750,9 +1575,14 @@ converts the result (as wei) to ether.
 
 *Example:*
 
-```sh
-> in3 -e  ....
-> in3 --eth  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -e  ....
+         > in3 --eth  ....
 
 ```
 
@@ -765,9 +1595,14 @@ if specified it will run as http-server listening to the given port.
 
 *Example:*
 
-```sh
-> in3 -port 8545  ....
-> in3 --port=8545  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -port 8545  ....
+         > in3 --port=8545  ....
 
 ```
 
@@ -780,9 +1615,14 @@ only works if port is specified and declares a comma-seperated list of rpc-metho
 
 *Example:*
 
-```sh
-> in3 -am eth_sign,eth_blockNumber  ....
-> in3 --allowed-methods=eth_sign,eth_blockNumber  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -am eth_sign,eth_blockNumber  ....
+         > in3 --allowed-methods=eth_sign,eth_blockNumber  ....
 
 ```
 
@@ -795,9 +1635,14 @@ the blocknumber to use when making calls. could be either latest (default),earli
 
 *Example:*
 
-```sh
-> in3 -b latest  ....
-> in3 --block=latest  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -b latest  ....
+         > in3 --block=latest  ....
 
 ```
 
@@ -810,9 +1655,14 @@ the target address of the call
 
 *Example:*
 
-```sh
-> in3 -to 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
-> in3 --to=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -to 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+         > in3 --to=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
 
 ```
 
@@ -825,9 +1675,14 @@ the sender of a call or tx (only needed if no signer is registered)
 
 *Example:*
 
-```sh
-> in3 -from 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
-> in3 --from=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -from 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+         > in3 --from=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
 
 ```
 
@@ -840,9 +1695,14 @@ the data for a transaction. This can be a filepath, a 0x-hexvalue or - for stdin
 
 *Example:*
 
-```sh
-> in3 -d 0x7d1c101  ....
-> in3 --data=0x7d1c101  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -d 0x7d1c101  ....
+         > in3 --data=0x7d1c101  ....
 
 ```
 
@@ -855,9 +1715,14 @@ the gas price to use when sending transactions. (default: use eth_gasPrice)
 
 *Example:*
 
-```sh
-> in3 -gp 1000000000000  ....
-> in3 --gas_price=1000000000000  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -gp 1000000000000  ....
+         > in3 --gas_price=1000000000000  ....
 
 ```
 
@@ -870,9 +1735,14 @@ the gas limit to use when sending transactions. (default: 100000)
 
 *Example:*
 
-```sh
-> in3 -gas 100000  ....
-> in3 --gas=100000  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -gas 100000  ....
+         > in3 --gas=100000  ....
 
 ```
 
@@ -891,9 +1761,14 @@ the nonce. (default: will be fetched useing eth_getTransactionCount)
 
 *Example:*
 
-```sh
-> in3 -nonce 2  ....
-> in3 --nonce=2  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -nonce 2  ....
+         > in3 --nonce=2  ....
 
 ```
 
@@ -906,9 +1781,14 @@ creates a new json-test written to stdout with the name as specified.
 
 *Example:*
 
-```sh
-> in3 -test test_blockNumber  ....
-> in3 --test=test_blockNumber  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -test test_blockNumber  ....
+         > in3 --test=test_blockNumber  ....
 
 ```
 
@@ -921,9 +1801,14 @@ the HD wallet derivation path . We can pass in simplified way as hex string  i.e
 
 *Example:*
 
-```sh
-> in3 -path 0x2c3c000000  ....
-> in3 --path=0x2c3c000000  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -path 0x2c3c000000  ....
+         > in3 --path=0x2c3c000000  ....
 
 ```
 
@@ -943,9 +1828,14 @@ Possible Values are:
 
 *Example:*
 
-```sh
-> in3 -st hash  ....
-> in3 --sigtype=hash  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -st hash  ....
+         > in3 --sigtype=hash  ....
 
 ```
 
@@ -958,9 +1848,14 @@ password to unlock the key
 
 *Example:*
 
-```sh
-> in3 -pwd MYPASSWORD  ....
-> in3 --password=MYPASSWORD  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -pwd MYPASSWORD  ....
+         > in3 --password=MYPASSWORD  ....
 
 ```
 
@@ -973,9 +1868,14 @@ the value to send when sending a transaction. can be hexvalue or a float/integer
 
 *Example:*
 
-```sh
-> in3 -value 0.2eth  ....
-> in3 --value=0.2eth  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -value 0.2eth  ....
+         > in3 --value=0.2eth  ....
 
 ```
 
@@ -988,9 +1888,14 @@ if given, instead returning the transaction, it will wait until the transaction 
 
 *Example:*
 
-```sh
-> in3 -w  ....
-> in3 --wait  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -w  ....
+         > in3 --wait  ....
 
 ```
 
@@ -1003,9 +1908,14 @@ if given the result will be returned as json, which is especially important for 
 
 *Example:*
 
-```sh
-> in3 -json  ....
-> in3 --json  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -json  ....
+         > in3 --json  ....
 
 ```
 
@@ -1018,9 +1928,14 @@ if given the result will be returned as hex.
 
 *Example:*
 
-```sh
-> in3 -hex  ....
-> in3 --hex  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -hex  ....
+         > in3 --hex  ....
 
 ```
 
@@ -1033,9 +1948,14 @@ if given incubed will output debug information when executing.
 
 *Example:*
 
-```sh
-> in3 -debug  ....
-> in3 --debug  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -debug  ....
+         > in3 --debug  ....
 
 ```
 
@@ -1048,9 +1968,14 @@ quiet. no additional output.
 
 *Example:*
 
-```sh
-> in3 -q  ....
-> in3 --quiet  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -q  ....
+         > in3 --quiet  ....
 
 ```
 
@@ -1063,9 +1988,14 @@ human readable, which removes the json -structure and oly displays the values.
 
 *Example:*
 
-```sh
-> in3 -h  ....
-> in3 --human  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -h  ....
+         > in3 --human  ....
 
 ```
 
@@ -1078,9 +2008,14 @@ runs test request when showing in3_weights
 
 *Example:*
 
-```sh
-> in3 -tr  ....
-> in3 --test-request  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -tr  ....
+         > in3 --test-request  ....
 
 ```
 
@@ -1093,9 +2028,14 @@ runs test request including health-check when showing in3_weights
 
 *Example:*
 
-```sh
-> in3 -thr  ....
-> in3 --test-health-request  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -thr  ....
+         > in3 --test-health-request  ....
 
 ```
 
@@ -1108,9 +2048,14 @@ adds a multisig as signer this needs to be done in the right order! (first the p
 
 *Example:*
 
-```sh
-> in3 -ms 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
-> in3 --multisig=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -ms 0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
+         > in3 --multisig=0x7d1c10184fa178ebb5b10a9aa6230a255c5c59f6  ....
 
 ```
 
@@ -1123,9 +2068,14 @@ add additional signatures, which will be useds when sending through a multisig!
 
 *Example:*
 
-```sh
-> in3 -sigs 8.270446144388933e+124  ....
-> in3 --ms.signatures=8.270446144388933e+124  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -sigs 8.270446144388933e+124  ....
+         > in3 --ms.signatures=8.270446144388933e+124  ....
 
 ```
 
@@ -1138,9 +2088,14 @@ read response from stdin
 
 *Example:*
 
-```sh
-> in3 -ri  ....
-> in3 --response.in  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -ri  ....
+         > in3 --response.in  ....
 
 ```
 
@@ -1153,9 +2108,14 @@ write raw response to stdout
 
 *Example:*
 
-```sh
-> in3 -ro  ....
-> in3 --response.out  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -ro  ....
+         > in3 --response.out  ....
 
 ```
 
@@ -1168,9 +2128,14 @@ reads a prerecorded request from the filepath and executes it with the recorded 
 
 *Example:*
 
-```sh
-> in3 -fi record.txt  ....
-> in3 --file.in=record.txt  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -fi record.txt  ....
+         > in3 --file.in=record.txt  ....
 
 ```
 
@@ -1183,9 +2148,14 @@ records a request and writes the reproducable data in a file (including all cach
 
 *Example:*
 
-```sh
-> in3 -fo record.txt  ....
-> in3 --file.out=record.txt  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -fo record.txt  ....
+         > in3 --file.out=record.txt  ....
 
 ```
 
@@ -1198,9 +2168,14 @@ a coma seperated list of urls (or address:url) to be used as fixed nodelist
 
 *Example:*
 
-```sh
-> in3 -nl https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
-> in3 --nodelist=https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -nl https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
+         > in3 --nodelist=https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
 
 ```
 
@@ -1213,9 +2188,14 @@ a coma seperated list of urls (or address:url) to be used as boot nodes
 
 *Example:*
 
-```sh
-> in3 -bn https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
-> in3 --bootnodes=https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -bn https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
+         > in3 --bootnodes=https://in3-v2.slock.it/mainnet/nd-1,https://mainnet.incubed.net  ....
 
 ```
 
@@ -1228,9 +2208,14 @@ only sign, do not send the raw Transaction
 
 *Example:*
 
-```sh
-> in3 -os  ....
-> in3 --onlysign  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -os  ....
+         > in3 --onlysign  ....
 
 ```
 
@@ -1243,9 +2228,14 @@ alias for --proof=none
 
 *Example:*
 
-```sh
-> in3 -np  ....
-> in3 --noproof  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -np  ....
+         > in3 --noproof  ....
 
 ```
 
@@ -1258,9 +2248,14 @@ alias for --stats=false, which will mark all requests as not counting in the sta
 
 *Example:*
 
-```sh
-> in3 -ns  ....
-> in3 --nostats  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -ns  ....
+         > in3 --nostats  ....
 
 ```
 
@@ -1273,9 +2268,14 @@ displays the version
 
 *Example:*
 
-```sh
-> in3 -v  ....
-> in3 --version  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -v  ....
+         > in3 --version  ....
 
 ```
 
@@ -1288,9 +2288,14 @@ displays this help message
 
 *Example:*
 
-```sh
-> in3 -h  ....
-> in3 --help  ....
+```eval_rst
+
+.. tabs::
+
+   .. code-tab:: sh
+
+         > in3 -h  ....
+         > in3 --help  ....
 
 ```
 
